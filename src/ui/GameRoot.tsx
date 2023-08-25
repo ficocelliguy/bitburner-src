@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createStyles, makeStyles } from "@mui/styles";
-import { Box, Typography } from "@mui/material";
+import {AppBar, Box, Container, Typography } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 
 import { Player } from "@player";
@@ -49,6 +49,7 @@ import { BitverseRoot } from "../BitNode/ui/BitverseRoot";
 import { StaneksGiftRoot } from "../CotMG/ui/StaneksGiftRoot";
 import { staneksGift } from "../CotMG/Helper";
 import { CharacterOverview } from "./React/CharacterOverview";
+import { CharacterInfoBar } from "./React/CharacterInfoBar";
 import { BladeburnerCinematic } from "../Bladeburner/ui/BladeburnerCinematic";
 import { workerScripts } from "../Netscript/WorkerScripts";
 import { Unclickable } from "../Exploits/Unclickable";
@@ -71,6 +72,7 @@ import { V2Modal } from "../utils/V2Modal";
 import { MathJaxContext } from "better-react-mathjax";
 import { useRerender } from "./React/hooks";
 import { HistoryProvider } from "./React/Documentation";
+import {Toolbar} from "../ScriptEditor/ui/Toolbar";
 
 const htmlLocation = location;
 
@@ -376,6 +378,11 @@ export function GameRoot(): React.ReactElement {
         <BypassWrapper content={bypassGame ? mainPage : null}>
           <HistoryProvider>
             <SnackbarProvider>
+              <CharacterInfoBar
+                parentOpen={true}
+                save={() => saveObject.saveGame()}
+                killScripts={killAllScripts}
+              />
               <Overview mode={ITutorial.isRunning ? "tutorial" : "overview"}>
                 {(parentOpen) =>
                   !ITutorial.isRunning ? (
@@ -390,7 +397,7 @@ export function GameRoot(): React.ReactElement {
                 }
               </Overview>
               {withSidebar ? (
-                <Box display="flex" flexDirection="row" width="100%">
+                <Box display="flex" flexDirection="row" width="100%" marginTop="60px">
                   <SidebarRoot page={pageWithContext.page} />
                   <Box className={classes.root}>{mainPage}</Box>
                 </Box>

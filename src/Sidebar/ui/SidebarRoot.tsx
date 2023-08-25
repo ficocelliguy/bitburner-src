@@ -65,6 +65,7 @@ const RotatedDoubleArrowIcon = React.forwardRef(function RotatedDoubleArrowIcon(
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: theme.spacing(31),
+  marginTop: theme.spacing(10),
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -79,6 +80,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   }),
   overflowX: "hidden",
   width: `calc(${theme.spacing(2)} + 1px)`,
+  marginTop: theme.spacing(10),
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(7)} + 1px)`,
   },
