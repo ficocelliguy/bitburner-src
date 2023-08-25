@@ -128,9 +128,16 @@ export function DataCell({ name, showBar, color, cellType }: DataRowProps): Reac
     <>
       <TableCell component="th" scope="row" classes={{ root: classes[cellType] }}>
         <Typography color={color}>{name}&nbsp;</Typography>
-        <Val name={name} color={color} />
-      {skillBar}
       </TableCell>
+      <TableCell align="right" classes={{ root: classes[cellType] }}>
+        <Val name={name} color={color} />
+      </TableCell>
+      <TableCell align="right" classes={{ root: classes[cellType] }}>
+        <Typography id={"overview-" + name.toLowerCase() + "-hook"} color={color}>
+          {}
+        </Typography>
+      </TableCell>
+      {skillBar}
     </>
   );
 }
