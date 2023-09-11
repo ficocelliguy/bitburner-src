@@ -4,7 +4,8 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
-import { Play, playerColors, PointState } from "./types";
+import { PlayerColor, playerColors, PointState } from "./types";
+import { updateChains } from "./utils";
 
 const BOARD_SIZE = 5;
 
@@ -21,8 +22,14 @@ export function Gameboard(): React.ReactElement {
   const [turn, setTurn] = useState(0);
 
   const [boardState, setBoardState] = useState<PointState[][]>(
-    Array.from({ length: BOARD_SIZE }, () =>
-      Array.from({ length: BOARD_SIZE }, () => ({ player: playerColors.empty, chain: null, liberties: null })),
+    Array.from({ length: BOARD_SIZE }, (_, x) =>
+      Array.from({ length: BOARD_SIZE }, (_, y) => ({
+        player: playerColors.empty,
+        chain: null,
+        liberties: null,
+        x,
+        y,
+      })),
     ),
   );
 
@@ -31,17 +38,26 @@ export function Gameboard(): React.ReactElement {
   function clickHandler(x: number, y: number): void {
     if (boardState[x][y].player === playerColors.empty) {
       boardState[x][y].player = playerColors.black;
-      updateBoard(boardState);
-
-      console.log(x, y, boardState[x][y].player, turn);
+      updateBoard(boardState, playerColors.black);
 
       takeAiTurn();
     }
   }
 
-  function updateBoard(state: PointState[][]): void {
+  function updateBoard(state: PointState[][], playerWhoMoved: PlayerColor): void {
     const newState = [...state];
+    updateChains(newState, playerWhoMoved);
     setBoardState(newState);
+
+    console.log("--------------");
+    for (let x = 0; x < state.length; x++) {
+      let output = `${x}: `;
+      for (let y = 0; y < state[x].length; y++) {
+        const point = state[x][y];
+        output += ` ${point.liberties?.length ?? 0}`;
+      }
+      console.log(output);
+    }
   }
 
   function takeAiTurn() {
@@ -64,15 +80,20 @@ export function Gameboard(): React.ReactElement {
     boardState[x][y].player = playerColors.white;
     setTurn(turn + 2);
 
-    console.log(x, y, boardState[x][y].player, turn);
-    updateBoard(boardState);
+    updateBoard(boardState, playerColors.white);
   }
 
   function resetState() {
     setTurn(0);
     setBoardState(
-      Array.from({ length: BOARD_SIZE }, () =>
-        Array.from({ length: BOARD_SIZE }, () => ({ player: playerColors.empty, chain: null, liberties: null })),
+      Array.from({ length: BOARD_SIZE }, (_, x) =>
+        Array.from({ length: BOARD_SIZE }, (_, y) => ({
+          player: playerColors.empty,
+          chain: null,
+          liberties: null,
+          x,
+          y,
+        })),
       ),
     );
   }

@@ -3,6 +3,7 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { playerColors, PointState } from "./types";
+import { findAdjacentLibertiesAndAlliesForPoint } from "./utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -92,15 +93,13 @@ export function Point(props: { state: PointState[][]; x: number; y: number }): R
 
   const currentPoint = props.state[props.x][props.y];
   const player = currentPoint.player;
-  const opposingPlayer = currentPoint.player === playerColors.white ? playerColors.black : playerColors.white;
-  const northNeighbor = props.state[props.x - 1]?.[props.y];
-  const hasNorthLiberty = player !== playerColors.empty && northNeighbor && northNeighbor.player !== opposingPlayer;
-  const eastNeighbor = props.state[props.x][props.y + 1];
-  const hasEastLiberty = player !== playerColors.empty && eastNeighbor && eastNeighbor.player !== opposingPlayer;
-  const southNeighbor = props.state[props.x + 1]?.[props.y];
-  const hasSouthLiberty = player !== playerColors.empty && southNeighbor && southNeighbor.player !== opposingPlayer;
-  const westNeighbor = props.state[props.x][props.y - 1];
-  const hasWestLiberty = player !== playerColors.empty && westNeighbor && westNeighbor.player !== opposingPlayer;
+
+  const liberties = findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y);
+
+  const hasNorthLiberty = liberties.north;
+  const hasEastLiberty = liberties.east;
+  const hasSouthLiberty = liberties.south;
+  const hasWestLiberty = liberties.west;
 
   const pointClass =
     player === playerColors.white
