@@ -11,6 +11,7 @@ import { CONSTANTS } from "../Constants";
 import { ActivateRecoveryMode } from "./React/RecoveryRoot";
 import { hash } from "../hash/hash";
 import { pushGameReady } from "../Electron";
+import { Gameboard } from "../Go/Gameboard";
 
 export function LoadingScreen(): React.ReactElement {
   const [show, setShow] = useState(false);
@@ -53,6 +54,8 @@ export function LoadingScreen(): React.ReactElement {
     }
     doLoad();
   }, []);
+
+  return <Gameboard></Gameboard>;
 
   return loaded ? (
     <GameRoot />
