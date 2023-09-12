@@ -3,7 +3,13 @@ import { Neighbor, PlayerColor, playerColors, PointState } from "../types";
 /**
  * Make a new move on the given board, and update the board state accordingly
  */
-export function makeMove(boardState: PointState[][], x: number, y: number, player: PlayerColor) {
+export function makeMove(
+  boardState: PointState[][],
+  x: number,
+  y: number,
+  player: PlayerColor,
+  evaluateCaptures = true,
+) {
   const point = boardState[x][y];
 
   // Do not update on invalid moves
@@ -13,19 +19,12 @@ export function makeMove(boardState: PointState[][], x: number, y: number, playe
   }
 
   boardState[x][y].player = player;
+
+  if (evaluateCaptures) {
+    return updateCaptures(boardState, player);
+  }
+
   return boardState;
-}
-
-export function getEmptySpaces(boardState: PointState[][]): PointState[] {
-  return boardState.reduce(
-    (emptySpaces, _, x) =>
-      emptySpaces.concat(boardState[x].filter((_, y) => boardState[x][y].player === playerColors.empty)),
-    [],
-  );
-}
-
-export function getStateClone(boardState: PointState[][]) {
-  return JSON.parse(JSON.stringify(boardState));
 }
 
 /**
@@ -66,7 +65,7 @@ export function updateCaptures(initialState: PointState[][], playerWhoMoved: Pla
   return boardState;
 }
 
-export function findAllChains(boardState: PointState[][]): PointState[][] {
+export function getAllChains(boardState: PointState[][]): PointState[][] {
   const chains: PointState[][] = [];
 
   for (let x = 0; x < boardState.length; x++) {
@@ -150,12 +149,17 @@ export function findAdjacentPointsInChain(
   return priorNeighbors;
 }
 
-function findLibertiesForChain(boardState: PointState[][], chain: PointState[]) {
+function findLibertiesForChain(boardState: PointState[][], chain: PointState[]): PointState[] {
   return chain.reduce((liberties: PointState[], member: PointState) => {
     const libertiesObject = findAdjacentLibertiesForPoint(boardState, member.x, member.y);
     const newLiberties = getArrayFromNeighbor(libertiesObject);
     return mergeNewItems(liberties, newLiberties);
   }, []);
+}
+
+export function findChainLibertiesForPoint(boardState: PointState[][], x: number, y: number): PointState[] {
+  const chain = findAdjacentPointsInChain(boardState, x, y);
+  return findLibertiesForChain(boardState, chain);
 }
 
 /**
@@ -202,6 +206,18 @@ export function findAdjacentLibertiesAndAlliesForPoint(board: PointState[][], x:
   };
 }
 
+export function getEmptySpaces(boardState: PointState[][]): PointState[] {
+  return boardState.reduce(
+    (emptySpaces, _, x) =>
+      emptySpaces.concat(boardState[x].filter((_, y) => boardState[x][y].player === playerColors.empty)),
+    [],
+  );
+}
+
+export function getStateClone(boardState: PointState[][]) {
+  return JSON.parse(JSON.stringify(boardState));
+}
+
 function contains(arr: PointState[], point: PointState) {
   return !!arr.find((p) => p && p.x === point.x && p.y === point.y);
 }
@@ -223,6 +239,10 @@ function getArrayFromNeighbor(neighborObject: Neighbor): PointState[] {
   return [neighborObject.north, neighborObject.east, neighborObject.south, neighborObject.west].filter(isNotNull);
 }
 
-function isNotNull<T>(argument: T | null): argument is T {
+export function isNotNull<T>(argument: T | null): argument is T {
   return argument !== null;
+}
+
+export function floor(n: number) {
+  return ~~n;
 }

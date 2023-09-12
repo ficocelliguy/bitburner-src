@@ -6,7 +6,7 @@ import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
 import { playerColors, PointState } from "./types";
 import { getStateClone, makeMove, updateCaptures } from "./utils/boardState";
-import { getRandomMove } from "./utils/ai";
+import { getMove } from "./utils/goAI";
 
 const BOARD_SIZE = 7;
 
@@ -41,17 +41,18 @@ export function Gameboard(): React.ReactElement {
     if (turn % 2 !== 0) {
       return;
     }
-    const updatedBoard = makeMove(boardState, x, y, playerColors.black);
+    const updatedBoard = makeMove(boardState, x, y, playerColors.black, false);
 
     if (updatedBoard) {
       setBoardState(updatedBoard);
       setTurn(turn + 1);
 
+      // Delay captures a short amount to make them easier to see
       setTimeout(() => {
         const captureUpdatedBoard = updateCaptures(updatedBoard, playerColors.black);
         setBoardState(captureUpdatedBoard);
         takeAiTurn(captureUpdatedBoard, turn + 1);
-      }, 200);
+      }, 100);
     }
 
     logBoard(boardState);
@@ -71,23 +72,25 @@ export function Gameboard(): React.ReactElement {
 
   function takeAiTurn(board: PointState[][], currentTurn: number) {
     const initialState = getStateClone(board);
-    const randomMove = getRandomMove(initialState);
+    const move = getMove(initialState, playerColors.white);
 
-    if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !randomMove) {
+    if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !move) {
       resetState();
       return;
     }
 
-    const updatedBoard = makeMove(initialState, randomMove.x, randomMove.y, playerColors.white);
+    const updatedBoard = makeMove(initialState, move.x, move.y, playerColors.white, false);
 
     if (updatedBoard) {
       setTimeout(() => {
         setBoardState(updatedBoard);
+
+        // Delay captures a short amount to make them easier to see
         setTimeout(() => {
           setBoardState(updateCaptures(updatedBoard, playerColors.white));
           setTurn(currentTurn + 1);
-        }, 200);
-      }, 400);
+        }, 100);
+      }, 300);
     }
   }
 
