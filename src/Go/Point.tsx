@@ -3,7 +3,7 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { playerColors, PointState } from "./types";
-import { findAdjacentLibertiesAndAlliesForPoint } from "./utils";
+import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

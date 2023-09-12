@@ -4,10 +4,11 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
-import { PlayerColor, playerColors, PointState } from "./types";
-import { updateChains } from "./utils";
+import { playerColors, PointState } from "./types";
+import { getStateClone, makeMove, updateCaptures } from "./utils/boardState";
+import { getRandomMove } from "./utils/ai";
 
-const BOARD_SIZE = 5;
+const BOARD_SIZE = 7;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,19 +37,27 @@ export function Gameboard(): React.ReactElement {
   const classes = useStyles();
 
   function clickHandler(x: number, y: number): void {
-    if (boardState[x][y].player === playerColors.empty) {
-      boardState[x][y].player = playerColors.black;
-      updateBoard(boardState, playerColors.black);
-
-      takeAiTurn();
+    // lock the board when it isn't the player's turn
+    if (turn % 2 !== 0) {
+      return;
     }
+    const updatedBoard = makeMove(boardState, x, y, playerColors.black);
+
+    if (updatedBoard) {
+      setBoardState(updatedBoard);
+      setTurn(turn + 1);
+
+      setTimeout(() => {
+        const captureUpdatedBoard = updateCaptures(updatedBoard, playerColors.black);
+        setBoardState(captureUpdatedBoard);
+        takeAiTurn(captureUpdatedBoard, turn + 1);
+      }, 200);
+    }
+
+    logBoard(boardState);
   }
 
-  function updateBoard(state: PointState[][], playerWhoMoved: PlayerColor): void {
-    const newState = [...state];
-    updateChains(newState, playerWhoMoved);
-    setBoardState(newState);
-
+  function logBoard(state: PointState[][]): void {
     console.log("--------------");
     for (let x = 0; x < state.length; x++) {
       let output = `${x}: `;
@@ -60,27 +69,26 @@ export function Gameboard(): React.ReactElement {
     }
   }
 
-  function takeAiTurn() {
-    const anEmptySpace = boardState.find((_, x) =>
-      boardState[x].find((_, y) => boardState[x][y].player === playerColors.empty),
-    );
+  function takeAiTurn(board: PointState[][], currentTurn: number) {
+    const initialState = getStateClone(board);
+    const randomMove = getRandomMove(initialState);
 
-    if (turn > BOARD_SIZE * (BOARD_SIZE - 1) || !anEmptySpace) {
+    if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !randomMove) {
       resetState();
       return;
     }
 
-    let x, y;
+    const updatedBoard = makeMove(initialState, randomMove.x, randomMove.y, playerColors.white);
 
-    do {
-      x = Math.floor(Math.random() * BOARD_SIZE);
-      y = Math.floor(Math.random() * BOARD_SIZE);
-    } while (boardState[x][y].player !== playerColors.empty);
-
-    boardState[x][y].player = playerColors.white;
-    setTurn(turn + 2);
-
-    updateBoard(boardState, playerColors.white);
+    if (updatedBoard) {
+      setTimeout(() => {
+        setBoardState(updatedBoard);
+        setTimeout(() => {
+          setBoardState(updateCaptures(updatedBoard, playerColors.white));
+          setTurn(currentTurn + 1);
+        }, 200);
+      }, 400);
+    }
   }
 
   function resetState() {
