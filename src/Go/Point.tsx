@@ -2,7 +2,7 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
-import { playerColors, PointState } from "./types";
+import { BoardState, playerColors } from "./types";
 import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -94,10 +94,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-export function Point(props: { state: PointState[][]; x: number; y: number }): React.ReactElement {
+export function Point(props: { state: BoardState; x: number; y: number }): React.ReactElement {
   const classes = useStyles();
 
-  const currentPoint = props.state[props.x][props.y];
+  const currentPoint = props.state.board[props.x][props.y];
   const player = currentPoint.player;
 
   const liberties = findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y);
@@ -114,7 +114,9 @@ export function Point(props: { state: PointState[][]; x: number; y: number }): R
       ? classes.blackPoint
       : classes.emptyPoint;
 
-  const colorLiberty = `${player === playerColors.white ? classes.libertyWhite : classes.libertyBlack} ${classes.liberty}`;
+  const colorLiberty = `${player === playerColors.white ? classes.libertyWhite : classes.libertyBlack} ${
+    classes.liberty
+  }`;
 
   return (
     <div className={classes.point} title={player}>

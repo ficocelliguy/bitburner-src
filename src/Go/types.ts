@@ -6,6 +6,14 @@ export enum playerColors {
 
 export type PlayerColor = playerColors.white | playerColors.black | playerColors.empty;
 
+export type Board = PointState[][];
+
+export type BoardState = {
+  board: Board;
+  previousPlayer: PlayerColor;
+  history: Board[];
+};
+
 export type PointState = {
   player: PlayerColor;
   chain: number | null;

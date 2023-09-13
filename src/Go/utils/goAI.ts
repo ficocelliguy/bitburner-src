@@ -1,23 +1,23 @@
-import { PlayerColor, playerColors, PointState } from "../types";
+import { BoardState, PlayerColor, playerColors, PointState } from "../types";
 import {
   findChainLibertiesForPoint,
   floor,
   getAllChains,
   getEmptySpaces,
-  getStateClone, isDefined,
+  getStateClone,
+  isDefined,
   isNotNull,
   makeMove,
 } from "./boardState";
-import {p} from "../../ui/MD/components";
 
-export function getRandomMove(boardState: PointState[][]) {
+export function getRandomMove(boardState: BoardState) {
   const emptySpaces = getEmptySpaces(boardState);
 
   const randomIndex = floor(Math.random() * emptySpaces.length);
   return emptySpaces[randomIndex];
 }
 
-export function getGrowthMove(initialState: PointState[][], player: PlayerColor) {
+export function getGrowthMove(initialState: BoardState, player: PlayerColor) {
   const boardState = getStateClone(initialState);
 
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
@@ -51,7 +51,7 @@ export function getGrowthMove(initialState: PointState[][], player: PlayerColor)
 }
 
 // TODO: refactor for clarity
-export function getSurroundMove(initialState: PointState[][], player: PlayerColor) {
+export function getSurroundMove(initialState: BoardState, player: PlayerColor) {
   const boardState = getStateClone(initialState);
 
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
@@ -63,14 +63,16 @@ export function getSurroundMove(initialState: PointState[][], player: PlayerColo
 
   const enemyChainRepresentatives = enemyChains
     .map((chain) => chain[0])
-    .map((point) => point.liberties?.filter(isNotNull)
-    .filter(isDefined)
-    .map(liberty => ({
-      liberty: liberty,
-      examplePoint: point
-    })))
+    .map((point) =>
+      point.liberties
+        ?.filter(isNotNull)
+        .filter(isDefined)
+        .map((liberty) => ({
+          liberty: liberty,
+          examplePoint: point,
+        })),
+    )
     .flat()
-    .filter(isNotNull)
     .filter(isDefined);
 
   // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
@@ -112,7 +114,7 @@ export function getSurroundMove(initialState: PointState[][], player: PlayerColo
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
-export function getMove(boardState: PointState[][], player: PlayerColor): PointState {
+export function getMove(boardState: BoardState, player: PlayerColor): PointState {
   const moveType = floor(Math.random() * 3);
   const randomMove = getRandomMove(boardState);
   const growthMove = getGrowthMove(boardState, player);

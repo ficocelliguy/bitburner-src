@@ -4,10 +4,10 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
-import { playerColors, PointState } from "./types";
-import { getStateClone, makeMove, updateCaptures } from "./utils/boardState";
+import { BoardState, playerColors } from "./types";
+import { getNewBoardState, getStateClone, makeMove, updateCaptures } from "./utils/boardState";
 import { getMove } from "./utils/goAI";
-import {weiArt} from "./utils/asciiArt";
+import { weiArt } from "./utils/asciiArt";
 
 const BOARD_SIZE = 7;
 
@@ -24,24 +24,14 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: "3.75px",
       whiteSpace: "pre",
       pointerEvents: "none",
-    }
+    },
   }),
 );
 
 export function Gameboard(): React.ReactElement {
   const [turn, setTurn] = useState(0);
 
-  const [boardState, setBoardState] = useState<PointState[][]>(
-    Array.from({ length: BOARD_SIZE }, (_, x) =>
-      Array.from({ length: BOARD_SIZE }, (_, y) => ({
-        player: playerColors.empty,
-        chain: null,
-        liberties: null,
-        x,
-        y,
-      })),
-    ),
-  );
+  const [boardState, setBoardState] = useState<BoardState>(getNewBoardState());
 
   const classes = useStyles();
 
@@ -67,7 +57,8 @@ export function Gameboard(): React.ReactElement {
     logBoard(boardState);
   }
 
-  function logBoard(state: PointState[][]): void {
+  function logBoard(boardState: BoardState): void {
+    const state = boardState.board;
     console.log("--------------");
     for (let x = 0; x < state.length; x++) {
       let output = `${x}: `;
@@ -79,7 +70,7 @@ export function Gameboard(): React.ReactElement {
     }
   }
 
-  function takeAiTurn(board: PointState[][], currentTurn: number) {
+  function takeAiTurn(board: BoardState, currentTurn: number) {
     const initialState = getStateClone(board);
     const move = getMove(initialState, playerColors.white);
 
@@ -105,17 +96,7 @@ export function Gameboard(): React.ReactElement {
 
   function resetState() {
     setTurn(0);
-    setBoardState(
-      Array.from({ length: BOARD_SIZE }, (_, x) =>
-        Array.from({ length: BOARD_SIZE }, (_, y) => ({
-          player: playerColors.empty,
-          chain: null,
-          liberties: null,
-          x,
-          y,
-        })),
-      ),
-    );
+    setBoardState(getNewBoardState());
   }
 
   return (
@@ -123,7 +104,7 @@ export function Gameboard(): React.ReactElement {
       <div>
         <div className={classes.background}>{weiArt}</div>
         <Grid container id="goGameboard" className={classes.board}>
-          {boardState.map((row, x) => (
+          {boardState.board.map((row, x) => (
             <Grid container key={`row_${x}`} item>
               {row.map((point, y: number) => (
                 <Grid item key={`point_${x}_${y}`} onClick={() => clickHandler(x, y)}>
