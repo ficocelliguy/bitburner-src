@@ -7,6 +7,7 @@ import { Point } from "./Point";
 import { playerColors, PointState } from "./types";
 import { getStateClone, makeMove, updateCaptures } from "./utils/boardState";
 import { getMove } from "./utils/goAI";
+import {weiArt} from "./utils/asciiArt";
 
 const BOARD_SIZE = 7;
 
@@ -14,8 +15,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     board: {
       margin: "auto",
-      backgroundColor: theme.colors.black,
     },
+    background: {
+      position: "absolute",
+      opacity: 0.07,
+      color: theme.colors.white,
+      fontFamily: "monospace",
+      fontSize: "3.75px",
+      whiteSpace: "pre",
+      pointerEvents: "none",
+    }
   }),
 );
 
@@ -112,6 +121,7 @@ export function Gameboard(): React.ReactElement {
   return (
     <>
       <div>
+        <div className={classes.background}>{weiArt}</div>
         <Grid container id="goGameboard" className={classes.board}>
           {boardState.map((row, x) => (
             <Grid container key={`row_${x}`} item>

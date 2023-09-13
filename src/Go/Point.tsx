@@ -8,7 +8,6 @@ import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     point: {
-      backgroundColor: theme.colors.black,
       padding: "30px",
       position: "relative",
       "&:hover $innerPoint": {
