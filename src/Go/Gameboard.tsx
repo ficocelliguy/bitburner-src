@@ -99,7 +99,7 @@ export function Gameboard(): React.ReactElement {
           setBoardState(updateCaptures(updatedBoard, playerColors.white));
           setTurn(currentTurn + 1);
         }, 100);
-      }, 300);
+      }, 500);
     }
   }
 

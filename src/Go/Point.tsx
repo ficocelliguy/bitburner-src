@@ -8,7 +8,7 @@ import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     point: {
-      padding: "30px",
+      padding: "23px",
       position: "relative",
       "&:hover $innerPoint": {
         borderColor: theme.colors.white,
@@ -17,13 +17,14 @@ const useStyles = makeStyles((theme: Theme) =>
     innerPoint: {
       borderStyle: "solid",
       borderWidth: "1px",
-      borderRadius: "12px",
+      borderRadius: "25px",
       borderColor: "transparent",
+      padding: "5px",
     },
     emptyPoint: {
       width: "4px",
       height: "4px",
-      margin: "11px",
+      margin: "13px",
       backgroundColor: theme.colors.white,
       position: "relative",
     },
@@ -38,12 +39,12 @@ const useStyles = makeStyles((theme: Theme) =>
     whitePoint: {
       width: "0",
       height: "0",
-      padding: "9px",
+      padding: "11px",
       backgroundColor: theme.colors.white,
     },
     blackPoint: {
-      width: "20px",
-      height: "20px",
+      width: "24px",
+      height: "24px",
       margin: "2px",
       backgroundColor: theme.colors.black,
       borderColor: theme.colors.white,
@@ -69,24 +70,24 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     northLiberty: {
       width: "2px",
-      height: "44px",
+      height: "50%",
       top: 0,
       left: "50%",
     },
     southLiberty: {
       width: "2px",
-      height: "44px",
+      height: "50%",
       top: "50%",
       left: "50%",
     },
     eastLiberty: {
-      width: "44px",
+      width: "50%",
       height: "2px",
       top: "50%",
       left: "50%",
     },
     westLiberty: {
-      width: "44px",
+      width: "50%",
       height: "2px",
       top: "50%",
       left: 0,

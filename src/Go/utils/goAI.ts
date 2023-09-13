@@ -4,10 +4,11 @@ import {
   floor,
   getAllChains,
   getEmptySpaces,
-  getStateClone,
+  getStateClone, isDefined,
   isNotNull,
   makeMove,
 } from "./boardState";
+import {p} from "../../ui/MD/components";
 
 export function getRandomMove(boardState: PointState[][]) {
   const emptySpaces = getEmptySpaces(boardState);
@@ -49,6 +50,7 @@ export function getGrowthMove(initialState: PointState[][], player: PlayerColor)
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
+// TODO: refactor for clarity
 export function getSurroundMove(initialState: PointState[][], player: PlayerColor) {
   const boardState = getStateClone(initialState);
 
@@ -59,18 +61,24 @@ export function getSurroundMove(initialState: PointState[][], player: PlayerColo
     return null;
   }
 
-  const liberties = enemyChains
-    .map((chain) => chain[0].liberties)
+  const enemyChainRepresentatives = enemyChains
+    .map((chain) => chain[0])
+    .map((point) => point.liberties?.filter(isNotNull)
+    .filter(isDefined)
+    .map(liberty => ({
+      liberty: liberty,
+      examplePoint: point
+    })))
     .flat()
-    .filter(isNotNull);
-  const exampleEnemyPiece = liberties[0];
+    .filter(isNotNull)
+    .filter(isDefined);
 
   // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
-  const libertyDecreases = liberties.map((point) => {
-    const stateAfterMove = makeMove(getStateClone(boardState), point?.x, point?.y, player);
+  const libertyDecreases = enemyChainRepresentatives.map((point) => {
+    const stateAfterMove = makeMove(getStateClone(boardState), point.liberty.x, point.liberty.y, player);
     if (!stateAfterMove) {
       return {
-        point,
+        point: point.liberty,
         newLibertyCount: Number.MAX_SAFE_INTEGER,
       };
     }
@@ -78,19 +86,19 @@ export function getSurroundMove(initialState: PointState[][], player: PlayerColo
     // TODO: this count is wrong (usually returning 0). why?
     const newEnemyLibertyCount = findChainLibertiesForPoint(
       stateAfterMove,
-      exampleEnemyPiece.x,
-      exampleEnemyPiece.y,
+      point.examplePoint.x,
+      point.examplePoint.y,
     ).length;
-    const newMoveLibertyCount = findChainLibertiesForPoint(stateAfterMove, point.x, point.y).length;
+    const newMoveLibertyCount = findChainLibertiesForPoint(stateAfterMove, point.liberty.x, point.liberty.y).length;
     if (newEnemyLibertyCount > 0 && newMoveLibertyCount === 0) {
       return {
-        point,
+        point: point.liberty,
         newLibertyCount: Number.MAX_SAFE_INTEGER,
       };
     }
 
     return {
-      point,
+      point: point.liberty,
       newLibertyCount: newEnemyLibertyCount,
     };
   });
@@ -114,21 +122,26 @@ export function getMove(boardState: PointState[][], player: PlayerColor): PointS
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
   console.log("Random: ", randomMove?.x, randomMove?.y);
 
-  // if (surroundMove && surroundMove?.newLibertyCount <= 1) {
-  //   console.log("surround move chosen");
-  //   return surroundMove.point;
-  // }
-  //
-  // if (growthMove && growthMove?.newLibertyCount <= 2) {
-  //   console.log("growth move chosen");
-  //   return growthMove.point;
-  // }
+  if (surroundMove && surroundMove?.newLibertyCount === 0) {
+    console.log("capture: surround move forced");
+    return surroundMove.point;
+  }
 
-  if (moveType === 0 && growthMove) {
+  if (growthMove && growthMove?.newLibertyCount <= 2) {
     console.log("growth move chosen");
     return growthMove.point;
-  } else if (moveType === 1 && surroundMove) {
+  }
+
+  if (surroundMove && surroundMove?.newLibertyCount <= 1) {
     console.log("surround move chosen");
+    return surroundMove.point;
+  }
+
+  if (moveType === 0 && growthMove) {
+    console.log("growth move");
+    return growthMove.point;
+  } else if (moveType === 1 && surroundMove) {
+    console.log("surround move");
     return surroundMove.point;
   } else {
     return randomMove;

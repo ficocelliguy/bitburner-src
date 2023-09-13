@@ -242,6 +242,9 @@ function getArrayFromNeighbor(neighborObject: Neighbor): PointState[] {
 export function isNotNull<T>(argument: T | null): argument is T {
   return argument !== null;
 }
+export function isDefined<T>(argument: T | undefined): argument is T {
+  return argument !== undefined;
+}
 
 export function floor(n: number) {
   return ~~n;
