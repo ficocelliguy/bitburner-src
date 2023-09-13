@@ -53,39 +53,45 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "12px",
       position: "relative",
     },
-    libertyWhite: {
+    liberty: {
       position: "absolute",
+      transition: "all 0.5s ease-out",
+      backgroundColor: "transparent",
+      width: "2px",
+      height: "2px",
+      top: "50%",
+      left: "50%",
+    },
+    libertyWhite: {
       backgroundColor: theme.colors.cha,
     },
     libertyBlack: {
-      position: "absolute",
       backgroundColor: theme.colors.success,
     },
     northLiberty: {
       width: "2px",
       height: "44px",
       top: 0,
-      left: "44px",
+      left: "50%",
     },
     southLiberty: {
       width: "2px",
       height: "44px",
-      top: "44px",
-      left: "44px",
+      top: "50%",
+      left: "50%",
     },
     eastLiberty: {
       width: "44px",
       height: "2px",
-      top: "44px",
-      left: "44px",
+      top: "50%",
+      left: "50%",
     },
     westLiberty: {
       width: "44px",
       height: "2px",
-      top: "44px",
+      top: "50%",
       left: 0,
     },
-    noLiberty: {},
   }),
 );
 export function Point(props: { state: PointState[][]; x: number; y: number }): React.ReactElement {
@@ -108,14 +114,14 @@ export function Point(props: { state: PointState[][]; x: number; y: number }): R
       ? classes.blackPoint
       : classes.emptyPoint;
 
-  const colorLiberty = player === playerColors.white ? classes.libertyWhite : classes.libertyBlack;
+  const colorLiberty = `${player === playerColors.white ? classes.libertyWhite : classes.libertyBlack} ${classes.liberty}`;
 
   return (
     <div className={classes.point} title={player}>
-      <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.noLiberty}></div>
-      <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.noLiberty}></div>
-      <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.noLiberty}></div>
-      <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.noLiberty}></div>
+      <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={classes.innerPoint}>
         <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
       </div>

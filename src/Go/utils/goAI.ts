@@ -114,15 +114,15 @@ export function getMove(boardState: PointState[][], player: PlayerColor): PointS
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
   console.log("Random: ", randomMove?.x, randomMove?.y);
 
-  if (surroundMove && surroundMove?.newLibertyCount <= 1) {
-    console.log("surround move chosen");
-    return surroundMove.point;
-  }
-
-  if (growthMove && growthMove?.newLibertyCount <= 2) {
-    console.log("growth move chosen");
-    return growthMove.point;
-  }
+  // if (surroundMove && surroundMove?.newLibertyCount <= 1) {
+  //   console.log("surround move chosen");
+  //   return surroundMove.point;
+  // }
+  //
+  // if (growthMove && growthMove?.newLibertyCount <= 2) {
+  //   console.log("growth move chosen");
+  //   return growthMove.point;
+  // }
 
   if (moveType === 0 && growthMove) {
     console.log("growth move chosen");
