@@ -4,7 +4,7 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
-import { BoardState, playerColors, validityReason } from "./types";
+import { BoardState, opponents, playerColors, validityReason } from "./types";
 import {
   evaluateIfMoveIsValid,
   getNewBoardState,
@@ -17,6 +17,7 @@ import { getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
 import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
+import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 const BOARD_SIZE = 7;
 
@@ -24,6 +25,17 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     board: {
       margin: "auto",
+    },
+    opponentName: {
+      paddingTop: "3px",
+      paddingBottom: "5px",
+    },
+    opponentLabel: {
+      padding: "3px 10px 5px 10px",
+    },
+    opponentBox: {
+      display: "inline-flex",
+      flexDirection: "row",
     },
     background: {
       position: "absolute",
@@ -33,16 +45,18 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: "3.75px",
       whiteSpace: "pre",
       pointerEvents: "none",
+      paddingTop: "20px",
     },
   }),
 );
 
 export function Gameboard(): React.ReactElement {
   const [turn, setTurn] = useState(0);
-
   const [boardState, setBoardState] = useState<BoardState>(getNewBoardState());
+  const [opponent, setOpponent] = useState<opponents>(opponents.Illuminati);
 
   const classes = useStyles();
+  const opponentFactions = [opponents.Netburners, opponents.SlumSnakes, opponents.TheBlackHand, opponents.Illuminati];
 
   function clickHandler(x: number, y: number): void {
     // lock the board when it isn't the player's turn
@@ -73,7 +87,7 @@ export function Gameboard(): React.ReactElement {
 
   async function takeAiTurn(board: BoardState, currentTurn: number) {
     const initialState = getStateClone(board);
-    const move = await getMove(initialState, playerColors.white);
+    const move = await getMove(initialState, playerColors.white, opponent);
 
     if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !move) {
       resetState();
@@ -95,6 +109,14 @@ export function Gameboard(): React.ReactElement {
     }
   }
 
+  function changeDropdown(event: SelectChangeEvent): void {
+    if (turn === 0) {
+      // TODO: make typescript happy, I guess?
+      // @ts-ignore
+      setOpponent(event.target.value);
+    }
+  }
+
   function resetState() {
     setTurn(0);
     setBoardState(getNewBoardState());
@@ -104,6 +126,20 @@ export function Gameboard(): React.ReactElement {
     <>
       <div>
         <div className={classes.background}>{weiArt}</div>
+        <Box className={classes.opponentBox}>
+          <Typography className={classes.opponentLabel}>Opponent:</Typography>
+          {turn === 0 ? (
+            <Select value={opponent} onChange={changeDropdown} sx={{ mr: 1 }}>
+              {opponentFactions.map((faction) => (
+                <MenuItem key={faction} value={faction}>
+                  {faction}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Typography className={classes.opponentName}>{opponent}</Typography>
+          )}
+        </Box>
         <Grid container id="goGameboard" className={classes.board}>
           {boardState.board.map((row, x) => (
             <Grid container key={`row_${x}`} item>
@@ -115,6 +151,7 @@ export function Gameboard(): React.ReactElement {
             </Grid>
           ))}
         </Grid>
+        <Button onClick={resetState}>Resign</Button>
       </div>
     </>
   );

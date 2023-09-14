@@ -30,6 +30,7 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
   }
 
   boardState.history.push(getStateClone(boardState).board);
+  boardState.history = boardState.history.slice(-4);
   boardState.board[x][y].player = player;
   boardState.previousPlayer = player;
 

@@ -12,10 +12,10 @@ export enum validityReason {
 }
 
 export enum opponents {
-  Netburners = "Netburners",
-  SlumSnakes = "Slum Snakes",
-  NiteSec = "NiteSec",
-  TheBlackHand = "The Black Hand",
+  Netburners = "Netburners (Easy AI)",
+  SlumSnakes = "Slum Snakes (Spread AI)",
+  TheBlackHand = "The Black Hand (Aggro AI)",
+  Illuminati = "Illuminati (Intermediate AI)",
 }
 
 export type PlayerColor = playerColors.white | playerColors.black | playerColors.empty;

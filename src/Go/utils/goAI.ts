@@ -1,4 +1,13 @@
-import { BoardState, Move, MoveOptions, PlayerColor, playerColors, PointState, validityReason } from "../types";
+import {
+  BoardState,
+  Move,
+  MoveOptions,
+  opponents,
+  PlayerColor,
+  playerColors,
+  PointState,
+  validityReason,
+} from "../types";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,
@@ -12,9 +21,89 @@ import {
   makeMove,
 } from "./boardState";
 
-export async function getMove(boardState: BoardState, player: PlayerColor): Promise<PointState> {
+export async function getMove(
+  boardState: BoardState,
+  player: PlayerColor,
+  opponent: opponents = opponents.Illuminati,
+): Promise<PointState> {
   const moves = await getMoveOptions(boardState, player);
 
+  const priorityMove = getFactionMove(moves, opponent);
+  if (
+    priorityMove &&
+    evaluateIfMoveIsValid(boardState, priorityMove.x, priorityMove.y, player) === validityReason.valid
+  ) {
+    return priorityMove;
+  }
+
+  const moveOptions = [
+    moves.growth?.point,
+    moves.surround?.point,
+    moves.defend?.point,
+    moves.expansion?.point,
+    moves.random?.point,
+  ]
+    .filter(isNotNull)
+    .filter(isDefined)
+    .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
+
+  const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
+  console.log(chosenMove ? `Random move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
+
+  return chosenMove;
+}
+
+function getFactionMove(moves: MoveOptions, faction: opponents): PointState | null {
+  if (faction === opponents.Netburners) {
+    return getNetburnersPriorityMove(moves);
+  }
+  if (faction === opponents.SlumSnakes) {
+    return getSlumSnakesPriorityMove(moves);
+  }
+  if (faction === opponents.TheBlackHand) {
+    return getBlackHandPriorityMove(moves);
+  }
+
+  return getIlluminatiPriorityMove(moves);
+}
+
+function getNetburnersPriorityMove(moves: MoveOptions): PointState | null {
+  const rng = Math.random();
+  if (rng < 0.2) {
+    return getIlluminatiPriorityMove(moves);
+  } else if (rng < 0.5 && moves.expansion) {
+    return moves.expansion.point;
+  }
+
+  return null;
+}
+
+function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
+  const rng = Math.random();
+  if (rng < 0.2) {
+    return getIlluminatiPriorityMove(moves);
+  } else if (rng < 0.6 && moves.growth) {
+    return moves.growth.point;
+  }
+
+  return null;
+}
+
+function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
+  if (moves.capture) {
+    return moves.capture.point;
+  }
+  const rng = Math.random();
+  if (rng < 0.3) {
+    return getIlluminatiPriorityMove(moves);
+  } else if (rng < 0.75 && moves.surround) {
+    return moves.surround.point;
+  }
+
+  return null;
+}
+
+function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.surround && moves.surround.point && moves.surround?.newLibertyCount === 0) {
     console.log("capture: surround move forced");
     return moves.surround.point;
@@ -35,26 +124,8 @@ export async function getMove(boardState: BoardState, player: PlayerColor): Prom
     return moves.surround.point;
   }
 
-  const moveOptions = [
-    moves.growth?.point,
-    moves.surround?.point,
-    moves.defend?.point,
-    moves.expansion?.point,
-    moves.random?.point,
-  ]
-    .filter(isNotNull)
-    .filter(isDefined)
-    .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
-
-  const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
-  console.log(chosenMove ? `Random move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
-
-  return chosenMove;
+  return null;
 }
-
-// function getNetburnersPriorityMove(moves) {
-//
-// }
 
 async function getRandomMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
   const emptySpaces = getEmptySpaces(boardState).filter(
