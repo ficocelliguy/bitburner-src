@@ -1,4 +1,4 @@
-import { Board, BoardState, Neighbor, PlayerColor, playerColors, PointState } from "../types";
+import { Board, BoardState, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "../types";
 
 const BOARD_SIZE = 7;
 
@@ -22,11 +22,10 @@ export function getNewBoardState(): BoardState {
  * Make a new move on the given board, and update the board state accordingly
  */
 export function makeMove(boardState: BoardState, x: number, y: number, player: PlayerColor, evaluateCaptures = true) {
-  const point = boardState.board[x][y];
-
   // Do not update on invalid moves
-  if (!point || point.player !== playerColors.empty) {
-    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
+  const validity = evaluateIfMoveIsValid(boardState, x, y, player);
+  if (validity !== validityReason.valid) {
+    console.warn(`Invalid move attempted! ${x} ${y} ${player} : ${validity}`);
     return false;
   }
 
@@ -39,6 +38,26 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
   }
 
   return boardState;
+}
+
+export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
+  const point = initialState.board[x][y];
+
+  if (!point || point.player !== playerColors.empty) {
+    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
+    return validityReason.pointNotEmpty;
+  }
+
+  const boardState = getStateClone(initialState);
+  boardState.history.push(getStateClone(boardState).board);
+  boardState.board[x][y].player = player;
+  boardState.previousPlayer = player;
+
+  if (checkIfBoardStateIsRepeated(boardState)) {
+    return validityReason.boardRepeated;
+  }
+
+  return validityReason.valid;
 }
 
 /**
@@ -77,6 +96,20 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
   }
 
   return boardState;
+}
+
+export function checkIfBoardStateIsRepeated(boardState: BoardState) {
+  const currentBoard = boardState.board;
+  return boardState.history.slice(-3).find((state) => {
+    for (let x = 0; x < state.length; x++) {
+      for (let y = 0; y < state[x].length; y++) {
+        if (currentBoard[x][y].player !== state[x][y].player) {
+          return false;
+        }
+      }
+    }
+    return true;
+  });
 }
 
 export function getAllChains(boardState: BoardState): PointState[][] {

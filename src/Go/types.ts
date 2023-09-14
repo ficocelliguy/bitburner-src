@@ -4,6 +4,12 @@ export enum playerColors {
   empty = "Empty",
 }
 
+export enum validityReason {
+  pointNotEmpty = "That point is already occupied by a piece",
+  boardRepeated = "It is illegal to repeat prior board states",
+  valid = "Valid move",
+}
+
 export type PlayerColor = playerColors.white | playerColors.black | playerColors.empty;
 
 export type Board = PointState[][];
