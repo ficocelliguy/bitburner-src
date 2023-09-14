@@ -48,7 +48,7 @@ export async function getMove(
     .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
 
   const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
-  console.log(chosenMove ? `Random move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
+  console.log(chosenMove ? `Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
 
   return chosenMove;
 }
@@ -91,8 +91,20 @@ function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
 
 function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.capture) {
+    console.log("capture: capture move chosen");
     return moves.capture.point;
   }
+
+  if (moves.surround && moves.surround.point && (moves.surround?.newLibertyCount ?? 999) <= 1) {
+    console.log("surround move chosen");
+    return moves.surround.point;
+  }
+
+  if (moves.defendCapture) {
+    console.log("defend capture: defend move chosen");
+    return moves.defendCapture.point;
+  }
+
   const rng = Math.random();
   if (rng < 0.3) {
     return getIlluminatiPriorityMove(moves);
@@ -104,19 +116,14 @@ function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
 }
 
 function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
-  if (moves.surround && moves.surround.point && moves.surround?.newLibertyCount === 0) {
-    console.log("capture: surround move forced");
-    return moves.surround.point;
+  if (moves.capture) {
+    console.log("capture: capture move chosen");
+    return moves.capture.point;
   }
 
-  if (
-    moves.defend &&
-    moves.defend.point &&
-    moves.defend.oldLibertyCount == 1 &&
-    (moves.defend?.newLibertyCount ?? 0) > 1
-  ) {
-    console.log("defend capture: defend move forced");
-    return moves.defend.point;
+  if (moves.defendCapture) {
+    console.log("defend capture: defend move chosen");
+    return moves.defendCapture.point;
   }
 
   if (moves.surround && moves.surround.point && (moves.surround?.newLibertyCount ?? 999) <= 1) {
@@ -128,9 +135,12 @@ function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
 }
 
 async function getRandomMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
-  const emptySpaces = getEmptySpaces(boardState).filter(
-    (space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid,
-  );
+  const emptySpaces = getEmptySpaces(boardState)
+    .filter((space) => {
+      const neighbors = findNeighbors(boardState, space.x, space.y);
+      return [neighbors.north, neighbors.east, neighbors.south, neighbors.west].filter(isNotNull).length === 4;
+    })
+    .filter((space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid);
 
   const randomIndex = floor(Math.random() * emptySpaces.length);
   return {
@@ -300,15 +310,21 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   await sleep(50);
   const surroundMove = await getSurroundMove(boardState, player);
 
+  const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
+  const defendCaptureMove =
+    defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1 ? defendMove : null;
+
+  console.log("capture: ", captureMove?.point?.x, captureMove?.point?.y);
+  console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
   console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
-  console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
+  console.log("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
   console.log("Random: ", randomMove?.point?.x, randomMove?.point?.y);
 
   return {
-    capture: surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null,
-    defendCapture: defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1 ? defendMove : null,
+    capture: captureMove,
+    defendCapture: defendCaptureMove,
     growth: growthMove,
     expansion: expansionMove,
     defend: defendMove,
