@@ -4,10 +4,19 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Point } from "./Point";
-import { BoardState, playerColors } from "./types";
-import { getNewBoardState, getStateClone, makeMove, updateCaptures } from "./utils/boardState";
+import { BoardState, playerColors, validityReason } from "./types";
+import {
+  evaluateIfMoveIsValid,
+  getNewBoardState,
+  getStateClone,
+  logBoard,
+  makeMove,
+  updateCaptures,
+} from "./utils/boardState";
 import { getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
+import { SnackbarEvents } from "../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
 
 const BOARD_SIZE = 7;
 
@@ -40,8 +49,13 @@ export function Gameboard(): React.ReactElement {
     if (turn % 2 !== 0) {
       return;
     }
-    const updatedBoard = makeMove(boardState, x, y, playerColors.black, false);
+    const validity = evaluateIfMoveIsValid(boardState, x, y, playerColors.black);
+    if (validity != validityReason.valid) {
+      SnackbarEvents.emit(`Invalid move: ${validity}`, ToastVariant.ERROR, 2000);
+      return;
+    }
 
+    const updatedBoard = makeMove(boardState, x, y, playerColors.black, false);
     if (updatedBoard) {
       setBoardState(updatedBoard);
       setTurn(turn + 1);
@@ -57,29 +71,16 @@ export function Gameboard(): React.ReactElement {
     logBoard(boardState);
   }
 
-  function logBoard(boardState: BoardState): void {
-    const state = boardState.board;
-    console.log("--------------");
-    for (let x = 0; x < state.length; x++) {
-      let output = `${x}: `;
-      for (let y = 0; y < state[x].length; y++) {
-        const point = state[x][y];
-        output += ` ${point.liberties?.length ?? 0}`;
-      }
-      console.log(output);
-    }
-  }
-
-  function takeAiTurn(board: BoardState, currentTurn: number) {
+  async function takeAiTurn(board: BoardState, currentTurn: number) {
     const initialState = getStateClone(board);
-    const move = getMove(initialState, playerColors.white);
+    const move = await getMove(initialState, playerColors.white);
 
     if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !move) {
       resetState();
       return;
     }
 
-    const updatedBoard = makeMove(initialState, move.x, move.y, playerColors.white, false);
+    const updatedBoard = await makeMove(initialState, move.x, move.y, playerColors.white, false);
 
     if (updatedBoard) {
       setTimeout(() => {

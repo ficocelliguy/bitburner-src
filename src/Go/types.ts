@@ -7,12 +7,36 @@ export enum playerColors {
 export enum validityReason {
   pointNotEmpty = "That point is already occupied by a piece",
   boardRepeated = "It is illegal to repeat prior board states",
+  invalid = "Invalid move",
   valid = "Valid move",
+}
+
+export enum opponents {
+  Netburners = "Netburners",
+  SlumSnakes = "Slum Snakes",
+  NiteSec = "NiteSec",
+  TheBlackHand = "The Black Hand",
 }
 
 export type PlayerColor = playerColors.white | playerColors.black | playerColors.empty;
 
 export type Board = PointState[][];
+
+export type MoveOptions = {
+  capture: Move | null;
+  defendCapture: Move | null;
+  growth: Move | null;
+  expansion: Move | null;
+  defend: Move | null;
+  surround: Move | null;
+  random: Move | null;
+};
+
+export type Move = {
+  point: PointState | null;
+  oldLibertyCount: number | null;
+  newLibertyCount: number | null;
+};
 
 export type BoardState = {
   board: Board;

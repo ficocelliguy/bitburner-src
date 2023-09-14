@@ -52,8 +52,9 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   boardState.history.push(getStateClone(boardState).board);
   boardState.board[x][y].player = player;
   boardState.previousPlayer = player;
+  const updatedBoardState = updateCaptures(boardState, player);
 
-  if (checkIfBoardStateIsRepeated(boardState)) {
+  if (checkIfBoardStateIsRepeated(updatedBoardState)) {
     return validityReason.boardRepeated;
   }
 
@@ -100,7 +101,7 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
 
 export function checkIfBoardStateIsRepeated(boardState: BoardState) {
   const currentBoard = boardState.board;
-  return boardState.history.slice(-3).find((state) => {
+  return boardState.history.slice(-4).find((state) => {
     for (let x = 0; x < state.length; x++) {
       for (let y = 0; y < state[x].length; y++) {
         if (currentBoard[x][y].player !== state[x][y].player) {
@@ -270,6 +271,19 @@ export function getStateClone(boardState: BoardState) {
   return JSON.parse(JSON.stringify(boardState));
 }
 
+export function logBoard(boardState: BoardState): void {
+  const state = boardState.board;
+  console.log("--------------");
+  for (let x = 0; x < state.length; x++) {
+    let output = `${x}: `;
+    for (let y = 0; y < state[x].length; y++) {
+      const point = state[x][y];
+      output += ` ${point.liberties?.length ?? 0}`;
+    }
+    console.log(output);
+  }
+}
+
 function contains(arr: PointState[], point: PointState) {
   return !!arr.find((p) => p && p.x === point.x && p.y === point.y);
 }
@@ -278,7 +292,7 @@ function mergeNewItems(arr: PointState[], arr2: PointState[]) {
   return arr.concat(arr2.filter((item) => item && !contains(arr, item)));
 }
 
-function findNeighbors(boardState: BoardState, x: number, y: number): Neighbor {
+export function findNeighbors(boardState: BoardState, x: number, y: number): Neighbor {
   const board = boardState.board;
   return {
     north: board[x - 1]?.[y],

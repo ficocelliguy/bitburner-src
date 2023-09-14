@@ -1,7 +1,8 @@
-import { BoardState, PlayerColor, playerColors, PointState } from "../types";
+import { BoardState, Move, MoveOptions, PlayerColor, playerColors, PointState, validityReason } from "../types";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,
+  findNeighbors,
   floor,
   getAllChains,
   getEmptySpaces,
@@ -11,16 +12,84 @@ import {
   makeMove,
 } from "./boardState";
 
-export function getRandomMove(boardState: BoardState, player: PlayerColor) {
-  const emptySpaces = getEmptySpaces(boardState).filter((space) =>
-    evaluateIfMoveIsValid(boardState, space.x, space.y, player),
+export async function getMove(boardState: BoardState, player: PlayerColor): Promise<PointState> {
+  const moves = await getMoveOptions(boardState, player);
+
+  if (moves.surround && moves.surround.point && moves.surround?.newLibertyCount === 0) {
+    console.log("capture: surround move forced");
+    return moves.surround.point;
+  }
+
+  if (
+    moves.defend &&
+    moves.defend.point &&
+    moves.defend.oldLibertyCount == 1 &&
+    (moves.defend?.newLibertyCount ?? 0) > 1
+  ) {
+    console.log("defend capture: defend move forced");
+    return moves.defend.point;
+  }
+
+  if (moves.surround && moves.surround.point && (moves.surround?.newLibertyCount ?? 999) <= 1) {
+    console.log("surround move chosen");
+    return moves.surround.point;
+  }
+
+  const moveOptions = [
+    moves.growth?.point,
+    moves.surround?.point,
+    moves.defend?.point,
+    moves.expansion?.point,
+    moves.random?.point,
+  ]
+    .filter(isNotNull)
+    .filter(isDefined)
+    .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
+
+  const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
+  console.log(chosenMove ? `Random move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
+
+  return chosenMove;
+}
+
+// function getNetburnersPriorityMove(moves) {
+//
+// }
+
+async function getRandomMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
+  const emptySpaces = getEmptySpaces(boardState).filter(
+    (space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid,
   );
 
   const randomIndex = floor(Math.random() * emptySpaces.length);
-  return emptySpaces[randomIndex];
+  return {
+    point: emptySpaces[randomIndex],
+    newLibertyCount: -1,
+    oldLibertyCount: -1,
+  };
 }
 
-export function getGrowthMove(initialState: BoardState, player: PlayerColor) {
+async function getExpansionMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
+  const emptySpaces = getEmptySpaces(boardState)
+    .filter((space) => {
+      const neighbors = findNeighbors(boardState, space.x, space.y);
+      return (
+        [neighbors.north, neighbors.east, neighbors.south, neighbors.west].filter(
+          (point) => point && point.player === playerColors.empty,
+        ).length === 4
+      );
+    })
+    .filter((space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid);
+
+  const randomIndex = floor(Math.random() * emptySpaces.length);
+  return {
+    point: emptySpaces[randomIndex],
+    newLibertyCount: -1,
+    oldLibertyCount: -1,
+  };
+}
+
+async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor) {
   const boardState = getStateClone(initialState);
 
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
@@ -51,9 +120,9 @@ export function getGrowthMove(initialState: BoardState, player: PlayerColor) {
   return libertyIncreases;
 }
 
-export function getExpansionMove(initialState: BoardState, player: PlayerColor) {
-  const libertyIncreases =
-    getGrowthMove(initialState, player)?.filter((move) => move.newLibertyCount >= move.oldLibertyCount) ?? [];
+async function getGrowthMove(initialState: BoardState, player: PlayerColor) {
+  const growthMoves = await getLibertyGrowthMove(initialState, player);
+  const libertyIncreases = growthMoves?.filter((move) => move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
   const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
 
@@ -65,11 +134,10 @@ export function getExpansionMove(initialState: BoardState, player: PlayerColor) 
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
-export function getDefendMove(initialState: BoardState, player: PlayerColor) {
+async function getDefendMove(initialState: BoardState, player: PlayerColor) {
+  const growthMoves = await getLibertyGrowthMove(initialState, player);
   const libertyIncreases =
-    getGrowthMove(initialState, player)?.filter(
-      (move) => move.oldLibertyCount <= 1 && move.newLibertyCount >= move.oldLibertyCount,
-    ) ?? [];
+    growthMoves?.filter((move) => move.oldLibertyCount <= 1 && move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
   const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
 
@@ -82,7 +150,7 @@ export function getDefendMove(initialState: BoardState, player: PlayerColor) {
 }
 
 // TODO: refactor for clarity
-export function getSurroundMove(initialState: BoardState, player: PlayerColor) {
+async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
   const boardState = getStateClone(initialState);
 
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
@@ -113,6 +181,7 @@ export function getSurroundMove(initialState: BoardState, player: PlayerColor) {
       if (!stateAfterMove) {
         return {
           point: point.liberty,
+          oldLibertyCount: Number.MAX_SAFE_INTEGER,
           newLibertyCount: Number.MAX_SAFE_INTEGER,
         };
       }
@@ -127,12 +196,14 @@ export function getSurroundMove(initialState: BoardState, player: PlayerColor) {
       if (newEnemyLibertyCount > 0 && newMoveLibertyCount === 0) {
         return {
           point: point.liberty,
+          oldLibertyCount: Number.MAX_SAFE_INTEGER,
           newLibertyCount: Number.MAX_SAFE_INTEGER,
         };
       }
 
       return {
         point: point.liberty,
+        oldLibertyCount: -1,
         newLibertyCount: newEnemyLibertyCount,
       };
     })
@@ -147,44 +218,32 @@ export function getSurroundMove(initialState: BoardState, player: PlayerColor) {
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
-export function getMove(boardState: BoardState, player: PlayerColor): PointState {
-  const randomMove = getRandomMove(boardState, player);
-  const expansionMove = getExpansionMove(boardState, player);
-  const defendMove = getDefendMove(boardState, player);
-  const surroundMove = getSurroundMove(boardState, player);
+async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
+  const randomMove = await getRandomMove(boardState, player);
+  await sleep(50);
+  const growthMove = await getGrowthMove(boardState, player);
+  await sleep(50);
+  const expansionMove = await getExpansionMove(boardState, player);
+  await sleep(50);
+  const defendMove = await getDefendMove(boardState, player);
+  await sleep(50);
+  const surroundMove = await getSurroundMove(boardState, player);
 
   console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
-  console.log("Growth: ", expansionMove?.point?.x, expansionMove?.point?.y);
-  console.log("Random: ", randomMove?.x, randomMove?.y);
+  console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
+  console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
+  console.log("Random: ", randomMove?.point?.x, randomMove?.point?.y);
 
-  if (surroundMove && surroundMove?.newLibertyCount === 0) {
-    console.log("capture: surround move forced");
-    return surroundMove.point;
-  }
-
-  if (defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1) {
-    console.log("defend: defend move forced");
-    return defendMove.point;
-  }
-
-  if (surroundMove && surroundMove?.newLibertyCount <= 1) {
-    console.log("surround move chosen");
-    return surroundMove.point;
-  }
-
-  // if (expansionMove && expansionMove?.newLibertyCount > 2) {
-  //   console.log("growth move chosen");
-  //   return expansionMove.point;
-  // }
-
-  const moveOptions = [expansionMove?.point, surroundMove?.point, defendMove?.point, randomMove]
-    .filter(isNotNull)
-    .filter(isDefined);
-
-  const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
-  console.log(chosenMove ? `Random move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
-  return chosenMove;
+  return {
+    capture: surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null,
+    defendCapture: defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1 ? defendMove : null,
+    growth: growthMove,
+    expansion: expansionMove,
+    defend: defendMove,
+    surround: surroundMove,
+    random: randomMove,
+  };
 }
 
 function sleep(ms: number): Promise<void> {
