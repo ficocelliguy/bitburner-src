@@ -36,13 +36,8 @@ export async function getMove(
     return priorityMove;
   }
 
-  const moveOptions = [
-    moves.growth?.point,
-    moves.surround?.point,
-    moves.defend?.point,
-    moves.expansion?.point,
-    moves.random?.point,
-  ]
+  // If no priority move is chosen, pick one of the reasonable moves
+  const moveOptions = [moves.growth?.point, moves.surround?.point, moves.defend?.point, moves.expansion?.point]
     .filter(isNotNull)
     .filter(isDefined)
     .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
@@ -79,6 +74,11 @@ function getNetburnersPriorityMove(moves: MoveOptions): PointState | null {
 }
 
 function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
+  if (moves.defendCapture) {
+    console.log("defend capture: defend move chosen");
+    return moves.defendCapture.point;
+  }
+
   const rng = Math.random();
   if (rng < 0.2) {
     return getIlluminatiPriorityMove(moves);
@@ -180,25 +180,31 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
   }
 
   const liberties = friendlyChains
-    .map((chain) => chain[0].liberties)
+    .map((chain) =>
+      chain[0].liberties?.filter(isNotNull).map((liberty) => ({
+        libertyPoint: liberty,
+        oldLibertyCount: chain[0].liberties?.length,
+      })),
+    )
     .flat()
-    .filter(isNotNull);
+    .filter(isNotNull)
+    .filter(isDefined);
 
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
-  const libertyIncreases = liberties
+  return liberties
     .map((point) => {
-      const stateAfterMove = makeMove(getStateClone(boardState), point?.x, point?.y, player);
-      const oldLibertyCount = point.liberties?.length ?? 0;
-      const newLibertyCount = stateAfterMove ? findChainLibertiesForPoint(stateAfterMove, point.x, point.y).length : -1;
+      const stateAfterMove = makeMove(getStateClone(boardState), point.libertyPoint.x, point.libertyPoint.y, player);
+      const oldLibertyCount = point?.oldLibertyCount ?? 0;
+      const newLibertyCount = stateAfterMove
+        ? findChainLibertiesForPoint(stateAfterMove, point.libertyPoint.x, point.libertyPoint.y).length
+        : -1;
       return {
-        point,
+        point: point.libertyPoint,
         oldLibertyCount,
         newLibertyCount,
       };
     })
     .filter((newLiberty) => newLiberty.newLibertyCount > 1);
-
-  return libertyIncreases;
 }
 
 async function getGrowthMove(initialState: BoardState, player: PlayerColor) {
@@ -222,7 +228,7 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor) {
 
   const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
 
-  if (maxLibertyCount <= 2) {
+  if (maxLibertyCount <= 1) {
     return null;
   }
 
@@ -320,7 +326,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
   console.log("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
-  console.log("Random: ", randomMove?.point?.x, randomMove?.point?.y);
+  // console.log("Random: ", randomMove?.point?.x, randomMove?.point?.y);
 
   return {
     capture: captureMove,
