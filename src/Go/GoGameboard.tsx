@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
-import { Point } from "./Point";
+import { GoPoint } from "./GoPoint";
 import { BoardState, opponents, playerColors, validityReason } from "./types";
 import {
   evaluateIfMoveIsValid,
@@ -19,8 +19,6 @@ import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
-const BOARD_SIZE = 7;
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     board: {
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     opponentLabel: {
       padding: "3px 10px 5px 10px",
     },
-    opponentBox: {
+    inlineFlexBox: {
       display: "inline-flex",
       flexDirection: "row",
     },
@@ -50,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export function Gameboard(): React.ReactElement {
+export function GoGameboard(): React.ReactElement {
   const [turn, setTurn] = useState(0);
   const [boardState, setBoardState] = useState<BoardState>(getNewBoardState());
   const [opponent, setOpponent] = useState<opponents>(opponents.Illuminati);
@@ -85,11 +83,18 @@ export function Gameboard(): React.ReactElement {
     logBoard(boardState);
   }
 
+  function passTurn() {
+    setTimeout(() => {
+      setTurn(turn + 1);
+      takeAiTurn(boardState, turn + 2);
+    }, 100);
+  }
+
   async function takeAiTurn(board: BoardState, currentTurn: number) {
     const initialState = getStateClone(board);
     const move = await getMove(initialState, playerColors.white, opponent);
 
-    if (currentTurn > BOARD_SIZE * (BOARD_SIZE - 1) || !move) {
+    if (!move) {
       resetState();
       return;
     }
@@ -126,7 +131,7 @@ export function Gameboard(): React.ReactElement {
     <>
       <div>
         <div className={classes.background}>{weiArt}</div>
-        <Box className={classes.opponentBox}>
+        <Box className={classes.inlineFlexBox}>
           <Typography className={classes.opponentLabel}>Opponent:</Typography>
           {turn === 0 ? (
             <Select value={opponent} onChange={changeDropdown} sx={{ mr: 1 }}>
@@ -145,13 +150,16 @@ export function Gameboard(): React.ReactElement {
             <Grid container key={`row_${x}`} item>
               {row.map((point, y: number) => (
                 <Grid item key={`point_${x}_${y}`} onClick={() => clickHandler(x, y)}>
-                  <Point state={boardState} x={x} y={y} />
+                  <GoPoint state={boardState} x={x} y={y} />
                 </Grid>
               ))}
             </Grid>
           ))}
         </Grid>
-        <Button onClick={resetState}>Resign</Button>
+        <Box className={classes.inlineFlexBox}>
+          <Button onClick={resetState}>Resign</Button>
+          <Button onClick={passTurn}>Pass Turn</Button>
+        </Box>
       </div>
     </>
   );

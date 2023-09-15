@@ -7,6 +7,7 @@ export enum playerColors {
 export enum validityReason {
   pointNotEmpty = "That point is already occupied by a piece",
   boardRepeated = "It is illegal to repeat prior board states",
+  noSuicide = "It is illegal to cause your own pieces to be captured",
   invalid = "Invalid move",
   valid = "Valid move",
 }

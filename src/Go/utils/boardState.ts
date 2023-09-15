@@ -55,6 +55,10 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   boardState.previousPlayer = player;
   const updatedBoardState = updateCaptures(boardState, player);
 
+  if (updatedBoardState.board[x][y].player !== player) {
+    return validityReason.noSuicide;
+  }
+
   if (checkIfBoardStateIsRepeated(updatedBoardState)) {
     return validityReason.boardRepeated;
   }

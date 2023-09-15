@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-export function Point(props: { state: BoardState; x: number; y: number }): React.ReactElement {
+export function GoPoint(props: { state: BoardState; x: number; y: number }): React.ReactElement {
   const classes = useStyles();
 
   const currentPoint = props.state.board[props.x][props.y];
