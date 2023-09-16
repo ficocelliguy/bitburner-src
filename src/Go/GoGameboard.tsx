@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     background: {
       position: "absolute",
-      opacity: 0.07,
+      opacity: 0.09,
       color: theme.colors.white,
       fontFamily: "monospace",
       fontSize: "3.75px",
