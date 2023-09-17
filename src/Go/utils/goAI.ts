@@ -15,16 +15,17 @@ import {
   floor,
   getAllChains,
   getEmptySpaces,
-  getStateClone,
+  getStateCopy,
   isDefined,
   isNotNull,
   makeMove,
+  updateCaptures,
 } from "./boardState";
 
 export async function getMove(
   boardState: BoardState,
   player: PlayerColor,
-  opponent: opponents = opponents.Illuminati,
+  opponent: opponents = opponents.Daedalus,
 ): Promise<PointState> {
   const moves = await getMoveOptions(boardState, player);
 
@@ -59,13 +60,13 @@ function getFactionMove(moves: MoveOptions, faction: opponents): PointState | nu
     return getBlackHandPriorityMove(moves);
   }
 
-  return getIlluminatiPriorityMove(moves);
+  return getDaedalusPriorityMove(moves);
 }
 
 function getNetburnersPriorityMove(moves: MoveOptions): PointState | null {
   const rng = Math.random();
   if (rng < 0.2) {
-    return getIlluminatiPriorityMove(moves);
+    return getDaedalusPriorityMove(moves);
   } else if (rng < 0.5 && moves.expansion) {
     return moves.expansion.point;
   }
@@ -81,7 +82,7 @@ function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
 
   const rng = Math.random();
   if (rng < 0.2) {
-    return getIlluminatiPriorityMove(moves);
+    return getDaedalusPriorityMove(moves);
   } else if (rng < 0.6 && moves.growth) {
     return moves.growth.point;
   }
@@ -107,7 +108,7 @@ function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
 
   const rng = Math.random();
   if (rng < 0.3) {
-    return getIlluminatiPriorityMove(moves);
+    return getDaedalusPriorityMove(moves);
   } else if (rng < 0.75 && moves.surround) {
     return moves.surround.point;
   }
@@ -115,7 +116,7 @@ function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
+function getDaedalusPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.capture) {
     console.log("capture: capture move chosen");
     return moves.capture.point;
@@ -171,7 +172,7 @@ async function getExpansionMove(boardState: BoardState, player: PlayerColor): Pr
 }
 
 async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor) {
-  const boardState = getStateClone(initialState);
+  const boardState = getStateCopy(initialState);
 
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
 
@@ -193,7 +194,7 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
   return liberties
     .map((point) => {
-      const stateAfterMove = makeMove(getStateClone(boardState), point.libertyPoint.x, point.libertyPoint.y, player);
+      const stateAfterMove = makeMove(getStateCopy(boardState), point.libertyPoint.x, point.libertyPoint.y, player);
       const oldLibertyCount = point?.oldLibertyCount ?? 0;
       const newLibertyCount = stateAfterMove
         ? findChainLibertiesForPoint(stateAfterMove, point.libertyPoint.x, point.libertyPoint.y).length
@@ -238,7 +239,7 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor) {
 
 // TODO: refactor for clarity
 async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
-  const boardState = getStateClone(initialState);
+  const boardState = getStateCopy(initialState);
 
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
   const enemyChains = getAllChains(boardState).filter((chain) => chain[0].player === opposingPlayer);
@@ -264,7 +265,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
   // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
   const libertyDecreases = enemyChainRepresentatives
     .map((point) => {
-      const stateAfterMove = makeMove(getStateClone(boardState), point.liberty.x, point.liberty.y, player);
+      const stateAfterMove = makeMove(getStateCopy(boardState), point.liberty.x, point.liberty.y, player);
       if (!stateAfterMove) {
         return {
           point: point.liberty,
@@ -337,6 +338,17 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
     surround: surroundMove,
     random: randomMove,
   };
+}
+
+export function getKomi(opponent: opponents) {
+  if (opponent === opponents.Netburners) {
+    return 3.5;
+  }
+  if (opponent === opponents.Daedalus) {
+    return 7.5;
+  }
+
+  return 5.5;
 }
 
 function sleep(ms: number): Promise<void> {

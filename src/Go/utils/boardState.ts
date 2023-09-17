@@ -29,7 +29,7 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
     return false;
   }
 
-  boardState.history.push(getStateClone(boardState).board);
+  boardState.history.push(getBoardCopy(boardState).board);
   boardState.history = boardState.history.slice(-4);
   boardState.board[x][y].player = player;
   boardState.previousPlayer = player;
@@ -49,8 +49,8 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
     return validityReason.pointNotEmpty;
   }
 
-  const boardState = getStateClone(initialState);
-  boardState.history.push(getStateClone(boardState).board);
+  const boardState = getStateCopy(initialState);
+  boardState.history.push(getBoardCopy(boardState).board);
   boardState.board[x][y].player = player;
   boardState.previousPlayer = player;
   const updatedBoardState = updateCaptures(boardState, player);
@@ -66,12 +66,8 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   return validityReason.valid;
 }
 
-/**
- * Assign each point on the board a chain ID, and link its list of 'liberties' (which are empty spaces
- * adjacent to some point on the chain including the current point).
- */
-export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerColor): BoardState {
-  const boardState = clearChains(getStateClone(initialState));
+export function updateChains(boardState: BoardState) {
+  boardState.board = clearChains(getBoardCopy(boardState)).board;
   const chains = [];
   let chainID = 0;
 
@@ -95,6 +91,18 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
       chainID++;
     }
   }
+
+  return boardState;
+}
+
+/**
+ * Assign each point on the board a chain ID, and link its list of 'liberties' (which are empty spaces
+ * adjacent to some point on the chain including the current point).
+ */
+export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerColor): BoardState {
+  const boardState = updateChains(initialState);
+  const chains = getAllChains(boardState);
+
   const chainToCapture = findAnyCapturedChain(chains, playerWhoMoved);
   if (chainToCapture) {
     captureChain(chainToCapture);
@@ -104,7 +112,7 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
   return boardState;
 }
 
-export function checkIfBoardStateIsRepeated(boardState: BoardState) {
+function checkIfBoardStateIsRepeated(boardState: BoardState) {
   const currentBoard = boardState.board;
   return boardState.history.slice(-4).find((state) => {
     for (let x = 0; x < state.length; x++) {
@@ -136,11 +144,6 @@ export function getAllChains(boardState: BoardState): PointState[][] {
   return chains;
 }
 
-// TODO: correctly implement ko rule
-export function getPriorBoardState(boardState: BoardState): Board | undefined {
-  return boardState.history.slice(-2, -1)[0];
-}
-
 function findAnyCapturedChain(chainList: PointState[][], playerWhoMoved: PlayerColor) {
   const opposingPlayer = playerWhoMoved === playerColors.white ? playerColors.black : playerColors.white;
   const enemyChainToCapture = findCapturedChainOfColor(chainList, opposingPlayer);
@@ -156,7 +159,7 @@ function findAnyCapturedChain(chainList: PointState[][], playerWhoMoved: PlayerC
 }
 
 function findCapturedChainOfColor(chainList: PointState[][], playerColor: PlayerColor) {
-  return chainList.find((chain) => chain[0].player === playerColor && chain[0].liberties?.length === 0);
+  return chainList.find((chain) => chain?.[0].player === playerColor && chain?.[0].liberties?.length === 0);
 }
 function captureChain(chain: PointState[]) {
   chain.forEach((point) => {
@@ -272,28 +275,32 @@ export function getEmptySpaces(boardState: BoardState): PointState[] {
   );
 }
 
-export function getStateClone(boardState: BoardState) {
-  return JSON.parse(JSON.stringify(boardState));
+export function getStateCopy(initialState: BoardState) {
+  const boardState = updateChains(getBoardCopy(initialState));
+
+  boardState.history = [...boardState.history];
+
+  return boardState;
 }
 
-export function logBoard(boardState: BoardState): void {
-  const state = boardState.board;
-  console.log("--------------");
-  for (let x = 0; x < state.length; x++) {
-    let output = `${x}: `;
-    for (let y = 0; y < state[x].length; y++) {
-      const point = state[x][y];
-      output += ` ${point.liberties?.length ?? 0}`;
+export function getBoardCopy(boardState: BoardState) {
+  const boardCopy = getNewBoardState();
+  const board = boardState.board;
+
+  for (let x = 0; x < board.length; x++) {
+    for (let y = 0; y < board[x].length; y++) {
+      boardCopy.board[x][y].player = board[x][y].player;
     }
-    console.log(output);
   }
+
+  return boardCopy;
 }
 
 function contains(arr: PointState[], point: PointState) {
   return !!arr.find((p) => p && p.x === point.x && p.y === point.y);
 }
 
-function mergeNewItems(arr: PointState[], arr2: PointState[]) {
+export function mergeNewItems(arr: PointState[], arr2: PointState[]) {
   return arr.concat(arr2.filter((item) => item && !contains(arr, item)));
 }
 
@@ -307,7 +314,7 @@ export function findNeighbors(boardState: BoardState, x: number, y: number): Nei
   };
 }
 
-function getArrayFromNeighbor(neighborObject: Neighbor): PointState[] {
+export function getArrayFromNeighbor(neighborObject: Neighbor): PointState[] {
   return [neighborObject.north, neighborObject.east, neighborObject.south, neighborObject.west].filter(isNotNull);
 }
 

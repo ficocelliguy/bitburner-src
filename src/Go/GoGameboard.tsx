@@ -3,21 +3,17 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
-import { GoPoint } from "./GoPoint";
-import { BoardState, opponents, playerColors, validityReason } from "./types";
-import {
-  evaluateIfMoveIsValid,
-  getNewBoardState,
-  getStateClone,
-  logBoard,
-  makeMove,
-  updateCaptures,
-} from "./utils/boardState";
-import { getMove } from "./utils/goAI";
-import { weiArt } from "./utils/asciiArt";
 import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+
+import { GoPoint } from "./GoPoint";
+import { BoardState, opponents, playerColors, validityReason } from "./types";
+import { evaluateIfMoveIsValid, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
+import { getKomi, getMove } from "./utils/goAI";
+import { weiArt } from "./utils/asciiArt";
+import { getScore, logBoard } from "./utils/scoring";
+import { useRerender } from "../ui/React/hooks";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,6 +31,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "inline-flex",
       flexDirection: "row",
     },
+    scoreBox: {
+      display: "inline-flex",
+      flexDirection: "row",
+      whiteSpace: "pre",
+      padding: "10px",
+    },
     background: {
       position: "absolute",
       opacity: 0.09,
@@ -49,12 +51,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export function GoGameboard(): React.ReactElement {
+  const rerender = useRerender(400);
   const [turn, setTurn] = useState(0);
   const [boardState, setBoardState] = useState<BoardState>(getNewBoardState());
-  const [opponent, setOpponent] = useState<opponents>(opponents.Illuminati);
+  const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
 
   const classes = useStyles();
-  const opponentFactions = [opponents.Netburners, opponents.SlumSnakes, opponents.TheBlackHand, opponents.Illuminati];
+  const opponentFactions = [opponents.Netburners, opponents.SlumSnakes, opponents.TheBlackHand, opponents.Daedalus];
+
+  const score = getScore(boardState, getKomi(opponent));
 
   function clickHandler(x: number, y: number): void {
     // lock the board when it isn't the player's turn
@@ -91,11 +96,11 @@ export function GoGameboard(): React.ReactElement {
   }
 
   async function takeAiTurn(board: BoardState, currentTurn: number) {
-    const initialState = getStateClone(board);
+    const initialState = getStateCopy(board);
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
-      resetState();
+      endGame();
       return;
     }
 
@@ -127,6 +132,12 @@ export function GoGameboard(): React.ReactElement {
     setBoardState(getNewBoardState());
   }
 
+  function endGame() {
+    rerender();
+    // TODO: score report handling
+    // TODO: territory ghosting
+  }
+
   return (
     <>
       <div>
@@ -156,8 +167,11 @@ export function GoGameboard(): React.ReactElement {
             </Grid>
           ))}
         </Grid>
+        <Typography className={classes.scoreBox}>
+          Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
+        </Typography>
         <Box className={classes.inlineFlexBox}>
-          <Button onClick={resetState}>Resign</Button>
+          <Button onClick={resetState}>Reset</Button>
           <Button onClick={passTurn}>Pass Turn</Button>
         </Box>
       </div>
