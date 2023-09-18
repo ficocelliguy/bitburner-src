@@ -19,6 +19,7 @@ export enum SimplePage {
   DevMenu = "Dev",
   Factions = "Factions",
   Gang = "Gang",
+  Go = "Go",
   Hacknet = "Hacknet",
   Milestones = "Milestones",
   Options = "Options",

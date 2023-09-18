@@ -14,12 +14,14 @@ export enum validityReason {
 
 export enum opponents {
   none = "No AI",
-  Netburners = "Netburners (Easy AI & +3.5 komi)",
-  SlumSnakes = "Slum Snakes (Spread AI & +5.5 komi)",
-  TheBlackHand = "The Black Hand (Aggro AI & +5.5 komi)",
-  Daedalus = "Daedalus (Mid AI & +7.5 komi)",
+  Netburners = "Netburners (Easy AI & +1.5 komi)",
+  SlumSnakes = "Slum Snakes (Spread AI & +3.5 komi)",
+  TheBlackHand = "The Black Hand (Aggro AI & +3.5 komi)",
+  Daedalus = "Daedalus (Mid AI & +5.5 komi)",
   Illuminati = "Illuminati (+7.5 komi & 4 handicap)",
 }
+
+export const boardSizes = [5, 7, 9, 13];
 
 export type PlayerColor = playerColors.white | playerColors.black | playerColors.empty;
 

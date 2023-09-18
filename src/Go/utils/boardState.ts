@@ -1,14 +1,12 @@
 import { BoardState, Move, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "../goConstants";
 import { getExpansionMoveArray } from "./goAI";
 
-const BOARD_SIZE = 7;
-
-export function getNewBoardState(): BoardState {
-  const newBoard = {
+export function getNewBoardState(boardSize: number): BoardState {
+  return {
     history: [],
     previousPlayer: playerColors.white,
-    board: Array.from({ length: BOARD_SIZE }, (_, x) =>
-      Array.from({ length: BOARD_SIZE }, (_, y) => ({
+    board: Array.from({ length: boardSize }, (_, x) =>
+      Array.from({ length: boardSize }, (_, y) => ({
         player: playerColors.empty,
         chain: null,
         liberties: null,
@@ -17,11 +15,10 @@ export function getNewBoardState(): BoardState {
       })),
     ),
   };
-  return newBoard;
 }
 
-export function applyHandicap(handicap: number) {
-  const newBoard = getNewBoardState();
+export function applyHandicap(boardSize: number, handicap: number) {
+  const newBoard = getNewBoardState(boardSize);
   const handicapMoves = getExpansionMoveArray(newBoard, playerColors.white, handicap);
 
   handicapMoves.forEach(
@@ -145,7 +142,7 @@ export function getAllChains(boardState: BoardState): PointState[][] {
     for (let y = 0; y < boardState.board[x].length; y++) {
       const point = boardState.board[x][y];
       // If the current chain is already analyzed, skip it
-      if (!point.chain || chains[point.chain]) {
+      if (point.chain === null || chains[point.chain]) {
         continue;
       }
 
@@ -190,36 +187,38 @@ function clearChains(boardState: BoardState): BoardState {
 }
 
 /**
- * Finds all the pieces in the current clump, or 'chain'
+ * Finds all the pieces in the current continuous group, or 'chain'
  *
- * Recursively traverse the adjacent pieces of the same color to find all the pieces in the same chain,
+ * Iteratively traverse the adjacent pieces of the same color to find all the pieces in the same chain,
  * which are the pieces connected directly via a path consisting only of only up/down/left/right
  */
-export function findAdjacentPointsInChain(
-  boardState: BoardState,
-  x: number,
-  y: number,
-  checkedNeighbors: PointState[] = [],
-): PointState[] {
-  const neighbors = findNeighbors(boardState, x, y);
-  const currentPoint = boardState.board[x][y];
-  if (contains(checkedNeighbors, currentPoint)) {
-    return checkedNeighbors;
+export function findAdjacentPointsInChain(boardState: BoardState, x: number, y: number) {
+  const checkedPoints: PointState[] = [];
+  const adjacentPoints: PointState[] = [boardState.board[x][y]];
+  const pointsToCheckNeighbors: PointState[] = [boardState.board[x][y]];
+
+  while (pointsToCheckNeighbors.length) {
+    const currentPoint = pointsToCheckNeighbors.pop();
+    if (!currentPoint) {
+      break;
+    }
+
+    checkedPoints.push(currentPoint);
+    const neighbors = findNeighbors(boardState, currentPoint.x, currentPoint.y);
+
+    [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
+      .filter(isNotNull)
+      .filter(isDefined)
+      .forEach((neighbor) => {
+        if (neighbor && neighbor.player === currentPoint.player && !contains(checkedPoints, neighbor)) {
+          adjacentPoints.push(neighbor);
+          pointsToCheckNeighbors.push(neighbor);
+        }
+        checkedPoints.push(neighbor);
+      });
   }
 
-  let priorNeighbors = [...checkedNeighbors];
-  priorNeighbors.push(currentPoint);
-
-  [neighbors.north, neighbors.east, neighbors.south, neighbors.west].forEach((neighbor) => {
-    if (neighbor && neighbor.player === currentPoint.player && !contains(priorNeighbors, neighbor)) {
-      priorNeighbors = mergeNewItems(
-        priorNeighbors,
-        findAdjacentPointsInChain(boardState, neighbor.x, neighbor.y, priorNeighbors),
-      );
-    }
-  });
-
-  return priorNeighbors;
+  return adjacentPoints;
 }
 
 function findLibertiesForChain(boardState: BoardState, chain: PointState[]): PointState[] {
@@ -290,13 +289,13 @@ export function getEmptySpaces(boardState: BoardState): PointState[] {
 export function getStateCopy(initialState: BoardState) {
   const boardState = updateChains(getBoardCopy(initialState));
 
-  boardState.history = [...boardState.history];
+  boardState.history = [...initialState.history];
 
   return boardState;
 }
 
 export function getBoardCopy(boardState: BoardState) {
-  const boardCopy = getNewBoardState();
+  const boardCopy = getNewBoardState(boardState.board[0].length);
   const board = boardState.board;
 
   for (let x = 0; x < board.length; x++) {

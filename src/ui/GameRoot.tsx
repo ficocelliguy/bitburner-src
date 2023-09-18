@@ -71,6 +71,7 @@ import { V2Modal } from "../utils/V2Modal";
 import { MathJaxContext } from "better-react-mathjax";
 import { useRerender } from "./React/hooks";
 import { HistoryProvider } from "./React/Documentation";
+import { GoGameboard } from "../Go/GoGameboard";
 
 const htmlLocation = location;
 
@@ -352,6 +353,10 @@ export function GameRoot(): React.ReactElement {
           }}
         />
       );
+      break;
+    }
+    case Page.Go: {
+      mainPage = <GoGameboard />;
       break;
     }
     case Page.Achievements: {

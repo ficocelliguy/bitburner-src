@@ -134,22 +134,6 @@ function getDaedalusPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-async function getRandomMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
-  const emptySpaces = getEmptySpaces(boardState)
-    .filter((space) => {
-      const neighbors = findNeighbors(boardState, space.x, space.y);
-      return [neighbors.north, neighbors.east, neighbors.south, neighbors.west].filter(isNotNull).length === 4;
-    })
-    .filter((space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid);
-
-  const randomIndex = floor(Math.random() * emptySpaces.length);
-  return {
-    point: emptySpaces[randomIndex],
-    newLibertyCount: -1,
-    oldLibertyCount: -1,
-  };
-}
-
 function getExpansionMove(boardState: BoardState, player: PlayerColor) {
   return getExpansionMoveArray(boardState, player)?.[0] ?? null;
 }
@@ -346,14 +330,17 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
 }
 
 export function getKomi(opponent: opponents) {
-  if (opponent === opponents.Netburners) {
-    return 3.5;
+  switch (opponent) {
+    case opponents.Netburners:
+      return 1.5;
+    case opponents.SlumSnakes:
+    case opponents.TheBlackHand:
+      return 3.5;
+    case opponents.Illuminati:
+      return 7.5;
+    default:
+      return 5.5;
   }
-  if (opponent === opponents.SlumSnakes || opponent === opponents.TheBlackHand) {
-    return 5.5;
-  }
-
-  return 7.5;
 }
 
 function sleep(ms: number): Promise<void> {

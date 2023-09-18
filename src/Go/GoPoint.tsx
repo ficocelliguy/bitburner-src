@@ -4,14 +4,34 @@ import makeStyles from "@mui/styles/makeStyles";
 import createStyles from "@mui/styles/createStyles";
 import { BoardState, playerColors } from "./goConstants";
 import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
+import { ClassNameMap } from "@mui/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     point: {
-      padding: "23px",
       position: "relative",
       "&:hover $innerPoint": {
         borderColor: theme.colors.white,
+      },
+    },
+    fiveByFive: {
+      "&$point": {
+        padding: "50px",
+      },
+    },
+    sevenBySeven: {
+      "&$point": {
+        padding: "30px",
+      },
+    },
+    nineByNine: {
+      "&$point": {
+        padding: "20px",
+      },
+    },
+    thirteenByThirteen: {
+      "&$point": {
+        padding: "7px",
       },
     },
     innerPoint: {
@@ -94,6 +114,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
 export function GoPoint(props: { state: BoardState; x: number; y: number }): React.ReactElement {
   const classes = useStyles();
 
@@ -118,8 +139,10 @@ export function GoPoint(props: { state: BoardState; x: number; y: number }): Rea
     classes.liberty
   }`;
 
+  const sizeClass = getSizeClass(props.state.board[0].length, classes);
+
   return (
-    <div className={classes.point} title={player}>
+    <div className={`${classes.point} ${sizeClass}`} title={player}>
       <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
@@ -129,4 +152,20 @@ export function GoPoint(props: { state: BoardState; x: number; y: number }): Rea
       </div>
     </div>
   );
+}
+
+function getSizeClass(
+  size: number,
+  classes: ClassNameMap<"fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen">,
+) {
+  switch (size) {
+    case 5:
+      return classes.fiveByFive;
+    case 7:
+      return classes.sevenBySeven;
+    case 9:
+      return classes.nineByNine;
+    case 13:
+      return classes.thirteenByThirteen;
+  }
 }
