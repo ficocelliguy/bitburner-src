@@ -8,8 +8,15 @@ import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 import { GoPoint } from "./GoPoint";
-import { BoardState, opponents, playerColors, validityReason } from "./types";
-import { evaluateIfMoveIsValid, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
+import { BoardState, opponents, playerColors, validityReason } from "./goConstants";
+import {
+  applyHandicap,
+  evaluateIfMoveIsValid,
+  getNewBoardState,
+  getStateCopy,
+  makeMove,
+  updateCaptures,
+} from "./utils/boardState";
 import { getKomi, getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
 import { getScore, logBoard } from "./utils/scoring";
@@ -57,7 +64,13 @@ export function GoGameboard(): React.ReactElement {
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
 
   const classes = useStyles();
-  const opponentFactions = [opponents.Netburners, opponents.SlumSnakes, opponents.TheBlackHand, opponents.Daedalus];
+  const opponentFactions = [
+    opponents.Netburners,
+    opponents.SlumSnakes,
+    opponents.TheBlackHand,
+    opponents.Daedalus,
+    opponents.Illuminati,
+  ];
 
   const score = getScore(boardState, getKomi(opponent));
 
@@ -120,15 +133,21 @@ export function GoGameboard(): React.ReactElement {
   }
 
   function changeDropdown(event: SelectChangeEvent): void {
-    if (turn === 0) {
-      // TODO: make typescript happy, I guess?
-      // @ts-ignore
-      setOpponent(event.target.value);
+    if (turn !== 0) {
+      return;
+    }
+    const newOpponent = event.target.value as opponents;
+    setOpponent(event.target.value as opponents);
+
+    resetState();
+    if (newOpponent === opponents.Illuminati) {
+      setBoardState(applyHandicap(4));
     }
   }
 
   function resetState() {
     setTurn(0);
+
     setBoardState(getNewBoardState());
   }
 

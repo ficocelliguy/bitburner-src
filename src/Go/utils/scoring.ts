@@ -1,4 +1,4 @@
-import { BoardState, PlayerColor, playerColors, PointState } from "../types";
+import { BoardState, PlayerColor, playerColors, PointState } from "../goConstants";
 import { findNeighbors, getAllChains, getArrayFromNeighbor, mergeNewItems } from "./boardState";
 
 export function getScore(boardState: BoardState, komi: number) {

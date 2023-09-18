@@ -7,7 +7,7 @@ import {
   playerColors,
   PointState,
   validityReason,
-} from "../types";
+} from "../goConstants";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,
@@ -19,7 +19,6 @@ import {
   isDefined,
   isNotNull,
   makeMove,
-  updateCaptures,
 } from "./boardState";
 
 export async function getMove(
@@ -151,7 +150,11 @@ async function getRandomMove(boardState: BoardState, player: PlayerColor): Promi
   };
 }
 
-async function getExpansionMove(boardState: BoardState, player: PlayerColor): Promise<Move> {
+function getExpansionMove(boardState: BoardState, player: PlayerColor) {
+  return getExpansionMoveArray(boardState, player)?.[0] ?? null;
+}
+
+export function getExpansionMoveArray(boardState: BoardState, player: PlayerColor, moveCount = 1): Move[] {
   const emptySpaces = getEmptySpaces(boardState)
     .filter((space) => {
       const neighbors = findNeighbors(boardState, space.x, space.y);
@@ -164,11 +167,16 @@ async function getExpansionMove(boardState: BoardState, player: PlayerColor): Pr
     .filter((space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid);
 
   const randomIndex = floor(Math.random() * emptySpaces.length);
-  return {
-    point: emptySpaces[randomIndex],
-    newLibertyCount: -1,
-    oldLibertyCount: -1,
-  };
+
+  const boardSize = boardState.board[0].length;
+  return new Array(moveCount).fill(null).map((_, index) => {
+    const spaceIndex = Math.floor(randomIndex + (boardSize / 3) * index) % emptySpaces.length;
+    return {
+      point: emptySpaces[spaceIndex],
+      newLibertyCount: -1,
+      oldLibertyCount: -1,
+    };
+  });
 }
 
 async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor) {
@@ -344,7 +352,7 @@ export function getKomi(opponent: opponents) {
   if (opponent === opponents.Netburners) {
     return 3.5;
   }
-  if (opponent === opponents.Daedalus) {
+  if (opponent === opponents.Daedalus || opponent === opponents.Illuminati) {
     return 7.5;
   }
 

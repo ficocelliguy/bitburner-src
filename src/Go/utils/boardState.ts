@@ -1,9 +1,10 @@
-import { Board, BoardState, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "../types";
+import { BoardState, Move, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "../goConstants";
+import { getExpansionMoveArray } from "./goAI";
 
 const BOARD_SIZE = 7;
 
 export function getNewBoardState(): BoardState {
-  return {
+  const newBoard = {
     history: [],
     previousPlayer: playerColors.white,
     board: Array.from({ length: BOARD_SIZE }, (_, x) =>
@@ -16,6 +17,17 @@ export function getNewBoardState(): BoardState {
       })),
     ),
   };
+  return newBoard;
+}
+
+export function applyHandicap(handicap: number) {
+  const newBoard = getNewBoardState();
+  const handicapMoves = getExpansionMoveArray(newBoard, playerColors.white, handicap);
+
+  handicapMoves.forEach(
+    (move: Move) => move.point && (newBoard.board[move.point.x][move.point.y].player = playerColors.white),
+  );
+  return newBoard;
 }
 
 /**
