@@ -315,8 +315,6 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
 }
 
 async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
-  const randomMove = await getRandomMove(boardState, player);
-  await sleep(50);
   const growthMove = await getGrowthMove(boardState, player);
   await sleep(50);
   const expansionMove = await getExpansionMove(boardState, player);
@@ -344,7 +342,6 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
     expansion: expansionMove,
     defend: defendMove,
     surround: surroundMove,
-    random: randomMove,
   };
 }
 
@@ -352,11 +349,11 @@ export function getKomi(opponent: opponents) {
   if (opponent === opponents.Netburners) {
     return 3.5;
   }
-  if (opponent === opponents.Daedalus || opponent === opponents.Illuminati) {
-    return 7.5;
+  if (opponent === opponents.SlumSnakes || opponent === opponents.TheBlackHand) {
+    return 5.5;
   }
 
-  return 5.5;
+  return 7.5;
 }
 
 function sleep(ms: number): Promise<void> {

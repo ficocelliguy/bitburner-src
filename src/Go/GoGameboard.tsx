@@ -65,6 +65,7 @@ export function GoGameboard(): React.ReactElement {
 
   const classes = useStyles();
   const opponentFactions = [
+    opponents.none,
     opponents.Netburners,
     opponents.SlumSnakes,
     opponents.TheBlackHand,
@@ -76,7 +77,7 @@ export function GoGameboard(): React.ReactElement {
 
   function clickHandler(x: number, y: number): void {
     // lock the board when it isn't the player's turn
-    if (turn % 2 !== 0) {
+    if (turn % 2 !== 0 && opponent !== opponents.none) {
       return;
     }
     const validity = evaluateIfMoveIsValid(boardState, x, y, playerColors.black);
@@ -85,7 +86,8 @@ export function GoGameboard(): React.ReactElement {
       return;
     }
 
-    const updatedBoard = makeMove(boardState, x, y, playerColors.black, false);
+    const currentPlayer = turn % 2 === 0 ? playerColors.black : playerColors.white;
+    const updatedBoard = makeMove(boardState, x, y, currentPlayer, false);
     if (updatedBoard) {
       setBoardState(updatedBoard);
       setTurn(turn + 1);
@@ -94,7 +96,7 @@ export function GoGameboard(): React.ReactElement {
       setTimeout(() => {
         const captureUpdatedBoard = updateCaptures(updatedBoard, playerColors.black);
         setBoardState(captureUpdatedBoard);
-        takeAiTurn(captureUpdatedBoard, turn + 1);
+        opponent !== opponents.none && takeAiTurn(captureUpdatedBoard, turn + 1);
       }, 100);
     }
 
@@ -104,7 +106,7 @@ export function GoGameboard(): React.ReactElement {
   function passTurn() {
     setTimeout(() => {
       setTurn(turn + 1);
-      takeAiTurn(boardState, turn + 2);
+      opponent !== opponents.none && takeAiTurn(boardState, turn + 2);
     }, 100);
   }
 
