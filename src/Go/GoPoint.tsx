@@ -1,132 +1,22 @@
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
-import createStyles from "@mui/styles/createStyles";
 import { BoardState, playerColors } from "./goConstants";
-import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardState";
+import { findAdjacentLibertiesAndAlliesForPoint, findNeighbors } from "./utils/boardState";
 import { ClassNameMap } from "@mui/styles";
+import { pointStyle } from "./utils/goStyles";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    point: {
-      position: "relative",
-      "&:hover $innerPoint": {
-        borderColor: theme.colors.white,
-      },
-    },
-    fiveByFive: {
-      "&$point": {
-        padding: "50px",
-      },
-    },
-    sevenBySeven: {
-      "&$point": {
-        padding: "30px",
-      },
-    },
-    nineByNine: {
-      "&$point": {
-        padding: "20px",
-      },
-    },
-    thirteenByThirteen: {
-      "&$point": {
-        padding: "7px",
-      },
-    },
-    innerPoint: {
-      borderStyle: "solid",
-      borderWidth: "1px",
-      borderRadius: "25px",
-      borderColor: "transparent",
-      padding: "5px",
-    },
-    emptyPoint: {
-      width: "4px",
-      height: "4px",
-      margin: "13px",
-      backgroundColor: theme.colors.white,
-      position: "relative",
-    },
-    filledPoint: {
-      margin: "2px",
-      borderColor: theme.colors.white,
-      borderStyle: "solid",
-      borderWidth: "2px",
-      borderRadius: "12px",
-      position: "relative",
-    },
-    whitePoint: {
-      width: "0",
-      height: "0",
-      padding: "11px",
-      backgroundColor: theme.colors.white,
-    },
-    blackPoint: {
-      width: "24px",
-      height: "24px",
-      margin: "2px",
-      backgroundColor: theme.colors.black,
-      borderColor: theme.colors.white,
-      borderStyle: "solid",
-      borderWidth: "1px",
-      borderRadius: "12px",
-      position: "relative",
-    },
-    liberty: {
-      position: "absolute",
-      transition: "all 0.5s ease-out",
-      backgroundColor: "transparent",
-      width: "2px",
-      height: "2px",
-      top: "50%",
-      left: "50%",
-    },
-    libertyWhite: {
-      backgroundColor: theme.colors.cha,
-    },
-    libertyBlack: {
-      backgroundColor: theme.colors.success,
-    },
-    northLiberty: {
-      width: "2px",
-      height: "50%",
-      top: 0,
-      left: "50%",
-    },
-    southLiberty: {
-      width: "2px",
-      height: "50%",
-      top: "50%",
-      left: "50%",
-    },
-    eastLiberty: {
-      width: "50%",
-      height: "2px",
-      top: "50%",
-      left: "50%",
-    },
-    westLiberty: {
-      width: "50%",
-      height: "2px",
-      top: "50%",
-      left: 0,
-    },
-  }),
-);
-
-export function GoPoint(props: { state: BoardState; x: number; y: number }): React.ReactElement {
-  const classes = useStyles();
+export function GoPoint(props: { state: BoardState; x: number; y: number; traditional: boolean }): React.ReactElement {
+  const classes = pointStyle();
 
   const currentPoint = props.state.board[props.x][props.y];
   const player = currentPoint.player;
 
   const liberties = findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y);
+  const neighbors = findNeighbors(props.state, props.x, props.y);
 
-  const hasNorthLiberty = liberties.north;
-  const hasEastLiberty = liberties.east;
-  const hasSouthLiberty = liberties.south;
-  const hasWestLiberty = liberties.west;
+  const hasNorthLiberty = props.traditional ? neighbors.north : liberties.north;
+  const hasEastLiberty = props.traditional ? neighbors.east : liberties.east;
+  const hasSouthLiberty = props.traditional ? neighbors.south : liberties.south;
+  const hasWestLiberty = props.traditional ? neighbors.west : liberties.west;
 
   const pointClass =
     player === playerColors.white
@@ -142,13 +32,16 @@ export function GoPoint(props: { state: BoardState; x: number; y: number }): Rea
   const sizeClass = getSizeClass(props.state.board[0].length, classes);
 
   return (
-    <div className={`${classes.point} ${sizeClass}`} title={player}>
-      <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
-      <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
-      <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
-      <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
-      <div className={classes.innerPoint}>
-        <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
+    <div className={`${props.traditional ? classes.traditional : ""}`}>
+      <div className={`${classes.point} ${sizeClass}`} title={player}>
+        <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
+        <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
+        <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
+        <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
+        <div className={classes.innerPoint}>
+          <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
+        </div>
+        <div className={`${pointClass} ${classes.tradStone}`} />
       </div>
     </div>
   );

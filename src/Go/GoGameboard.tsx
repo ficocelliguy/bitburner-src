@@ -1,8 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Theme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
-import createStyles from "@mui/styles/createStyles";
 import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
@@ -22,51 +19,32 @@ import { weiArt } from "./utils/asciiArt";
 import { getScore, logBoard } from "./utils/scoring";
 import { useRerender } from "../ui/React/hooks";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
+import { OptionSwitch } from "../ui/React/OptionSwitch";
+import { boardStyles } from "./utils/goStyles";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    board: {
-      margin: "auto",
-      minWidth: "740px",
-    },
-    opponentName: {
-      paddingTop: "3px",
-      paddingBottom: "5px",
-    },
-    opponentLabel: {
-      padding: "3px 10px 5px 10px",
-    },
-    inlineFlexBox: {
-      display: "inline-flex",
-      flexDirection: "row",
-    },
-    scoreBox: {
-      display: "inline-flex",
-      flexDirection: "row",
-      whiteSpace: "pre",
-      padding: "10px",
-    },
-    background: {
-      position: "absolute",
-      opacity: 0.09,
-      color: theme.colors.white,
-      fontFamily: "monospace",
-      fontSize: "4.5px",
-      whiteSpace: "pre",
-      pointerEvents: "none",
-      paddingTop: "20px",
-    },
-  }),
-);
+// TODO: reset button on end game screen, see ` AscensionModal `
+
+// TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
+
+// TODO: Encode go state in player object
+
+// TODO: "How to Play" modal or page
+
+// TODO: Flavor text and page title, flavor in summary modal
+
+// TODO: Win streaks? won node and subnet counts?
+
+// TODO: Minor grow boost as reward?
 
 export function GoGameboard(): React.ReactElement {
-  const rerender = useRerender();
+  const rerender = useRerender(200);
   const [turn, setTurn] = useState(0);
+  const [traditional, setTraditional] = useState(false);
   const [boardState, setBoardState] = useState<BoardState>(getNewBoardState(boardSizes[1]));
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
   const [boardSize, setBoardSize] = useState(boardSizes[1]);
 
-  const classes = useStyles();
+  const classes = boardStyles();
   const opponentFactions = [
     opponents.none,
     opponents.Netburners,
@@ -76,7 +54,7 @@ export function GoGameboard(): React.ReactElement {
     opponents.Illuminati,
   ];
 
-  const score = getScore(boardState, getKomi(opponent));
+  const score = useMemo(() => getScore(boardState, getKomi(opponent)), [boardState, opponent]);
 
   function clickHandler(x: number, y: number): void {
     // lock the board when it isn't the player's turn
@@ -99,6 +77,7 @@ export function GoGameboard(): React.ReactElement {
       setTimeout(() => {
         const captureUpdatedBoard = updateCaptures(updatedBoard, currentPlayer);
         setBoardState(captureUpdatedBoard);
+        rerender();
         opponent !== opponents.none && takeAiTurn(captureUpdatedBoard, turn + 1);
       }, 100);
     }
@@ -125,6 +104,7 @@ export function GoGameboard(): React.ReactElement {
     if (updatedBoard) {
       setTimeout(() => {
         setBoardState(updatedBoard);
+        rerender();
 
         // Delay captures a short amount to make them easier to see
         setTimeout(() => {
@@ -167,23 +147,24 @@ export function GoGameboard(): React.ReactElement {
 
   function endGame() {
     rerender();
+    const blackScore = score[playerColors.black];
+    const whiteScore = score[playerColors.white];
     dialogBoxCreate(
       "Game complete! \n\n" +
         `Black:\n` +
-        `  Territory: ${score[playerColors.black].territory},  Pieces: ${score[playerColors.black].pieces}  \n` +
-        `Black final score: ${score[playerColors.black].sum}  \n\n` +
+        `  Territory: ${blackScore.territory},  Pieces: ${blackScore.pieces}  \n` +
+        `     Final score: ${blackScore.sum}  \n\n` +
         `White:\n` +
-        `  Territory: ${score[playerColors.white].territory},  Pieces: ${score[playerColors.white].pieces},  Komi: ${
-          score[playerColors.white].komi
-        }  \n` +
-        `White final score: ${score[playerColors.white].sum}  \n`,
+        `  Territory: ${whiteScore.territory},  Pieces: ${whiteScore.pieces},  Komi: ${whiteScore.komi}  \n` +
+        `    Final score: ${whiteScore.sum}  \n\n` +
+        `       ${blackScore > whiteScore ? "You win!" : `Winner: ${opponent.slice(0, opponent.indexOf("("))}`} \n\n`,
     );
   }
 
   return (
     <>
       <div>
-        <div className={classes.background}>{weiArt}</div>
+        {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
         <Box className={classes.inlineFlexBox}>
           <Typography className={classes.opponentLabel}>Opponent:</Typography>
           {turn === 0 ? (
@@ -211,12 +192,12 @@ export function GoGameboard(): React.ReactElement {
             </Typography>
           )}
         </Box>
-        <Grid container id="goGameboard" className={classes.board}>
+        <Grid container id="goGameboard" className={`${classes.board} ${traditional ? classes.traditional : ""}`}>
           {boardState.board.map((row, x) => (
             <Grid container key={`row_${x}`} item>
               {row.map((point, y: number) => (
                 <Grid item key={`point_${x}_${y}`} onClick={() => clickHandler(x, y)}>
-                  <GoPoint state={boardState} x={x} y={y} />
+                  <GoPoint state={boardState} x={x} y={y} traditional={traditional} />
                 </Grid>
               ))}
             </Grid>
@@ -229,6 +210,14 @@ export function GoGameboard(): React.ReactElement {
           <Button onClick={() => resetState()}>Reset</Button>
           <Button onClick={passTurn}>Pass Turn</Button>
         </Box>
+        <div className={classes.opponentLabel}>
+          <OptionSwitch
+            checked={traditional}
+            onChange={(newValue) => setTraditional(newValue)}
+            text="Use traditional Go style"
+            tooltip={<>Show stones and grid as if it was a standard Go board</>}
+          />
+        </div>
       </div>
     </>
   );
