@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Help } from "@mui/icons-material";
 
 import { GoPoint } from "./GoPoint";
 import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./utils/goConstants";
@@ -21,39 +22,54 @@ import { useRerender } from "../ui/React/hooks";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
 import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
-import { Help } from "@mui/icons-material";
 import { GoInfoModal } from "./GoInfoModal";
+import { Player } from "@player";
 
 // In progress:
 // TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
 
 // TODO: "How to Play" modal or page
 
-// Not started:
-// TODO: reset button on end game screen, see ` AscensionModal `
+// TODO: Encode go state in player object
 
-// TODO: last stone played marker
+// TODO: API
+
+//TODO: Update screen on player object changing
+
+// Not started:
+
+// TODO: Eye and territory calculation : detect end of game
+
+// TODO: reset button on end game screen, see ` AscensionModal `
 
 // TODO: better shine and glow to tron theme stones
 
-// TODO: Encode go state in player object
-
 // TODO: Flavor text and page title
+
+// TODO: pattern matching
+
+// TODO: last stone played marker?
 
 // TODO: Win streaks? won node and subnet counts?
 
 // TODO: Minor grow boost as reward?
 
-// TODO: Eye and territory calculation
-
-// TODO: pattern matching
-
-
 export function GoGameboard(): React.ReactElement {
   const rerender = useRerender(400);
-  const [turn, setTurn] = useState(0);
+
+  // Determine if there is an in-progress game, and if so, whose turn is next
+  const currentTurn = Player.goBoard.history.length
+    ? Player.goBoard.previousPlayer === playerColors.black
+      ? 1
+      : 2
+    : 0;
+
+  const boardState = (function () {
+    if (Player.goBoard === null) throw new Error("Player.goBoard should not be null");
+    return Player.goBoard;
+  })();
+  const [turn, setTurn] = useState(currentTurn);
   const [traditional, setTraditional] = useState(false);
-  const [boardState, setBoardState] = useState<BoardState>(getNewBoardState(boardSizes[1]));
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
   const [boardSize, setBoardSize] = useState(boardSizes[1]);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -70,7 +86,7 @@ export function GoGameboard(): React.ReactElement {
   ];
 
   function clickHandler(x: number, y: number): void {
-    // lock the board when it isn't the player's turn
+    // Lock the board when it isn't the player's turn
     if (turn % 2 !== 0 && opponent !== opponents.none) {
       return;
     }
@@ -83,24 +99,21 @@ export function GoGameboard(): React.ReactElement {
 
     const updatedBoard = makeMove(boardState, x, y, currentPlayer, false);
     if (updatedBoard) {
-      setBoardState(updatedBoard);
-      setTurn(turn + 1);
-      setScore(getScore(updatedBoard, getKomi(opponent)));
-      rerender();
+      updateBoard(updatedBoard, turn + 1);
 
       // Delay captures a short amount to make them easier to see
       setTimeout(() => {
         const captureUpdatedBoard = updateCaptures(updatedBoard, currentPlayer);
-        setBoardState(captureUpdatedBoard);
-        rerender();
+        Player.goBoard = captureUpdatedBoard;
         opponent !== opponents.none && takeAiTurn(captureUpdatedBoard, turn + 1);
       }, 100);
     }
   }
 
   function passTurn() {
+    boardState.previousPlayer = playerColors.black;
+    updateBoard(boardState, turn + 1);
     setTimeout(() => {
-      setTurn(turn + 1);
       opponent !== opponents.none && takeAiTurn(boardState, turn + 2);
     }, 100);
   }
@@ -110,8 +123,8 @@ export function GoGameboard(): React.ReactElement {
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
-      setScore(getScore(board, getKomi(opponent)));
-      rerender();
+      initialState.previousPlayer = playerColors.white;
+      updateBoard(initialState, turn + 1);
       endGame();
       return;
     }
@@ -120,16 +133,13 @@ export function GoGameboard(): React.ReactElement {
 
     if (updatedBoard) {
       setTimeout(() => {
-        setBoardState(updatedBoard);
+        Player.goBoard = updatedBoard;
         rerender();
 
         // Delay captures a short amount to make them easier to see
         setTimeout(() => {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
-          setBoardState(newBoard);
-          setTurn(currentTurn + 1);
-          setScore(getScore(updatedBoard, getKomi(opponent)));
-          rerender();
+          updateBoard(newBoard, currentTurn + 1);
 
           logBoard(newBoard);
         }, 100);
@@ -147,7 +157,7 @@ export function GoGameboard(): React.ReactElement {
 
     resetState();
     if (newOpponent === opponents.Illuminati) {
-      setBoardState(applyHandicap(boardSize, 4));
+      updateBoard(applyHandicap(boardSize, 4));
     }
   }
 
@@ -161,15 +171,23 @@ export function GoGameboard(): React.ReactElement {
   }
 
   function resetState(newBoardSize = boardSize) {
-    setTurn(0);
-    setBoardState(getNewBoardState(newBoardSize));
+    updateBoard(getNewBoardState(newBoardSize));
+  }
+
+  function updateBoard(newBoardState: BoardState, turn = 0) {
+    Player.goBoard = newBoardState;
+    setScore(getScore(newBoardState, getKomi(opponent)));
+    setTurn(turn);
     rerender();
   }
 
   function endGame() {
+    const finalScore = getScore(boardState, getKomi(opponent));
+    setScore(finalScore);
     rerender();
-    const blackScore = score[playerColors.black];
-    const whiteScore = score[playerColors.white];
+
+    const blackScore = finalScore[playerColors.black];
+    const whiteScore = finalScore[playerColors.white];
     dialogBoxCreate(
       "Game complete! \n\n" +
         `Black:\n` +

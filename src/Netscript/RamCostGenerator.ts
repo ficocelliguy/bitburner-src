@@ -236,6 +236,11 @@ const gang = {
   getBonusTime: 0,
 } as const;
 
+// Gang API
+const go = {
+  makeMove: 2,
+} as const;
+
 // Bladeburner API
 const bladeburner = {
   inBladeburner: RamCostConstants.BladeburnerApiBase / 4,
@@ -424,6 +429,7 @@ export const RamCosts: RamCostTree<NSFull> = {
   stock,
   singularity,
   gang,
+  go,
   bladeburner,
   infiltration,
   codingcontract,

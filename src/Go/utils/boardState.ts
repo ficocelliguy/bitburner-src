@@ -1,10 +1,20 @@
-import { BoardState, Move, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "./goConstants";
+import {
+  BoardState,
+  Move,
+  Neighbor,
+  opponents,
+  PlayerColor,
+  playerColors,
+  PointState,
+  validityReason,
+} from "./goConstants";
 import { getExpansionMoveArray } from "./goAI";
 
-export function getNewBoardState(boardSize: number): BoardState {
+export function getNewBoardState(boardSize: number, ai = opponents.Daedalus): BoardState {
   return {
     history: [],
     previousPlayer: playerColors.white,
+    ai: ai,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
         player: playerColors.empty,
@@ -51,7 +61,12 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
 }
 
 export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
-  const point = initialState.board[x][y];
+  const point = initialState.board?.[x]?.[y];
+
+  if (initialState.previousPlayer === player) {
+    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
+    return validityReason.notYourTurn;
+  }
 
   if (!point || point.player !== playerColors.empty) {
     console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
@@ -290,6 +305,8 @@ export function getStateCopy(initialState: BoardState) {
   const boardState = updateChains(getBoardCopy(initialState));
 
   boardState.history = [...initialState.history];
+  boardState.previousPlayer = initialState.previousPlayer;
+  boardState.ai = initialState.ai;
 
   return boardState;
 }

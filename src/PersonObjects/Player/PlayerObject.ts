@@ -28,6 +28,7 @@ import { CONSTANTS } from "../../Constants";
 import { Person } from "../Person";
 import { isMember } from "../../utils/EnumHelper";
 import { PartialRecord } from "../../Types/Record";
+import { getNewBoardState } from "../../Go/utils/boardState";
 
 export class PlayerObject extends Person implements IPlayer {
   // Player-specific properties
@@ -36,6 +37,7 @@ export class PlayerObject extends Person implements IPlayer {
   gang: Gang | null = null;
   bladeburner: Bladeburner | null = null;
   currentServer = "";
+  goBoard = getNewBoardState(7);
   factions: FactionName[] = [];
   factionInvitations: FactionName[] = [];
   hacknetNodes: (HacknetNode | string)[] = []; // HacknetNode object or hostname of Hacknet Server

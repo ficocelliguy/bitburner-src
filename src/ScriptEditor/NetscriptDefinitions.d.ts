@@ -1,5 +1,7 @@
 /** All netscript definitions */
 
+import { Play } from "../Go/utils/goConstants";
+
 /** @public */
 interface HP {
   current: number;
@@ -4299,6 +4301,11 @@ interface GangFormulas {
   ascensionMultiplier(points: number): number;
 }
 
+/** @public */
+export interface Go {
+  makeMove(x: string | number, y: number): Promise<Play>;
+}
+
 /**
  * Formulas API
  * @remarks
@@ -4628,6 +4635,12 @@ export interface NS {
    * @remarks RAM cost: 0 GB
    */
   readonly gang: Gang;
+
+  /**
+   * Namespace for Go functions.
+   * @remarks RAM cost: 0 GB
+   */
+  readonly go: Go;
 
   /**
    * Namespace for sleeve functions. Contains spoilers.

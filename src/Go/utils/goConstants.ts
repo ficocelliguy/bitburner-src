@@ -8,6 +8,7 @@ export enum validityReason {
   pointNotEmpty = "That point is already occupied by a piece",
   boardRepeated = "It is illegal to repeat prior board states",
   noSuicide = "It is illegal to cause your own pieces to be captured",
+  notYourTurn = "It is not your turn to play",
   invalid = "Invalid move",
   valid = "Valid move",
 }
@@ -46,6 +47,7 @@ export type BoardState = {
   board: Board;
   previousPlayer: PlayerColor;
   history: Board[];
+  ai: opponents;
 };
 
 export type PointState = {
@@ -57,7 +59,7 @@ export type PointState = {
 };
 
 export type Play = {
-  x: number;
+  x: number | string;
   y: number;
 };
 
@@ -72,3 +74,5 @@ export type goScore = {
   White: { pieces: number; territory: number; komi: number; sum: number };
   Black: { pieces: number; territory: number; komi: number; sum: number };
 };
+
+export const columnIndexes = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
