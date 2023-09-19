@@ -1,4 +1,4 @@
-import { BoardState, Move, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "../goConstants";
+import { BoardState, Move, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "./goConstants";
 import { getExpansionMoveArray } from "./goAI";
 
 export function getNewBoardState(boardSize: number): BoardState {
@@ -84,7 +84,7 @@ export function updateChains(boardState: BoardState) {
     for (let y = 0; y < boardState.board[x].length; y++) {
       const point = boardState.board[x][y];
       // If the current point is already analyzed, skip it
-      if (point.chain) {
+      if (point.chain !== null) {
         continue;
       }
 

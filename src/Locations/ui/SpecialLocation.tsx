@@ -338,7 +338,7 @@ export function SpecialLocation(props: SpecialLocationProps): React.ReactElement
           <br />
           <br />
           <br />
-          <Button onClick={() => Router.toPage(Page.Go)}>Play a Game of Go</Button>
+          <Button onClick={() => Router.toPage(Page.Go)}>IPvGO Subnet Takeover</Button>
         </>
       );
     }

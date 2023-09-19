@@ -7,7 +7,7 @@ import {
   playerColors,
   PointState,
   validityReason,
-} from "../goConstants";
+} from "./goConstants";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,

@@ -67,3 +67,8 @@ export type Neighbor = {
   south: PointState | null;
   west: PointState | null;
 };
+
+export type goScore = {
+  White: { pieces: number; territory: number; komi: number; sum: number };
+  Black: { pieces: number; territory: number; komi: number; sum: number };
+};

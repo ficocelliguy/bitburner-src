@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 import { GoPoint } from "./GoPoint";
-import { boardSizes, BoardState, opponents, playerColors, validityReason } from "./goConstants";
+import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./utils/goConstants";
 import {
   applyHandicap,
   evaluateIfMoveIsValid,
@@ -21,28 +21,43 @@ import { useRerender } from "../ui/React/hooks";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
 import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
+import { Help } from "@mui/icons-material";
+import { GoInfoModal } from "./GoInfoModal";
 
-// TODO: reset button on end game screen, see ` AscensionModal `
-
+// In progress:
 // TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
-
-// TODO: Encode go state in player object
 
 // TODO: "How to Play" modal or page
 
-// TODO: Flavor text and page title, flavor in summary modal
+// Not started:
+// TODO: reset button on end game screen, see ` AscensionModal `
+
+// TODO: last stone played marker
+
+// TODO: better shine and glow to tron theme stones
+
+// TODO: Encode go state in player object
+
+// TODO: Flavor text and page title
 
 // TODO: Win streaks? won node and subnet counts?
 
 // TODO: Minor grow boost as reward?
 
+// TODO: Eye and territory calculation
+
+// TODO: pattern matching
+
+
 export function GoGameboard(): React.ReactElement {
-  const rerender = useRerender(200);
+  const rerender = useRerender(400);
   const [turn, setTurn] = useState(0);
   const [traditional, setTraditional] = useState(false);
   const [boardState, setBoardState] = useState<BoardState>(getNewBoardState(boardSizes[1]));
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
   const [boardSize, setBoardSize] = useState(boardSizes[1]);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [score, setScore] = useState<goScore>(getScore(boardState, getKomi(opponent)));
 
   const classes = boardStyles();
   const opponentFactions = [
@@ -53,8 +68,6 @@ export function GoGameboard(): React.ReactElement {
     opponents.Daedalus,
     opponents.Illuminati,
   ];
-
-  const score = useMemo(() => getScore(boardState, getKomi(opponent)), [boardState, opponent]);
 
   function clickHandler(x: number, y: number): void {
     // lock the board when it isn't the player's turn
@@ -72,6 +85,8 @@ export function GoGameboard(): React.ReactElement {
     if (updatedBoard) {
       setBoardState(updatedBoard);
       setTurn(turn + 1);
+      setScore(getScore(updatedBoard, getKomi(opponent)));
+      rerender();
 
       // Delay captures a short amount to make them easier to see
       setTimeout(() => {
@@ -95,6 +110,8 @@ export function GoGameboard(): React.ReactElement {
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
+      setScore(getScore(board, getKomi(opponent)));
+      rerender();
       endGame();
       return;
     }
@@ -111,6 +128,8 @@ export function GoGameboard(): React.ReactElement {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           setBoardState(newBoard);
           setTurn(currentTurn + 1);
+          setScore(getScore(updatedBoard, getKomi(opponent)));
+          rerender();
 
           logBoard(newBoard);
         }, 100);
@@ -124,6 +143,7 @@ export function GoGameboard(): React.ReactElement {
     }
     const newOpponent = event.target.value as opponents;
     setOpponent(event.target.value as opponents);
+    setScore(getScore(boardState, getKomi(newOpponent)));
 
     resetState();
     if (newOpponent === opponents.Illuminati) {
@@ -143,6 +163,7 @@ export function GoGameboard(): React.ReactElement {
   function resetState(newBoardSize = boardSize) {
     setTurn(0);
     setBoardState(getNewBoardState(newBoardSize));
+    rerender();
   }
 
   function endGame() {
@@ -157,13 +178,16 @@ export function GoGameboard(): React.ReactElement {
         `White:\n` +
         `  Territory: ${whiteScore.territory},  Pieces: ${whiteScore.pieces},  Komi: ${whiteScore.komi}  \n` +
         `    Final score: ${whiteScore.sum}  \n\n` +
-        `       ${blackScore > whiteScore ? "You win!" : `Winner: ${opponent.slice(0, opponent.indexOf("("))}`} \n\n`,
+        `       ${
+          blackScore.sum > whiteScore.sum ? "You win!" : `Winner: ${opponent.slice(0, opponent.indexOf("("))}`
+        } \n\n`,
     );
   }
 
   return (
     <>
       <div>
+        <GoInfoModal open={infoOpen} onClose={() => setInfoOpen(false)} />
         {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
         <Box className={classes.inlineFlexBox}>
           <Typography className={classes.opponentLabel}>Opponent:</Typography>
@@ -191,6 +215,10 @@ export function GoGameboard(): React.ReactElement {
               {boardSize}x{boardSize}
             </Typography>
           )}
+          <Button onClick={() => setInfoOpen(true)} sx={{ my: 1 }}>
+            <Help sx={{ mr: 1 }} />
+            About IPvGO Subnets
+          </Button>
         </Box>
         <Grid container id="goGameboard" className={`${classes.board} ${traditional ? classes.traditional : ""}`}>
           {boardState.board.map((row, x) => (

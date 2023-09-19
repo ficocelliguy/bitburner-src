@@ -1,5 +1,5 @@
 import React from "react";
-import { BoardState, playerColors } from "./goConstants";
+import { BoardState, playerColors } from "./utils/goConstants";
 import { findAdjacentLibertiesAndAlliesForPoint, findNeighbors } from "./utils/boardState";
 import { ClassNameMap } from "@mui/styles";
 import { pointStyle } from "./utils/goStyles";
