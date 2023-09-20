@@ -8,19 +8,8 @@ import {
   PointState,
   validityReason,
 } from "./goConstants";
-import {
-  evaluateIfMoveIsValid,
-  findChainLibertiesForPoint,
-  findNeighbors,
-  floor,
-  getAllChains,
-  getEmptySpaces,
-  getStateCopy,
-  isDefined,
-  isNotNull,
-  makeMove,
-} from "./boardState";
-import { findClaimedTerritory } from "./boardAnalysis";
+import { findNeighbors, floor, getEmptySpaces, getStateCopy, isDefined, isNotNull, makeMove } from "./boardState";
+import { evaluateIfMoveIsValid, findChainLibertiesForPoint, findClaimedTerritory, getAllChains } from "./boardAnalysis";
 
 export async function getMove(
   boardState: BoardState,

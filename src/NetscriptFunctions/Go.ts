@@ -1,9 +1,10 @@
 import { NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid, getStateCopy, makeMove } from "../Go/utils/boardState";
+import { getStateCopy, makeMove } from "../Go/utils/boardState";
 import { columnIndexes, Play, playerColors, validityReason } from "../Go/utils/goConstants";
 import { getMove } from "../Go/utils/goAI";
+import { evaluateIfMoveIsValid } from "../Go/utils/boardAnalysis";
 
 export function NetscriptGo() {
   return {

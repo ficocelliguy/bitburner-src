@@ -1,6 +1,5 @@
 import { BoardState, PlayerColor, playerColors, PointState } from "./goConstants";
-import { getAllChains } from "./boardState";
-import { getPlayerNeighbors } from "./boardAnalysis";
+import { getAllChains, getPlayerNeighbors } from "./boardAnalysis";
 
 export function getScore(boardState: BoardState, komi: number) {
   const whitePieces = getColoredPieceCount(boardState, playerColors.white);

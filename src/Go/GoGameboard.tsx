@@ -7,14 +7,7 @@ import { Help } from "@mui/icons-material";
 
 import { GoPoint } from "./GoPoint";
 import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./utils/goConstants";
-import {
-  applyHandicap,
-  evaluateIfMoveIsValid,
-  getNewBoardState,
-  getStateCopy,
-  makeMove,
-  updateCaptures,
-} from "./utils/boardState";
+import { applyHandicap, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
 import { getKomi, getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
 import { getScore, logBoard } from "./utils/scoring";
@@ -24,6 +17,7 @@ import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
 import { GoInfoModal } from "./GoInfoModal";
 import { Player } from "@player";
+import { evaluateIfMoveIsValid } from "./utils/boardAnalysis";
 
 // In progress:
 // TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
@@ -39,8 +33,6 @@ import { Player } from "@player";
 // Not started:
 
 // TODO: percent css
-
-// TODO: fix handicap stones
 
 // TODO: reset button on end game screen, see ` AscensionModal `
 
