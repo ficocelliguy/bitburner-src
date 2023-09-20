@@ -20,6 +20,7 @@ import {
   isNotNull,
   makeMove,
 } from "./boardState";
+import { findClaimedTerritory } from "./boardAnalysis";
 
 export async function getMove(
   boardState: BoardState,
@@ -134,12 +135,17 @@ function getDaedalusPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getExpansionMove(boardState: BoardState, player: PlayerColor) {
-  return getExpansionMoveArray(boardState, player)?.[0] ?? null;
+function getExpansionMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  return getExpansionMoveArray(boardState, player, availableSpaces)?.[0] ?? null;
 }
 
-export function getExpansionMoveArray(boardState: BoardState, player: PlayerColor, moveCount = 1): Move[] {
-  const emptySpaces = getEmptySpaces(boardState)
+export function getExpansionMoveArray(
+  boardState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+  moveCount = 1,
+): Move[] {
+  const emptySpaces = availableSpaces
     .filter((space) => {
       const neighbors = findNeighbors(boardState, space.x, space.y);
       return (
@@ -163,7 +169,7 @@ export function getExpansionMoveArray(boardState: BoardState, player: PlayerColo
   });
 }
 
-async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor) {
+async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const boardState = getStateCopy(initialState);
 
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
@@ -181,7 +187,10 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
     )
     .flat()
     .filter(isNotNull)
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter((liberty) =>
+      availableSpaces.find((point) => liberty.libertyPoint.x === point.x && liberty.libertyPoint.y === point.y),
+    );
 
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
   return liberties
@@ -200,8 +209,8 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
     .filter((newLiberty) => newLiberty.newLibertyCount > 1);
 }
 
-async function getGrowthMove(initialState: BoardState, player: PlayerColor) {
-  const growthMoves = await getLibertyGrowthMove(initialState, player);
+async function getGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  const growthMoves = await getLibertyGrowthMove(initialState, player, availableSpaces);
   const libertyIncreases = growthMoves?.filter((move) => move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
   const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
@@ -214,8 +223,8 @@ async function getGrowthMove(initialState: BoardState, player: PlayerColor) {
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
-async function getDefendMove(initialState: BoardState, player: PlayerColor) {
-  const growthMoves = await getLibertyGrowthMove(initialState, player);
+async function getDefendMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  const growthMoves = await getLibertyGrowthMove(initialState, player, availableSpaces);
   const libertyIncreases =
     growthMoves?.filter((move) => move.oldLibertyCount <= 1 && move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
@@ -230,7 +239,7 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor) {
 }
 
 // TODO: refactor for clarity
-async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
+async function getSurroundMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const boardState = getStateCopy(initialState);
 
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
@@ -252,7 +261,10 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
         })),
     )
     .flat()
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter((liberty) =>
+      availableSpaces.find((point) => liberty.liberty.x === point.x && liberty.liberty.y === point.y),
+    );
 
   // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
   const libertyDecreases = enemyChainRepresentatives
@@ -299,13 +311,18 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor) {
 }
 
 async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
-  const growthMove = await getGrowthMove(boardState, player);
+  const claimedTerritory = findClaimedTerritory(boardState);
+  const availableSpaces = getEmptySpaces(boardState).filter(
+    (point) => !claimedTerritory.find((claimedPoint) => claimedPoint.x === point.x && claimedPoint.y === point.y),
+  );
+
+  const growthMove = await getGrowthMove(boardState, player, availableSpaces);
   await sleep(50);
-  const expansionMove = await getExpansionMove(boardState, player);
+  const expansionMove = await getExpansionMove(boardState, player, availableSpaces);
   await sleep(50);
-  const defendMove = await getDefendMove(boardState, player);
+  const defendMove = await getDefendMove(boardState, player, availableSpaces);
   await sleep(50);
-  const surroundMove = await getSurroundMove(boardState, player);
+  const surroundMove = await getSurroundMove(boardState, player, availableSpaces);
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
   const defendCaptureMove =
@@ -317,7 +334,6 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
   console.log("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
-  // console.log("Random: ", randomMove?.point?.x, randomMove?.point?.y);
 
   return {
     capture: captureMove,

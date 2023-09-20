@@ -1,5 +1,6 @@
 import { BoardState, PlayerColor, playerColors, PointState } from "./goConstants";
-import { findNeighbors, getAllChains, getArrayFromNeighbor, mergeNewItems } from "./boardState";
+import { getAllChains } from "./boardState";
+import { getPlayerNeighbors } from "./boardAnalysis";
 
 export function getScore(boardState: BoardState, komi: number) {
   const whitePieces = getColoredPieceCount(boardState, playerColors.white);
@@ -51,12 +52,7 @@ function checkTerritoryOwnership(boardState: BoardState, emptyPointChain: PointS
     return null;
   }
 
-  const playerNeighbors = emptyPointChain.reduce((chainNeighbors: PointState[], point: PointState) => {
-    const playerNeighbors = getArrayFromNeighbor(findNeighbors(boardState, point.x, point.y)).filter(
-      (neighbor) => neighbor && neighbor.player !== playerColors.empty,
-    );
-    return mergeNewItems(chainNeighbors, playerNeighbors);
-  }, []);
+  const playerNeighbors = getPlayerNeighbors(boardState, emptyPointChain);
   const hasWhitePieceNeighbors = playerNeighbors.find((p) => p.player === playerColors.white);
   const hasBlackPieceNeighbors = playerNeighbors.find((p) => p.player === playerColors.black);
   const isWhiteTerritory = hasWhitePieceNeighbors && !hasBlackPieceNeighbors;

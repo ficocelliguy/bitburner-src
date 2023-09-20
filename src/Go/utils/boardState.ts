@@ -29,7 +29,8 @@ export function getNewBoardState(boardSize: number, ai = opponents.Daedalus): Bo
 
 export function applyHandicap(boardSize: number, handicap: number) {
   const newBoard = getNewBoardState(boardSize);
-  const handicapMoves = getExpansionMoveArray(newBoard, playerColors.white, handicap);
+  const availableMoves = getEmptySpaces(newBoard);
+  const handicapMoves = getExpansionMoveArray(newBoard, playerColors.black, availableMoves, handicap);
 
   handicapMoves.forEach(
     (move: Move) => move.point && (newBoard.board[move.point.x][move.point.y].player = playerColors.white),
@@ -236,7 +237,8 @@ export function findAdjacentPointsInChain(boardState: BoardState, x: number, y: 
   return adjacentPoints;
 }
 
-function findLibertiesForChain(boardState: BoardState, chain: PointState[]): PointState[] {
+// TODO: does this need to be simplified?
+export function findLibertiesForChain(boardState: BoardState, chain: PointState[]): PointState[] {
   return chain.reduce((liberties: PointState[], member: PointState) => {
     const libertiesObject = findAdjacentLibertiesForPoint(boardState, member.x, member.y);
     const newLiberties = getArrayFromNeighbor(libertiesObject);

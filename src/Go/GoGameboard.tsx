@@ -38,7 +38,9 @@ import { Player } from "@player";
 
 // Not started:
 
-// TODO: Eye and territory calculation : detect end of game
+// TODO: percent css
+
+// TODO: fix handicap stones
 
 // TODO: reset button on end game screen, see ` AscensionModal `
 
@@ -253,7 +255,7 @@ export function GoGameboard(): React.ReactElement {
           Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
         </Typography>
         <Box className={classes.inlineFlexBox}>
-          <Button onClick={() => resetState()}>Reset</Button>
+          <Button onClick={() => resetState(boardSize)}>Reset</Button>
           <Button onClick={passTurn}>Pass Turn</Button>
         </Box>
         <div className={classes.opponentLabel}>

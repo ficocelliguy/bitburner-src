@@ -1,7 +1,5 @@
 /** All netscript definitions */
 
-import { Play } from "../Go/utils/goConstants";
-
 /** @public */
 interface HP {
   current: number;
@@ -4299,11 +4297,6 @@ interface GangFormulas {
    * @returns The calculated ascension mult.
    */
   ascensionMultiplier(points: number): number;
-}
-
-/** @public */
-export interface Go {
-  makeMove(x: string | number, y: number): Promise<Play>;
 }
 
 /**

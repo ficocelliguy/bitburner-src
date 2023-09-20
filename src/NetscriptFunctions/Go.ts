@@ -1,31 +1,15 @@
-import { InternalAPI } from "../Netscript/APIWrapper";
-import { Go } from "@nsdefs";
+import { NetscriptContext } from "../Netscript/APIWrapper";
+import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
 import { evaluateIfMoveIsValid, getStateCopy, makeMove } from "../Go/utils/boardState";
 import { columnIndexes, Play, playerColors, validityReason } from "../Go/utils/goConstants";
-import { helpers } from "../Netscript/NetscriptHelpers";
 import { getMove } from "../Go/utils/goAI";
 
-export function NetscriptGo(): InternalAPI<Go> {
+export function NetscriptGo() {
   return {
-    // TODO: determine how to clean up this type signature and avoid the following clutter:
-    // APIWrapper.ts(8, 36): The expected type comes from the return type of this signature.
-
-    // makeMove: (ctx) => async (x: number | string, y: number): Promise<Play>  => {
-
     makeMove:
-      (ctx) =>
-      async (...args): Promise<Play> => {
-        // Begin make-typescript-happy bullshittery
-        const x = args[0];
-        const y = args[1];
-
-        if ((typeof x !== "string" && typeof x !== "number") || typeof y !== "number") {
-          await sleep(500);
-          throw helpers.makeRuntimeErrorMsg(ctx, `Invalid move data: ${x}, ${y}`);
-        }
-        // end typescript bullshittery
-
+      (ctx: NetscriptContext) =>
+      async (x: number | string, y: number): Promise<Play> => {
         const xIndex = typeof x === "string" ? columnIndexes.indexOf(x.toUpperCase()) : +x;
         const yIndex = typeof x === "string" ? y + 1 : y;
 
@@ -48,6 +32,7 @@ export function NetscriptGo(): InternalAPI<Go> {
         const aiMoveResult = new Promise<Play>((res) => (resolve = res));
         const playerUpdatedBoard = getStateCopy(result);
 
+        // TODO: split out AI move logic
         getMove(playerUpdatedBoard, playerColors.white, Player.goBoard.ai).then(async (result) => {
           if (!result) {
             playerUpdatedBoard.previousPlayer = playerColors.white;
@@ -75,6 +60,11 @@ export function NetscriptGo(): InternalAPI<Go> {
 
         return aiMoveResult;
       },
+    passTurn: () => async (): Promise<Play> => {
+      // TODO
+      await sleep(200);
+      return Promise.resolve({ x: 0, y: 0 });
+    },
   };
 }
 
