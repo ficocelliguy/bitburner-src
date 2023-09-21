@@ -6,11 +6,16 @@ export const pointStyle = makeStyles((theme: Theme) =>
   createStyles({
     point: {
       position: "relative",
+      height: "100%",
+      width: "100%",
+
       "&:hover $innerPoint": {
-        borderColor: theme.colors.white,
+        outlineColor: theme.colors.white,
       },
     },
     traditional: {
+      top: "-45%",
+
       "& $innerPoint": {
         display: "none",
       },
@@ -27,7 +32,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
       "& $eastLiberty, & $westLiberty": {
         height: "1px",
       },
-      "& $thirteenByThirteen": {
+      "&$thirteenByThirteen": {
         "& $blackPoint": {
           "&:before": {
             backgroundImage:
@@ -44,16 +49,14 @@ export const pointStyle = makeStyles((theme: Theme) =>
         },
       },
     },
-    fiveByFive: {
-      "&$point": {
-        padding: "50px",
-      },
-    },
+    fiveByFive: {},
+    sevenBySeven: {},
+    nineByNine: {},
+    thirteenByThirteen: {},
     tradStone: {
       display: "none",
       borderRadius: "50%",
-      width: 0,
-      height: 0,
+      margin: 0,
 
       "&:before": {
         zIndex: 2,
@@ -80,11 +83,8 @@ export const pointStyle = makeStyles((theme: Theme) =>
       },
 
       "&$blackPoint": {
-        width: 0,
-        height: 0,
-        padding: "11px",
         position: "static",
-        margin: "3px",
+        outlineWidth: 0,
 
         "&:before": {
           backgroundColor: "black",
@@ -93,7 +93,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
         },
       },
       "&$whitePoint": {
-        margin: "4px",
+        backgroundColor: "transparent",
 
         "&:before": {
           backgroundColor: "hsla(0, 0%, 90%, 1)",
@@ -103,70 +103,58 @@ export const pointStyle = makeStyles((theme: Theme) =>
       },
       "&$emptyPoint": {
         backgroundColor: "transparent",
-      },
-    },
-    sevenBySeven: {
-      "&$point": {
-        padding: "30px",
-      },
-    },
-    nineByNine: {
-      "&$point": {
-        padding: "20px",
-      },
-    },
-    thirteenByThirteen: {
-      "&$point": {
-        padding: "7px",
+        "&:before": {
+          display: "none",
+        },
+        "&:after": {
+          display: "none",
+        },
       },
     },
     innerPoint: {
-      borderStyle: "solid",
-      borderWidth: "1px",
+      outlineStyle: "solid",
+      outlineWidth: "1px",
+      outlineColor: "transparent",
       borderRadius: "50%",
-      borderColor: "transparent",
-      padding: "5px",
+      width: "25%",
+      height: "25%",
+      margin: "37.8%",
+      position: "absolute",
     },
     emptyPoint: {
-      width: "4px",
-      height: "4px",
-      margin: "13px",
+      width: "10%",
+      height: "10%",
+      margin: "45%",
       backgroundColor: theme.colors.white,
       position: "relative",
     },
     filledPoint: {
-      margin: "2px",
-      borderColor: theme.colors.white,
-      borderStyle: "solid",
-      borderWidth: "2px",
-      borderRadius: "12px",
+      outlineStyle: "solid",
+      outlineWidth: "1px",
+      borderRadius: "50%",
       position: "relative",
     },
     whitePoint: {
-      width: "0",
-      height: "0",
-      padding: "11px",
+      width: "70%",
+      height: "70%",
+      margin: "15%",
       backgroundColor: theme.colors.white,
     },
     blackPoint: {
-      width: "24px",
-      height: "24px",
-      margin: "2px",
+      width: "70%",
+      height: "70%",
+      margin: "15%",
       backgroundColor: theme.colors.black,
-      borderColor: theme.colors.white,
-      borderStyle: "solid",
-      borderWidth: "1px",
-      borderRadius: "12px",
-      position: "relative",
+      outlineColor: theme.colors.white,
     },
     liberty: {
       position: "absolute",
       transition: "all 0.5s ease-out",
       backgroundColor: "transparent",
-      width: "2px",
-      height: "2px",
-      top: "50%",
-      left: "50%",
+      width: "2%",
+      height: "2%",
+      top: "49%",
+      left: "49%",
     },
     libertyWhite: {
       backgroundColor: theme.colors.cha,
@@ -175,28 +163,28 @@ export const pointStyle = makeStyles((theme: Theme) =>
       backgroundColor: theme.colors.success,
     },
     northLiberty: {
-      width: "2px",
+      width: "2%",
       height: "50%",
-      top: 0,
-      left: "50%",
+      top: "-1px",
+      left: "49%",
     },
     southLiberty: {
-      width: "2px",
+      width: "2%",
       height: "50%",
-      top: "50%",
-      left: "50%",
+      top: "51%",
+      left: "49%",
     },
     eastLiberty: {
       width: "50%",
-      height: "2px",
-      top: "50%",
-      left: "50%",
+      height: "2%",
+      top: "49%",
+      left: "49%",
     },
     westLiberty: {
       width: "50%",
-      height: "2px",
-      top: "50%",
-      left: 0,
+      height: "2%",
+      top: "49%",
+      left: "-1px",
     },
   }),
 );
@@ -204,9 +192,11 @@ export const pointStyle = makeStyles((theme: Theme) =>
 export const boardStyles = makeStyles((theme: Theme) =>
   createStyles({
     board: {
-      margin: "auto",
-      minWidth: "740px",
+      margin: "10px",
+      width: "calc(min(800px, 95vw - 250px))",
+      height: "calc(min(800px, 95vw - 250px))",
       padding: "30px",
+      position: "relative",
     },
     traditional: {
       backgroundColor: "#ca973e",
@@ -227,6 +217,34 @@ export const boardStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       whiteSpace: "pre",
       padding: "10px",
+    },
+    fiveByFive: {
+      height: "20%",
+      "& $fiveByFive": {
+        width: "20%",
+        height: "100%",
+      },
+    },
+    sevenBySeven: {
+      height: "14%",
+      "& sevenBySeven": {
+        width: "14%",
+        height: "100%",
+      },
+    },
+    nineByNine: {
+      height: "11%",
+      "& nineByNine": {
+        width: "11%",
+        height: "100%",
+      },
+    },
+    thirteenByThirteen: {
+      height: "7.5%",
+      "& thirteenByThirteen": {
+        width: "7.5%",
+        height: "100%",
+      },
     },
     background: {
       position: "absolute",

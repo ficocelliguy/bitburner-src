@@ -34,22 +34,20 @@ export function GoPoint(props: { state: BoardState; x: number; y: number; tradit
   const sizeClass = getSizeClass(props.state.board[0].length, classes);
 
   return (
-    <div className={`${props.traditional ? classes.traditional : ""}`}>
-      <div className={`${classes.point} ${sizeClass}`} title={player}>
-        <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
-        <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
-        <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
-        <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
-        <div className={classes.innerPoint}>
-          <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
-        </div>
-        <div className={`${pointClass} ${classes.tradStone}`} />
+    <div className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""}`} title={player}>
+      <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
+      <div className={classes.innerPoint}>
+        <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
       </div>
+      <div className={`${pointClass} ${classes.tradStone}`} />
     </div>
   );
 }
 
-function getSizeClass(
+export function getSizeClass(
   size: number,
   classes: ClassNameMap<"fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen">,
 ) {

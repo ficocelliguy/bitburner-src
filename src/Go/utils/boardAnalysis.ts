@@ -1,4 +1,4 @@
-import { BoardState, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "./goConstants";
+import { Board, BoardState, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "./goConstants";
 import {
   findAdjacentPointsInChain,
   findNeighbors,
@@ -187,4 +187,37 @@ export function findAdjacentLibertiesAndAlliesForPoint(boardState: BoardState, x
     south: adjacentLiberties.south || neighbors.south?.player === player ? neighbors.south : null,
     west: adjacentLiberties.west || neighbors.west?.player === player ? neighbors.west : null,
   };
+}
+
+/**
+ * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
+ *
+ * For example, a 5x5 board might look like this:
+ * ```
+ * [
+ *   "XX.O.",
+ *   "X..OO",
+ *   ".XO..",
+ *   "XXO..",
+ *   ".XOO.",
+ * ]
+ * ```
+ *
+ * Each string represents a vertical column on the board, and each character in the string represents a point.
+ *
+ * Traditional notation for Go is e.g. "B,1" referring to second ("B") column, first rank. This is the equivalent of index [1][0].
+ *
+ * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
+ * string represents a vertical column on the board. In other words, the visual above can be understood to be rotated
+ * 90 degrees clockwise compared to the board UI.
+ *
+ */
+export function getSimplifiedBoardState(board: Board): string[] {
+  return board.map((column) =>
+    column.reduce((str, point) => {
+      const currentPointState =
+        point.player === playerColors.black ? "X" : point.player === playerColors.white ? "O" : ".";
+      return str + currentPointState;
+    }, ""),
+  );
 }

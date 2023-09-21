@@ -5,7 +5,7 @@ import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { Help } from "@mui/icons-material";
 
-import { GoPoint } from "./GoPoint";
+import { getSizeClass, GoPoint } from "./GoPoint";
 import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./utils/goConstants";
 import { applyHandicap, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
 import { getKomi, getMove } from "./utils/goAI";
@@ -31,6 +31,10 @@ import { GoScoreModal } from "./GoScoreModal";
 // Not started:
 
 // TODO: percent css
+
+// TODO: Show coordinates on hover
+
+// TODO: Label ranks and columns
 
 // TODO: reset button on end game screen, see ` AscensionModal `
 
@@ -63,7 +67,7 @@ export function GoGameboard(): React.ReactElement {
   const [turn, setTurn] = useState(currentTurn);
   const [traditional, setTraditional] = useState(false);
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
-  const [boardSize, setBoardSize] = useState(boardSizes[1]);
+  const [boardSize, setBoardSize] = useState(Player.goBoard.board[0].length);
   const [infoOpen, setInfoOpen] = useState(false);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState, getKomi(opponent)));
@@ -161,6 +165,7 @@ export function GoGameboard(): React.ReactElement {
   }
 
   function resetState(newBoardSize = boardSize, newOpponent = opponent) {
+    setScoreOpen(false);
     updateBoard(getNewBoardState(newBoardSize));
 
     if (newOpponent === opponents.Illuminati) {
@@ -178,6 +183,7 @@ export function GoGameboard(): React.ReactElement {
   function endGame() {
     const finalScore = getScore(boardState, getKomi(opponent));
     setScore(finalScore);
+    setScoreOpen(true);
     rerender();
   }
 
@@ -225,15 +231,26 @@ export function GoGameboard(): React.ReactElement {
           </Button>
         </Box>
         <Grid container id="goGameboard" className={`${classes.board} ${traditional ? classes.traditional : ""}`}>
-          {boardState.board.map((row, x) => (
-            <Grid container key={`row_${x}`} item>
-              {row.map((point, y: number) => (
-                <Grid item key={`point_${x}_${y}`} onClick={() => clickHandler(x, y)}>
-                  <GoPoint state={boardState} x={x} y={y} traditional={traditional} />
-                </Grid>
-              ))}
-            </Grid>
-          ))}
+          {boardState.board.map((row, y) => {
+            const yIndex = boardState.board[0].length - y - 1;
+            return (
+              <Grid container key={`column_${yIndex}`} item className={getSizeClass(boardSize, classes)}>
+                {row.map((point, x: number) => {
+                  const xIndex = x;
+                  return (
+                    <Grid
+                      item
+                      key={`point_${xIndex}_${yIndex}`}
+                      onClick={() => clickHandler(xIndex, yIndex)}
+                      className={getSizeClass(boardSize, classes)}
+                    >
+                      <GoPoint state={boardState} x={xIndex} y={yIndex} traditional={traditional} />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            );
+          })}
         </Grid>
         <Typography className={classes.scoreBox}>
           Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}

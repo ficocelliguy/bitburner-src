@@ -201,10 +201,10 @@ export function mergeNewItems(arr: PointState[], arr2: PointState[]) {
 export function findNeighbors(boardState: BoardState, x: number, y: number): Neighbor {
   const board = boardState.board;
   return {
-    north: board[x - 1]?.[y],
-    east: board[x][y + 1],
-    south: board[x + 1]?.[y],
-    west: board[x][y - 1],
+    north: board[x]?.[y + 1],
+    east: board[x + 1]?.[y],
+    south: board[x]?.[y - 1],
+    west: board[x - 1]?.[y],
   };
 }
 

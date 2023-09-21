@@ -26,15 +26,21 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
         <Typography>
           Black:
           <br />
-          Territory: {blackScore.territory}, Pieces: {blackScore.pieces} <br />
-          Final score: {blackScore.sum} <br />
+          Territory: {blackScore.territory}, Pieces: {blackScore.pieces}
+          <br />
+          Final score: {blackScore.sum}
+          <br />
           <br />
           White:
           <br />
-          Territory: {whiteScore.territory}, Pieces: {whiteScore.pieces}, Komi: {whiteScore.komi} <br />
-          Final score: {whiteScore.sum} <br />
+          Territory: {whiteScore.territory}, Pieces: {whiteScore.pieces}, Komi: {whiteScore.komi}
+          <br />
+          Final score: {whiteScore.sum}
+          <br />
           <br />
           {blackScore.sum > whiteScore.sum ? "You win!" : `Winner: ${opponentString}`}
+          <br />
+          <br />
         </Typography>
         <Button onClick={reset}>Reset</Button>
       </>

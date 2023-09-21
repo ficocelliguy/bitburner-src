@@ -2,9 +2,41 @@ import { NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
 import { getStateCopy, makeMove } from "../Go/utils/boardState";
-import { columnIndexes, Play, playerColors, validityReason } from "../Go/utils/goConstants";
+import { BoardState, columnIndexes, Play, playerColors, validityReason } from "../Go/utils/goConstants";
 import { getMove } from "../Go/utils/goAI";
-import { evaluateIfMoveIsValid } from "../Go/utils/boardAnalysis";
+import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/utils/boardAnalysis";
+
+async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditionalNotation: boolean): Promise<Play> {
+  let resolve: (value: Play) => void;
+  const aiMoveResult = new Promise<Play>((res) => (resolve = res));
+
+  // TODO: split out AI move logic
+  getMove(boardState, playerColors.white, Player.goBoard.ai).then(async (result) => {
+    if (!result) {
+      boardState.previousPlayer = playerColors.white;
+      Player.goBoard = boardState;
+      // TODO: handle game ending
+      await sleep(500);
+      return;
+    }
+
+    const aiUpdateBoard = makeMove(boardState, result.x, result.y, playerColors.white);
+    if (!aiUpdateBoard) {
+      boardState.previousPlayer = playerColors.white;
+      Player.goBoard = boardState;
+    } else {
+      Player.goBoard = aiUpdateBoard;
+      helpers.log(ctx, () => `Opponent played move: ${result.x}, ${result.y}`);
+    }
+
+    const xResultIndex = traditionalNotation ? columnIndexes[result.x] : result.x;
+    const yResultIndex = traditionalNotation ? result.y + 1 : result.y;
+
+    await sleep(200);
+    resolve({ x: xResultIndex, y: yResultIndex });
+  });
+  return aiMoveResult;
+}
 
 export function NetscriptGo() {
   return {
@@ -29,42 +61,17 @@ export function NetscriptGo() {
 
         helpers.log(ctx, () => `Go move played: ${x}, ${y}`);
 
-        let resolve: (value: Play) => void;
-        const aiMoveResult = new Promise<Play>((res) => (resolve = res));
         const playerUpdatedBoard = getStateCopy(result);
-
-        // TODO: split out AI move logic
-        getMove(playerUpdatedBoard, playerColors.white, Player.goBoard.ai).then(async (result) => {
-          if (!result) {
-            playerUpdatedBoard.previousPlayer = playerColors.white;
-            Player.goBoard = playerUpdatedBoard;
-            // TODO: handle game ending
-            await sleep(500);
-            return;
-          }
-
-          const aiUpdateBoard = makeMove(playerUpdatedBoard, result.x, result.y, playerColors.white);
-          if (!aiUpdateBoard) {
-            playerUpdatedBoard.previousPlayer = playerColors.white;
-            Player.goBoard = playerUpdatedBoard;
-          } else {
-            Player.goBoard = aiUpdateBoard;
-            helpers.log(ctx, () => `Opponent played move: ${result.x}, ${result.y}`);
-          }
-
-          const xResultIndex = typeof x === "string" ? columnIndexes[result.x] : result.x;
-          const yResultIndex = typeof x === "string" ? y + 1 : y;
-
-          await sleep(200);
-          resolve({ x: xResultIndex, y: yResultIndex });
-        });
-
-        return aiMoveResult;
+        return getAIMove(ctx, playerUpdatedBoard, typeof x === "string");
       },
-    passTurn: () => async (): Promise<Play> => {
-      // TODO
-      await sleep(200);
-      return Promise.resolve({ x: 0, y: 0 });
+    passTurn:
+      (ctx: NetscriptContext) =>
+      async (useTraditionalNotation = false): Promise<Play> => {
+        Player.goBoard.previousPlayer = playerColors.black;
+        return getAIMove(ctx, Player.goBoard, useTraditionalNotation);
+      },
+    getBoardState: () => () => {
+      return getSimplifiedBoardState(Player.goBoard.board);
     },
   };
 }
