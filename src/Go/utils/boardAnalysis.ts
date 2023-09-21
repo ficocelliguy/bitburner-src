@@ -68,8 +68,7 @@ export function findAllEyes(boardState: BoardState) {
 // Once all points are either stones or claimed territory in this way, the game is over
 export function findClaimedTerritory(boardState: BoardState) {
   const eyes = findAllEyes(boardState);
-  const claimedPoints = eyes
-    .filter((eyesForChainN) => eyesForChainN.length >= 2);
+  const claimedPoints = eyes.filter((eyesForChainN) => eyesForChainN.length >= 2);
   return claimedPoints.flat().flat();
 }
 

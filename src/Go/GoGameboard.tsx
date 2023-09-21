@@ -12,12 +12,12 @@ import { getKomi, getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
 import { getScore, logBoard } from "./utils/scoring";
 import { useRerender } from "../ui/React/hooks";
-import { dialogBoxCreate } from "../ui/React/DialogBox";
 import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
 import { GoInfoModal } from "./GoInfoModal";
 import { Player } from "@player";
 import { evaluateIfMoveIsValid } from "./utils/boardAnalysis";
+import { GoScoreModal } from "./GoScoreModal";
 
 // In progress:
 // TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
@@ -27,8 +27,6 @@ import { evaluateIfMoveIsValid } from "./utils/boardAnalysis";
 // TODO: Encode go state in player object
 
 // TODO: API
-
-//TODO: Update screen on player object changing
 
 // Not started:
 
@@ -67,6 +65,7 @@ export function GoGameboard(): React.ReactElement {
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
   const [boardSize, setBoardSize] = useState(boardSizes[1]);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [scoreOpen, setScoreOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState, getKomi(opponent)));
 
   const classes = boardStyles();
@@ -149,10 +148,7 @@ export function GoGameboard(): React.ReactElement {
     setOpponent(event.target.value as opponents);
     setScore(getScore(boardState, getKomi(newOpponent)));
 
-    resetState();
-    if (newOpponent === opponents.Illuminati) {
-      updateBoard(applyHandicap(boardSize, 4));
-    }
+    resetState(boardSize, newOpponent);
   }
 
   function changeBoardSize(event: SelectChangeEvent) {
@@ -164,8 +160,12 @@ export function GoGameboard(): React.ReactElement {
     resetState(newSize);
   }
 
-  function resetState(newBoardSize = boardSize) {
+  function resetState(newBoardSize = boardSize, newOpponent = opponent) {
     updateBoard(getNewBoardState(newBoardSize));
+
+    if (newOpponent === opponents.Illuminati) {
+      updateBoard(applyHandicap(boardSize, 4));
+    }
   }
 
   function updateBoard(newBoardState: BoardState, turn = 0) {
@@ -179,27 +179,19 @@ export function GoGameboard(): React.ReactElement {
     const finalScore = getScore(boardState, getKomi(opponent));
     setScore(finalScore);
     rerender();
-
-    const blackScore = finalScore[playerColors.black];
-    const whiteScore = finalScore[playerColors.white];
-    dialogBoxCreate(
-      "Game complete! \n\n" +
-        `Black:\n` +
-        `  Territory: ${blackScore.territory},  Pieces: ${blackScore.pieces}  \n` +
-        `     Final score: ${blackScore.sum}  \n\n` +
-        `White:\n` +
-        `  Territory: ${whiteScore.territory},  Pieces: ${whiteScore.pieces},  Komi: ${whiteScore.komi}  \n` +
-        `    Final score: ${whiteScore.sum}  \n\n` +
-        `       ${
-          blackScore.sum > whiteScore.sum ? "You win!" : `Winner: ${opponent.slice(0, opponent.indexOf("("))}`
-        } \n\n`,
-    );
   }
 
   return (
     <>
       <div>
         <GoInfoModal open={infoOpen} onClose={() => setInfoOpen(false)} />
+        <GoScoreModal
+          open={scoreOpen}
+          onClose={() => setScoreOpen(false)}
+          reset={() => resetState()}
+          finalScore={score}
+          opponent={opponent}
+        ></GoScoreModal>
         {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
         <Box className={classes.inlineFlexBox}>
           <Typography className={classes.opponentLabel}>Opponent:</Typography>
