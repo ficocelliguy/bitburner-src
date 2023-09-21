@@ -28,15 +28,14 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: API
 
-// Not started:
-
 // TODO: percent css
+
+
+// Not started:
 
 // TODO: Show coordinates on hover
 
 // TODO: Label ranks and columns
-
-// TODO: reset button on end game screen, see ` AscensionModal `
 
 // TODO: better shine and glow to tron theme stones
 
