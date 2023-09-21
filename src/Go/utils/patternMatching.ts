@@ -1,6 +1,6 @@
 // Inspired by https://github.com/pasky/michi/blob/master/michi.py
 export const threeByThreePatterns = [
-  // 3x3 playout patterns; X,O are colors, x,o are either the color or empty
+  // 3x3 playout patterns; X,O are colors; x,o are either the color or empty; "?" is any state (even off the board)
   [
     "XOX", // hane pattern - enclosing hane
     "...",

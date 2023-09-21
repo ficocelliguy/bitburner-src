@@ -11,6 +11,17 @@ import {
 import { findNeighbors, floor, getEmptySpaces, getStateCopy, isDefined, isNotNull, makeMove } from "./boardState";
 import { evaluateIfMoveIsValid, findChainLibertiesForPoint, findClaimedTerritory, getAllChains } from "./boardAnalysis";
 
+
+/*
+  Basic GO AIs, each with some personality and weaknesses
+
+  The basic logic is pulled from https://archive.org/details/byte-magazine-1981-04/page/n101/mode/2up?view=theater
+
+  In addition, knowledge of claimed territory and eyes has been added, to aid in narrowing down spaces to play on
+
+ */
+
+
 export async function getMove(
   boardState: BoardState,
   player: PlayerColor,
