@@ -208,8 +208,8 @@ export function findAdjacentLibertiesAndAlliesForPoint(boardState: BoardState, x
  * Traditional notation for Go is e.g. "B,1" referring to second ("B") column, first rank. This is the equivalent of index [1][0].
  *
  * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
- * string represents a vertical column on the board. In other words, the visual above can be understood to be rotated
- * 90 degrees clockwise compared to the board UI.
+ * string represents a vertical column on the board. In other words, the printed example above can be understood to
+ * be rotated 90 degrees clockwise compared to the board UI.
  *
  */
 export function getSimplifiedBoardState(board: Board): string[] {

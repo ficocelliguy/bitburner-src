@@ -14,7 +14,6 @@ export const pointStyle = makeStyles((theme: Theme) =>
       },
     },
     traditional: {
-      top: "-45%",
 
       "& $innerPoint": {
         display: "none",
@@ -25,6 +24,10 @@ export const pointStyle = makeStyles((theme: Theme) =>
       "& $liberty": {
         backgroundColor: "black",
         transition: "none",
+        "&:not($northLiberty):not($southLiberty):not($eastLiberty):not($westLiberty)": {
+          width: 0,
+          height: 0,
+        }
       },
       "& $northLiberty, & $southLiberty": {
         width: "1px",
@@ -36,15 +39,41 @@ export const pointStyle = makeStyles((theme: Theme) =>
         "& $blackPoint": {
           "&:before": {
             backgroundImage:
-              "linear-gradient(145deg, transparent, black 65%), radial-gradient(38px at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+              "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(40px, 6vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
           },
         },
         "& $whitePoint": {
-          margin: "3px",
-
           "&:before": {
             backgroundImage:
-              "linear-gradient(145deg, transparent, white 65%), radial-gradient(38px at 42% 38%, white 0%, white 35%, transparent 36%)",
+              "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(40px, 6vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+          },
+        },
+      },
+      "&$nineByNine": {
+        "& $blackPoint": {
+          "&:before": {
+            backgroundImage:
+              "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(60px, 7vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+          },
+        },
+        "& $whitePoint": {
+          "&:before": {
+            backgroundImage:
+              "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(60px, 7vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+          },
+        },
+      },
+      "&$sevenBySeven": {
+        "& $blackPoint": {
+          "&:before": {
+            backgroundImage:
+              "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(80px, 8vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+          },
+        },
+        "& $whitePoint": {
+          "&:before": {
+            backgroundImage:
+              "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(80px, 8vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
           },
         },
       },
@@ -85,24 +114,34 @@ export const pointStyle = makeStyles((theme: Theme) =>
       "&$blackPoint": {
         position: "static",
         outlineWidth: 0,
+        width: 0,
+        height: 0,
+        margin: 0,
 
         "&:before": {
           backgroundColor: "black",
           backgroundImage:
-            "linear-gradient(145deg, transparent, black 65%), radial-gradient(70px at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+            "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(150px, 11vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
         },
       },
       "&$whitePoint": {
         backgroundColor: "transparent",
+        width: 0,
+        height: 0,
+        margin: 0,
 
         "&:before": {
           backgroundColor: "hsla(0, 0%, 90%, 1)",
           backgroundImage:
-            "linear-gradient(145deg, transparent, white 65%), radial-gradient(70px at 42% 38%, white 0%, white 35%, transparent 36%)",
+            "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(150px, 11vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
         },
       },
       "&$emptyPoint": {
+        width: 0,
+        height: 0,
+        margin: 0,
         backgroundColor: "transparent",
+
         "&:before": {
           display: "none",
         },
@@ -153,8 +192,8 @@ export const pointStyle = makeStyles((theme: Theme) =>
       backgroundColor: "transparent",
       width: "2%",
       height: "2%",
-      top: "49%",
-      left: "49%",
+      top: "50%",
+      left: "50%",
     },
     libertyWhite: {
       backgroundColor: theme.colors.cha,
@@ -164,27 +203,27 @@ export const pointStyle = makeStyles((theme: Theme) =>
     },
     northLiberty: {
       width: "2%",
-      height: "50%",
-      top: "-1px",
-      left: "49%",
+      height: "54%",
+      top: "-3%",
+      left: "50%",
     },
     southLiberty: {
       width: "2%",
       height: "50%",
-      top: "51%",
-      left: "49%",
+      top: "50%",
+      left: "50%",
     },
     eastLiberty: {
       width: "50%",
       height: "2%",
-      top: "49%",
-      left: "49%",
+      top: "50%",
+      left: "50%",
     },
     westLiberty: {
       width: "50%",
       height: "2%",
-      top: "49%",
-      left: "-1px",
+      top: "50%",
+      left: "0",
     },
   }),
 );
@@ -227,21 +266,21 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     sevenBySeven: {
       height: "14%",
-      "& sevenBySeven": {
+      "& $sevenBySeven": {
         width: "14%",
         height: "100%",
       },
     },
     nineByNine: {
       height: "11%",
-      "& nineByNine": {
+      "& $nineByNine": {
         width: "11%",
         height: "100%",
       },
     },
     thirteenByThirteen: {
       height: "7.5%",
-      "& thirteenByThirteen": {
+      "& $thirteenByThirteen": {
         width: "7.5%",
         height: "100%",
       },
