@@ -42,7 +42,7 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
 // Find all empty point groups where all of its surrounding player points are in the same continuous chain
 export function findAllEyes(boardState: BoardState) {
   const emptyPointChains = getAllChains(boardState).filter((chain) => chain[0].player === playerColors.empty);
-  const eyes: PointState[][][] = new Array(boardState.board[0].length).fill([]);
+  const eyes: PointState[][][] = new Array(boardState.board[0].length ** 2).fill([]);
 
   emptyPointChains
     .filter((chain) => chain.length < 9)

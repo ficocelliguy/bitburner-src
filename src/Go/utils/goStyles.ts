@@ -12,6 +12,9 @@ export const pointStyle = makeStyles((theme: Theme) =>
       "&:hover $innerPoint": {
         outlineColor: theme.colors.white,
       },
+      "&:hover $coordinates": {
+        display: "block",
+      },
     },
     traditional: {
 
@@ -30,10 +33,10 @@ export const pointStyle = makeStyles((theme: Theme) =>
         }
       },
       "& $northLiberty, & $southLiberty": {
-        width: "1px",
+        width: "0.9px",
       },
       "& $eastLiberty, & $westLiberty": {
-        height: "1px",
+        height: "0.9px",
       },
       "&$thirteenByThirteen": {
         "& $blackPoint": {
@@ -48,6 +51,9 @@ export const pointStyle = makeStyles((theme: Theme) =>
               "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(40px, 6vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
           },
         },
+        "& $coordinates": {
+          fontSize: "0.9vw",
+        }
       },
       "&$nineByNine": {
         "& $blackPoint": {
@@ -76,6 +82,13 @@ export const pointStyle = makeStyles((theme: Theme) =>
               "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(80px, 8vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
           },
         },
+      },
+      "& $coordinates": {
+        color: "black",
+        left: "15%",
+      },
+      "& $blackPoint ~ $coordinates": {
+        color: "white",
       },
     },
     fiveByFive: {},
@@ -225,6 +238,17 @@ export const pointStyle = makeStyles((theme: Theme) =>
       top: "50%",
       left: "0",
     },
+    coordinates: {
+      color: "white",
+      fontFamily: "monospace",
+      fontSize: "1.2vw",
+      display: "none",
+      position: "relative",
+      top: "20%",
+      left: "10%",
+      zIndex: "10",
+      userSelect: "none",
+    }
   }),
 );
 

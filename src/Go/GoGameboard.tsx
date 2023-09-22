@@ -33,6 +33,8 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // Not started:
 
+// TODO: eye calc update: ignore chains completely surrounded by an eye (or multiple eyes?)
+
 // TODO: Show coordinates on hover
 
 // TODO: Label ranks and columns

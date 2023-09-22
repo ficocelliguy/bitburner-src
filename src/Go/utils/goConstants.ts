@@ -75,4 +75,4 @@ export type goScore = {
   Black: { pieces: number; territory: number; komi: number; sum: number };
 };
 
-export const columnIndexes = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+export const columnIndexes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

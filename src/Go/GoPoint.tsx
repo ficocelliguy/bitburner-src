@@ -1,7 +1,7 @@
 import React from "react";
 import { ClassNameMap } from "@mui/styles";
 
-import { BoardState, playerColors } from "./utils/goConstants";
+import {BoardState, columnIndexes, playerColors} from "./utils/goConstants";
 import { findNeighbors } from "./utils/boardState";
 import { pointStyle } from "./utils/goStyles";
 import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardAnalysis";
@@ -43,6 +43,7 @@ export function GoPoint(props: { state: BoardState; x: number; y: number; tradit
         <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
       </div>
       <div className={`${pointClass} ${classes.tradStone}`} />
+      <div className={classes.coordinates}>{columnIndexes[props.x]}{props.traditional ? "" : "."}{props.y + 1}</div>
     </div>
   );
 }
