@@ -296,11 +296,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
     .map((point) => {
       const stateAfterMove = makeMove(getStateCopy(boardState), point.liberty.x, point.liberty.y, player);
       if (!stateAfterMove) {
-        return {
-          point: point.liberty,
-          oldLibertyCount: Number.MAX_SAFE_INTEGER,
-          newLibertyCount: Number.MAX_SAFE_INTEGER,
-        };
+        return null;
       }
 
       const newEnemyLibertyCount = findChainLibertiesForPoint(
@@ -310,11 +306,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
       ).length;
       const newMoveLibertyCount = findChainLibertiesForPoint(stateAfterMove, point.liberty.x, point.liberty.y).length;
       if (newEnemyLibertyCount > 0 && newMoveLibertyCount < 2) {
-        return {
-          point: point.liberty,
-          oldLibertyCount: Number.MAX_SAFE_INTEGER,
-          newLibertyCount: Number.MAX_SAFE_INTEGER,
-        };
+        return null;
       }
 
       return {
@@ -323,7 +315,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
         newLibertyCount: newEnemyLibertyCount,
       };
     })
-    .filter((option) => option.newLibertyCount < Number.MAX_SAFE_INTEGER);
+    .filter(isNotNull);
   if (!libertyDecreases.length) {
     return null;
   }
