@@ -30,9 +30,9 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // Not started:
 
-// TODO: Status tab
+// TODO: End game when both players pass, or when all territory is claimed
 
-// TODO: eye calc update: look for moves to create eyes, or to block opponent eye creation
+// TODO: Status tab
 
 // TODO: Label ranks and columns?
 

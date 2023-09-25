@@ -303,14 +303,13 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
         };
       }
 
-      // TODO: this count is wrong (usually returning 0). why?
       const newEnemyLibertyCount = findChainLibertiesForPoint(
         stateAfterMove,
         point.examplePoint.x,
         point.examplePoint.y,
       ).length;
       const newMoveLibertyCount = findChainLibertiesForPoint(stateAfterMove, point.liberty.x, point.liberty.y).length;
-      if (newEnemyLibertyCount > 0 && newMoveLibertyCount === 0) {
+      if (newEnemyLibertyCount > 0 && newMoveLibertyCount < 2) {
         return {
           point: point.liberty,
           oldLibertyCount: Number.MAX_SAFE_INTEGER,
