@@ -22,21 +22,19 @@ import { GoScoreModal } from "./GoScoreModal";
 // In progress:
 // TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
 
-// TODO: "How to Play" modal or page
+// TODO: "How to Play" tab
 
-// TODO: Encode go state in player object
+// TODO: Encode win streaks and history per faction in player object
 
-// TODO: API
-
-// TODO: percent css
+// TODO: API: chains? liberties?
 
 // Not started:
 
-// TODO: eye calc update: ignore chains completely surrounded by an eye (or multiple eyes?)
+// TODO: Status tab
 
-// TODO: Show coordinates on hover
+// TODO: eye calc update: look for moves to create eyes, or to block opponent eye creation
 
-// TODO: Label ranks and columns
+// TODO: Label ranks and columns?
 
 // TODO: better shine and glow to tron theme stones
 
@@ -48,7 +46,9 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: Win streaks? won node and subnet counts?
 
-// TODO: Minor grow boost as reward?
+// TODO: faux minor boost as reward? Grow, hacknet, rep?
+
+// TODO: harden against interrupts for AI plays?
 
 export function GoGameboard(): React.ReactElement {
   const rerender = useRerender(400);
