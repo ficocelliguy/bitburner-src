@@ -31,6 +31,8 @@ export type Board = PointState[][];
 export type MoveOptions = {
   capture: Move | null;
   defendCapture: Move | null;
+  eyeMove: EyeMove | null;
+  eyeBlock: EyeMove | null;
   growth: Move | null;
   expansion: Move | null;
   defend: Move | null;
@@ -38,9 +40,15 @@ export type MoveOptions = {
 };
 
 export type Move = {
-  point: PointState | null;
+  point: PointState;
   oldLibertyCount: number | null;
   newLibertyCount: number | null;
+};
+
+export type EyeMove = {
+  point: PointState;
+  oldEyes: number;
+  newEyes: number;
 };
 
 export type BoardState = {
