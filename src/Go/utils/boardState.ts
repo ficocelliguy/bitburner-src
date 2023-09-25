@@ -19,7 +19,7 @@ export function getNewBoardState(boardSize: number, ai = opponents.Daedalus): Bo
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
         player: playerColors.empty,
-        chain: null,
+        chain: -1,
         liberties: null,
         x,
         y,
@@ -71,7 +71,7 @@ export function updateChains(boardState: BoardState) {
     for (let y = 0; y < boardState.board[x].length; y++) {
       const point = boardState.board[x][y];
       // If the current point is already analyzed, skip it
-      if (point.chain !== null) {
+      if (point.chain !== -1) {
         continue;
       }
 
@@ -117,7 +117,7 @@ function captureChain(chain: PointState[]) {
 function clearChains(boardState: BoardState): BoardState {
   for (const x in boardState.board) {
     for (const y in boardState.board[x]) {
-      boardState.board[x][y].chain = null;
+      boardState.board[x][y].chain = -1;
       boardState.board[x][y].liberties = null;
     }
   }
@@ -192,10 +192,6 @@ export function getBoardCopy(boardState: BoardState) {
 
 function contains(arr: PointState[], point: PointState) {
   return !!arr.find((p) => p && p.x === point.x && p.y === point.y);
-}
-
-export function mergeNewItems(arr: PointState[], arr2: PointState[]) {
-  return arr.concat(arr2.filter((item) => item && !contains(arr, item)));
 }
 
 export function findNeighbors(boardState: BoardState, x: number, y: number): Neighbor {

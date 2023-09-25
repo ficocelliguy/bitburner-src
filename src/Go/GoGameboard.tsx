@@ -30,7 +30,6 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: percent css
 
-
 // Not started:
 
 // TODO: eye calc update: ignore chains completely surrounded by an eye (or multiple eyes?)

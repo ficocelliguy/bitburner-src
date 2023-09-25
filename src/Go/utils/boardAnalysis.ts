@@ -5,8 +5,9 @@ import {
   getArrayFromNeighbor,
   getBoardCopy,
   getStateCopy,
-  mergeNewItems,
+  isDefined,
   updateCaptures,
+  updateChains,
 } from "./boardState";
 
 export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
@@ -39,27 +40,112 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   return validityReason.valid;
 }
 
-// Find all empty point groups where all of its surrounding player points are in the same continuous chain
+/*
+  Find all empty point groups where either:
+  * all of its immediate surrounding player-controlled points are in the same continuous chain, or
+  * it is completely surrounded by some single larger chain and the edge of the board
+
+  Eyes are important because a chain of pieces cannot be captured if it contains two or more eyes within it.
+ */
 export function findAllEyes(boardState: BoardState) {
-  const emptyPointChains = getAllChains(boardState).filter((chain) => chain[0].player === playerColors.empty);
-  const eyes: PointState[][][] = new Array(boardState.board[0].length ** 2).fill([]);
+  const allChains = getAllChains(boardState);
+  const eyeCandidates = getAllPotentialEyes(boardState, allChains);
+  const eyes: PointState[][][] = Array.from(new Array(boardState.board[0].length ** 2), () => []);
+
+  eyeCandidates.forEach((neighborChainList, index) => {
+    const candidateChain = allChains[index];
+    if (neighborChainList.length === 0) {
+      return;
+    }
+
+    // If only one chain surrounds the empty space, it is a true eye
+    if (neighborChainList.length === 1) {
+      const neighborChainNumber = neighborChainList[0][0].chain;
+      eyes[neighborChainNumber].push(candidateChain);
+      return;
+    }
+
+    // If any chain fully encircles the empty space (even if there are other chains encircled as well), the eye is true
+    const neighborsEncirclingEye = findNeighboringChainsThatFullyEncircleEmptySpace(
+      boardState,
+      candidateChain,
+      neighborChainList,
+      allChains,
+    );
+    neighborsEncirclingEye.forEach((neighborChain) => {
+      const neighborChainNumber = neighborChain[0].chain;
+      eyes[neighborChainNumber].push(candidateChain);
+    });
+  });
+
+  return eyes;
+}
+
+/*
+  Find all empty spaces completely surrounded by a single player color.
+  For each player chain number, add any empty space chains that are completely surrounded by a single player's color to
+   an array at that chain number's index.
+ */
+function getAllPotentialEyes(boardState: BoardState, allChains: PointState[][]) {
+  const emptyPointChains = allChains.filter((chain) => chain[0].player === playerColors.empty);
+  const eyeCandidates: PointState[][][] = Array.from(new Array(boardState.board[0].length ** 2), () => []);
 
   emptyPointChains
     .filter((chain) => chain.length < 9)
     .forEach((chain) => {
-      const playerNeighbors = getPlayerNeighbors(boardState, chain);
-      // If all of playerNeighbors is from one chain, `chain` is an eye for that player chain
-      const neighboringChains = playerNeighbors.reduce(
-        (neighborChains, neighbor) => neighborChains.add(neighbor.chain),
-        new Set(),
+      const neighboringChains = getAllNeighboringChains(boardState, chain, allChains);
+
+      const hasWhitePieceNeighbor = neighboringChains.find(
+        (neighborChain) => neighborChain[0]?.player === playerColors.white,
       );
-      if (neighboringChains.size === 1) {
-        const chainNumber = neighboringChains.values().next().value;
-        eyes[chainNumber].push(chain);
+      const hasBlackPieceNeighbor = neighboringChains.find(
+        (neighborChain) => neighborChain[0]?.player === playerColors.black,
+      );
+
+      // Record the neighbor chains of the eye candidate empty chain, if all of its neighbors are the same color piece
+      if ((hasWhitePieceNeighbor && !hasBlackPieceNeighbor) || (!hasWhitePieceNeighbor && hasBlackPieceNeighbor)) {
+        eyeCandidates[chain[0].chain] = neighboringChains;
       }
     });
 
-  return eyes;
+  return eyeCandidates;
+}
+
+/**
+ *  For each chain bordering an eye candidate:
+ *    remove all other neighboring chains. (replace with empty points)
+ *    check if the eye candidate is a simple true eye now
+ *       If so, the original candidate is a true eye.
+ */
+function findNeighboringChainsThatFullyEncircleEmptySpace(
+  boardState: BoardState,
+  candidateChain: PointState[],
+  neighborChainList: PointState[][],
+  allChains: PointState[][],
+) {
+  return neighborChainList.filter((neighborChain, index) => {
+    const evaluationBoard = getStateCopy(boardState);
+    const examplePoint = candidateChain[0];
+    const otherChainNeighborPoints = [...neighborChainList].splice(index, 1).flat();
+    otherChainNeighborPoints.forEach((point) => (evaluationBoard.board[point.x][point.y].player = playerColors.empty));
+    const updatedBoard = updateChains(evaluationBoard);
+    const newChains = getAllChains(updatedBoard);
+    const newChainNumber = updatedBoard.board[examplePoint.x][examplePoint.y].chain;
+    const newNeighborChains = getAllNeighboringChains(boardState, newChains[newChainNumber], allChains);
+
+    return newNeighborChains.length === 1;
+  });
+}
+
+function getAllNeighboringChains(boardState: BoardState, chain: PointState[], allChains: PointState[][]) {
+  const playerNeighbors = getPlayerNeighbors(boardState, chain);
+
+  const neighboringChains = playerNeighbors.reduce(
+    (neighborChains, neighbor) => neighborChains.add(allChains[neighbor.chain]),
+    new Set<PointState[]>(),
+  );
+
+  return [...neighboringChains];
 }
 
 // If a group of stones has more than one empty holes that it completely surrounds, it cannot be captured, because white can
@@ -73,12 +159,22 @@ export function findClaimedTerritory(boardState: BoardState) {
 }
 
 export function getPlayerNeighbors(boardState: BoardState, chain: PointState[]) {
-  return chain.reduce((chainNeighbors: PointState[], point: PointState) => {
-    const playerNeighbors = getArrayFromNeighbor(findNeighbors(boardState, point.x, point.y)).filter(
-      (neighbor) => neighbor && neighbor.player !== playerColors.empty,
-    );
-    return mergeNewItems(chainNeighbors, playerNeighbors);
-  }, []);
+  return getAllNeighbors(boardState, chain).filter((neighbor) => neighbor && neighbor.player !== playerColors.empty);
+}
+
+export function getAllNeighbors(boardState: BoardState, chain: PointState[]) {
+  const allNeighbors = chain.reduce((chainNeighbors: Set<PointState>, point: PointState) => {
+    getArrayFromNeighbor(findNeighbors(boardState, point.x, point.y))
+      .filter(isDefined)
+      .filter((neighborPoint) => !isPointInChain(neighborPoint, chain))
+      .forEach((neighborPoint) => chainNeighbors.add(neighborPoint));
+    return chainNeighbors;
+  }, new Set<PointState>());
+  return [...allNeighbors];
+}
+
+function isPointInChain(point: PointState, chain: PointState[]) {
+  return !!chain.find((chainPoint) => chainPoint.x === point.x && chainPoint.y === point.y);
 }
 
 function checkIfBoardStateIsRepeated(boardState: BoardState) {
@@ -102,7 +198,7 @@ export function getAllChains(boardState: BoardState): PointState[][] {
     for (let y = 0; y < boardState.board[x].length; y++) {
       const point = boardState.board[x][y];
       // If the current chain is already analyzed, skip it
-      if (point.chain === null || chains[point.chain]) {
+      if (point.chain === -1 || chains[point.chain]) {
         continue;
       }
 
@@ -131,13 +227,8 @@ function findCapturedChainOfColor(chainList: PointState[][], playerColor: Player
   return chainList.find((chain) => chain?.[0].player === playerColor && chain?.[0].liberties?.length === 0);
 }
 
-// TODO: does this need to be simplified?
 export function findLibertiesForChain(boardState: BoardState, chain: PointState[]): PointState[] {
-  return chain.reduce((liberties: PointState[], member: PointState) => {
-    const libertiesObject = findAdjacentLibertiesForPoint(boardState, member.x, member.y);
-    const newLiberties = getArrayFromNeighbor(libertiesObject);
-    return mergeNewItems(liberties, newLiberties);
-  }, []);
+  return getAllNeighbors(boardState, chain).filter((neighbor) => neighbor && neighbor.player === playerColors.empty);
 }
 
 export function findChainLibertiesForPoint(boardState: BoardState, x: number, y: number): PointState[] {

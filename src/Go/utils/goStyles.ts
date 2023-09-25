@@ -17,7 +17,6 @@ export const pointStyle = makeStyles((theme: Theme) =>
       },
     },
     traditional: {
-
       "& $innerPoint": {
         display: "none",
       },
@@ -30,7 +29,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
         "&:not($northLiberty):not($southLiberty):not($eastLiberty):not($westLiberty)": {
           width: 0,
           height: 0,
-        }
+        },
       },
       "& $northLiberty, & $southLiberty": {
         width: "0.9px",
@@ -53,7 +52,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
         },
         "& $coordinates": {
           fontSize: "0.9vw",
-        }
+        },
       },
       "&$nineByNine": {
         "& $blackPoint": {
@@ -248,7 +247,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
       left: "10%",
       zIndex: "10",
       userSelect: "none",
-    }
+    },
   }),
 );
 
