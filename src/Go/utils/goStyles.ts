@@ -167,9 +167,9 @@ export const pointStyle = makeStyles((theme: Theme) =>
       outlineWidth: "1px",
       outlineColor: "transparent",
       borderRadius: "50%",
-      width: "25%",
-      height: "25%",
-      margin: "37.8%",
+      width: "50%",
+      height: "50%",
+      margin: "25.8%",
       position: "absolute",
     },
     emptyPoint: {
@@ -190,6 +190,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
       height: "70%",
       margin: "15%",
       backgroundColor: theme.colors.white,
+      outlineStyle: "none",
     },
     blackPoint: {
       width: "70%",
@@ -255,8 +256,8 @@ export const boardStyles = makeStyles((theme: Theme) =>
   createStyles({
     board: {
       margin: "10px",
-      width: "calc(min(800px, 95vw - 250px))",
-      height: "calc(min(800px, 95vw - 250px))",
+      width: "calc(min(700px, 95vw - 250px))",
+      height: "calc(min(700px, 95vw - 250px))",
       padding: "30px",
       position: "relative",
     },
@@ -313,10 +314,11 @@ export const boardStyles = makeStyles((theme: Theme) =>
       opacity: 0.09,
       color: theme.colors.white,
       fontFamily: "monospace",
-      fontSize: "4.5px",
+      fontSize: "4.1px",
       whiteSpace: "pre",
       pointerEvents: "none",
       paddingTop: "20px",
+      paddingLeft: "15px",
     },
   }),
 );
