@@ -191,13 +191,17 @@ export const pointStyle = makeStyles((theme: Theme) =>
       margin: "15%",
       backgroundColor: theme.colors.white,
       outlineStyle: "none",
+      backgroundImage:
+        "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(20px, 3vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
     },
     blackPoint: {
       width: "70%",
       height: "70%",
       margin: "15%",
-      backgroundColor: theme.colors.black,
-      outlineColor: theme.colors.white,
+      backgroundColor: "black",
+      outlineColor: "white",
+      backgroundImage:
+        "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(20px, 3vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
     },
     liberty: {
       position: "absolute",
@@ -244,8 +248,8 @@ export const pointStyle = makeStyles((theme: Theme) =>
       fontSize: "1.2vw",
       display: "none",
       position: "relative",
-      top: "20%",
-      left: "10%",
+      top: "15%",
+      left: "8%",
       zIndex: "10",
       userSelect: "none",
     },

@@ -12,7 +12,6 @@ import {
 import {
   findNeighbors,
   floor,
-  getEmptySpaces,
   getStateCopy,
   isDefined,
   isNotNull,
@@ -22,9 +21,9 @@ import {
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,
-  findClaimedTerritory,
   getAllChains,
   getAllEyes,
+  getAllUnclaimedTerritory,
 } from "./boardAnalysis";
 import { findAnyMatchedPatterns } from "./patternMatching";
 
@@ -387,10 +386,7 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
 }
 
 async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
-  const claimedTerritory = findClaimedTerritory(boardState);
-  const availableSpaces = getEmptySpaces(boardState).filter(
-    (point) => !claimedTerritory.find((claimedPoint) => claimedPoint.x === point.x && claimedPoint.y === point.y),
-  );
+  const availableSpaces = getAllUnclaimedTerritory(boardState);
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
   await sleep(50);

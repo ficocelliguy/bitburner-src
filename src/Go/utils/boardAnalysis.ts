@@ -4,6 +4,7 @@ import {
   findNeighbors,
   getArrayFromNeighbor,
   getBoardCopy,
+  getEmptySpaces,
   getStateCopy,
   isDefined,
   updateCaptures,
@@ -38,6 +39,14 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   }
 
   return validityReason.valid;
+}
+
+export function getAllUnclaimedTerritory(boardState: BoardState) {
+  const claimedTerritory = findClaimedTerritory(boardState);
+  const emptySpaces = getEmptySpaces(boardState);
+  return emptySpaces.filter(
+    (point) => !claimedTerritory.find((claimedPoint) => claimedPoint.x === point.x && claimedPoint.y === point.y),
+  );
 }
 
 /*
@@ -126,7 +135,7 @@ function findNeighboringChainsThatFullyEncircleEmptySpace(
   return neighborChainList.filter((neighborChain, index) => {
     const evaluationBoard = getStateCopy(boardState);
     const examplePoint = candidateChain[0];
-    const otherChainNeighborPoints = [...neighborChainList].splice(index, 1).flat();
+    const otherChainNeighborPoints = removePointAtIndex(neighborChainList, index).flat();
     otherChainNeighborPoints.forEach((point) => (evaluationBoard.board[point.x][point.y].player = playerColors.empty));
     const updatedBoard = updateChains(evaluationBoard);
     const newChains = getAllChains(updatedBoard);
@@ -135,6 +144,12 @@ function findNeighboringChainsThatFullyEncircleEmptySpace(
 
     return newNeighborChains.length === 1;
   });
+}
+
+function removePointAtIndex(arr: PointState[][], index: number) {
+  const newArr = [...arr];
+  newArr.splice(index, 1);
+  return newArr;
 }
 
 function getAllNeighboringChains(boardState: BoardState, chain: PointState[], allChains: PointState[][]) {

@@ -16,11 +16,10 @@ import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
 import { GoInfoModal } from "./GoInfoModal";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid } from "./utils/boardAnalysis";
+import { evaluateIfMoveIsValid, getAllUnclaimedTerritory } from "./utils/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 
 // In progress:
-// TODO: traditional stone styling ( https://codepen.io/neagle/pen/NWRPgP )
 
 // TODO: "How to Play" tab
 
@@ -120,9 +119,14 @@ export function GoGameboard(): React.ReactElement {
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
-      initialState.previousPlayer = playerColors.white;
-      updateBoard(initialState, turn + 1);
-      endGame();
+      const openTerritory = getAllUnclaimedTerritory(Player.goBoard);
+      if (openTerritory.length === 0) {
+        endGame();
+      } else {
+        SnackbarEvents.emit(`The opponent passes their turn; It is now your turn to move.`, ToastVariant.WARNING, 4000);
+        initialState.previousPlayer = playerColors.white;
+        updateBoard(initialState, currentTurn + 1);
+      }
       return;
     }
 
@@ -137,6 +141,10 @@ export function GoGameboard(): React.ReactElement {
         setTimeout(() => {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           updateBoard(newBoard, currentTurn + 1);
+
+          if (getAllUnclaimedTerritory(Player.goBoard).length === 0) {
+            endGame();
+          }
         }, 100);
       }, 500);
     }
