@@ -10,7 +10,7 @@ import { boardSizes, BoardState, goScore, opponents, playerColors, validityReaso
 import { applyHandicap, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
 import { getKomi, getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
-import { getScore, logBoard } from "./utils/scoring";
+import { getScore } from "./utils/scoring";
 import { useRerender } from "../ui/React/hooks";
 import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./utils/goStyles";
@@ -26,7 +26,7 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: Encode win streaks and history per faction in player object
 
-// TODO: API: chains? liberties?
+// TODO: pattern matching: prevent one-liberty plays
 
 // Not started:
 
@@ -40,8 +40,6 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: Flavor text and page title
 
-// TODO: pattern matching
-
 // TODO: last stone played marker?
 
 // TODO: Win streaks? won node and subnet counts?
@@ -49,6 +47,8 @@ import { GoScoreModal } from "./GoScoreModal";
 // TODO: faux minor boost as reward? Grow, hacknet, rep?
 
 // TODO: harden against interrupts for AI plays?
+
+// TODO: API: chains? liberties?
 
 export function GoGameboard(): React.ReactElement {
   const rerender = useRerender(400);
@@ -137,8 +137,6 @@ export function GoGameboard(): React.ReactElement {
         setTimeout(() => {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           updateBoard(newBoard, currentTurn + 1);
-
-          logBoard(newBoard);
         }, 100);
       }, 500);
     }

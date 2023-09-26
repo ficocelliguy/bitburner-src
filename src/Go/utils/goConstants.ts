@@ -33,6 +33,7 @@ export type MoveOptions = {
   defendCapture: Move | null;
   eyeMove: EyeMove | null;
   eyeBlock: EyeMove | null;
+  pattern: PointState | null;
   growth: Move | null;
   expansion: Move | null;
   defend: Move | null;

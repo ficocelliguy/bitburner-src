@@ -26,6 +26,7 @@ import {
   getAllChains,
   getAllEyes,
 } from "./boardAnalysis";
+import { findAnyMatchedPatterns } from "./patternMatching";
 
 /*
   Basic GO AIs, each with some personality and weaknesses
@@ -52,7 +53,15 @@ export async function getMove(
   }
 
   // If no priority move is chosen, pick one of the reasonable moves
-  const moveOptions = [moves.growth?.point, moves.surround?.point, moves.defend?.point, moves.expansion?.point]
+  const moveOptions = [
+    moves.growth?.point,
+    moves.surround?.point,
+    moves.defend?.point,
+    moves.expansion?.point,
+    moves.pattern,
+    moves.eyeMove?.point,
+    moves.eyeBlock?.point,
+  ]
     .filter(isNotNull)
     .filter(isDefined)
     .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
@@ -154,6 +163,11 @@ function getDaedalusPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.eyeBlock) {
     console.log("Block eye move chosen");
     return moves.eyeBlock.point;
+  }
+
+  if (moves.pattern) {
+    console.log("pattern match move chosen");
+    return moves.pattern;
   }
 
   return null;
@@ -389,6 +403,8 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   const eyeMove = getEyeCreationMove(boardState, player);
   await sleep(50);
   const eyeBlock = getEyeBlockingMove(boardState, player);
+  await sleep(50);
+  const pattern = await findAnyMatchedPatterns(boardState, player);
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
   const defendCaptureMove =
@@ -398,6 +414,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
   console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
   console.log("eyeBlock: ", eyeBlock?.point?.x, eyeBlock?.point?.y);
+  console.log("pattern: ", pattern?.x, pattern?.y);
   console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
@@ -408,6 +425,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
     defendCapture: defendCaptureMove,
     eyeMove: eyeMove,
     eyeBlock: eyeBlock,
+    pattern: pattern,
     growth: growthMove,
     expansion: expansionMove,
     defend: defendMove,
@@ -429,6 +447,6 @@ export function getKomi(opponent: opponents) {
   }
 }
 
-function sleep(ms: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
