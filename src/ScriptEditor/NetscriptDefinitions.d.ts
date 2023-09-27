@@ -282,6 +282,12 @@ interface RunOptions {
 }
 
 /** @public */
+interface SpawnOptions extends RunOptions {
+  /** Number of milliseconds to delay before spawning script, defaults to 10000 (10s). Must be a positive integer. */
+  spawnDelay?: number;
+}
+
+/** @public */
 interface RecentScript extends RunningScript {
   /** Timestamp of when the script was killed */
   timeOfDeath: Date;
@@ -783,7 +789,7 @@ interface GangGenInfo {
   wantedLevel: number;
   /** Wanted level gained/lost per game cycle (negative for losses) */
   wantedLevelGainRate: number;
-  /** Indicating if territory warfare is enabled */
+  /** Indicating if territory clashes are enabled */
   territoryWarfareEngaged: boolean;
   /** Number indicating the current wanted penalty */
   wantedPenalty: number;
@@ -3626,13 +3632,13 @@ export interface Gang {
   getAscensionResult(memberName: string): GangMemberAscension | undefined;
 
   /**
-   * Enable/Disable territory warfare.
+   * Enable/Disable territory clashes.
    * @remarks
    * RAM cost: 2 GB
    *
-   * Set whether or not the gang should engage in territory warfare
+   * Set whether or not the gang should engage in territory clashes
    *
-   * @param engage - Whether or not to engage in territory warfare.
+   * @param engage - Whether or not to engage in territory clashes.
    */
   setTerritoryWarfare(engage: boolean): void;
 
@@ -5500,11 +5506,11 @@ export interface NS {
   ): number;
 
   /**
-   * Terminate current script and start another in 10 seconds.
+   * Terminate current script and start another in a defined number of milliseconds.
    * @remarks
    * RAM cost: 2 GB
    *
-   * Terminates the current script, and then after a delay of about 10 seconds it will execute the
+   * Terminates the current script, and then after a defined delay it will execute the
    * newly-specified script. The purpose of this function is to execute a new script without being
    * constrained by the RAM usage of the current one. This function can only be used to run scripts
    * on the local server.
@@ -5515,15 +5521,14 @@ export interface NS {
    *
    * @example
    * ```js
-   * //The following example will execute the script ‘foo.js’ with 10 threads and the arguments ‘foodnstuff’ and 90:
-   * ns.spawn('foo.js', 10, 'foodnstuff', 90);
+   * //The following example will execute the script ‘foo.js’ with 10 threads, in 500 milliseconds and the arguments ‘foodnstuff’ and 90:
+   * ns.spawn('foo.js', 10, 500, 'foodnstuff', 90);
    * ```
    * @param script - Filename of script to execute.
-   * @param threadOrOptions - Either an integer number of threads for new script, or a {@link RunOptions} object. Threads defaults to 1.
+   * @param threadOrOptions - Either an integer number of threads for new script, or a {@link SpawnOptions} object. Threads defaults to 1.
    * @param args - Additional arguments to pass into the new script that is being run.
    */
-  spawn(script: string, threadOrOptions?: number | RunOptions, ...args: (string | number | boolean)[]): void;
-
+  spawn(script: string, threadOrOptions?: number | SpawnOptions, ...args: (string | number | boolean)[]): void;
   /**
    * Terminate the script with the provided PID.
    * @remarks
@@ -7443,11 +7448,13 @@ export interface Corporation extends WarehouseAPI, OfficeAPI {
    * @returns Amount of funds generated for the corporation. */
   issueNewShares(amount?: number): number;
 
-  /** Buyback Shares
+  /** Buyback Shares.
+   * Spend money from the player's wallet to transfer shares from public traders to the CEO.
    * @param amount - Amount of shares to buy back, must be integer and larger than 0 */
   buyBackShares(amount: number): void;
 
-  /** Sell Shares
+  /** Sell Shares.
+   * Transfer shares from the CEO to public traders to receive money in the player's wallet.
    * @param amount -  Amount of shares to sell, must be integer between 1 and 100t */
   sellShares(amount: number): void;
 
@@ -7521,13 +7528,15 @@ interface CorporationInfo {
   expenses: number;
   /** Indicating if the company is public */
   public: boolean;
-  /** Total number of shares issues by this corporation */
+  /** Total number of shares issued by this corporation. */
   totalShares: number;
-  /** Amount of share owned */
+  /** Amount of shares owned by the CEO. */
   numShares: number;
   /** Cooldown until shares can be sold again */
   shareSaleCooldown: number;
-  /** Amount of acquirable shares. */
+  /** Amount of shares owned by private investors. Not available for public sale or CEO buyback. */
+  investorShares: number;
+  /** Amount of shares owned by public traders. Available for CEO buyback. */
   issuedShares: number;
   /** Cooldown until new shares can be issued */
   issueNewSharesCooldown: number;
