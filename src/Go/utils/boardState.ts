@@ -35,10 +35,18 @@ export function endGoGame(boardState: BoardState) {
   const statusToUpdate = Player.go.status[boardState.ai];
   const score = getScore(boardState);
 
-  if (score[playerColors.black].sum > score[playerColors.white].sum) {
-    statusToUpdate.wins++;
-  } else {
+  if (score[playerColors.black].sum < score[playerColors.white].sum) {
     statusToUpdate.losses++;
+    statusToUpdate.winStreak = 0;
+    statusToUpdate.nodePower += score[playerColors.black].sum * 0.3;
+  } else {
+    statusToUpdate.wins++;
+    statusToUpdate.winStreak++;
+    statusToUpdate.nodePower += score[playerColors.black].sum * (Math.max(score[playerColors.white].komi / 3, 2)) * (1.2 ** statusToUpdate.winStreak);
+
+    if (statusToUpdate.winStreak > statusToUpdate.highestWinStreak) {
+      statusToUpdate.highestWinStreak = statusToUpdate.winStreak;
+    }
   }
 
   statusToUpdate.nodes += score[playerColors.black].sum;

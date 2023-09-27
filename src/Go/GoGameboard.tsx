@@ -80,6 +80,7 @@ export function GoGameboard(): React.ReactElement {
     const gameOver = boardState.previousPlayer === null;
     const notYourTurn = boardState.previousPlayer === playerColors.black && opponent !== opponents.none;
     if (notYourTurn) {
+      SnackbarEvents.emit(`It is not your turn to play.`, ToastVariant.WARNING, 2000);
       return;
     }
     if (gameOver) {

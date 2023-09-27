@@ -53,7 +53,6 @@ import { achievements } from "../../Achievements/Achievements";
 import { isCompanyWork } from "../../Work/CompanyWork";
 import { serverMetadata } from "../../Server/data/servers";
 import { getEnumHelper, isMember } from "../../utils/EnumHelper";
-import { getGoPlayerStartingState } from "../../Go/utils/goConstants";
 
 export function init(this: PlayerObject): void {
   /* Initialize Player's home computer */
@@ -126,8 +125,6 @@ export function prestigeAugmentation(this: PlayerObject): void {
 
   this.hacknetNodes.length = 0;
   this.hashManager.prestige();
-
-  this.go = getGoPlayerStartingState();
 
   // Reapply augs, re-calculate skills and reset HP
   this.reapplyAllAugmentations(true);
