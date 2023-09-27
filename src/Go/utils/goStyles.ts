@@ -90,10 +90,52 @@ export const pointStyle = makeStyles((theme: Theme) =>
         color: "white",
       },
     },
-    fiveByFive: {},
-    sevenBySeven: {},
-    nineByNine: {},
-    thirteenByThirteen: {},
+    fiveByFive: {
+      "& $blackPoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(35px, 4vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+      },
+      "& $whitePoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(35px, 4vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+      },
+    },
+    sevenBySeven: {
+      "& $blackPoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(23px, 3vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+      },
+      "& $whitePoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(25px, 3vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+      },
+    },
+    nineByNine: {
+      "& $filledPoint": {
+        boxShadow: "0px 0px 30px hsla(0, 100%, 100%, 0.48)",
+      },
+      "& $blackPoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(15px, 2vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+      },
+      "& $whitePoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(15px, 2vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+      },
+    },
+    thirteenByThirteen: {
+      "& $filledPoint": {
+        boxShadow: "0px 0px 18px hsla(0, 100%, 100%, 0.48)",
+      },
+      "& $blackPoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(10px, 1.5vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
+      },
+      "& $whitePoint": {
+        backgroundImage:
+          "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(10px, 1.5vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
+      },
+    },
     tradStone: {
       display: "none",
       borderRadius: "50%",
@@ -176,7 +218,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
       width: "10%",
       height: "10%",
       margin: "45%",
-      backgroundColor: theme.colors.white,
+      backgroundColor: "white",
       position: "relative",
     },
     filledPoint: {
@@ -184,15 +226,14 @@ export const pointStyle = makeStyles((theme: Theme) =>
       outlineWidth: "1px",
       borderRadius: "50%",
       position: "relative",
+      boxShadow: "0px 0px 40px hsla(0, 100%, 100%, 0.48)",
     },
     whitePoint: {
       width: "70%",
       height: "70%",
       margin: "15%",
-      backgroundColor: theme.colors.white,
+      backgroundColor: "hsla(0, 0%, 85%, 1)",
       outlineStyle: "none",
-      backgroundImage:
-        "linear-gradient(145deg, transparent, white 65%), radial-gradient(calc(min(20px, 3vw)) at 42% 38%, white 0%, white 35%, transparent 36%)",
     },
     blackPoint: {
       width: "70%",
@@ -200,8 +241,6 @@ export const pointStyle = makeStyles((theme: Theme) =>
       margin: "15%",
       backgroundColor: "black",
       outlineColor: "white",
-      backgroundImage:
-        "linear-gradient(145deg, transparent, black 65%), radial-gradient(calc(min(20px, 3vw)) at 42% 38%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.25) 35%, transparent 36%)",
     },
     liberty: {
       position: "absolute",
@@ -244,8 +283,8 @@ export const pointStyle = makeStyles((theme: Theme) =>
     },
     coordinates: {
       color: "white",
-      fontFamily: "monospace",
-      fontSize: "1.2vw",
+      fontFamily: `"Lucida Console", "Lucida Sans Unicode", "Fira Mono", Consolas, "Courier New", Courier, monospace, "Times New Roman"`,
+      fontSize: "calc(min(1.3vw, 12px))",
       display: "none",
       position: "relative",
       top: "15%",

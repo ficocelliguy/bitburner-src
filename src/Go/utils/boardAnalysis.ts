@@ -315,7 +315,7 @@ export function findAdjacentLibertiesAndAlliesForPoint(boardState: BoardState, x
  *
  * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
  * string represents a vertical column on the board. In other words, the printed example above can be understood to
- * be rotated 90 degrees clockwise compared to the board UI.
+ * be rotated 90 degrees clockwise compared to the board UI as shown in the IPvGO game.
  *
  */
 export function getSimplifiedBoardState(board: Board): string[] {

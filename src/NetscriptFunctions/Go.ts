@@ -11,10 +11,10 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditio
   const aiMoveResult = new Promise<Play>((res) => (resolve = res));
 
   // TODO: split out AI move logic
-  getMove(boardState, playerColors.white, Player.goBoard.ai).then(async (result) => {
+  getMove(boardState, playerColors.white, Player.go.boardState.ai).then(async (result) => {
     if (!result) {
       boardState.previousPlayer = playerColors.white;
-      Player.goBoard = boardState;
+      Player.go.boardState = boardState;
       // TODO: handle game ending
       await sleep(500);
       return;
@@ -23,9 +23,9 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditio
     const aiUpdateBoard = makeMove(boardState, result.x, result.y, playerColors.white);
     if (!aiUpdateBoard) {
       boardState.previousPlayer = playerColors.white;
-      Player.goBoard = boardState;
+      Player.go.boardState = boardState;
     } else {
-      Player.goBoard = aiUpdateBoard;
+      Player.go.boardState = aiUpdateBoard;
       helpers.log(ctx, () => `Opponent played move: ${result.x}, ${result.y}`);
     }
 
@@ -46,14 +46,14 @@ export function NetscriptGo() {
         const xIndex = typeof x === "string" ? columnIndexes.indexOf(x.toUpperCase()) : +x;
         const yIndex = typeof x === "string" ? y + 1 : y;
 
-        const validity = evaluateIfMoveIsValid(Player.goBoard, xIndex, yIndex, playerColors.black);
+        const validity = evaluateIfMoveIsValid(Player.go.boardState, xIndex, yIndex, playerColors.black);
 
         if (validity !== validityReason.valid) {
           await sleep(500);
           throw helpers.makeRuntimeErrorMsg(ctx, `Invalid move: '${x}, ${y}': ${validity}`);
         }
 
-        const result = makeMove(Player.goBoard, xIndex, yIndex, playerColors.black);
+        const result = makeMove(Player.go.boardState, xIndex, yIndex, playerColors.black);
         if (!result) {
           await sleep(500);
           throw helpers.makeRuntimeErrorMsg(ctx, `Invalid move`);
@@ -67,11 +67,11 @@ export function NetscriptGo() {
     passTurn:
       (ctx: NetscriptContext) =>
       async (useTraditionalNotation = false): Promise<Play> => {
-        Player.goBoard.previousPlayer = playerColors.black;
-        return getAIMove(ctx, Player.goBoard, useTraditionalNotation);
+        Player.go.boardState.previousPlayer = playerColors.black;
+        return getAIMove(ctx, Player.go.boardState, useTraditionalNotation);
       },
     getBoardState: () => () => {
-      return getSimplifiedBoardState(Player.goBoard.board);
+      return getSimplifiedBoardState(Player.go.boardState.board);
     },
   };
 }

@@ -25,17 +25,11 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: Encode win streaks and history per faction in player object
 
-// TODO: pattern matching: prevent one-liberty plays
-
 // Not started:
-
-// TODO: End game when both players pass, or when all territory is claimed
 
 // TODO: Status tab
 
 // TODO: Label ranks and columns?
-
-// TODO: better shine and glow to tron theme stones
 
 // TODO: Flavor text and page title
 
@@ -53,20 +47,20 @@ export function GoGameboard(): React.ReactElement {
   const rerender = useRerender(400);
 
   // Determine if there is an in-progress game, and if so, whose turn is next
-  const currentTurn = Player.goBoard.history.length
-    ? Player.goBoard.previousPlayer === playerColors.black
+  const currentTurn = Player.go.boardState.history.length
+    ? Player.go.boardState.previousPlayer === playerColors.black
       ? 1
       : 2
     : 0;
 
   const boardState = (function () {
-    if (Player.goBoard === null) throw new Error("Player.goBoard should not be null");
-    return Player.goBoard;
+    if (Player?.go?.boardState === null) throw new Error("Player.go should not be null");
+    return Player.go.boardState;
   })();
   const [turn, setTurn] = useState(currentTurn);
   const [traditional, setTraditional] = useState(false);
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
-  const [boardSize, setBoardSize] = useState(Player.goBoard.board[0].length);
+  const [boardSize, setBoardSize] = useState(Player.go.boardState.board[0].length);
   const [infoOpen, setInfoOpen] = useState(false);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState, getKomi(opponent)));
@@ -100,7 +94,7 @@ export function GoGameboard(): React.ReactElement {
       // Delay captures a short amount to make them easier to see
       setTimeout(() => {
         const captureUpdatedBoard = updateCaptures(updatedBoard, currentPlayer);
-        Player.goBoard = captureUpdatedBoard;
+        Player.go.boardState = captureUpdatedBoard;
         opponent !== opponents.none && takeAiTurn(captureUpdatedBoard, turn + 1);
       }, 100);
     }
@@ -119,7 +113,7 @@ export function GoGameboard(): React.ReactElement {
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
-      const openTerritory = getAllUnclaimedTerritory(Player.goBoard);
+      const openTerritory = getAllUnclaimedTerritory(Player.go.boardState);
       if (openTerritory.length === 0) {
         endGame();
       } else {
@@ -134,7 +128,7 @@ export function GoGameboard(): React.ReactElement {
 
     if (updatedBoard) {
       setTimeout(() => {
-        Player.goBoard = updatedBoard;
+        Player.go.boardState = updatedBoard;
         rerender();
 
         // Delay captures a short amount to make them easier to see
@@ -142,7 +136,7 @@ export function GoGameboard(): React.ReactElement {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           updateBoard(newBoard, currentTurn + 1);
 
-          if (getAllUnclaimedTerritory(Player.goBoard).length === 0) {
+          if (getAllUnclaimedTerritory(Player.go.boardState).length === 0) {
             endGame();
           }
         }, 100);
@@ -180,7 +174,7 @@ export function GoGameboard(): React.ReactElement {
   }
 
   function updateBoard(newBoardState: BoardState, turn = 0) {
-    Player.goBoard = newBoardState;
+    Player.go.boardState = newBoardState;
     setScore(getScore(newBoardState, getKomi(opponent)));
     setTurn(turn);
     rerender();

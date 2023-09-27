@@ -9,15 +9,7 @@ import {
   PointState,
   validityReason,
 } from "./goConstants";
-import {
-  findNeighbors,
-  floor,
-  getStateCopy,
-  isDefined,
-  isNotNull,
-  makeMove,
-  updateCaptures,
-} from "./boardState";
+import { findNeighbors, floor, getStateCopy, isDefined, isNotNull, makeMove, updateCaptures } from "./boardState";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,
