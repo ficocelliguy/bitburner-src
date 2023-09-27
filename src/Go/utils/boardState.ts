@@ -10,12 +10,14 @@ import {
 } from "./goConstants";
 import { getExpansionMoveArray } from "./goAI";
 import { evaluateIfMoveIsValid, findAnyCapturedChain, findLibertiesForChain, getAllChains } from "./boardAnalysis";
+import { Player } from "@player";
+import { getScore } from "./scoring";
 
-export function getNewBoardState(boardSize: number, ai = opponents.Daedalus): BoardState {
+export function getNewBoardState(boardSize: number, ai?: opponents): BoardState {
   return {
     history: [],
     previousPlayer: playerColors.white,
-    ai: ai,
+    ai: ai ?? opponents.Daedalus,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
         player: playerColors.empty,
@@ -26,6 +28,20 @@ export function getNewBoardState(boardSize: number, ai = opponents.Daedalus): Bo
       })),
     ),
   };
+}
+
+export function endGoGame(boardState: BoardState) {
+  boardState.previousPlayer = null;
+  const statusToUpdate = Player.go.status[boardState.ai];
+  const score = getScore(boardState);
+
+  if (score[playerColors.black].sum > score[playerColors.white].sum) {
+    statusToUpdate.wins++;
+  } else {
+    statusToUpdate.losses++;
+  }
+
+  statusToUpdate.nodes += score[playerColors.black].sum;
 }
 
 export function applyHandicap(boardSize: number, handicap: number) {

@@ -1,3 +1,5 @@
+import { getNewBoardState } from "./boardState";
+
 export enum playerColors {
   white = "White",
   black = "Black",
@@ -9,6 +11,7 @@ export enum validityReason {
   boardRepeated = "It is illegal to repeat prior board states",
   noSuicide = "It is illegal to cause your own pieces to be captured",
   notYourTurn = "It is not your turn to play",
+  gameOver = "The game is over",
   invalid = "Invalid move",
   valid = "Valid move",
 }
@@ -54,7 +57,7 @@ export type EyeMove = {
 
 export type BoardState = {
   board: Board;
-  previousPlayer: PlayerColor;
+  previousPlayer: PlayerColor | null;
   history: Board[];
   ai: opponents;
 };
@@ -67,9 +70,16 @@ export type PointState = {
   y: number;
 };
 
+export enum playTypes {
+  move = "move",
+  pass = "pass",
+  gameOver = "gameOver",
+}
+
 export type Play = {
-  x: number | string;
-  y: number;
+  type: playTypes;
+  x: number | string | null;
+  y: number | null;
 };
 
 export type Neighbor = {
@@ -85,3 +95,47 @@ export type goScore = {
 };
 
 export const columnIndexes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+export function getGoPlayerStartingState() {
+  return {
+    boardState: getNewBoardState(7),
+    status: {
+      [opponents.none]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+      [opponents.Netburners]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+      [opponents.SlumSnakes]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+      [opponents.TheBlackHand]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+      [opponents.Daedalus]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+      [opponents.Illuminati]: {
+        wins: 0,
+        losses: 0,
+        nodes: 0,
+        nodePower: 0,
+      },
+    },
+  };
+}

@@ -1,10 +1,10 @@
 import { NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { getStateCopy, makeMove } from "../Go/utils/boardState";
-import { BoardState, columnIndexes, Play, playerColors, validityReason } from "../Go/utils/goConstants";
+import { endGoGame, getStateCopy, makeMove } from "../Go/utils/boardState";
+import { BoardState, columnIndexes, Play, playerColors, playTypes, validityReason } from "../Go/utils/goConstants";
 import { getMove } from "../Go/utils/goAI";
-import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/utils/boardAnalysis";
+import { evaluateIfMoveIsValid, getAllUnclaimedTerritory, getSimplifiedBoardState } from "../Go/utils/boardAnalysis";
 
 async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditionalNotation: boolean): Promise<Play> {
   let resolve: (value: Play) => void;
@@ -15,9 +15,23 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditio
     if (!result) {
       boardState.previousPlayer = playerColors.white;
       Player.go.boardState = boardState;
-      // TODO: handle game ending
+
+      const remainingTerritory = getAllUnclaimedTerritory(boardState).length;
       await sleep(500);
-      return;
+      if (remainingTerritory > 0) {
+        return {
+          type: playTypes.pass,
+          x: null,
+          y: null,
+        };
+      } else {
+        endGoGame(Player.go.boardState);
+        return {
+          type: playTypes.gameOver,
+          x: null,
+          y: null,
+        };
+      }
     }
 
     const aiUpdateBoard = makeMove(boardState, result.x, result.y, playerColors.white);
@@ -33,7 +47,7 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditio
     const yResultIndex = traditionalNotation ? result.y + 1 : result.y;
 
     await sleep(200);
-    resolve({ x: xResultIndex, y: yResultIndex });
+    resolve({ type: playTypes.move, x: xResultIndex, y: yResultIndex });
   });
   return aiMoveResult;
 }

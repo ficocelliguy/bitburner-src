@@ -1,7 +1,9 @@
 import { BoardState, PlayerColor, playerColors, PointState } from "./goConstants";
 import { getAllChains, getPlayerNeighbors } from "./boardAnalysis";
+import { getKomi } from "./goAI";
 
-export function getScore(boardState: BoardState, komi: number) {
+export function getScore(boardState: BoardState) {
+  const komi = getKomi(boardState.ai) ?? 6.5;
   const whitePieces = getColoredPieceCount(boardState, playerColors.white);
   const blackPieces = getColoredPieceCount(boardState, playerColors.black);
   const territoryScores = getTerritoryScores(boardState);

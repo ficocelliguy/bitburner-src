@@ -7,8 +7,8 @@ import { Help } from "@mui/icons-material";
 
 import { getSizeClass, GoPoint } from "./GoPoint";
 import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./utils/goConstants";
-import { applyHandicap, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
-import { getKomi, getMove } from "./utils/goAI";
+import { applyHandicap, endGoGame, getNewBoardState, getStateCopy, makeMove, updateCaptures } from "./utils/boardState";
+import { getMove } from "./utils/goAI";
 import { weiArt } from "./utils/asciiArt";
 import { getScore } from "./utils/scoring";
 import { useRerender } from "../ui/React/hooks";
@@ -23,9 +23,11 @@ import { GoScoreModal } from "./GoScoreModal";
 
 // TODO: "How to Play" tab
 
-// TODO: Encode win streaks and history per faction in player object
+// TODO: Encode win streaks per faction in player object
 
 // Not started:
+
+// TODO: only show hover over valid moves
 
 // TODO: Status tab
 
@@ -34,8 +36,6 @@ import { GoScoreModal } from "./GoScoreModal";
 // TODO: Flavor text and page title
 
 // TODO: last stone played marker?
-
-// TODO: Win streaks? won node and subnet counts?
 
 // TODO: faux minor boost as reward? Grow, hacknet, rep?
 
@@ -63,7 +63,7 @@ export function GoGameboard(): React.ReactElement {
   const [boardSize, setBoardSize] = useState(Player.go.boardState.board[0].length);
   const [infoOpen, setInfoOpen] = useState(false);
   const [scoreOpen, setScoreOpen] = useState(false);
-  const [score, setScore] = useState<goScore>(getScore(boardState, getKomi(opponent)));
+  const [score, setScore] = useState<goScore>(getScore(boardState));
 
   const classes = boardStyles();
   const opponentFactions = [
@@ -77,10 +77,17 @@ export function GoGameboard(): React.ReactElement {
 
   function clickHandler(x: number, y: number): void {
     // Lock the board when it isn't the player's turn
-    if (turn % 2 !== 0 && opponent !== opponents.none) {
+    const gameOver = boardState.previousPlayer === null;
+    const notYourTurn = boardState.previousPlayer === playerColors.black && opponent !== opponents.none;
+    if (notYourTurn) {
       return;
     }
-    const currentPlayer = turn % 2 === 0 ? playerColors.black : playerColors.white;
+    if (gameOver) {
+      SnackbarEvents.emit(`The game is complete, please reset to continue.`, ToastVariant.WARNING, 2000);
+      return;
+    }
+
+    const currentPlayer = boardState.previousPlayer === playerColors.white ? playerColors.black : playerColors.white;
     const validity = evaluateIfMoveIsValid(boardState, x, y, currentPlayer);
     if (validity != validityReason.valid) {
       SnackbarEvents.emit(`Invalid move: ${validity}`, ToastVariant.ERROR, 2000);
@@ -109,11 +116,14 @@ export function GoGameboard(): React.ReactElement {
   }
 
   async function takeAiTurn(board: BoardState, currentTurn: number) {
+    if (board.previousPlayer === null) {
+      return;
+    }
     const initialState = getStateCopy(board);
     const move = await getMove(initialState, playerColors.white, opponent);
 
     if (!move) {
-      const openTerritory = getAllUnclaimedTerritory(Player.go.boardState);
+      const openTerritory = getAllUnclaimedTerritory(board);
       if (openTerritory.length === 0) {
         endGame();
       } else {
@@ -150,7 +160,7 @@ export function GoGameboard(): React.ReactElement {
     }
     const newOpponent = event.target.value as opponents;
     setOpponent(event.target.value as opponents);
-    setScore(getScore(boardState, getKomi(newOpponent)));
+    setScore(getScore(boardState));
 
     resetState(boardSize, newOpponent);
   }
@@ -175,13 +185,14 @@ export function GoGameboard(): React.ReactElement {
 
   function updateBoard(newBoardState: BoardState, turn = 0) {
     Player.go.boardState = newBoardState;
-    setScore(getScore(newBoardState, getKomi(opponent)));
+    setScore(getScore(newBoardState));
     setTurn(turn);
     rerender();
   }
 
   function endGame() {
-    const finalScore = getScore(boardState, getKomi(opponent));
+    endGoGame(boardState);
+    const finalScore = getScore(boardState);
     setScore(finalScore);
     setScoreOpen(true);
     rerender();

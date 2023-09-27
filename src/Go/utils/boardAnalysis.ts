@@ -14,6 +14,11 @@ import {
 export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
   const point = initialState.board?.[x]?.[y];
 
+  if (initialState.previousPlayer === null) {
+    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
+    return validityReason.gameOver;
+  }
+
   if (initialState.previousPlayer === player) {
     console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
     return validityReason.notYourTurn;
