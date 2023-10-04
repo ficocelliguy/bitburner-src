@@ -8,8 +8,16 @@ import {
   playerColors,
   PointState,
   validityReason,
-} from "./goConstants";
-import { findNeighbors, floor, getStateCopy, isDefined, isNotNull, makeMove, updateCaptures } from "./boardState";
+} from "../boardState/goConstants";
+import {
+  findNeighbors,
+  floor,
+  getStateCopy,
+  isDefined,
+  isNotNull,
+  makeMove,
+  updateCaptures,
+} from "../boardState/boardState";
 import {
   evaluateIfMoveIsValid,
   findChainLibertiesForPoint,

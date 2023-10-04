@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 import { Modal } from "../ui/React/Modal";
-import { goScore, opponents, playerColors } from "./utils/goConstants";
+import { goScore, opponents, playerColors } from "./boardState/goConstants";
 
 interface IProps {
   open: boolean;

@@ -75,6 +75,9 @@ export class BitNodeMultipliers {
   /** Percentage of unique augs that the gang has. */
   GangUniqueAugs = 1;
 
+  /** Percentage multiplier on the effect of the IPvGO rewards  **/
+  GoPower = 1;
+
   /** Influences the experienced gained when hacking a server. */
   HackExpGain = 1;
 

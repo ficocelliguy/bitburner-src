@@ -1,4 +1,12 @@
-import { Board, BoardState, Neighbor, PlayerColor, playerColors, PointState, validityReason } from "./goConstants";
+import {
+  Board,
+  BoardState,
+  Neighbor,
+  PlayerColor,
+  playerColors,
+  PointState,
+  validityReason,
+} from "../boardState/goConstants";
 import {
   findAdjacentPointsInChain,
   findNeighbors,
@@ -9,7 +17,7 @@ import {
   isDefined,
   updateCaptures,
   updateChains,
-} from "./boardState";
+} from "../boardState/boardState";
 
 export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
   const point = initialState.board?.[x]?.[y];

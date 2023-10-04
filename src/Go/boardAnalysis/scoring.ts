@@ -1,4 +1,4 @@
-import { BoardState, PlayerColor, playerColors, PointState } from "./goConstants";
+import { BoardState, PlayerColor, playerColors, PointState } from "../boardState/goConstants";
 import { getAllChains, getPlayerNeighbors } from "./boardAnalysis";
 import { getKomi } from "./goAI";
 

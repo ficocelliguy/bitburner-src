@@ -1,16 +1,10 @@
 import React from "react";
 
 import Typography from "@mui/material/Typography";
-import { Modal } from "../ui/React/Modal";
 
-interface IProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export const GoInfoModal = ({ open, onClose }: IProps): React.ReactElement => {
+export const GoInstructionsPage = (): React.ReactElement => {
   return (
-    <Modal open={open} onClose={onClose}>
+    <div>
       <>
         <Typography variant="h4">IPvGO</Typography>
         <Typography>
@@ -80,6 +74,6 @@ export const GoInfoModal = ({ open, onClose }: IProps): React.ReactElement => {
 
         <br />
       </>
-    </Modal>
+    </div>
   );
 };

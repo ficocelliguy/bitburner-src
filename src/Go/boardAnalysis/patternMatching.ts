@@ -1,7 +1,7 @@
 // Inspired by https://github.com/pasky/michi/blob/master/michi.py
-import { BoardState, PlayerColor, playerColors, PointState } from "./goConstants";
+import { BoardState, PlayerColor, playerColors, PointState } from "../boardState/goConstants";
 import { sleep } from "./goAI";
-import { getStateCopy, updateCaptures } from "./boardState";
+import { getStateCopy, updateCaptures } from "../boardState/boardState";
 
 export const threeByThreePatterns = [
   // 3x3 piece patterns; X,O are color pieces; x,o are any state except the opposite color piece;

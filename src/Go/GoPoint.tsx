@@ -1,10 +1,10 @@
 import React from "react";
 import { ClassNameMap } from "@mui/styles";
 
-import { BoardState, columnIndexes, playerColors } from "./utils/goConstants";
-import { findNeighbors } from "./utils/boardState";
-import { pointStyle } from "./utils/goStyles";
-import { findAdjacentLibertiesAndAlliesForPoint } from "./utils/boardAnalysis";
+import { BoardState, columnIndexes, playerColors } from "./boardState/goConstants";
+import { findNeighbors } from "./boardState/boardState";
+import { pointStyle } from "./boardState/goStyles";
+import { findAdjacentLibertiesAndAlliesForPoint } from "./boardAnalysis/boardAnalysis";
 
 export function GoPoint(props: { state: BoardState; x: number; y: number; traditional: boolean }): React.ReactElement {
   const classes = pointStyle();

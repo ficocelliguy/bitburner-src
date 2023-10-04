@@ -1,10 +1,14 @@
 import { NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { endGoGame, getStateCopy, makeMove } from "../Go/utils/boardState";
-import { BoardState, columnIndexes, Play, playerColors, playTypes, validityReason } from "../Go/utils/goConstants";
-import { getMove } from "../Go/utils/goAI";
-import { evaluateIfMoveIsValid, getAllUnclaimedTerritory, getSimplifiedBoardState } from "../Go/utils/boardAnalysis";
+import { endGoGame, getStateCopy, makeMove } from "../Go/boardState/boardState";
+import { BoardState, columnIndexes, Play, playerColors, playTypes, validityReason } from "../Go/boardState/goConstants";
+import { getMove } from "../Go/boardAnalysis/goAI";
+import {
+  evaluateIfMoveIsValid,
+  getAllUnclaimedTerritory,
+  getSimplifiedBoardState,
+} from "../Go/boardAnalysis/boardAnalysis";
 
 async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditionalNotation: boolean): Promise<Play> {
   let resolve: (value: Play) => void;

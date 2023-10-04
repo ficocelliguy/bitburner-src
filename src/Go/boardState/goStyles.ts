@@ -297,11 +297,28 @@ export const pointStyle = makeStyles((theme: Theme) =>
 
 export const boardStyles = makeStyles((theme: Theme) =>
   createStyles({
-    board: {
-      margin: "10px",
+    tab: {
+      paddingTop: 0,
+      paddingBottom: 0,
+      whiteSpace: "pre",
+      height: "50px",
+      minHeight: "unset",
+      width: "210px",
+    },
+    gameboardWrapper: {
+      position: "relative",
       width: "calc(min(700px, 95vw - 250px))",
       height: "calc(min(700px, 95vw - 250px))",
-      padding: "30px",
+      padding: "5px",
+    },
+    statusPageGameboard: {
+      position: "relative",
+      width: "calc(min(400px, 60vw - 250px))",
+      height: "calc(min(400px, 60vw - 250px))",
+    },
+    board: {
+      width: "100%",
+      height: "100%",
       position: "relative",
     },
     traditional: {

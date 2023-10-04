@@ -8,10 +8,15 @@ import {
   PointState,
   validityReason,
 } from "./goConstants";
-import { getExpansionMoveArray } from "./goAI";
-import { evaluateIfMoveIsValid, findAnyCapturedChain, findLibertiesForChain, getAllChains } from "./boardAnalysis";
+import { getExpansionMoveArray } from "../boardAnalysis/goAI";
+import {
+  evaluateIfMoveIsValid,
+  findAnyCapturedChain,
+  findLibertiesForChain,
+  getAllChains,
+} from "../boardAnalysis/boardAnalysis";
 import { Player } from "@player";
-import { getScore } from "./scoring";
+import { getScore } from "../boardAnalysis/scoring";
 
 export function getNewBoardState(boardSize: number, ai?: opponents): BoardState {
   return {
@@ -42,7 +47,8 @@ export function endGoGame(boardState: BoardState) {
   } else {
     statusToUpdate.wins++;
     statusToUpdate.winStreak++;
-    statusToUpdate.nodePower += score[playerColors.black].sum * (Math.max(score[playerColors.white].komi / 3, 2)) * (1.2 ** statusToUpdate.winStreak);
+    statusToUpdate.nodePower +=
+      score[playerColors.black].sum * Math.max(score[playerColors.white].komi / 3, 2) * 1.2 ** statusToUpdate.winStreak;
 
     if (statusToUpdate.winStreak > statusToUpdate.highestWinStreak) {
       statusToUpdate.highestWinStreak = statusToUpdate.winStreak;

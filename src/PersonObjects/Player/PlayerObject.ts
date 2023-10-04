@@ -28,7 +28,7 @@ import { CONSTANTS } from "../../Constants";
 import { Person } from "../Person";
 import { isMember } from "../../utils/EnumHelper";
 import { PartialRecord } from "../../Types/Record";
-import { getGoPlayerStartingState } from "../../Go/utils/goConstants";
+import { getGoPlayerStartingState } from "../../Go/boardState/goConstants";
 
 export class PlayerObject extends Person implements IPlayer {
   // Player-specific properties
