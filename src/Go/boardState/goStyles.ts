@@ -4,15 +4,17 @@ import createStyles from "@mui/styles/createStyles";
 
 export const pointStyle = makeStyles((theme: Theme) =>
   createStyles({
+    hover: {},
+    valid: {},
     point: {
       position: "relative",
       height: "100%",
       width: "100%",
 
-      "&:hover $innerPoint": {
+      "&$hover$valid:hover $innerPoint": {
         outlineColor: theme.colors.white,
       },
-      "&:hover $coordinates": {
+      "&$hover:hover $coordinates": {
         display: "block",
       },
     },
@@ -316,6 +318,14 @@ export const boardStyles = makeStyles((theme: Theme) =>
       width: "calc(min(400px, 60vw - 250px))",
       height: "calc(min(400px, 60vw - 250px))",
     },
+    factionStatus: {
+      padding: "10px",
+      margin: "10px",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: theme.colors.success,
+      width: "270px",
+    },
     board: {
       width: "100%",
       height: "100%",
@@ -379,6 +389,11 @@ export const boardStyles = makeStyles((theme: Theme) =>
       pointerEvents: "none",
       paddingTop: "20px",
       paddingLeft: "15px",
+    },
+    instructionScroller: {
+      height: "calc(100vw - 225px)",
+      overflowY: "scroll",
+      marginTop: "10px",
     },
   }),
 );

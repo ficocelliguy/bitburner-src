@@ -6,7 +6,14 @@ import { findNeighbors } from "./boardState/boardState";
 import { pointStyle } from "./boardState/goStyles";
 import { findAdjacentLibertiesAndAlliesForPoint } from "./boardAnalysis/boardAnalysis";
 
-export function GoPoint(props: { state: BoardState; x: number; y: number; traditional: boolean }): React.ReactElement {
+export function GoPoint(props: {
+  state: BoardState;
+  x: number;
+  y: number;
+  traditional: boolean;
+  hover: boolean;
+  valid: boolean;
+}): React.ReactElement {
   const classes = pointStyle();
 
   const currentPoint = props.state.board[props.x][props.y];
@@ -34,7 +41,12 @@ export function GoPoint(props: { state: BoardState; x: number; y: number; tradit
   const sizeClass = getSizeClass(props.state.board[0].length, classes);
 
   return (
-    <div className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""}`} title={player}>
+    <div
+      className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
+        props.hover ? classes.hover : ""
+      } ${props.valid ? classes.valid : ""}`}
+      title={player}
+    >
       <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>

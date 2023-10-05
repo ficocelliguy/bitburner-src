@@ -23,25 +23,17 @@ import { evaluateIfMoveIsValid, getAllUnclaimedTerritory } from "./boardAnalysis
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 
-// In progress:
+// TODO: Unit tests
 
-// TODO: "How to Play" tab
+// TODO: documentation
 
-// TODO: Encode win streaks per faction in player object
-
-// Not started:
-
-// TODO: only show hover over valid moves
-
-// TODO: Status tab
+// TODO: cleanup
 
 // TODO: Label ranks and columns?
 
 // TODO: Flavor text and page title
 
 // TODO: last stone played marker?
-
-// TODO: faux minor boost as reward? Grow, hacknet, rep?
 
 // TODO: harden against interrupts for AI plays?
 
@@ -232,7 +224,7 @@ export function GoGameboardWrapper(): React.ReactElement {
           )}
         </Box>
         <div className={classes.gameboardWrapper}>
-          <GoGameboard traditional={traditional} clickHandler={clickHandler} />
+          <GoGameboard traditional={traditional} clickHandler={clickHandler} hover={true} />
         </div>
         <Typography className={classes.scoreBox}>
           Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}

@@ -1,10 +1,12 @@
 import React from "react";
 
 import Typography from "@mui/material/Typography";
+import { boardStyles } from "./boardState/goStyles";
 
 export const GoInstructionsPage = (): React.ReactElement => {
+  const classes = boardStyles();
   return (
-    <div>
+    <div className={classes.instructionScroller}>
       <>
         <Typography variant="h4">IPvGO</Typography>
         <Typography>
@@ -50,15 +52,22 @@ export const GoInstructionsPage = (): React.ReactElement => {
           * Every faction has a different style, and different weaknesses. Try to identify what they are good and bad at
           doing.
           <br />
+          <br />
           * Pay attention to when a network of routers has only one or two open ports (or "liberties") to empty spaces.
           That is your opportunity to defend your network, or capture the opposing faction's.
+          <br />
           <br />
           * To make sure your router networks are hard to capture, make sure to build around a few empty node ("eyes")
           inside of the network, so you never completely run out of open ports.
           <br />
+          <br />
           * The best way to learn strategies is to experiment and find out what works! <br />
-          * This game is a slightly simplified version of Go. For more rule details and strategies try [The Way to Go
-          interactive guide.](https://way-to-go.gitlab.io/#/en/capture-stones) <br />
+          <br />* This game is a slightly simplified version of Go. For more rule details and strategies try{" "}
+          <a href={"https://way-to-go.gitlab.io/#/en/capture-stones"} target={"_blank"} rel="noreferrer">
+            The Way to Go interactive guide.
+          </a>{" "}
+          <br />
+          <br />
         </Typography>
         <br />
         <br />
@@ -66,6 +75,7 @@ export const GoInstructionsPage = (): React.ReactElement => {
         <Typography>
           * You cannot place a router on a node with no open ports (or on a node that removes all open ports of a
           network of your routers), unless it will capture a network of opponent's routers first.
+          <br />
           <br />
           * You cannot repeat previous board states. This prevents infinite loops of capturing and re-capturing. <br />
           (Note that you CAN re-capture in these cases, but you must play somewhere else on the board first, to make the

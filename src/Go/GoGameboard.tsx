@@ -5,13 +5,16 @@ import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../ui/React/hooks";
 import { boardStyles } from "./boardState/goStyles";
 import { Player } from "@player";
+import { evaluateIfMoveIsValid, getAllUnclaimedTerritory } from "./boardAnalysis/boardAnalysis";
+import { opponents, playerColors, validityReason } from "./boardState/goConstants";
 
 interface IProps {
   traditional: boolean;
   clickHandler: (x: number, y: number) => any;
+  hover: boolean;
 }
 
-export function GoGameboard({ traditional, clickHandler }: IProps): React.ReactElement {
+export function GoGameboard({ traditional, clickHandler, hover }: IProps): React.ReactElement {
   useRerender(400);
 
   const boardState = (function () {
@@ -19,7 +22,21 @@ export function GoGameboard({ traditional, clickHandler }: IProps): React.ReactE
     return Player.go.boardState;
   })();
 
-  const boardSize = Player.go.boardState.board[0].length;
+  const currentPlayer =
+    boardState.ai !== opponents.none || boardState.previousPlayer === playerColors.white
+      ? playerColors.black
+      : playerColors.white;
+  const availablePoints = hover
+    ? getAllUnclaimedTerritory(boardState).filter(
+        (point) => evaluateIfMoveIsValid(boardState, point.x, point.y, currentPlayer) === validityReason.valid,
+      )
+    : [];
+
+  function pointIsValid(x: number, y: number) {
+    return !!availablePoints.find((point) => point.x === x && point.y === y);
+  }
+
+  const boardSize = boardState.board[0].length;
   const classes = boardStyles();
 
   return (
@@ -38,7 +55,14 @@ export function GoGameboard({ traditional, clickHandler }: IProps): React.ReactE
                     onClick={() => clickHandler(xIndex, yIndex)}
                     className={getSizeClass(boardSize, classes)}
                   >
-                    <GoPoint state={boardState} x={xIndex} y={yIndex} traditional={traditional} />
+                    <GoPoint
+                      state={boardState}
+                      x={xIndex}
+                      y={yIndex}
+                      traditional={traditional}
+                      hover={hover}
+                      valid={pointIsValid(xIndex, yIndex)}
+                    />
                   </Grid>
                 );
               })}
