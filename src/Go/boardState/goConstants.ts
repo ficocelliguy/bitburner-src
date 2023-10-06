@@ -51,8 +51,7 @@ export type Move = {
 
 export type EyeMove = {
   point: PointState;
-  oldEyes: number;
-  newEyes: number;
+  createsLife: boolean;
 };
 
 export type BoardState = {
@@ -60,6 +59,7 @@ export type BoardState = {
   previousPlayer: PlayerColor | null;
   history: Board[];
   ai: opponents;
+  passCount: number;
 };
 
 export type PointState = {
@@ -78,8 +78,8 @@ export enum playTypes {
 
 export type Play = {
   type: playTypes;
-  x: number | string | null;
-  y: number | null;
+  x: number | string;
+  y: number;
 };
 
 export type Neighbor = {

@@ -3,13 +3,22 @@ import { SnackbarEvents } from "../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
-import { boardSizes, BoardState, goScore, opponents, playerColors, validityReason } from "./boardState/goConstants";
+import {
+  boardSizes,
+  BoardState,
+  goScore,
+  opponents,
+  playerColors,
+  playTypes,
+  validityReason,
+} from "./boardState/goConstants";
 import {
   applyHandicap,
   endGoGame,
   getNewBoardState,
   getStateCopy,
   makeMove,
+  passTurn,
   updateCaptures,
 } from "./boardState/boardState";
 import { getMove } from "./boardAnalysis/goAI";
@@ -19,9 +28,11 @@ import { useRerender } from "../ui/React/hooks";
 import { OptionSwitch } from "../ui/React/OptionSwitch";
 import { boardStyles } from "./boardState/goStyles";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid, getAllUnclaimedTerritory } from "./boardAnalysis/boardAnalysis";
+import { evaluateIfMoveIsValid } from "./boardAnalysis/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
+
+// TODO: make sure game ends if AI passes second
 
 // TODO: Unit tests
 
@@ -95,9 +106,13 @@ export function GoGameboardWrapper(): React.ReactElement {
     }
   }
 
-  function passTurn() {
-    boardState.previousPlayer = playerColors.black;
+  function passPlayerTurn() {
+    passTurn(boardState);
     updateBoard(boardState);
+    if (boardState.previousPlayer === null) {
+      endGame();
+    }
+
     setTimeout(() => {
       opponent !== opponents.none && takeAiTurn(boardState);
     }, 100);
@@ -110,15 +125,14 @@ export function GoGameboardWrapper(): React.ReactElement {
     const initialState = getStateCopy(board);
     const move = await getMove(initialState, playerColors.white, opponent);
 
-    if (!move) {
-      const openTerritory = getAllUnclaimedTerritory(board);
-      if (openTerritory.length === 0) {
-        endGame();
-      } else {
-        SnackbarEvents.emit(`The opponent passes their turn; It is now your turn to move.`, ToastVariant.WARNING, 4000);
-        initialState.previousPlayer = playerColors.white;
-        updateBoard(initialState);
-      }
+    if (move.type === playTypes.pass) {
+      SnackbarEvents.emit(`The opponent passes their turn; It is now your turn to move.`, ToastVariant.WARNING, 4000);
+      updateBoard(initialState);
+      return;
+    }
+
+    if (move.type === playTypes.gameOver || move.x === null || move.y === null) {
+      endGame();
       return;
     }
 
@@ -133,10 +147,6 @@ export function GoGameboardWrapper(): React.ReactElement {
         setTimeout(() => {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           updateBoard(newBoard);
-
-          if (getAllUnclaimedTerritory(Player.go.boardState).length === 0) {
-            endGame();
-          }
         }, 100);
       }, 500);
     }
@@ -231,7 +241,7 @@ export function GoGameboardWrapper(): React.ReactElement {
         </Typography>
         <Box className={classes.inlineFlexBox}>
           <Button onClick={() => resetState(boardSize)}>Reset</Button>
-          <Button onClick={passTurn}>Pass Turn</Button>
+          <Button onClick={passPlayerTurn}>{boardState.passCount ? "End Game" : "Pass Turn"}</Button>
         </Box>
         <div className={classes.opponentLabel}>
           <OptionSwitch

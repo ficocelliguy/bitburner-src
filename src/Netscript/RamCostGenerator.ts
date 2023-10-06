@@ -239,8 +239,10 @@ const gang = {
 // Gang API
 const go = {
   makeMove: 2,
+  makeMoveTraditional: 2,
   passTurn: 0,
   getBoardState: 2,
+  resetBoardState: 0,
 } as const;
 
 // Bladeburner API

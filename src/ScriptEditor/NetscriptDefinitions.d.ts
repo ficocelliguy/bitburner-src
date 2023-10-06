@@ -1,5 +1,7 @@
 /** All netscript definitions */
 
+import { opponents } from "../Go/boardState/goConstants";
+
 /** @public */
 interface HP {
   current: number;
@@ -3668,6 +3670,23 @@ export interface Gang {
    * @returns Bonus time for the Gang mechanic in milliseconds.
    */
   getBonusTime(): number;
+}
+
+/**
+ * IPvGO api
+ *  TODO: Documentation
+ * @public
+ */
+export interface Go {
+  makeMove(x: number, y: number): Promise<Play>;
+
+  makeMoveTraditional(x: string, y: number): Promise<Play>;
+
+  passTurn(useTraditionalNotation: boolean): Promise<Play>;
+
+  getBoardState(): string[];
+
+  resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): void;
 }
 
 /**

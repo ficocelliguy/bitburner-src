@@ -5,8 +5,8 @@ import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../ui/React/hooks";
 import { boardStyles } from "./boardState/goStyles";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid, getAllUnclaimedTerritory } from "./boardAnalysis/boardAnalysis";
-import { opponents, playerColors, validityReason } from "./boardState/goConstants";
+import { getAllValidMoves } from "./boardAnalysis/boardAnalysis";
+import { opponents, playerColors } from "./boardState/goConstants";
 
 interface IProps {
   traditional: boolean;
@@ -26,11 +26,7 @@ export function GoGameboard({ traditional, clickHandler, hover }: IProps): React
     boardState.ai !== opponents.none || boardState.previousPlayer === playerColors.white
       ? playerColors.black
       : playerColors.white;
-  const availablePoints = hover
-    ? getAllUnclaimedTerritory(boardState).filter(
-        (point) => evaluateIfMoveIsValid(boardState, point.x, point.y, currentPlayer) === validityReason.valid,
-      )
-    : [];
+  const availablePoints = hover ? getAllValidMoves(boardState, currentPlayer) : [];
 
   function pointIsValid(x: number, y: number) {
     return !!availablePoints.find((point) => point.x === x && point.y === y);

@@ -23,17 +23,14 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   const point = initialState.board?.[x]?.[y];
 
   if (initialState.previousPlayer === null) {
-    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
     return validityReason.gameOver;
   }
 
   if (initialState.previousPlayer === player) {
-    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
     return validityReason.notYourTurn;
   }
 
   if (!point || point.player !== playerColors.empty) {
-    console.warn(`Invalid move attempted! ${x} ${y} ${player}`);
     return validityReason.pointNotEmpty;
   }
 
@@ -62,6 +59,12 @@ export function getAllUnclaimedTerritory(boardState: BoardState) {
   );
 }
 
+export function getAllValidMoves(boardState: BoardState, player: PlayerColor) {
+  return getEmptySpaces(boardState).filter(
+    (point) => evaluateIfMoveIsValid(boardState, point.x, point.y, player) === validityReason.valid,
+  );
+}
+
 /*
   Find all empty point groups where either:
   * all of its immediate surrounding player-controlled points are in the same continuous chain, or
@@ -69,9 +72,9 @@ export function getAllUnclaimedTerritory(boardState: BoardState) {
 
   Eyes are important because a chain of pieces cannot be captured if it contains two or more eyes within it.
  */
-export function getAllEyes(boardState: BoardState) {
+export function getAllEyes(boardState: BoardState, player: playerColors) {
   const allChains = getAllChains(boardState);
-  const eyeCandidates = getAllPotentialEyes(boardState, allChains);
+  const eyeCandidates = getAllPotentialEyes(boardState, allChains, player);
   const eyes: PointState[][][] = Array.from(new Array(boardState.board[0].length ** 2), () => []);
 
   eyeCandidates.forEach((neighborChainList, index) => {
@@ -108,7 +111,7 @@ export function getAllEyes(boardState: BoardState) {
   For each player chain number, add any empty space chains that are completely surrounded by a single player's color to
    an array at that chain number's index.
  */
-function getAllPotentialEyes(boardState: BoardState, allChains: PointState[][]) {
+function getAllPotentialEyes(boardState: BoardState, allChains: PointState[][], player: playerColors) {
   const emptyPointChains = allChains.filter((chain) => chain[0].player === playerColors.empty);
   const eyeCandidates: PointState[][][] = Array.from(new Array(boardState.board[0].length ** 2), () => []);
 
@@ -125,7 +128,10 @@ function getAllPotentialEyes(boardState: BoardState, allChains: PointState[][]) 
       );
 
       // Record the neighbor chains of the eye candidate empty chain, if all of its neighbors are the same color piece
-      if ((hasWhitePieceNeighbor && !hasBlackPieceNeighbor) || (!hasWhitePieceNeighbor && hasBlackPieceNeighbor)) {
+      if (
+        (hasWhitePieceNeighbor && !hasBlackPieceNeighbor && player === playerColors.white) ||
+        (!hasWhitePieceNeighbor && hasBlackPieceNeighbor && player === playerColors.black)
+      ) {
         eyeCandidates[chain[0].chain] = neighboringChains;
       }
     });
@@ -181,9 +187,13 @@ function getAllNeighboringChains(boardState: BoardState, chain: PointState[], al
 // Thus, the empty space of those holes is firmly claimed by the player surrounding them, and it can be ignored as a play area
 // Once all points are either stones or claimed territory in this way, the game is over
 export function findClaimedTerritory(boardState: BoardState) {
-  const eyes = getAllEyes(boardState);
-  const claimedPoints = eyes.filter((eyesForChainN) => eyesForChainN.length >= 2);
-  return claimedPoints.flat().flat();
+  const whiteClaimedTerritory = getAllEyes(boardState, playerColors.white).filter(
+    (eyesForChainN) => eyesForChainN.length >= 2,
+  );
+  const blackClaimedTerritory = getAllEyes(boardState, playerColors.black).filter(
+    (eyesForChainN) => eyesForChainN.length >= 2,
+  );
+  return [...blackClaimedTerritory, ...whiteClaimedTerritory].flat().flat();
 }
 
 export function getPlayerNeighbors(boardState: BoardState, chain: PointState[]) {

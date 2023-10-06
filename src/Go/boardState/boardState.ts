@@ -23,6 +23,7 @@ export function getNewBoardState(boardSize: number, ai?: opponents): BoardState 
     history: [],
     previousPlayer: playerColors.white,
     ai: ai ?? opponents.Daedalus,
+    passCount: 0,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
         player: playerColors.empty,
@@ -33,6 +34,42 @@ export function getNewBoardState(boardSize: number, ai?: opponents): BoardState 
       })),
     ),
   };
+}
+/**
+ * Make a new move on the given board, and update the board state accordingly
+ */
+export function makeMove(boardState: BoardState, x: number, y: number, player: PlayerColor, evaluateCaptures = true) {
+  // Do not update on invalid moves
+  const validity = evaluateIfMoveIsValid(boardState, x, y, player);
+  if (validity !== validityReason.valid) {
+    console.warn(`Invalid move attempted! ${x} ${y} ${player} : ${validity}`);
+    return false;
+  }
+
+  boardState.history.push(getBoardCopy(boardState).board);
+  boardState.history = boardState.history.slice(-4);
+  boardState.board[x][y].player = player;
+  boardState.previousPlayer = player;
+  boardState.passCount = 0;
+
+  if (evaluateCaptures) {
+    return updateCaptures(boardState, player);
+  }
+
+  return boardState;
+}
+
+export function passTurn(boardState: BoardState) {
+  if (boardState.previousPlayer === null) {
+    return;
+  }
+  boardState.previousPlayer =
+    boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
+  boardState.passCount++;
+
+  if (boardState.passCount >= 2) {
+    endGoGame(boardState);
+  }
 }
 
 export function endGoGame(boardState: BoardState) {
@@ -73,29 +110,6 @@ export function applyHandicap(boardSize: number, handicap: number) {
     (move: Move) => move.point && (newBoard.board[move.point.x][move.point.y].player = playerColors.white),
   );
   return newBoard;
-}
-
-/**
- * Make a new move on the given board, and update the board state accordingly
- */
-export function makeMove(boardState: BoardState, x: number, y: number, player: PlayerColor, evaluateCaptures = true) {
-  // Do not update on invalid moves
-  const validity = evaluateIfMoveIsValid(boardState, x, y, player);
-  if (validity !== validityReason.valid) {
-    console.warn(`Invalid move attempted! ${x} ${y} ${player} : ${validity}`);
-    return false;
-  }
-
-  boardState.history.push(getBoardCopy(boardState).board);
-  boardState.history = boardState.history.slice(-4);
-  boardState.board[x][y].player = player;
-  boardState.previousPlayer = player;
-
-  if (evaluateCaptures) {
-    return updateCaptures(boardState, player);
-  }
-
-  return boardState;
 }
 
 export function updateChains(boardState: BoardState) {

@@ -6,16 +6,19 @@ import {
   opponents,
   PlayerColor,
   playerColors,
+  playTypes,
   PointState,
   validityReason,
 } from "../boardState/goConstants";
 import {
+  endGoGame,
   findNeighbors,
   floor,
   getStateCopy,
   isDefined,
   isNotNull,
   makeMove,
+  passTurn,
   updateCaptures,
 } from "../boardState/boardState";
 import {
@@ -23,7 +26,7 @@ import {
   findChainLibertiesForPoint,
   getAllChains,
   getAllEyes,
-  getAllUnclaimedTerritory,
+  getAllValidMoves,
 } from "./boardAnalysis";
 import { findAnyMatchedPatterns } from "./patternMatching";
 
@@ -36,19 +39,20 @@ import { findAnyMatchedPatterns } from "./patternMatching";
 
  */
 
-export async function getMove(
-  boardState: BoardState,
-  player: PlayerColor,
-  opponent: opponents = opponents.Daedalus,
-): Promise<PointState> {
+export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents = opponents.Daedalus) {
   const moves = await getMoveOptions(boardState, player);
 
   const priorityMove = getFactionMove(moves, opponent);
+  // TODO: move validity analysis in move generation, not here
   if (
     priorityMove &&
     evaluateIfMoveIsValid(boardState, priorityMove.x, priorityMove.y, player) === validityReason.valid
   ) {
-    return priorityMove;
+    return {
+      type: playTypes.move,
+      x: priorityMove.x,
+      y: priorityMove.y,
+    };
   }
 
   // If no priority move is chosen, pick one of the reasonable moves
@@ -68,7 +72,34 @@ export async function getMove(
   const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
   console.log(chosenMove ? `Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
 
-  return chosenMove;
+  if (chosenMove) {
+    return {
+      type: playTypes.move,
+      x: chosenMove.x,
+      y: chosenMove.y,
+    };
+  } else {
+    return handleNoMoveFound(boardState);
+  }
+}
+
+function handleNoMoveFound(boardState: BoardState) {
+  passTurn(boardState);
+  const remainingTerritory = getAllValidMoves(boardState, playerColors.black).length;
+  if (remainingTerritory > 0 && boardState.passCount < 2) {
+    return {
+      type: playTypes.pass,
+      x: -1,
+      y: -1,
+    };
+  } else {
+    endGoGame(boardState);
+    return {
+      type: playTypes.gameOver,
+      x: -1,
+      y: -1,
+    };
+  }
 }
 
 function getFactionMove(moves: MoveOptions, faction: opponents): PointState | null {
@@ -340,30 +371,37 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
 }
 
 function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
-  const currentEyes = getAllEyes(boardState);
+  const currentEyes = getAllEyes(boardState, player);
+  const currentLivingGroupsCount = currentEyes.filter((eye) => eye.length >= 2);
+  const currentEyeCount = currentEyes.filter((eye) => eye.length);
+
   const chains = getAllChains(boardState);
   const friendlyLiberties = chains
     .filter((chain) => chain[0].player === player)
     .map((chain) => chain[0].liberties)
     .flat()
-    .filter(isNotNull);
+    .filter(isNotNull)
+    .filter((point) => evaluateIfMoveIsValid(boardState, point.x, point.y, playerColors.white));
+
   const eyeCreationMoves = friendlyLiberties.reduce((moveOptions: EyeMove[], point: PointState) => {
     const evaluationBoard = getStateCopy(boardState);
     evaluationBoard.board[point.x][point.y].player = player;
-    const newEyes = getAllEyes(updateCaptures(evaluationBoard, player));
-    newEyes.forEach((eyes, index) => {
-      if (eyes.length > currentEyes[index].length && currentEyes[index].length < 2) {
-        moveOptions.push({
-          point: point,
-          oldEyes: currentEyes[index].length,
-          newEyes: eyes.length,
-        });
-      }
-    });
+    const newEyes = getAllEyes(updateCaptures(evaluationBoard, player), player);
+    const newLivingGroupsCount = newEyes.filter((eye) => eye.length >= 2);
+    const newEyeCount = newEyes.filter((eye) => eye.length);
+    if (
+      newLivingGroupsCount > currentLivingGroupsCount ||
+      (newEyeCount > currentEyeCount && newLivingGroupsCount === currentLivingGroupsCount)
+    ) {
+      moveOptions.push({
+        point: point,
+        createsLife: newLivingGroupsCount > currentLivingGroupsCount,
+      });
+    }
     return moveOptions;
   }, []);
 
-  return eyeCreationMoves.sort((moveA, moveB) => moveB.newEyes - moveA.newEyes);
+  return eyeCreationMoves.sort((moveA, moveB) => +moveB.createsLife - +moveA.createsLife);
 }
 
 function getEyeCreationMove(boardState: BoardState, player: PlayerColor) {
@@ -373,8 +411,8 @@ function getEyeCreationMove(boardState: BoardState, player: PlayerColor) {
 function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
   const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
   const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer);
-  const twoEyeMoves = opponentEyeMoves.filter((move) => move.newEyes > 1);
-  const oneEyeMoves = opponentEyeMoves.filter((move) => move.newEyes === 1);
+  const twoEyeMoves = opponentEyeMoves.filter((move) => move.createsLife);
+  const oneEyeMoves = opponentEyeMoves.filter((move) => !move.createsLife);
 
   if (twoEyeMoves.length === 1) {
     return twoEyeMoves[0];
@@ -386,7 +424,7 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
 }
 
 async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
-  const availableSpaces = getAllUnclaimedTerritory(boardState);
+  const availableSpaces = getAllValidMoves(boardState, player);
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
   await sleep(50);
@@ -406,6 +444,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   const defendCaptureMove =
     defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1 ? defendMove : null;
 
+  console.log("---------------------");
   console.log("capture: ", captureMove?.point?.x, captureMove?.point?.y);
   console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
   console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
