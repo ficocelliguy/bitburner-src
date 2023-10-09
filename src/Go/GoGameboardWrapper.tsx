@@ -34,6 +34,8 @@ import { GoGameboard } from "./GoGameboard";
 
 // TODO: Unit tests
 
+// TODO: show diagrams in "how to play" tab
+
 // TODO: show previous board state
 
 // TODO: harden against interrupts for AI plays?
