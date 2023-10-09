@@ -29,6 +29,7 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditio
     if (!aiUpdatedBoard) {
       boardState.previousPlayer = playerColors.white;
       Player.go.boardState = boardState;
+      helpers.log(ctx, () => `Invalid AI move attempted: ${result.x}, ${result.y}`);
     } else {
       Player.go.boardState = aiUpdatedBoard;
       helpers.log(ctx, () => `Opponent played move: ${result.x}, ${result.y}`);
@@ -102,9 +103,22 @@ export function NetscriptGo(): InternalAPI<Go> {
     resetBoardState: (ctx) => (_opponent, _boardSize) => {
       // TODO: correctly handle opponent checking, and cleaner list
       const opponentString = helpers.string(ctx, "opponent", _opponent);
-      const opponent = opponents.Daedalus || opponentString;
+      const opponent = [
+        opponents.Netburners,
+        opponents.SlumSnakes,
+        opponents.TheBlackHand,
+        opponents.Daedalus,
+        opponents.Illuminati,
+      ].find((faction) => faction === opponentString);
+
       const boardSize = helpers.number(ctx, "boardSize", _boardSize);
+      if (![5, 7, 9, 13].includes(boardSize)) {
+        const ws = ctx.workerScript;
+        throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n Invalid subnet size requested (${boardSize}), size must be 5, 7, 9, or 13`;
+      }
+
       Player.go.boardState = getNewBoardState(boardSize, opponent);
+      return getSimplifiedBoardState(Player.go.boardState.board);
     },
   };
 }

@@ -18,6 +18,9 @@ import {
 import { Player } from "@player";
 import { getScore } from "../boardAnalysis/scoring";
 
+/**
+ * Generates a new BoardState object with the given opponent and size
+ */
 export function getNewBoardState(boardSize: number, ai?: opponents): BoardState {
   return {
     history: [],
@@ -59,6 +62,10 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
   return boardState;
 }
 
+/**
+ * Pass the current player's turn without making a move.
+ * Ends the game if this is the second pass in a row.
+ */
 export function passTurn(boardState: BoardState) {
   if (boardState.previousPlayer === null) {
     return;
@@ -72,6 +79,10 @@ export function passTurn(boardState: BoardState) {
   }
 }
 
+/**
+ * Handles ending the game. Sets the previous player to null to prevent further moves, calculates score, and updates
+ * player node count and power, and game history
+ */
 export function endGoGame(boardState: BoardState) {
   if (boardState.previousPlayer === null) {
     return;
@@ -101,6 +112,9 @@ export function endGoGame(boardState: BoardState) {
   statusToUpdate.nodes += score[playerColors.black].sum;
 }
 
+/**
+ * Makes a number of random moves on the board before the game starts, to give one player an edge.
+ */
 export function applyHandicap(boardSize: number, handicap: number) {
   const newBoard = getNewBoardState(boardSize);
   const availableMoves = getEmptySpaces(newBoard);
@@ -112,6 +126,10 @@ export function applyHandicap(boardSize: number, handicap: number) {
   return newBoard;
 }
 
+/**
+ * Finds all groups of connected stones on the board, and updates the points in them with their
+ * chain information and liberties.
+ */
 export function updateChains(boardState: BoardState) {
   boardState.board = clearChains(getBoardCopy(boardState)).board;
   const chains = [];
@@ -144,6 +162,8 @@ export function updateChains(boardState: BoardState) {
 /**
  * Assign each point on the board a chain ID, and link its list of 'liberties' (which are empty spaces
  * adjacent to some point on the chain including the current point).
+ *
+ * Then, remove any chains with no liberties.
  */
 export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerColor): BoardState {
   const boardState = updateChains(initialState);
@@ -209,6 +229,9 @@ export function findAdjacentPointsInChain(boardState: BoardState, x: number, y: 
   return adjacentPoints;
 }
 
+/**
+ * Finds all empty spaces on the board.
+ */
 export function getEmptySpaces(boardState: BoardState): PointState[] {
   return boardState.board.reduce(
     (emptySpaces, _, x) =>
@@ -217,6 +240,9 @@ export function getEmptySpaces(boardState: BoardState): PointState[] {
   );
 }
 
+/**
+ * Makes a deep copy of the given board state
+ */
 export function getStateCopy(initialState: BoardState) {
   const boardState = updateChains(getBoardCopy(initialState));
 
@@ -228,6 +254,9 @@ export function getStateCopy(initialState: BoardState) {
   return boardState;
 }
 
+/**
+ * Makes a deep copy of the given BoardState's board
+ */
 export function getBoardCopy(boardState: BoardState) {
   const boardCopy = getNewBoardState(boardState.board[0].length);
   const board = boardState.board;

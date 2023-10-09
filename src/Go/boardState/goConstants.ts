@@ -115,6 +115,9 @@ export type PointState = {
   y: number;
 };
 
+/**
+ * "move" or "pass" or "gameOver"
+ */
 export enum playTypes {
   move = "move",
   pass = "pass",

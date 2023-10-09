@@ -19,6 +19,19 @@ import {
   updateChains,
 } from "../boardState/boardState";
 
+/**
+ * Determines if the given player can legally make a move at the specified coordinates.
+ *
+ * You cannot repeat previous board states, to prevent endless loops (superko rule)
+ *
+ * You cannot make a move that would remove all liberties of your own piece(s) unless it captures opponent's pieces
+ *
+ * You cannot make a move in an occupied space
+ *
+ * You cannot make a move if it is not your turn, or if the game is over
+ *
+ * @returns a validity explanation for if the move is legal or not
+ */
 export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
   const point = initialState.board?.[x]?.[y];
 
@@ -51,21 +64,16 @@ export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: nu
   return validityReason.valid;
 }
 
-export function getAllUnclaimedTerritory(boardState: BoardState) {
-  const claimedTerritory = findClaimedTerritory(boardState);
-  const emptySpaces = getEmptySpaces(boardState);
-  return emptySpaces.filter(
-    (point) => !claimedTerritory.find((claimedPoint) => claimedPoint.x === point.x && claimedPoint.y === point.y),
-  );
-}
-
+/**
+ * Returns a list of points that are valid moves for the given player
+ */
 export function getAllValidMoves(boardState: BoardState, player: PlayerColor) {
   return getEmptySpaces(boardState).filter(
     (point) => evaluateIfMoveIsValid(boardState, point.x, point.y, player) === validityReason.valid,
   );
 }
 
-/*
+/**
   Find all empty point groups where either:
   * all of its immediate surrounding player-controlled points are in the same continuous chain, or
   * it is completely surrounded by some single larger chain and the edge of the board
@@ -106,7 +114,7 @@ export function getAllEyes(boardState: BoardState, player: playerColors) {
   return eyes;
 }
 
-/*
+/**
   Find all empty spaces completely surrounded by a single player color.
   For each player chain number, add any empty space chains that are completely surrounded by a single player's color to
    an array at that chain number's index.
@@ -182,10 +190,12 @@ function getAllNeighboringChains(boardState: BoardState, chain: PointState[], al
   return [...neighboringChains];
 }
 
-// If a group of stones has more than one empty holes that it completely surrounds, it cannot be captured, because white can
-// only play one stone at a time.
-// Thus, the empty space of those holes is firmly claimed by the player surrounding them, and it can be ignored as a play area
-// Once all points are either stones or claimed territory in this way, the game is over
+/**
+  If a group of stones has more than one empty holes that it completely surrounds, it cannot be captured, because white can
+  only play one stone at a time.
+  Thus, the empty space of those holes is firmly claimed by the player surrounding them, and it can be ignored as a play area
+  Once all points are either stones or claimed territory in this way, the game is over
+ */
 export function findClaimedTerritory(boardState: BoardState) {
   const whiteClaimedTerritory = getAllEyes(boardState, playerColors.white).filter(
     (eyesForChainN) => eyesForChainN.length >= 2,
@@ -196,10 +206,16 @@ export function findClaimedTerritory(boardState: BoardState) {
   return [...blackClaimedTerritory, ...whiteClaimedTerritory].flat().flat();
 }
 
+/**
+ * Gets all points that have player pieces adjacent to the given point
+ */
 export function getPlayerNeighbors(boardState: BoardState, chain: PointState[]) {
   return getAllNeighbors(boardState, chain).filter((neighbor) => neighbor && neighbor.player !== playerColors.empty);
 }
 
+/**
+ * Gets all points adjacent to the given point
+ */
 export function getAllNeighbors(boardState: BoardState, chain: PointState[]) {
   const allNeighbors = chain.reduce((chainNeighbors: Set<PointState>, point: PointState) => {
     getArrayFromNeighbor(findNeighbors(boardState, point.x, point.y))
@@ -211,13 +227,20 @@ export function getAllNeighbors(boardState: BoardState, chain: PointState[]) {
   return [...allNeighbors];
 }
 
-function isPointInChain(point: PointState, chain: PointState[]) {
+/**
+ * Determines if chain has a point that matches the given coordinates
+ */
+export function isPointInChain(point: PointState, chain: PointState[]) {
   return !!chain.find((chainPoint) => chainPoint.x === point.x && chainPoint.y === point.y);
 }
 
+/**
+ * Looks through the board history to see if the current state is identical to any previous state
+ * Capped at 5 for calculation speed, because loops of size 6 are essentially impossible
+ */
 function checkIfBoardStateIsRepeated(boardState: BoardState) {
   const currentBoard = boardState.board;
-  return boardState.history.slice(-4).find((state) => {
+  return boardState.history.slice(-5).find((state) => {
     for (let x = 0; x < state.length; x++) {
       for (let y = 0; y < state[x].length; y++) {
         if (currentBoard[x][y].player !== state[x][y].player) {
@@ -229,6 +252,9 @@ function checkIfBoardStateIsRepeated(boardState: BoardState) {
   });
 }
 
+/**
+ * Finds all groups of connected pieces, or empty space groups
+ */
 export function getAllChains(boardState: BoardState): PointState[][] {
   const chains: PointState[][] = [];
 
@@ -247,6 +273,9 @@ export function getAllChains(boardState: BoardState): PointState[][] {
   return chains;
 }
 
+/**
+ * Find any group of stones with no liberties (who therefore are to be removed from the board)
+ */
 export function findAnyCapturedChain(chainList: PointState[][], playerWhoMoved: PlayerColor) {
   const opposingPlayer = playerWhoMoved === playerColors.white ? playerColors.black : playerColors.white;
   const enemyChainToCapture = findCapturedChainOfColor(chainList, opposingPlayer);
@@ -265,10 +294,16 @@ function findCapturedChainOfColor(chainList: PointState[][], playerColor: Player
   return chainList.find((chain) => chain?.[0].player === playerColor && chain?.[0].liberties?.length === 0);
 }
 
+/**
+ * Find all empty points adjacent to any piece in a given chain
+ */
 export function findLibertiesForChain(boardState: BoardState, chain: PointState[]): PointState[] {
   return getAllNeighbors(boardState, chain).filter((neighbor) => neighbor && neighbor.player === playerColors.empty);
 }
 
+/**
+ * Find all empty points adjacent to any piece in the chain that a given point belongs to
+ */
 export function findChainLibertiesForPoint(boardState: BoardState, x: number, y: number): PointState[] {
   const chain = findAdjacentPointsInChain(boardState, x, y);
   return findLibertiesForChain(boardState, chain);

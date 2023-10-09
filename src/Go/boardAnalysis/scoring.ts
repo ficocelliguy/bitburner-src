@@ -2,6 +2,11 @@ import { BoardState, PlayerColor, playerColors, PointState } from "../boardState
 import { getAllChains, getPlayerNeighbors } from "./boardAnalysis";
 import { getKomi } from "./goAI";
 
+/**
+ * Returns the score of the current board.
+ * Each player gets one point for each piece on the board, and one point for any empty node
+ *  fully surrounded by their pieces
+ */
 export function getScore(boardState: BoardState) {
   const komi = getKomi(boardState.ai) ?? 6.5;
   const whitePieces = getColoredPieceCount(boardState, playerColors.white);
@@ -24,10 +29,16 @@ export function getScore(boardState: BoardState) {
   };
 }
 
+/**
+ * Gets the number pieces of a given color on the board
+ */
 function getColoredPieceCount(boardState: BoardState, color: PlayerColor) {
   return boardState.board.reduce((sum, row) => sum + row.filter((point) => point.player === color).length, 0);
 }
 
+/**
+ * Finds all empty spaces fully surrounded by a single player's stones
+ */
 function getTerritoryScores(boardState: BoardState) {
   const emptyTerritoryChains = getAllChains(boardState).filter((chain) => chain?.[0]?.player === playerColors.empty);
 
@@ -48,6 +59,9 @@ function getTerritoryScores(boardState: BoardState) {
   );
 }
 
+/**
+ * Finds all neighbors of the empty points in question. If they are all one color, that player controls that space
+ */
 function checkTerritoryOwnership(boardState: BoardState, emptyPointChain: PointState[]) {
   if (emptyPointChain.length > boardState.board[0].length ** 2 - 3) {
     return null;
@@ -61,6 +75,9 @@ function checkTerritoryOwnership(boardState: BoardState, emptyPointChain: PointS
   return isWhiteTerritory ? playerColors.white : isBlackTerritory ? playerColors.black : null;
 }
 
+/**
+ * prints the board state to the console
+ */
 export function logBoard(boardState: BoardState): void {
   const state = boardState.board;
   console.log("--------------");

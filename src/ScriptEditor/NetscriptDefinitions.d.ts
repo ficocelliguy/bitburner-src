@@ -3674,23 +3674,87 @@ export interface Gang {
 
 /**
  * IPvGO api
- *  TODO: Documentation
  * @public
  */
 export interface Go {
   /**
+   *  Make a move on the IPvGO subnet gameboard, and await the opponent's response.
+   *  x:0 y:0 represents the bottom-left corner of the board in the UI.
    *
+   * @remarks
+   * RAM cost: 2 GB
    *
+   * see also makeMoveTraditional to use the traditional go notation e.g. A 1 instead of 0 0
+   *
+   * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
    */
   makeMove(x: number, y: number): Promise<Play>;
 
+  /**
+   *  Make a move on the IPvGO subnet gameboard, and await the opponent's response.
+   *  x:"A" y:1 represents the bottom-left corner of the board in the UI.
+   *
+   * @remarks
+   * RAM cost: 2 GB
+   *
+   * see also makeMove to use a simplified coordinate notation e.g. 0 0 instead of A 1
+   *
+   * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
+   */
   makeMoveTraditional(x: string, y: number): Promise<Play>;
 
-  passTurn(useTraditionalNotation: boolean): Promise<Play>;
+  /**
+   * Pass the player's turn rather than making a move, and await the opponent's response.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   *
+   * @param useTraditionalNotation optional: if true, the opponent's move will be in the form A 1 instead of 0 0
+   */
+  passTurn(useTraditionalNotation?: boolean): Promise<Play>;
 
+  /**
+   * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
+   *
+   * @remarks
+   * RAM cost: 2 GB
+   *
+   * For example, a 5x5 board might look like this:
+   * ```
+   * [
+   *   "XX.O.",
+   *   "X..OO",
+   *   ".XO..",
+   *   "XXO..",
+   *   ".XOO.",
+   * ]
+   * ```
+   *
+   * Each string represents a vertical column on the board, and each character in the string represents a point.
+   *
+   * Traditional notation for Go is e.g. "B,1" referring to second ("B") column, first rank. This is the equivalent of index [1][0].
+   *
+   * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
+   * string represents a vertical column on the board. In other words, the printed example above can be understood to
+   * be rotated 90 degrees clockwise compared to the board UI as shown in the IPvGO subnet tab.
+   *
+   */
   getBoardState(): string[];
 
-  resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): void;
+  /**
+   * Gets new IPvGO subnet with the specified size owned by the listed faction, ready for the player to make a move.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   *
+   * Note that some factions will have a few routers on the subnet at this state.
+   *
+   * @param opponent "Netburners" or "Slum Snakes" or "The Black Hand" or "Daedalus" or "Illuminati",
+   * @param boardSize
+   *
+   * @returns a simplified version of the board state as an array of strings representing the board columns. See ns.Go.getBoardState() for full details
+   */
+  resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): string[];
 }
 
 /**

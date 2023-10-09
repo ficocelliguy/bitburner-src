@@ -74,6 +74,9 @@ export const threeByThreePatterns = [
   ],
 ];
 
+/**
+ * Searches the board for any point that matches the expanded pattern set
+ */
 export async function findAnyMatchedPatterns(boardState: BoardState, player: PlayerColor) {
   const board = boardState.board;
   const boardSize = board[0].length;
@@ -97,7 +100,7 @@ export async function findAnyMatchedPatterns(boardState: BoardState, player: Pla
   return null;
 }
 
-/*
+/**
   Returns false if any point does not match the pattern, and true if it matches fully.
  */
 function checkMatch(neighborhood: PointState[][], pattern: string[], player: PlayerColor) {
@@ -107,6 +110,9 @@ function checkMatch(neighborhood: PointState[][], pattern: string[], player: Pla
   return !mismatch;
 }
 
+/**
+ * Gets the 8 points adjacent and diagonally adjacent to the given point
+ */
 function getNeighborhood(boardState: BoardState, x: number, y: number) {
   const board = boardState.board;
   return [
@@ -116,6 +122,15 @@ function getNeighborhood(boardState: BoardState, x: number, y: number) {
   ];
 }
 
+/**
+ * @returns true if the given point matches the given string representation, false otherwise
+ *
+ * Capital X and O only match stones of that color
+ * lowercase x and o match stones of that color, or empty space, or the edge of the board
+ * a period "." only matches empty nodes
+ * A space " " only matches the edge of the board
+ * question mark "?" matches anything
+ */
 function matches(stringPoint: string, point: PointState | null, player: PlayerColor) {
   const opponent = player === playerColors.white ? playerColors.black : playerColors.white;
   switch (stringPoint) {
@@ -143,6 +158,9 @@ function matches(stringPoint: string, point: PointState | null, player: PlayerCo
   }
 }
 
+/**
+ * Finds all variations of the pattern list, by expanding it using rotation and mirroring
+ */
 function expandAllThreeByThreePatterns() {
   const patterns1 = [...threeByThreePatterns, ...threeByThreePatterns.map(rotate90Degrees)];
   const patterns2 = [...patterns1, ...patterns1.map(verticalMirror)];

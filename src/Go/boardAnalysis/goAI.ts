@@ -30,6 +30,8 @@ import {
   getAllValidMoves,
 } from "./boardAnalysis";
 import { findAnyMatchedPatterns } from "./patternMatching";
+import { WHRNG } from "../../Casino/RNG";
+import { Player } from "@player";
 
 /*
   Basic GO AIs, each with some personality and weaknesses
@@ -39,10 +41,18 @@ import { findAnyMatchedPatterns } from "./patternMatching";
   In addition, knowledge of claimed territory and eyes has been added, to aid in narrowing down which spaces to play on
  */
 
-export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents = opponents.Daedalus) {
+/**
+ * Finds an array of potential moves based on the current board state, then chooses one
+ * based on the given opponent's personality and preferences. If no preference is given by the AI,
+ * will choose one from the reasonable moves at random.
+ *
+ * @returns a promise that will resolve with a move (or pass) from the designated AI opponent.
+ */
+export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents) {
   const moves = await getMoveOptions(boardState, player);
+  const rng = new WHRNG(Player.totalPlaytime).random();
 
-  const priorityMove = getFactionMove(moves, opponent);
+  const priorityMove = getFactionMove(moves, opponent, rng);
   if (priorityMove) {
     return {
       type: playTypes.move,
@@ -64,7 +74,7 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
     .filter(isNotNull)
     .filter(isDefined);
 
-  const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
+  const chosenMove = moveOptions[floor(rng * moveOptions.length)];
 
   if (chosenMove) {
     console.log(`Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}`);
@@ -79,6 +89,12 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
   }
 }
 
+/**
+ * Detects if the AI is merely passing their turn, or if the game should end.
+ *
+ * Ends the game if the player passed on the previous turn before the AI passes,
+ *   or if the player will be forced to pass their next turn after the AI passes.
+ */
 function handleNoMoveFound(boardState: BoardState) {
   passTurn(boardState);
   const remainingTerritory = getAllValidMoves(boardState, playerColors.black).length;
@@ -98,24 +114,32 @@ function handleNoMoveFound(boardState: BoardState) {
   }
 }
 
-function getFactionMove(moves: MoveOptions, faction: opponents): PointState | null {
+/**
+ * Given a group of move options, chooses one based on the given opponent's personality (if any fit their priorities)
+ */
+function getFactionMove(moves: MoveOptions, faction: opponents, rng: number): PointState | null {
   if (faction === opponents.Netburners) {
-    return getNetburnersPriorityMove(moves);
+    return getNetburnersPriorityMove(moves, rng);
   }
   if (faction === opponents.SlumSnakes) {
-    return getSlumSnakesPriorityMove(moves);
+    return getSlumSnakesPriorityMove(moves, rng);
   }
   if (faction === opponents.TheBlackHand) {
-    return getBlackHandPriorityMove(moves);
+    return getBlackHandPriorityMove(moves, rng);
+  }
+  if (faction === opponents.Daedalus) {
+    return getDaedalusPriorityMove(moves, rng);
   }
 
-  return getDaedalusPriorityMove(moves);
+  return getIlluminatiPriorityMove(moves);
 }
 
-function getNetburnersPriorityMove(moves: MoveOptions): PointState | null {
-  const rng = Math.random();
+/**
+ * Netburners mostly just put random points around the board, but occasionally have a smart move
+ */
+function getNetburnersPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (rng < 0.2) {
-    return getDaedalusPriorityMove(moves);
+    return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.5 && moves.expansion) {
     return moves.expansion.point;
   }
@@ -123,15 +147,17 @@ function getNetburnersPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
+/**
+ * Slum snakes prioritize defending their pieces and building chains that snake around as much of the bord as possible.
+ */
+function getSlumSnakesPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (moves.defendCapture) {
     console.log("defend capture: defend move chosen");
     return moves.defendCapture.point;
   }
 
-  const rng = Math.random();
   if (rng < 0.2) {
-    return getDaedalusPriorityMove(moves);
+    return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.6 && moves.growth) {
     return moves.growth.point;
   }
@@ -139,7 +165,10 @@ function getSlumSnakesPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
+/**
+ * Black hand just wants to smOrk. They always capture or smother the opponent if possible.
+ */
+function getBlackHandPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (moves.capture) {
     console.log("capture: capture move chosen");
     return moves.capture.point;
@@ -155,9 +184,8 @@ function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
     return moves.defendCapture.point;
   }
 
-  const rng = Math.random();
   if (rng < 0.3) {
-    return getDaedalusPriorityMove(moves);
+    return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.75 && moves.surround) {
     return moves.surround.point;
   }
@@ -165,7 +193,26 @@ function getBlackHandPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getDaedalusPriorityMove(moves: MoveOptions): PointState | null {
+/**
+ * Daedalus almost always picks the Illuminati move, but very occasionally gets distracted.
+ */
+function getDaedalusPriorityMove(moves: MoveOptions, rng: number): PointState | null {
+  if (rng < 0.1) {
+    return null;
+  }
+
+  return getIlluminatiPriorityMove(moves);
+}
+
+/**
+ * First prioritizes capturing of opponent pieces.
+ * Then, preventing capture of their own pieces.
+ * Then, creating "eyes" to solidify their control over the board
+ * Then, finding opportunities to capture on their next move
+ * Then, blocking the opponent's attempts to create eyes
+ * Finally, will match any of the predefined local patterns indicating a strong move.
+ */
+function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.capture) {
     console.log("capture: capture move chosen");
     return moves.capture.point;
@@ -203,6 +250,9 @@ function getExpansionMove(boardState: BoardState, player: PlayerColor, available
   return getExpansionMoveArray(boardState, player, availableSpaces)?.[0] ?? null;
 }
 
+/**
+ * Finds a move in an open area to expand influence and later build on
+ */
 export function getExpansionMoveArray(
   boardState: BoardState,
   player: PlayerColor,
@@ -233,7 +283,10 @@ export function getExpansionMoveArray(
   });
 }
 
-async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+/**
+ * Finds all moves that increases the liberties of the player's pieces, making them harder to capture and occupy more space on the board.
+ */
+async function getLibertyGrowthMoves(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const boardState = getStateCopy(initialState);
   const friendlyEyes = getAllEyes(initialState, player).flat().flat();
   const growableSpaces = availableSpaces.filter(
@@ -278,8 +331,11 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
     .filter((newLiberty) => evaluateIfMoveIsValid(boardState, newLiberty.point.x, newLiberty.point.y, player));
 }
 
+/**
+ * Find a move that increases the player's liberties by the maximum amount
+ */
 async function getGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const growthMoves = await getLibertyGrowthMove(initialState, player, availableSpaces);
+  const growthMoves = await getLibertyGrowthMoves(initialState, player, availableSpaces);
   const libertyIncreases = growthMoves?.filter((move) => move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
   const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
@@ -292,8 +348,11 @@ async function getGrowthMove(initialState: BoardState, player: PlayerColor, avai
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
+/**
+ * Find a move that specifically increases a chain's liberties from 1 to more than 1, preventing capture
+ */
 async function getDefendMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const growthMoves = await getLibertyGrowthMove(initialState, player, availableSpaces);
+  const growthMoves = await getLibertyGrowthMoves(initialState, player, availableSpaces);
   const libertyIncreases =
     growthMoves?.filter((move) => move.oldLibertyCount <= 1 && move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
@@ -307,8 +366,10 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor, avai
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
-// TODO: refactor for clarity
-// TODO: eliminate move options with only one liberty
+/**
+ * Find a move that reduces the opponent's liberties as much as possible,
+ *   capturing (or making it easier to capture) their pieces
+ */
 async function getSurroundMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const boardState = getStateCopy(initialState);
 
@@ -319,6 +380,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
     return null;
   }
 
+  // Get a point from each enemy chain to use as a reference point later
   const enemyChainRepresentatives = enemyChains
     .map((chain) => chain[0])
     .map((point) =>
@@ -376,6 +438,13 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
+/**
+ * Finds all moves that would create an eye for the given player.
+ *
+ * An "eye" is empty point(s) completely surrounded by a single player's connected pieces.
+ * If a chain has multiple eyes, it cannot be captured by the opponent (since they can only fill one eye at a time,
+ *  and suiciding your own pieces is not legal unless it captures the opponents' first)
+ */
 function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
   const currentEyes = getAllEyes(boardState, player);
   const currentLivingGroupsCount = currentEyes.filter((eye) => eye.length >= 2);
@@ -414,6 +483,9 @@ function getEyeCreationMove(boardState: BoardState, player: PlayerColor) {
   return getEyeCreationMoves(boardState, player)[0];
 }
 
+/**
+ * If there is only one move that would create two eyes for the opponent, it should be blocked if possible
+ */
 function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
   const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
   const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer);
@@ -429,6 +501,9 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
   return null;
 }
 
+/**
+ * Gets a group of reasonable moves based on the current board state, to be passed to the factions' AI to decide on
+ */
 async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
   const availableSpaces = getAllValidMoves(boardState, player);
 
@@ -474,10 +549,16 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   };
 }
 
+/**
+ * Gets the starting score for white.
+ */
 export function getKomi(opponent: opponents) {
   return opponentDetails[opponent].komi;
 }
 
+/**
+ * Allows time to pass
+ */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

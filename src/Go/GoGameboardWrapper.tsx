@@ -32,23 +32,11 @@ import { evaluateIfMoveIsValid } from "./boardAnalysis/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 
-// TODO: make sure game ends if AI passes second
-
 // TODO: Unit tests
 
-// TODO: documentation
-
-// TODO: cleanup
-
-// TODO: Label ranks and columns?
-
-// TODO: Flavor text and page title
-
-// TODO: last stone played marker?
+// TODO: show previous board state
 
 // TODO: harden against interrupts for AI plays?
-
-// TODO: API: chains? liberties?
 
 export function GoGameboardWrapper(): React.ReactElement {
   const rerender = useRerender(400);

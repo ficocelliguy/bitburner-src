@@ -1,3 +1,4 @@
+// The character 'wei' is part of the original Chinese name of the game Go, meaning to surround or enclose
 export const weiArt = `
 
 
