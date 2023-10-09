@@ -1,6 +1,6 @@
 /** All netscript definitions */
 
-import { opponents } from "../Go/boardState/goConstants";
+import { opponents, Play } from "../Go/boardState/goConstants";
 
 /** @public */
 interface HP {
@@ -3678,6 +3678,10 @@ export interface Gang {
  * @public
  */
 export interface Go {
+  /**
+   *
+   *
+   */
   makeMove(x: number, y: number): Promise<Play>;
 
   makeMoveTraditional(x: string, y: number): Promise<Play>;

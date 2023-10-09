@@ -3,6 +3,7 @@ import {
   EyeMove,
   Move,
   MoveOptions,
+  opponentDetails,
   opponents,
   PlayerColor,
   playerColors,
@@ -35,19 +36,14 @@ import { findAnyMatchedPatterns } from "./patternMatching";
 
   The basic logic is pulled from https://archive.org/details/byte-magazine-1981-04/page/n101/mode/2up?view=theater
 
-  In addition, knowledge of claimed territory and eyes has been added, to aid in narrowing down spaces to play on
-
+  In addition, knowledge of claimed territory and eyes has been added, to aid in narrowing down which spaces to play on
  */
 
 export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents = opponents.Daedalus) {
   const moves = await getMoveOptions(boardState, player);
 
   const priorityMove = getFactionMove(moves, opponent);
-  // TODO: move validity analysis in move generation, not here
-  if (
-    priorityMove &&
-    evaluateIfMoveIsValid(boardState, priorityMove.x, priorityMove.y, player) === validityReason.valid
-  ) {
+  if (priorityMove) {
     return {
       type: playTypes.move,
       x: priorityMove.x,
@@ -66,19 +62,19 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
     moves.eyeBlock?.point,
   ]
     .filter(isNotNull)
-    .filter(isDefined)
-    .filter((move) => evaluateIfMoveIsValid(boardState, move.x, move.y, player) === validityReason.valid);
+    .filter(isDefined);
 
   const chosenMove = moveOptions[floor(Math.random() * moveOptions.length)];
-  console.log(chosenMove ? `Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}` : "No valid moves found");
 
   if (chosenMove) {
+    console.log(`Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}`);
     return {
       type: playTypes.move,
       x: chosenMove.x,
       y: chosenMove.y,
     };
   } else {
+    console.log("No valid moves found");
     return handleNoMoveFound(boardState);
   }
 }
@@ -239,6 +235,10 @@ export function getExpansionMoveArray(
 
 async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const boardState = getStateCopy(initialState);
+  const friendlyEyes = getAllEyes(initialState, player).flat().flat();
+  const growableSpaces = availableSpaces.filter(
+    (point) => !friendlyEyes.find((eye) => eye.x === point.x && eye.y == point.y),
+  );
 
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
 
@@ -257,7 +257,7 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
     .filter(isNotNull)
     .filter(isDefined)
     .filter((liberty) =>
-      availableSpaces.find((point) => liberty.libertyPoint.x === point.x && liberty.libertyPoint.y === point.y),
+      growableSpaces.find((point) => liberty.libertyPoint.x === point.x && liberty.libertyPoint.y === point.y),
     );
 
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
@@ -274,7 +274,8 @@ async function getLibertyGrowthMove(initialState: BoardState, player: PlayerColo
         newLibertyCount,
       };
     })
-    .filter((newLiberty) => newLiberty.newLibertyCount > 1);
+    .filter((newLiberty) => newLiberty.newLibertyCount > 1)
+    .filter((newLiberty) => evaluateIfMoveIsValid(boardState, newLiberty.point.x, newLiberty.point.y, player));
 }
 
 async function getGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
@@ -359,7 +360,12 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
         newLibertyCount: newEnemyLibertyCount,
       };
     })
-    .filter(isNotNull);
+    .filter(isNotNull)
+    .filter(
+      (libertyDecrease) =>
+        evaluateIfMoveIsValid(boardState, libertyDecrease.point.x, libertyDecrease.point.y, player) ===
+        validityReason.valid,
+    );
   if (!libertyDecreases.length) {
     return null;
   }
@@ -381,7 +387,7 @@ function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
     .map((chain) => chain[0].liberties)
     .flat()
     .filter(isNotNull)
-    .filter((point) => evaluateIfMoveIsValid(boardState, point.x, point.y, playerColors.white));
+    .filter((point) => evaluateIfMoveIsValid(boardState, point.x, point.y, player));
 
   const eyeCreationMoves = friendlyLiberties.reduce((moveOptions: EyeMove[], point: PointState) => {
     const evaluationBoard = getStateCopy(boardState);
@@ -469,17 +475,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
 }
 
 export function getKomi(opponent: opponents) {
-  switch (opponent) {
-    case opponents.Netburners:
-      return 1.5;
-    case opponents.SlumSnakes:
-    case opponents.TheBlackHand:
-      return 3.5;
-    case opponents.Illuminati:
-      return 7.5;
-    default:
-      return 5.5;
-  }
+  return opponentDetails[opponent].komi;
 }
 
 export function sleep(ms: number): Promise<void> {

@@ -25,10 +25,6 @@ export const GoStatusPage = (): React.ReactElement => {
     opponents.Illuminati,
   ];
 
-  function getFormattedOpponentName(opponent: opponents) {
-    return opponent.slice(0, opponent.indexOf("("));
-  }
-
   function formatPercent(n: number) {
     return floor((n - 1) * 10000) / 100;
   }
@@ -78,12 +74,11 @@ export const GoStatusPage = (): React.ReactElement => {
       <Grid container style={{ maxWidth: "875px" }}>
         {opponentList.map((faction, index) => {
           const data = Player.go.status[faction];
-          const name = getFormattedOpponentName(faction);
           return (
             <Grid item key={opponentList[index]} className={classes.factionStatus}>
               <Typography>
                 <br />
-                <strong>{name}</strong>
+                <strong>{faction}</strong>
                 <br />
                 Wins: {data.wins} / {data.losses + data.wins}
                 <br />

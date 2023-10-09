@@ -17,8 +17,6 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
   const blackScore = finalScore[playerColors.black];
   const whiteScore = finalScore[playerColors.white];
 
-  const opponentString = opponent.slice(0, opponent.indexOf("("));
-
   return (
     <Modal open={open} onClose={onClose}>
       <>
@@ -38,7 +36,7 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
           Final score: {whiteScore.sum}
           <br />
           <br />
-          {blackScore.sum > whiteScore.sum ? "You win!" : `Winner: ${opponentString}`}
+          {blackScore.sum > whiteScore.sum ? "You win!" : `Winner: ${opponent}`}
           <br />
           <br />
         </Typography>

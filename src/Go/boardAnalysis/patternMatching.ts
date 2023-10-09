@@ -1,7 +1,8 @@
 // Inspired by https://github.com/pasky/michi/blob/master/michi.py
-import { BoardState, PlayerColor, playerColors, PointState } from "../boardState/goConstants";
+import { BoardState, PlayerColor, playerColors, PointState, validityReason } from "../boardState/goConstants";
 import { sleep } from "./goAI";
 import { getStateCopy, updateCaptures } from "../boardState/boardState";
+import { evaluateIfMoveIsValid } from "./boardAnalysis";
 
 export const threeByThreePatterns = [
   // 3x3 piece patterns; X,O are color pieces; x,o are any state except the opposite color piece;
@@ -86,7 +87,7 @@ export async function findAnyMatchedPatterns(boardState: BoardState, player: Pla
         evaluationBoard.board[x][y].player = player;
         const updatedBoard = updateCaptures(evaluationBoard, player);
 
-        if ((updatedBoard.board[x][y].liberties?.length ?? 0) > 1) {
+        if (evaluateIfMoveIsValid(updatedBoard, x, y, player) === validityReason.valid) {
           return board[x][y];
         }
       }

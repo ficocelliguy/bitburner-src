@@ -111,6 +111,7 @@ export function GoGameboardWrapper(): React.ReactElement {
     updateBoard(boardState);
     if (boardState.previousPlayer === null) {
       endGame();
+      return;
     }
 
     setTimeout(() => {

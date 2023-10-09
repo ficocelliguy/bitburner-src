@@ -223,6 +223,7 @@ export function getStateCopy(initialState: BoardState) {
   boardState.history = [...initialState.history];
   boardState.previousPlayer = initialState.previousPlayer;
   boardState.ai = initialState.ai;
+  boardState.passCount = initialState.passCount;
 
   return boardState;
 }

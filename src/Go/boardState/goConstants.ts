@@ -18,12 +18,57 @@ export enum validityReason {
 
 export enum opponents {
   none = "No AI",
-  Netburners = "Netburners (Easy AI & +1.5 komi)",
-  SlumSnakes = "Slum Snakes (Spread AI & +3.5 komi)",
-  TheBlackHand = "The Black Hand (Aggro AI & +3.5 komi)",
-  Daedalus = "Daedalus (Mid AI & +5.5 komi)",
-  Illuminati = "Illuminati (+7.5 komi & 4 handicap)",
+  Netburners = "Netburners",
+  SlumSnakes = "Slum Snakes",
+  TheBlackHand = "The Black Hand",
+  Daedalus = "Daedalus",
+  Illuminati = "Illuminati",
 }
+
+export const opponentDetails = {
+  [opponents.none]: {
+    komi: 5.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "Play both colors",
+    bonusDescription: "",
+    bonusPower: 0,
+  },
+  [opponents.Netburners]: {
+    komi: 1.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "Easy AI",
+    bonusDescription: "hacknet cost",
+    bonusPower: -1.5,
+  },
+  [opponents.SlumSnakes]: {
+    komi: 3.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "Spread AI",
+    bonusDescription: "crime money",
+    bonusPower: 1.1,
+  },
+  [opponents.TheBlackHand]: {
+    komi: 3.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "Aggro AI",
+    bonusDescription: "hacking exp",
+    bonusPower: 0.8,
+  },
+  [opponents.Daedalus]: {
+    komi: 5.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "Mid AI",
+    bonusDescription: "reputation gain",
+    bonusPower: 0.9,
+  },
+  [opponents.Illuminati]: {
+    komi: 7.5,
+    boardSizes: [5, 7, 9, 13],
+    description: "4 handicap",
+    bonusDescription: "grow() power",
+    bonusPower: 0.6,
+  },
+};
 
 export const boardSizes = [5, 7, 9, 13];
 

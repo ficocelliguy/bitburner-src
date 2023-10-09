@@ -1264,7 +1264,7 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
     },
     "go": {
       "boardState": {
-        "ai": "Daedalus (Mid AI & +5.5 komi)",
+        "ai": "Daedalus",
         "board": [
           [
             {
@@ -1625,10 +1625,11 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
           ],
         ],
         "history": [],
+        "passCount": 0,
         "previousPlayer": "White",
       },
       "status": {
-        "Daedalus (Mid AI & +5.5 komi)": {
+        "Daedalus": {
           "highestWinStreak": 0,
           "losses": 0,
           "nodePower": 0,
@@ -1636,7 +1637,7 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
           "winStreak": 0,
           "wins": 0,
         },
-        "Illuminati (+7.5 komi & 4 handicap)": {
+        "Illuminati": {
           "highestWinStreak": 0,
           "losses": 0,
           "nodePower": 0,
@@ -1644,7 +1645,7 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
           "winStreak": 0,
           "wins": 0,
         },
-        "Netburners (Easy AI & +1.5 komi)": {
+        "Netburners": {
           "highestWinStreak": 0,
           "losses": 0,
           "nodePower": 0,
@@ -1660,7 +1661,7 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
           "winStreak": 0,
           "wins": 0,
         },
-        "Slum Snakes (Spread AI & +3.5 komi)": {
+        "Slum Snakes": {
           "highestWinStreak": 0,
           "losses": 0,
           "nodePower": 0,
@@ -1668,7 +1669,7 @@ exports[`Check Save File Continuity PlayerSave continuity 1`] = `
           "winStreak": 0,
           "wins": 0,
         },
-        "The Black Hand (Aggro AI & +3.5 komi)": {
+        "The Black Hand": {
           "highestWinStreak": 0,
           "losses": 0,
           "nodePower": 0,
