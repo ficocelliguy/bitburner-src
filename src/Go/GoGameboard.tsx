@@ -4,23 +4,18 @@ import Grid from "@mui/material/Grid";
 import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../ui/React/hooks";
 import { boardStyles } from "./boardState/goStyles";
-import { Player } from "@player";
 import { getAllValidMoves } from "./boardAnalysis/boardAnalysis";
-import { opponents, playerColors } from "./boardState/goConstants";
+import {BoardState, opponents, playerColors} from "./boardState/goConstants";
 
 interface IProps {
+  boardState: BoardState;
   traditional: boolean;
   clickHandler: (x: number, y: number) => any;
   hover: boolean;
 }
 
-export function GoGameboard({ traditional, clickHandler, hover }: IProps): React.ReactElement {
+export function GoGameboard({ boardState, traditional, clickHandler, hover }: IProps): React.ReactElement {
   useRerender(400);
-
-  const boardState = (function () {
-    if (Player?.go?.boardState === null) throw new Error("Player.go should not be null");
-    return Player.go.boardState;
-  })();
 
   const currentPlayer =
     boardState.ai !== opponents.none || boardState.previousPlayer === playerColors.white

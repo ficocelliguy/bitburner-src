@@ -309,14 +309,18 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     gameboardWrapper: {
       position: "relative",
-      width: "calc(min(700px, 95vw - 250px))",
-      height: "calc(min(700px, 95vw - 250px))",
+      width: "650px",
+      height: "650px",
       padding: "5px",
+    },
+    boardFrame: {
+      position: "relative",
+      width: "652px",
     },
     statusPageGameboard: {
       position: "relative",
-      width: "calc(min(400px, 60vw - 250px))",
-      height: "calc(min(400px, 60vw - 250px))",
+      width: "calc(min(400px, max(60vw - 250px, 300px)))",
+      height: "calc(min(400px, max(60vw - 250px, 300px)))",
     },
     factionStatus: {
       padding: "10px",
@@ -337,19 +341,29 @@ export const boardStyles = makeStyles((theme: Theme) =>
     opponentName: {
       paddingTop: "3px",
       paddingBottom: "5px",
+      paddingRight: "10px",
     },
     opponentLabel: {
       padding: "3px 10px 5px 10px",
     },
+    opponentTitle: {
+      padding: "10px 0 0 0",
+    },
     inlineFlexBox: {
       display: "inline-flex",
       flexDirection: "row",
+      width: "100%",
+      justifyContent: "center",
+
+      "& button": {
+        padding: "0 20px",
+      }
     },
     scoreBox: {
       display: "inline-flex",
       flexDirection: "row",
       whiteSpace: "pre",
-      padding: "10px",
+      padding: "10px 45px",
     },
     fiveByFive: {
       height: "20%",
@@ -387,13 +401,15 @@ export const boardStyles = makeStyles((theme: Theme) =>
       fontSize: "4.1px",
       whiteSpace: "pre",
       pointerEvents: "none",
-      paddingTop: "20px",
-      paddingLeft: "15px",
+      paddingTop: "15px",
     },
     instructionScroller: {
       height: "calc(100vw - 225px)",
       overflowY: "scroll",
       marginTop: "10px",
     },
+    translucent: {
+      opacity: 0.6,
+    }
   }),
 );

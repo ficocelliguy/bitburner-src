@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { SnackbarEvents } from "../ui/React/Snackbar";
-import { ToastVariant } from "@enums";
-import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import React, {useState} from "react";
+import {SnackbarEvents} from "../ui/React/Snackbar";
+import {ToastVariant} from "@enums";
+import {Box, Button, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
 
 import {
   boardSizes,
@@ -21,22 +21,20 @@ import {
   passTurn,
   updateCaptures,
 } from "./boardState/boardState";
-import { getMove } from "./boardAnalysis/goAI";
-import { weiArt } from "./boardState/asciiArt";
-import { getScore } from "./boardAnalysis/scoring";
-import { useRerender } from "../ui/React/hooks";
-import { OptionSwitch } from "../ui/React/OptionSwitch";
-import { boardStyles } from "./boardState/goStyles";
-import { Player } from "@player";
-import { evaluateIfMoveIsValid } from "./boardAnalysis/boardAnalysis";
-import { GoScoreModal } from "./GoScoreModal";
-import { GoGameboard } from "./GoGameboard";
+import {getMove} from "./boardAnalysis/goAI";
+import {weiArt} from "./boardState/asciiArt";
+import {getScore} from "./boardAnalysis/scoring";
+import {useRerender} from "../ui/React/hooks";
+import {OptionSwitch} from "../ui/React/OptionSwitch";
+import {boardStyles} from "./boardState/goStyles";
+import {Player} from "@player";
+import {evaluateIfMoveIsValid} from "./boardAnalysis/boardAnalysis";
+import {GoScoreModal} from "./GoScoreModal";
+import {GoGameboard} from "./GoGameboard";
 
 // TODO: Unit tests
 
 // TODO: show diagrams in "how to play" tab
-
-// TODO: show previous board state
 
 // TODO: harden against interrupts for AI plays?
 
@@ -48,6 +46,7 @@ export function GoGameboardWrapper(): React.ReactElement {
     return Player.go.boardState;
   })();
   const [traditional, setTraditional] = useState(false);
+  const [showPriorMove, setShowPriorMove] = useState(false);
   const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
   const [boardSize, setBoardSize] = useState(Player.go.boardState.board[0].length);
   const [scoreOpen, setScoreOpen] = useState(false);
@@ -64,6 +63,11 @@ export function GoGameboardWrapper(): React.ReactElement {
   ];
 
   function clickHandler(x: number, y: number): void {
+    if (showPriorMove) {
+      SnackbarEvents.emit(`Currently showing a past board state.`, ToastVariant.WARNING, 2000);
+      return;
+    }
+
     // Lock the board when it isn't the player's turn
     const gameOver = boardState.previousPlayer === null;
     const notYourTurn = boardState.previousPlayer === playerColors.black && opponent !== opponents.none;
@@ -186,9 +190,18 @@ export function GoGameboardWrapper(): React.ReactElement {
     rerender();
   }
 
+  function getPriorMove() {
+    const priorBoard = Player.go.boardState.history.slice(-1)[0]
+    const boardState = getStateCopy(Player.go.boardState);
+    boardState.board = priorBoard;
+    boardState.previousPlayer = boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
+
+    return boardState;
+  }
+
   return (
     <>
-      <div>
+      <div className={classes.boardFrame}>
         <GoScoreModal
           open={scoreOpen}
           onClose={() => setScoreOpen(false)}
@@ -197,8 +210,10 @@ export function GoGameboardWrapper(): React.ReactElement {
           opponent={opponent}
         ></GoScoreModal>
         {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
-        <Box className={classes.inlineFlexBox}>
-          <Typography className={classes.opponentLabel}>Opponent:</Typography>
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography className={classes.opponentLabel}>
+            {opponent !== opponents.none ? "Subnet owner: " : ""}
+          </Typography>
           {boardState.history.length === 0 ? (
             <Select value={opponent} onChange={changeOpponent} sx={{ mr: 1 }}>
               {opponentFactions.map((faction) => (
@@ -220,27 +235,35 @@ export function GoGameboardWrapper(): React.ReactElement {
             </Select>
           ) : (
             <Typography className={classes.opponentName}>
-              {boardSize}x{boardSize}
+              ( {boardSize}x{boardSize} )
             </Typography>
           )}
         </Box>
-        <div className={classes.gameboardWrapper}>
-          <GoGameboard traditional={traditional} clickHandler={clickHandler} hover={true} />
+        <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
+          <GoGameboard  boardState={showPriorMove ? getPriorMove() : Player.go.boardState} traditional={traditional} clickHandler={clickHandler} hover={!showPriorMove} />
         </div>
-        <Typography className={classes.scoreBox}>
-          Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
-        </Typography>
         <Box className={classes.inlineFlexBox}>
-          <Button onClick={() => resetState(boardSize)}>Reset</Button>
-          <Button onClick={passPlayerTurn}>{boardState.passCount ? "End Game" : "Pass Turn"}</Button>
+          <Button onClick={() => resetState(boardSize)}>  Reset  </Button>
+          <Typography className={classes.scoreBox}>
+            Score:   Black: {score[playerColors.black].sum}   White: {score[playerColors.white].sum}
+          </Typography>
+          <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
         </Box>
         <div className={classes.opponentLabel}>
+          <Box className={classes.inlineFlexBox}>
           <OptionSwitch
             checked={traditional}
             onChange={(newValue) => setTraditional(newValue)}
-            text="Use traditional Go style"
+            text="Traditional Go look"
             tooltip={<>Show stones and grid as if it was a standard Go board</>}
           />
+          <OptionSwitch
+            checked={showPriorMove}
+            onChange={(newValue) => setShowPriorMove(newValue)}
+            text="Show previous move"
+            tooltip={<>Show the board as it was before the last move</>}
+          />
+          </Box>
         </div>
       </div>
     </>
