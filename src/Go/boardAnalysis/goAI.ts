@@ -488,8 +488,9 @@ function getEyeCreationMove(boardState: BoardState, player: PlayerColor) {
  */
 function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
   const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
-  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer)
-    .filter(move => evaluateIfMoveIsValid(boardState, move.point.x, move.point.y, player));
+  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer).filter((move) =>
+    evaluateIfMoveIsValid(boardState, move.point.x, move.point.y, player),
+  );
   const twoEyeMoves = opponentEyeMoves.filter((move) => move.createsLife);
   const oneEyeMoves = opponentEyeMoves.filter((move) => !move.createsLife);
 

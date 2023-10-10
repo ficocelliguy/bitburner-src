@@ -5,7 +5,7 @@ import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../ui/React/hooks";
 import { boardStyles } from "./boardState/goStyles";
 import { getAllValidMoves } from "./boardAnalysis/boardAnalysis";
-import {BoardState, opponents, playerColors} from "./boardState/goConstants";
+import { BoardState, opponents, playerColors } from "./boardState/goConstants";
 
 interface IProps {
   boardState: BoardState;

@@ -66,7 +66,12 @@ export const GoStatusPage = (): React.ReactElement => {
         </Grid>
         <Grid item>
           <div className={classes.statusPageGameboard}>
-            <GoGameboard boardState={Player.go.boardState} traditional={false} clickHandler={(x, y) => ({ x, y })} hover={false} />
+            <GoGameboard
+              boardState={Player.go.boardState}
+              traditional={false}
+              clickHandler={(x, y) => ({ x, y })}
+              hover={false}
+            />
           </div>
         </Grid>
       </Grid>

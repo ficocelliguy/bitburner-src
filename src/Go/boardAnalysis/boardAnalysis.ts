@@ -2,6 +2,7 @@ import {
   Board,
   BoardState,
   Neighbor,
+  opponents,
   PlayerColor,
   playerColors,
   PointState,
@@ -13,6 +14,7 @@ import {
   getArrayFromNeighbor,
   getBoardCopy,
   getEmptySpaces,
+  getNewBoardState,
   getStateCopy,
   isDefined,
   updateCaptures,
@@ -384,4 +386,27 @@ export function getSimplifiedBoardState(board: Board): string[] {
       return str + currentPointState;
     }, ""),
   );
+}
+
+export function getBoardFromSimplifiedBoardState(
+  boardStrings: string[],
+  ai = opponents.Daedalus,
+  lastPlayer = playerColors.black,
+) {
+  const newBoardState = getNewBoardState(boardStrings[0].length, ai);
+  newBoardState.previousPlayer = lastPlayer;
+
+  for (let x = 0; x < boardStrings[0].length; x++) {
+    for (let y = 0; y < boardStrings[0].length; y++) {
+      const boardStringPoint = boardStrings[x][y];
+      if (boardStringPoint === "X") {
+        newBoardState.board[x][y].player = playerColors.black;
+      }
+      if (boardStringPoint === "O") {
+        newBoardState.board[x][y].player = playerColors.white;
+      }
+    }
+  }
+
+  return updateCaptures(newBoardState, lastPlayer);
 }

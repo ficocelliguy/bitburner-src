@@ -357,7 +357,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
 
       "& button": {
         padding: "0 20px",
-      }
+      },
     },
     scoreBox: {
       display: "inline-flex",
@@ -410,6 +410,6 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     translucent: {
       opacity: 0.6,
-    }
+    },
   }),
 );

@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {SnackbarEvents} from "../ui/React/Snackbar";
-import {ToastVariant} from "@enums";
-import {Box, Button, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
+import React, { useState } from "react";
+import { SnackbarEvents } from "../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
+import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 import {
   boardSizes,
@@ -21,18 +21,16 @@ import {
   passTurn,
   updateCaptures,
 } from "./boardState/boardState";
-import {getMove} from "./boardAnalysis/goAI";
-import {weiArt} from "./boardState/asciiArt";
-import {getScore} from "./boardAnalysis/scoring";
-import {useRerender} from "../ui/React/hooks";
-import {OptionSwitch} from "../ui/React/OptionSwitch";
-import {boardStyles} from "./boardState/goStyles";
-import {Player} from "@player";
-import {evaluateIfMoveIsValid} from "./boardAnalysis/boardAnalysis";
-import {GoScoreModal} from "./GoScoreModal";
-import {GoGameboard} from "./GoGameboard";
-
-// TODO: Unit tests
+import { getMove } from "./boardAnalysis/goAI";
+import { weiArt } from "./boardState/asciiArt";
+import { getScore } from "./boardAnalysis/scoring";
+import { useRerender } from "../ui/React/hooks";
+import { OptionSwitch } from "../ui/React/OptionSwitch";
+import { boardStyles } from "./boardState/goStyles";
+import { Player } from "@player";
+import { evaluateIfMoveIsValid } from "./boardAnalysis/boardAnalysis";
+import { GoScoreModal } from "./GoScoreModal";
+import { GoGameboard } from "./GoGameboard";
 
 // TODO: show diagrams in "how to play" tab
 
@@ -191,10 +189,11 @@ export function GoGameboardWrapper(): React.ReactElement {
   }
 
   function getPriorMove() {
-    const priorBoard = Player.go.boardState.history.slice(-1)[0]
+    const priorBoard = Player.go.boardState.history.slice(-1)[0];
     const boardState = getStateCopy(Player.go.boardState);
     boardState.board = priorBoard;
-    boardState.previousPlayer = boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
+    boardState.previousPlayer =
+      boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
 
     return boardState;
   }
@@ -240,29 +239,34 @@ export function GoGameboardWrapper(): React.ReactElement {
           )}
         </Box>
         <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
-          <GoGameboard  boardState={showPriorMove ? getPriorMove() : Player.go.boardState} traditional={traditional} clickHandler={clickHandler} hover={!showPriorMove} />
+          <GoGameboard
+            boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
+            traditional={traditional}
+            clickHandler={clickHandler}
+            hover={!showPriorMove}
+          />
         </div>
         <Box className={classes.inlineFlexBox}>
-          <Button onClick={() => resetState(boardSize)}>  Reset  </Button>
+          <Button onClick={() => resetState(boardSize)}> Reset </Button>
           <Typography className={classes.scoreBox}>
-            Score:   Black: {score[playerColors.black].sum}   White: {score[playerColors.white].sum}
+            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
           </Typography>
           <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
         </Box>
         <div className={classes.opponentLabel}>
           <Box className={classes.inlineFlexBox}>
-          <OptionSwitch
-            checked={traditional}
-            onChange={(newValue) => setTraditional(newValue)}
-            text="Traditional Go look"
-            tooltip={<>Show stones and grid as if it was a standard Go board</>}
-          />
-          <OptionSwitch
-            checked={showPriorMove}
-            onChange={(newValue) => setShowPriorMove(newValue)}
-            text="Show previous move"
-            tooltip={<>Show the board as it was before the last move</>}
-          />
+            <OptionSwitch
+              checked={traditional}
+              onChange={(newValue) => setTraditional(newValue)}
+              text="Traditional Go look"
+              tooltip={<>Show stones and grid as if it was a standard Go board</>}
+            />
+            <OptionSwitch
+              checked={showPriorMove}
+              onChange={(newValue) => setShowPriorMove(newValue)}
+              text="Show previous move"
+              tooltip={<>Show the board as it was before the last move</>}
+            />
           </Box>
         </div>
       </div>

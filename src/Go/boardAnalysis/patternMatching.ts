@@ -87,7 +87,6 @@ export async function findAnyMatchedPatterns(boardState: BoardState, player: Pla
       const matchedPattern = patterns.find((pattern) => checkMatch(neighborhood, pattern, player));
       if (matchedPattern) {
         const evaluationBoard = getStateCopy(boardState);
-        evaluationBoard.board[x][y].player = player;
         const updatedBoard = updateCaptures(evaluationBoard, player);
 
         if (evaluateIfMoveIsValid(updatedBoard, x, y, player) === validityReason.valid) {
@@ -116,9 +115,9 @@ function checkMatch(neighborhood: PointState[][], pattern: string[], player: Pla
 function getNeighborhood(boardState: BoardState, x: number, y: number) {
   const board = boardState.board;
   return [
-    [board[x - 1]?.[y + 1], board[x]?.[y + 1], board[x + 1]?.[y + 1]],
-    [board[x - 1]?.[y], board[x]?.[y], board[x + 1]?.[y]],
-    [board[x - 1]?.[y - 1], board[x]?.[y - 1], board[x + 1]?.[y - 1]],
+    [board[x - 1]?.[y - 1], board[x - 1]?.[y], board[x - 1]?.[y + 1]],
+    [board[x]?.[y - 1], board[x]?.[y], board[x]?.[y + 1]],
+    [board[x + 1]?.[y - 1], board[x + 1]?.[y], board[x + 1]?.[y + 1]],
   ];
 }
 
