@@ -34,6 +34,10 @@ import { GoGameboard } from "./GoGameboard";
 
 // TODO: show diagrams in "how to play" tab
 
+// TODO: Show previous game result & gains
+
+// TODO: Subnet searcher UI to find opponent
+
 // TODO: harden against interrupts for AI plays?
 
 export function GoGameboardWrapper(): React.ReactElement {
@@ -45,7 +49,7 @@ export function GoGameboardWrapper(): React.ReactElement {
   })();
   const [traditional, setTraditional] = useState(false);
   const [showPriorMove, setShowPriorMove] = useState(false);
-  const [opponent, setOpponent] = useState<opponents>(opponents.Daedalus);
+  const [opponent, setOpponent] = useState<opponents>(Player.go.boardState.ai);
   const [boardSize, setBoardSize] = useState(Player.go.boardState.board[0].length);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState));
@@ -150,10 +154,10 @@ export function GoGameboardWrapper(): React.ReactElement {
       return;
     }
     const newOpponent = event.target.value as opponents;
-    setOpponent(event.target.value as opponents);
-    setScore(getScore(boardState));
 
     resetState(boardSize, newOpponent);
+    setOpponent(newOpponent);
+    setScore(getScore(boardState));
   }
 
   function changeBoardSize(event: SelectChangeEvent) {
@@ -167,7 +171,7 @@ export function GoGameboardWrapper(): React.ReactElement {
 
   function resetState(newBoardSize = boardSize, newOpponent = opponent) {
     setScoreOpen(false);
-    updateBoard(getNewBoardState(newBoardSize));
+    updateBoard(getNewBoardState(newBoardSize, newOpponent));
 
     if (newOpponent === opponents.Illuminati) {
       updateBoard(applyHandicap(boardSize, 4));

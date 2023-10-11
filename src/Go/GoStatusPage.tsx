@@ -8,8 +8,7 @@ import { Grid } from "@mui/material";
 import { GoGameboard } from "./GoGameboard";
 import { boardStyles } from "./boardState/goStyles";
 import { useRerender } from "../ui/React/hooks";
-import { CalculateEffect, getEffectTypeForFaction } from "./effects/effect";
-import { floor } from "./boardState/boardState";
+import { getBonusText } from "./effects/effect";
 
 export const GoStatusPage = (): React.ReactElement => {
   useRerender(400);
@@ -24,17 +23,6 @@ export const GoStatusPage = (): React.ReactElement => {
     opponents.Daedalus,
     opponents.Illuminati,
   ];
-
-  function formatPercent(n: number) {
-    return floor((n - 1) * 10000) / 100;
-  }
-
-  function getBonus(opponent: opponents) {
-    const nodePower = Player.go.status[opponent].nodePower;
-    const effectSize = formatPercent(CalculateEffect(nodePower, opponent));
-    const effectDescription = getEffectTypeForFaction(opponent);
-    return `${effectSize}% ? ${effectDescription} ?`;
-  }
 
   return (
     <div>
@@ -99,7 +87,7 @@ export const GoStatusPage = (): React.ReactElement => {
                 <br />
                 <strong>Bonus:</strong>
                 <br />
-                {getBonus(faction)}
+                {getBonusText(faction)}
                 <br />
                 <br />
               </Typography>

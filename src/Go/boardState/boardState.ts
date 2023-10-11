@@ -17,6 +17,7 @@ import {
 } from "../boardAnalysis/boardAnalysis";
 import { Player } from "@player";
 import { getScore } from "../boardAnalysis/scoring";
+import { getDifficultyMultiplier, getWinstreakMultiplier } from "../effects/effect";
 
 /**
  * Generates a new BoardState object with the given opponent and size
@@ -100,8 +101,8 @@ export function endGoGame(boardState: BoardState) {
     statusToUpdate.winStreak++;
     statusToUpdate.nodePower += floor(
       score[playerColors.black].sum *
-        Math.max(score[playerColors.white].komi / 3, 2) *
-        1.2 ** (statusToUpdate.winStreak - 1),
+        getDifficultyMultiplier(score[playerColors.white].komi) *
+        getWinstreakMultiplier(statusToUpdate.winStreak),
     );
 
     if (statusToUpdate.winStreak > statusToUpdate.highestWinStreak) {
