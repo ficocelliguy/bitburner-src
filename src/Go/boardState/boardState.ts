@@ -99,18 +99,24 @@ export function endGoGame(boardState: BoardState) {
   } else {
     statusToUpdate.wins++;
     statusToUpdate.winStreak++;
-    statusToUpdate.nodePower += floor(
-      score[playerColors.black].sum *
-        getDifficultyMultiplier(score[playerColors.white].komi) *
-        getWinstreakMultiplier(statusToUpdate.winStreak),
-    );
 
     if (statusToUpdate.winStreak > statusToUpdate.highestWinStreak) {
       statusToUpdate.highestWinStreak = statusToUpdate.winStreak;
     }
   }
 
+  statusToUpdate.nodePower +=
+    score[playerColors.black].sum *
+    getDifficultyMultiplier(score[playerColors.white].komi) *
+    getWinstreakMultiplier(statusToUpdate.winStreak);
+
   statusToUpdate.nodes += score[playerColors.black].sum;
+}
+
+export function resetWinstreak(boardState: BoardState) {
+  const statusToUpdate = Player.go.status[boardState.ai];
+  statusToUpdate.losses++;
+  statusToUpdate.winStreak = 0;
 }
 
 /**

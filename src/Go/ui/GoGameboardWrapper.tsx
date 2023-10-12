@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SnackbarEvents } from "../ui/React/Snackbar";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
@@ -11,7 +11,7 @@ import {
   playerColors,
   playTypes,
   validityReason,
-} from "./boardState/goConstants";
+} from "../boardState/goConstants";
 import {
   applyHandicap,
   endGoGame,
@@ -19,16 +19,17 @@ import {
   getStateCopy,
   makeMove,
   passTurn,
+  resetWinstreak,
   updateCaptures,
-} from "./boardState/boardState";
-import { getMove } from "./boardAnalysis/goAI";
-import { weiArt } from "./boardState/asciiArt";
-import { getScore } from "./boardAnalysis/scoring";
-import { useRerender } from "../ui/React/hooks";
-import { OptionSwitch } from "../ui/React/OptionSwitch";
-import { boardStyles } from "./boardState/goStyles";
+} from "../boardState/boardState";
+import { getMove } from "../boardAnalysis/goAI";
+import { weiArt } from "../boardState/asciiArt";
+import { getScore } from "../boardAnalysis/scoring";
+import { useRerender } from "../../ui/React/hooks";
+import { OptionSwitch } from "../../ui/React/OptionSwitch";
+import { boardStyles } from "../boardState/goStyles";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid } from "./boardAnalysis/boardAnalysis";
+import { evaluateIfMoveIsValid } from "../boardAnalysis/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 
@@ -171,6 +172,7 @@ export function GoGameboardWrapper(): React.ReactElement {
 
   function resetState(newBoardSize = boardSize, newOpponent = opponent) {
     setScoreOpen(false);
+    resetWinstreak(boardState);
     updateBoard(getNewBoardState(newBoardSize, newOpponent));
 
     if (newOpponent === opponents.Illuminati) {
@@ -251,9 +253,9 @@ export function GoGameboardWrapper(): React.ReactElement {
           />
         </div>
         <Box className={classes.inlineFlexBox}>
-          <Button onClick={() => resetState(boardSize)}> Reset </Button>
+          <Button onClick={() => resetState(boardSize)}>Find New Subnet</Button>
           <Typography className={classes.scoreBox}>
-            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
+            Score:   Black: {score[playerColors.black].sum}   White: {score[playerColors.white].sum}
           </Typography>
           <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
         </Box>

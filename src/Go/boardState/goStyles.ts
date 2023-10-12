@@ -322,6 +322,9 @@ export const boardStyles = makeStyles((theme: Theme) =>
       width: "calc(min(400px, max(60vw - 250px, 300px)))",
       height: "calc(min(400px, max(60vw - 250px, 300px)))",
     },
+    statusPageScore: {
+      width: "280px",
+    },
     factionStatus: {
       padding: "10px",
       margin: "10px",
@@ -410,6 +413,22 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     translucent: {
       opacity: 0.6,
+    },
+    cellNone: {
+      borderBottom: "none",
+      padding: 0,
+      margin: 0,
+      color: theme.colors.success,
+    },
+    keyText: {
+      paddingTop: "10px",
+      color: theme.colors.int,
+    },
+    scoreModal: {
+      width: "400px",
+    },
+    centeredText: {
+      textAlign: "center",
     },
   }),
 );

@@ -1,7 +1,7 @@
 import React from "react";
 
 import Typography from "@mui/material/Typography";
-import { boardStyles } from "./boardState/goStyles";
+import { boardStyles } from "../boardState/goStyles";
 
 export const GoInstructionsPage = (): React.ReactElement => {
   const classes = boardStyles();
@@ -21,8 +21,9 @@ export const GoInstructionsPage = (): React.ReactElement => {
           Your goal is to control more territory in the subnet than the faction currently holding it.
           <br />
           <br />
-          Each turn, you may place a router on a node on the subnet, or pass. The router will connect to your adjacent
-          routers, forming networks. A network's open ports to adjacent spaces are shown visually.
+          Each turn, you may place a router on an open node in the subnet, or pass. The router will connect to your adjacent
+          routers, forming networks. A network's open ports to adjacent open nodes are indicated with lines extending
+          outside the network.
           <br />
           <br />
           If a group of routers no longer has any open ports to empty nodes, they will experience intense packet loss,

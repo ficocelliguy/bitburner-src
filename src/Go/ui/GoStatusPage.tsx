@@ -1,21 +1,21 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 
-import { opponents, playerColors } from "./boardState/goConstants";
-import { getScore } from "./boardAnalysis/scoring";
+import { opponents } from "../boardState/goConstants";
+import { getScore } from "../boardAnalysis/scoring";
 import { Player } from "@player";
-import { Grid } from "@mui/material";
+import { Grid, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { GoGameboard } from "./GoGameboard";
-import { boardStyles } from "./boardState/goStyles";
-import { useRerender } from "../ui/React/hooks";
-import { getBonusText } from "./effects/effect";
+import { boardStyles } from "../boardState/goStyles";
+import { useRerender } from "../../ui/React/hooks";
+import { getBonusText } from "../effects/effect";
+import { formatNumber } from "../../ui/formatNumber";
+import {GoScoreSummaryTable} from "./GoScoreSummaryTable";
 
 export const GoStatusPage = (): React.ReactElement => {
   useRerender(400);
   const classes = boardStyles();
   const score = getScore(Player.go.boardState);
-  const blackScore = score[playerColors.black];
-  const whiteScore = score[playerColors.white];
   const opponentList = [
     opponents.Netburners,
     opponents.SlumSnakes,
@@ -28,29 +28,10 @@ export const GoStatusPage = (): React.ReactElement => {
     <div>
       <Grid container>
         <Grid item>
-          <Typography variant="h5">Subnet Status</Typography>
-          <Typography>
-            Black:
-            <br />
-            <br />
-            Territory: {blackScore.territory}, Pieces: {blackScore.pieces}
-            <br />
-            <br />
-            Total score: {blackScore.sum}
-            <br />
-            <br />
-            <br />
-            White:
-            <br />
-            <br />
-            Territory: {whiteScore.territory}, Pieces: {whiteScore.pieces}, Komi: {whiteScore.komi}
-            <br />
-            <br />
-            Total score: {whiteScore.sum}
-            <br />
-            <br />
-            <br />
-          </Typography>
+          <div className={classes.statusPageScore}>
+          <Typography variant="h5">Current Subnet:</Typography>
+          <GoScoreSummaryTable score={score}/>
+          </div>
         </Grid>
         <Grid item>
           <div className={classes.statusPageGameboard}>
@@ -62,8 +43,31 @@ export const GoStatusPage = (): React.ReactElement => {
             />
           </div>
         </Grid>
-      </Grid>
-      <Typography variant="h5">History</Typography>
+      </Grid><br/>
+      <Typography variant="h5">Summary of All Subnet Boosts:</Typography><br/>
+      <Table sx={{ display: "table", mb: 1, width: "100%" }}>
+        <TableBody>
+          <TableRow>
+            <TableCell className={classes.cellNone}>
+              <strong>Faction:</strong>
+            </TableCell>
+            <TableCell className={classes.cellNone}>
+              <strong>Effect:</strong>
+            </TableCell>
+          </TableRow>
+          {opponentList.map((faction, index) => {
+            return <><br/><TableRow key={index}>
+              <TableCell className={classes.cellNone}>
+                <span>{faction}:</span>
+              </TableCell>
+              <TableCell className={classes.cellNone}>
+                <span>+{getBonusText(faction)}</span>
+              </TableCell>
+            </TableRow></>
+          })}
+        </TableBody>
+      </Table><br/><br/>
+      <Typography variant="h5">Faction Stats:</Typography>
       <Grid container style={{ maxWidth: "875px" }}>
         {opponentList.map((faction, index) => {
           const data = Player.go.status[faction];
@@ -82,12 +86,12 @@ export const GoStatusPage = (): React.ReactElement => {
                 <br />
                 Captured nodes: {data.nodes}
                 <br />
-                Node power: {data.nodePower}
+                Node power: {formatNumber(data.nodePower, 2)}
                 <br />
                 <br />
                 <strong>Bonus:</strong>
                 <br />
-                {getBonusText(faction)}
+                +{getBonusText(faction)}
                 <br />
                 <br />
               </Typography>

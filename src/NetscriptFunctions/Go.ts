@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { getNewBoardState, getStateCopy, makeMove, passTurn } from "../Go/boardState/boardState";
+import { getNewBoardState, getStateCopy, makeMove, passTurn, resetWinstreak } from "../Go/boardState/boardState";
 import {
   BoardState,
   columnIndexes,
@@ -116,7 +116,7 @@ export function NetscriptGo(): InternalAPI<Go> {
         const ws = ctx.workerScript;
         throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n Invalid subnet size requested (${boardSize}), size must be 5, 7, 9, or 13`;
       }
-
+      resetWinstreak(Player.go.boardState);
       Player.go.boardState = getNewBoardState(boardSize, opponent);
       return getSimplifiedBoardState(Player.go.boardState.board);
     },

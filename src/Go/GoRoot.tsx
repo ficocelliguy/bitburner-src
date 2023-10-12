@@ -1,9 +1,9 @@
 import { Container, Tab, Tabs } from "@mui/material";
 import React from "react";
-import { GoInstructionsPage } from "./GoInstructionsPage";
+import { GoInstructionsPage } from "./ui/GoInstructionsPage";
 import { GridOn, Help, ManageSearch } from "@mui/icons-material";
-import { GoStatusPage } from "./GoStatusPage";
-import { GoGameboardWrapper } from "./GoGameboardWrapper";
+import { GoStatusPage } from "./ui/GoStatusPage";
+import { GoGameboardWrapper } from "./ui/GoGameboardWrapper";
 import { boardStyles } from "./boardState/goStyles";
 
 export function GoRoot(): React.ReactElement {

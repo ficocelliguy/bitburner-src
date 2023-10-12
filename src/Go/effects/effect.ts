@@ -16,7 +16,7 @@ export function getBonusText(opponent: opponents) {
   const nodePower = Player.go.status[opponent].nodePower;
   const effectSize = formatPercent(CalculateEffect(nodePower, opponent));
   const effectDescription = getEffectTypeForFaction(opponent);
-  return `${effectSize}% ? ${effectDescription} ?`;
+  return `${effectSize}% ${effectDescription}?`;
 }
 
 function formatPercent(n: number) {
@@ -32,7 +32,7 @@ export function getEffectTypeForFaction(opponent: opponents) {
 }
 
 export function getWinstreakMultiplier(winStreak: number) {
-  return 1.2 ** (winStreak - 1);
+  return winStreak ? 1.2 ** (winStreak - 1) : 0.5;
 }
 
 export function getDifficultyMultiplier(komi: number) {
