@@ -244,6 +244,17 @@ export const pointStyle = makeStyles((theme: Theme) =>
       backgroundColor: "black",
       outlineColor: "white",
     },
+    fadeLoopAnimation: {
+      animation: `$fadeLoop 800ms ${theme.transitions.easing.easeInOut} infinite alternate`,
+    },
+    "@keyframes fadeLoop": {
+      "0%": {
+        opacity: 0.4,
+      },
+      "100%": {
+        opacity: 1,
+      },
+    },
     liberty: {
       position: "absolute",
       transition: "all 0.5s ease-out",
@@ -323,7 +334,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       height: "calc(min(400px, max(60vw - 250px, 300px)))",
     },
     statusPageScore: {
-      width: "280px",
+      width: "300px",
     },
     factionStatus: {
       padding: "10px",
@@ -366,7 +377,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       display: "inline-flex",
       flexDirection: "row",
       whiteSpace: "pre",
-      padding: "10px 45px",
+      padding: "10px 30px",
     },
     fiveByFive: {
       height: "20%",

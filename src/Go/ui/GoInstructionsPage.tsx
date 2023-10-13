@@ -21,9 +21,9 @@ export const GoInstructionsPage = (): React.ReactElement => {
           Your goal is to control more territory in the subnet than the faction currently holding it.
           <br />
           <br />
-          Each turn, you may place a router on an open node in the subnet, or pass. The router will connect to your adjacent
-          routers, forming networks. A network's open ports to adjacent open nodes are indicated with lines extending
-          outside the network.
+          Each turn, you may place a router on an open node in the subnet, or pass. The router will connect to your
+          adjacent routers, forming networks. A network's open ports to adjacent open nodes are indicated with lines
+          extending outside the network.
           <br />
           <br />
           If a group of routers no longer has any open ports to empty nodes, they will experience intense packet loss,

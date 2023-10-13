@@ -10,12 +10,13 @@ import { boardStyles } from "../boardState/goStyles";
 import { useRerender } from "../../ui/React/hooks";
 import { getBonusText } from "../effects/effect";
 import { formatNumber } from "../../ui/formatNumber";
-import {GoScoreSummaryTable} from "./GoScoreSummaryTable";
+import { GoScoreSummaryTable } from "./GoScoreSummaryTable";
 
 export const GoStatusPage = (): React.ReactElement => {
   useRerender(400);
   const classes = boardStyles();
   const score = getScore(Player.go.boardState);
+  const opponent = Player.go.boardState.ai;
   const opponentList = [
     opponents.Netburners,
     opponents.SlumSnakes,
@@ -29,8 +30,8 @@ export const GoStatusPage = (): React.ReactElement => {
       <Grid container>
         <Grid item>
           <div className={classes.statusPageScore}>
-          <Typography variant="h5">Current Subnet:</Typography>
-          <GoScoreSummaryTable score={score}/>
+            <Typography variant="h5">Current Subnet:</Typography>
+            <GoScoreSummaryTable score={score} opponent={opponent} />
           </div>
         </Grid>
         <Grid item>
@@ -43,8 +44,10 @@ export const GoStatusPage = (): React.ReactElement => {
             />
           </div>
         </Grid>
-      </Grid><br/>
-      <Typography variant="h5">Summary of All Subnet Boosts:</Typography><br/>
+      </Grid>
+      <br />
+      <Typography variant="h5">Summary of All Subnet Boosts:</Typography>
+      <br />
       <Table sx={{ display: "table", mb: 1, width: "100%" }}>
         <TableBody>
           <TableRow>
@@ -56,17 +59,24 @@ export const GoStatusPage = (): React.ReactElement => {
             </TableCell>
           </TableRow>
           {opponentList.map((faction, index) => {
-            return <><br/><TableRow key={index}>
-              <TableCell className={classes.cellNone}>
-                <span>{faction}:</span>
-              </TableCell>
-              <TableCell className={classes.cellNone}>
-                <span>+{getBonusText(faction)}</span>
-              </TableCell>
-            </TableRow></>
+            return (
+              <>
+                <br />
+                <TableRow key={index}>
+                  <TableCell className={classes.cellNone}>
+                    <span>{faction}:</span>
+                  </TableCell>
+                  <TableCell className={classes.cellNone}>
+                    <span>+{getBonusText(faction)}</span>
+                  </TableCell>
+                </TableRow>
+              </>
+            );
           })}
         </TableBody>
-      </Table><br/><br/>
+      </Table>
+      <br />
+      <br />
       <Typography variant="h5">Faction Stats:</Typography>
       <Grid container style={{ maxWidth: "875px" }}>
         {opponentList.map((faction, index) => {
@@ -90,8 +100,7 @@ export const GoStatusPage = (): React.ReactElement => {
                 <br />
                 <br />
                 <strong>Bonus:</strong>
-                <br />
-                +{getBonusText(faction)}
+                <br />+{getBonusText(faction)}
                 <br />
                 <br />
               </Typography>

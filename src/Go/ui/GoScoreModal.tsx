@@ -31,10 +31,7 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
           <Typography variant="h5" className={classes.centeredText}>
             Game complete!
           </Typography>
-          <Typography>
-            <strong>Score:</strong>
-          </Typography>
-          <GoScoreSummaryTable score={finalScore} />
+          <GoScoreSummaryTable score={finalScore} opponent={opponent} />
           <Typography>
             <br />
             <Typography variant="h5" className={classes.centeredText}>

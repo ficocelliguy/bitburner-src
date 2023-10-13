@@ -19,6 +19,7 @@ export function GoPoint(props: {
   const currentPoint = props.state.board[props.x][props.y];
   const player = currentPoint.player;
 
+  const isInAtari = currentPoint.liberties?.length === 1 && player !== playerColors.empty && !props.traditional;
   const liberties = findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y);
   const neighbors = findNeighbors(props.state, props.x, props.y);
 
@@ -44,14 +45,14 @@ export function GoPoint(props: {
     <div
       className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
         props.hover ? classes.hover : ""
-      } ${props.valid ? classes.valid : ""}`}
+      } ${props.valid ? classes.valid : ""} ${isInAtari ? classes.fadeLoopAnimation : ""}`}
       title={player}
     >
       <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
-      <div className={classes.innerPoint}>
+      <div className={`${classes.innerPoint} `}>
         <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
       </div>
       <div className={`${pointClass} ${classes.tradStone}`} />

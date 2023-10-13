@@ -255,7 +255,7 @@ export function GoGameboardWrapper(): React.ReactElement {
         <Box className={classes.inlineFlexBox}>
           <Button onClick={() => resetState(boardSize)}>Find New Subnet</Button>
           <Typography className={classes.scoreBox}>
-            Score:   Black: {score[playerColors.black].sum}   White: {score[playerColors.white].sum}
+            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
           </Typography>
           <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
         </Box>
