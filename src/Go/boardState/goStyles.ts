@@ -316,7 +316,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       whiteSpace: "pre",
       height: "50px",
       minHeight: "unset",
-      width: "210px",
+      width: "170px",
     },
     gameboardWrapper: {
       position: "relative",

@@ -26,7 +26,7 @@ export function getNewBoardState(boardSize: number, ai?: opponents): BoardState 
   return {
     history: [],
     previousPlayer: playerColors.white,
-    ai: ai ?? opponents.Daedalus,
+    ai: ai ?? opponents.SlumSnakes,
     passCount: 0,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({

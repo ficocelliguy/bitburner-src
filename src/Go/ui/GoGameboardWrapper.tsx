@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
-import { Box, Button, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
-import {
-  boardSizes,
-  BoardState,
-  goScore,
-  opponents,
-  playerColors,
-  playTypes,
-  validityReason,
-} from "../boardState/goConstants";
+import { BoardState, goScore, opponents, playerColors, playTypes, validityReason } from "../boardState/goConstants";
 import {
   applyHandicap,
   endGoGame,
@@ -32,16 +24,23 @@ import { Player } from "@player";
 import { evaluateIfMoveIsValid } from "../boardAnalysis/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
+import { GoSubnetSearch } from "./GoSubnetSearch";
+
+interface IProps {
+  showInstructions: () => void;
+}
 
 // TODO: show diagrams in "how to play" tab
 
-// TODO: Show previous game result & gains
+// TODO: Subnet searcher styles
 
-// TODO: Subnet searcher UI to find opponent
+// TODO: faction status layout: left-align text, table?
+
+// TODO: Show current player
 
 // TODO: harden against interrupts for AI plays?
 
-export function GoGameboardWrapper(): React.ReactElement {
+export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactElement {
   const rerender = useRerender(400);
 
   const boardState = (function () {
@@ -51,19 +50,12 @@ export function GoGameboardWrapper(): React.ReactElement {
   const [traditional, setTraditional] = useState(false);
   const [showPriorMove, setShowPriorMove] = useState(false);
   const [opponent, setOpponent] = useState<opponents>(Player.go.boardState.ai);
-  const [boardSize, setBoardSize] = useState(Player.go.boardState.board[0].length);
   const [scoreOpen, setScoreOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState));
 
   const classes = boardStyles();
-  const opponentFactions = [
-    opponents.none,
-    opponents.Netburners,
-    opponents.SlumSnakes,
-    opponents.TheBlackHand,
-    opponents.Daedalus,
-    opponents.Illuminati,
-  ];
+  const boardSize = Player.go.boardState.board[0].length;
 
   function clickHandler(x: number, y: number): void {
     if (showPriorMove) {
@@ -150,29 +142,13 @@ export function GoGameboardWrapper(): React.ReactElement {
     }
   }
 
-  function changeOpponent(event: SelectChangeEvent): void {
-    if (boardState.history.length !== 0) {
-      return;
-    }
-    const newOpponent = event.target.value as opponents;
-
-    resetState(boardSize, newOpponent);
-    setOpponent(newOpponent);
-    setScore(getScore(boardState));
-  }
-
-  function changeBoardSize(event: SelectChangeEvent) {
-    if (boardState.history.length !== 0) {
-      return;
-    }
-    const newSize = +event.target.value;
-    setBoardSize(newSize);
-    resetState(newSize);
-  }
-
   function resetState(newBoardSize = boardSize, newOpponent = opponent) {
     setScoreOpen(false);
-    resetWinstreak(boardState);
+    setSearchOpen(false);
+    setOpponent(newOpponent);
+    if (boardState.previousPlayer !== null) {
+      resetWinstreak(boardState);
+    }
     updateBoard(getNewBoardState(newBoardSize, newOpponent));
 
     if (newOpponent === opponents.Illuminati) {
@@ -207,74 +183,61 @@ export function GoGameboardWrapper(): React.ReactElement {
   return (
     <>
       <div className={classes.boardFrame}>
-        <GoScoreModal
-          open={scoreOpen}
-          onClose={() => setScoreOpen(false)}
-          reset={() => resetState()}
-          finalScore={score}
-          opponent={opponent}
-        ></GoScoreModal>
-        {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
-        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-          <Typography className={classes.opponentLabel}>
-            {opponent !== opponents.none ? "Subnet owner: " : ""}
-          </Typography>
-          {boardState.history.length === 0 ? (
-            <Select value={opponent} onChange={changeOpponent} sx={{ mr: 1 }}>
-              {opponentFactions.map((faction) => (
-                <MenuItem key={faction} value={faction}>
-                  {faction}
-                </MenuItem>
-              ))}
-            </Select>
-          ) : (
-            <Typography className={classes.opponentName}>{opponent}</Typography>
-          )}
-          {boardState.history.length === 0 ? (
-            <Select value={`${boardSize}`} onChange={changeBoardSize} sx={{ mr: 1 }}>
-              {boardSizes.map((size) => (
-                <MenuItem key={size} value={size}>
-                  {size}x{size}
-                </MenuItem>
-              ))}
-            </Select>
-          ) : (
-            <Typography className={classes.opponentName}>
-              ( {boardSize}x{boardSize} )
-            </Typography>
-          )}
-        </Box>
-        <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
-          <GoGameboard
-            boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
-            traditional={traditional}
-            clickHandler={clickHandler}
-            hover={!showPriorMove}
-          />
-        </div>
-        <Box className={classes.inlineFlexBox}>
-          <Button onClick={() => resetState(boardSize)}>Find New Subnet</Button>
-          <Typography className={classes.scoreBox}>
-            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
-          </Typography>
-          <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
-        </Box>
-        <div className={classes.opponentLabel}>
-          <Box className={classes.inlineFlexBox}>
-            <OptionSwitch
-              checked={traditional}
-              onChange={(newValue) => setTraditional(newValue)}
-              text="Traditional Go look"
-              tooltip={<>Show stones and grid as if it was a standard Go board</>}
-            />
-            <OptionSwitch
-              checked={showPriorMove}
-              onChange={(newValue) => setShowPriorMove(newValue)}
-              text="Show previous move"
-              tooltip={<>Show the board as it was before the last move</>}
-            />
-          </Box>
-        </div>
+        {searchOpen ? (
+          <GoSubnetSearch
+            search={resetState}
+            cancel={() => setSearchOpen(false)}
+            showInstructions={showInstructions}
+          ></GoSubnetSearch>
+        ) : (
+          <>
+            <GoScoreModal
+              open={scoreOpen}
+              onClose={() => setScoreOpen(false)}
+              reset={() => resetState()}
+              finalScore={score}
+              opponent={opponent}
+            ></GoScoreModal>
+            {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
+            <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+              <Typography className={classes.opponentLabel}>
+                {opponent !== opponents.none ? "Subnet owner: " : ""}
+              </Typography>
+              <Typography className={classes.opponentName}>{opponent}</Typography>
+            </Box>
+            <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
+              <GoGameboard
+                boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
+                traditional={traditional}
+                clickHandler={clickHandler}
+                hover={!showPriorMove}
+              />
+            </div>
+            <Box className={classes.inlineFlexBox}>
+              <Button onClick={() => setSearchOpen(true)}>Find New Subnet</Button>
+              <Typography className={classes.scoreBox}>
+                Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
+              </Typography>
+              <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
+            </Box>
+            <div className={classes.opponentLabel}>
+              <Box className={classes.inlineFlexBox}>
+                <OptionSwitch
+                  checked={traditional}
+                  onChange={(newValue) => setTraditional(newValue)}
+                  text="Traditional Go look"
+                  tooltip={<>Show stones and grid as if it was a standard Go board</>}
+                />
+                <OptionSwitch
+                  checked={showPriorMove}
+                  onChange={(newValue) => setShowPriorMove(newValue)}
+                  text="Show previous move"
+                  tooltip={<>Show the board as it was before the last move</>}
+                />
+              </Box>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

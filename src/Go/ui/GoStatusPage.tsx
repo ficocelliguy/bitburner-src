@@ -9,7 +9,6 @@ import { GoGameboard } from "./GoGameboard";
 import { boardStyles } from "../boardState/goStyles";
 import { useRerender } from "../../ui/React/hooks";
 import { getBonusText } from "../effects/effect";
-import { formatNumber } from "../../ui/formatNumber";
 import { GoScoreSummaryTable } from "./GoScoreSummaryTable";
 
 export const GoStatusPage = (): React.ReactElement => {
@@ -48,7 +47,7 @@ export const GoStatusPage = (): React.ReactElement => {
       <br />
       <Typography variant="h5">Summary of All Subnet Boosts:</Typography>
       <br />
-      <Table sx={{ display: "table", mb: 1, width: "100%" }}>
+      <Table sx={{ display: "table", mb: 1, width: "550px" }}>
         <TableBody>
           <TableRow>
             <TableCell className={classes.cellNone}>
@@ -61,13 +60,13 @@ export const GoStatusPage = (): React.ReactElement => {
           {opponentList.map((faction, index) => {
             return (
               <>
-                <br />
+                <br key={index} />
                 <TableRow key={index}>
                   <TableCell className={classes.cellNone}>
                     <span>{faction}:</span>
                   </TableCell>
                   <TableCell className={classes.cellNone}>
-                    <span>+{getBonusText(faction)}</span>
+                    <strong className={classes.keyText}>+{getBonusText(faction)}</strong>
                   </TableCell>
                 </TableRow>
               </>
@@ -77,37 +76,6 @@ export const GoStatusPage = (): React.ReactElement => {
       </Table>
       <br />
       <br />
-      <Typography variant="h5">Faction Stats:</Typography>
-      <Grid container style={{ maxWidth: "875px" }}>
-        {opponentList.map((faction, index) => {
-          const data = Player.go.status[faction];
-          return (
-            <Grid item key={opponentList[index]} className={classes.factionStatus}>
-              <Typography>
-                <br />
-                <strong>{faction}</strong>
-                <br />
-                Wins: {data.wins} / {data.losses + data.wins}
-                <br />
-                Current winstreak: {data.winStreak}
-                <br />
-                Highest winstreak: {data.highestWinStreak}
-                <br />
-                <br />
-                Captured nodes: {data.nodes}
-                <br />
-                Node power: {formatNumber(data.nodePower, 2)}
-                <br />
-                <br />
-                <strong>Bonus:</strong>
-                <br />+{getBonusText(faction)}
-                <br />
-                <br />
-              </Typography>
-            </Grid>
-          );
-        })}
-      </Grid>
     </div>
   );
 };
