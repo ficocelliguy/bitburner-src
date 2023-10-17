@@ -111,6 +111,7 @@ export function endGoGame(boardState: BoardState) {
     getWinstreakMultiplier(statusToUpdate.winStreak);
 
   statusToUpdate.nodes += score[playerColors.black].sum;
+  Player.go.previousGameFinalBoardState = boardState;
 }
 
 export function resetWinstreak(boardState: BoardState) {
