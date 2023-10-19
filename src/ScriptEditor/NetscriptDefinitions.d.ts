@@ -3743,6 +3743,7 @@ export interface Go {
 
   /**
    * Gets new IPvGO subnet with the specified size owned by the listed faction, ready for the player to make a move.
+   * This will reset your win streak if the current game is not complete and you have already made moves.
    *
    * @remarks
    * RAM cost: 0 GB

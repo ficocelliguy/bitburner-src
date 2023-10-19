@@ -146,8 +146,8 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     setScoreOpen(false);
     setSearchOpen(false);
     setOpponent(newOpponent);
-    if (boardState.previousPlayer !== null) {
-      resetWinstreak(boardState);
+    if (boardState.previousPlayer !== null && boardState.history.length) {
+      resetWinstreak(boardState.ai);
     }
     updateBoard(getNewBoardState(newBoardSize, newOpponent));
 

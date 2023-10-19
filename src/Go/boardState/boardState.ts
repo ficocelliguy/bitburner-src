@@ -114,8 +114,8 @@ export function endGoGame(boardState: BoardState) {
   Player.go.previousGameFinalBoardState = boardState;
 }
 
-export function resetWinstreak(boardState: BoardState) {
-  const statusToUpdate = Player.go.status[boardState.ai];
+export function resetWinstreak(opponent: opponents) {
+  const statusToUpdate = Player.go.status[opponent];
   statusToUpdate.losses++;
   statusToUpdate.winStreak = 0;
 }

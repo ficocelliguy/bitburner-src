@@ -101,22 +101,32 @@ export function NetscriptGo(): InternalAPI<Go> {
       return getSimplifiedBoardState(Player.go.boardState.board);
     },
     resetBoardState: (ctx) => (_opponent, _boardSize) => {
-      // TODO: correctly handle opponent checking, and cleaner list
+      const oldBoardState = Player.go.boardState;
       const opponentString = helpers.string(ctx, "opponent", _opponent);
-      const opponent = [
+      const opponentOptions = [
         opponents.Netburners,
         opponents.SlumSnakes,
         opponents.TheBlackHand,
         opponents.Daedalus,
         opponents.Illuminati,
-      ].find((faction) => faction === opponentString);
+      ];
+      const opponent = opponentOptions.find((faction) => faction === opponentString);
 
       const boardSize = helpers.number(ctx, "boardSize", _boardSize);
       if (![5, 7, 9, 13].includes(boardSize)) {
         const ws = ctx.workerScript;
         throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n Invalid subnet size requested (${boardSize}), size must be 5, 7, 9, or 13`;
       }
-      resetWinstreak(Player.go.boardState);
+      if (!opponent) {
+        const ws = ctx.workerScript;
+        throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${
+          ws.pid
+        })\n\n Invalid opponent requested (${opponentString}), valid options are ${opponentOptions.join(", ")}`;
+      }
+      if (oldBoardState.previousPlayer !== null && oldBoardState.history.length) {
+        resetWinstreak(oldBoardState.ai);
+      }
+
       Player.go.boardState = getNewBoardState(boardSize, opponent);
       return getSimplifiedBoardState(Player.go.boardState.board);
     },
