@@ -30,8 +30,6 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: show diagrams in "how to play" tab
-
 // TODO: Subnet searcher styles
 
 // TODO: faction status layout: left-align text, table?
@@ -214,11 +212,15 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
               />
             </div>
             <Box className={classes.inlineFlexBox}>
-              <Button onClick={() => setSearchOpen(true)}>Find New Subnet</Button>
+              <Button onClick={() => setSearchOpen(true)} className={classes.resetBoard}>
+                Find New Subnet
+              </Button>
               <Typography className={classes.scoreBox}>
                 Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
               </Typography>
-              <Button onClick={passPlayerTurn}>{boardState.passCount ? "  End Game  " : "  Pass Turn  "}</Button>
+              <Button onClick={passPlayerTurn} className={boardState.passCount ? classes.endGame : classes.resetBoard}>
+                {boardState.passCount ? "  End Game  " : "  Pass Turn  "}
+              </Button>
             </Box>
             <div className={classes.opponentLabel}>
               <Box className={classes.inlineFlexBox}>

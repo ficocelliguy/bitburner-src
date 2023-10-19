@@ -368,9 +368,23 @@ export const boardStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       width: "100%",
       justifyContent: "center",
-
-      "& button": {
-        padding: "0 20px",
+    },
+    resetBoard: {
+      padding: "0 20px",
+    },
+    endGame: {
+      borderStyle: "solid",
+      borderWidth: "8px",
+      borderColor: theme.colors.success,
+      padding: "0 12px",
+      animation: `$fadeLoop 600ms ${theme.transitions.easing.easeInOut} infinite alternate`,
+    },
+    "@keyframes fadeLoop": {
+      "0%": {
+        opacity: 0.6,
+      },
+      "100%": {
+        opacity: 1,
       },
     },
     scoreBox: {
@@ -418,9 +432,22 @@ export const boardStyles = makeStyles((theme: Theme) =>
       paddingTop: "15px",
     },
     instructionScroller: {
-      height: "calc(100vw - 225px)",
+      height: "calc(100vh - 80px)",
       overflowY: "scroll",
       marginTop: "10px",
+    },
+    instructionBoard: {
+      width: "350px",
+      height: "350px",
+    },
+    instructionBoardWrapper: {
+      maxWidth: "350px",
+      marginRight: "20px",
+    },
+    instructionsBlurb: {
+      width: "60%",
+      minWidth: "500px",
+      marginRight: "20px",
     },
     translucent: {
       opacity: 0.6,
