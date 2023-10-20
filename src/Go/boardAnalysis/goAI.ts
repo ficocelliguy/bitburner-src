@@ -9,21 +9,11 @@ import {
   playerColors,
   playTypes,
   PointState,
-  validityReason,
 } from "../boardState/goConstants";
-import {
-  endGoGame,
-  findNeighbors,
-  floor,
-  getStateCopy,
-  isDefined,
-  isNotNull,
-  makeMove,
-  passTurn,
-  updateCaptures,
-} from "../boardState/boardState";
+import { endGoGame, findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
 import {
   evaluateIfMoveIsValid,
+  evaluateMoveResult,
   findChainLibertiesForPoint,
   getAllChains,
   getAllEyes,
@@ -259,16 +249,14 @@ export function getExpansionMoveArray(
   availableSpaces: PointState[],
   moveCount = 1,
 ): Move[] {
-  const emptySpaces = availableSpaces
-    .filter((space) => {
-      const neighbors = findNeighbors(boardState, space.x, space.y);
-      return (
-        [neighbors.north, neighbors.east, neighbors.south, neighbors.west].filter(
-          (point) => point && point.player === playerColors.empty,
-        ).length === 4
-      );
-    })
-    .filter((space) => evaluateIfMoveIsValid(boardState, space.x, space.y, player) === validityReason.valid);
+  const emptySpaces = availableSpaces.filter((space) => {
+    const neighbors = findNeighbors(boardState, space.x, space.y);
+    return (
+      [neighbors.north, neighbors.east, neighbors.south, neighbors.west].filter(
+        (point) => point && point.player === playerColors.empty,
+      ).length === 4
+    );
+  });
 
   const randomIndex = floor(Math.random() * emptySpaces.length);
 
@@ -286,9 +274,8 @@ export function getExpansionMoveArray(
 /**
  * Finds all moves that increases the liberties of the player's pieces, making them harder to capture and occupy more space on the board.
  */
-async function getLibertyGrowthMoves(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const boardState = getStateCopy(initialState);
-  const friendlyEyes = getAllEyes(initialState, player).flat().flat();
+async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  const friendlyEyes = getAllEyes(boardState, player).flat().flat();
   const growableSpaces = availableSpaces.filter(
     (point) => !friendlyEyes.find((eye) => eye.x === point.x && eye.y == point.y),
   );
@@ -316,7 +303,7 @@ async function getLibertyGrowthMoves(initialState: BoardState, player: PlayerCol
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
   return liberties
     .map((point) => {
-      const stateAfterMove = makeMove(getStateCopy(boardState), point.libertyPoint.x, point.libertyPoint.y, player);
+      const stateAfterMove = evaluateMoveResult(boardState, point.libertyPoint.x, point.libertyPoint.y, player);
       const oldLibertyCount = point?.oldLibertyCount ?? 0;
       const newLibertyCount = stateAfterMove
         ? findChainLibertiesForPoint(stateAfterMove, point.libertyPoint.x, point.libertyPoint.y).length
@@ -370,9 +357,7 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor, avai
  * Find a move that reduces the opponent's liberties as much as possible,
  *   capturing (or making it easier to capture) their pieces
  */
-async function getSurroundMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const boardState = getStateCopy(initialState);
-
+async function getSurroundMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
   const enemyChains = getAllChains(boardState).filter((chain) => chain[0].player === opposingPlayer);
 
@@ -401,7 +386,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
   // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
   const libertyDecreases = enemyChainRepresentatives
     .map((point) => {
-      const stateAfterMove = makeMove(getStateCopy(boardState), point.liberty.x, point.liberty.y, player);
+      const stateAfterMove = evaluateMoveResult(boardState, point.liberty.x, point.liberty.y, player);
       if (!stateAfterMove) {
         return null;
       }
@@ -423,10 +408,11 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
       };
     })
     .filter(isNotNull)
-    .filter(
-      (libertyDecrease) =>
-        evaluateIfMoveIsValid(boardState, libertyDecrease.point.x, libertyDecrease.point.y, player) ===
-        validityReason.valid,
+    .filter((libertyDecrease) =>
+      availableSpaces.find(
+        (availablePoint) =>
+          availablePoint.x === libertyDecrease.point.x && availablePoint.y === libertyDecrease.point.y,
+      ),
     );
   if (!libertyDecreases.length) {
     return null;
@@ -445,7 +431,7 @@ async function getSurroundMove(initialState: BoardState, player: PlayerColor, av
  * If a chain has multiple eyes, it cannot be captured by the opponent (since they can only fill one eye at a time,
  *  and suiciding your own pieces is not legal unless it captures the opponents' first)
  */
-function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
+function getEyeCreationMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const currentEyes = getAllEyes(boardState, player);
   const currentLivingGroupsCount = currentEyes.filter((eye) => eye.length >= 2);
   const currentEyeCount = currentEyes.filter((eye) => eye.length);
@@ -456,12 +442,13 @@ function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
     .map((chain) => chain[0].liberties)
     .flat()
     .filter(isNotNull)
-    .filter((point) => evaluateIfMoveIsValid(boardState, point.x, point.y, player));
+    .filter((point) =>
+      availableSpaces.find((availablePoint) => availablePoint.x === point.x && availablePoint.y === point.y),
+    );
 
   const eyeCreationMoves = friendlyLiberties.reduce((moveOptions: EyeMove[], point: PointState) => {
-    const evaluationBoard = getStateCopy(boardState);
-    evaluationBoard.board[point.x][point.y].player = player;
-    const newEyes = getAllEyes(updateCaptures(evaluationBoard, player), player);
+    const evaluationBoard = evaluateMoveResult(boardState, point.x, point.y, player);
+    const newEyes = getAllEyes(evaluationBoard, player);
     const newLivingGroupsCount = newEyes.filter((eye) => eye.length >= 2);
     const newEyeCount = newEyes.filter((eye) => eye.length);
     if (
@@ -479,18 +466,16 @@ function getEyeCreationMoves(boardState: BoardState, player: PlayerColor) {
   return eyeCreationMoves.sort((moveA, moveB) => +moveB.createsLife - +moveA.createsLife);
 }
 
-function getEyeCreationMove(boardState: BoardState, player: PlayerColor) {
-  return getEyeCreationMoves(boardState, player)[0];
+function getEyeCreationMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  return getEyeCreationMoves(boardState, player, availableSpaces)[0];
 }
 
 /**
  * If there is only one move that would create two eyes for the opponent, it should be blocked if possible
  */
-function getEyeBlockingMove(boardState: BoardState, player: PlayerColor) {
+function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availablePoints: PointState[]) {
   const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
-  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer).filter(
-    (move) => evaluateIfMoveIsValid(boardState, move.point.x, move.point.y, player) === validityReason.valid,
-  );
+  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer, availablePoints);
   const twoEyeMoves = opponentEyeMoves.filter((move) => move.createsLife);
   const oneEyeMoves = opponentEyeMoves.filter((move) => !move.createsLife);
 
@@ -510,18 +495,18 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   const availableSpaces = getAllValidMoves(boardState, player);
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
-  await sleep(50);
+  await sleep(80);
   const expansionMove = await getExpansionMove(boardState, player, availableSpaces);
-  await sleep(50);
+  await sleep(80);
   const defendMove = await getDefendMove(boardState, player, availableSpaces);
-  await sleep(50);
+  await sleep(80);
   const surroundMove = await getSurroundMove(boardState, player, availableSpaces);
-  await sleep(50);
-  const eyeMove = getEyeCreationMove(boardState, player);
-  await sleep(50);
-  const eyeBlock = getEyeBlockingMove(boardState, player);
-  await sleep(50);
-  const pattern = await findAnyMatchedPatterns(boardState, player);
+  await sleep(80);
+  const eyeMove = getEyeCreationMove(boardState, player, availableSpaces);
+  await sleep(80);
+  const eyeBlock = getEyeBlockingMove(boardState, player, availableSpaces);
+  await sleep(80);
+  const pattern = await findAnyMatchedPatterns(boardState, player, availableSpaces);
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
   const defendCaptureMove =
@@ -530,7 +515,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   console.log("---------------------");
   console.log("capture: ", captureMove?.point?.x, captureMove?.point?.y);
   console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
-  console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
+  //console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
   console.log("eyeBlock: ", eyeBlock?.point?.x, eyeBlock?.point?.y);
   console.log("pattern: ", pattern?.x, pattern?.y);
   console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);

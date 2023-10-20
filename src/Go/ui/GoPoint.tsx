@@ -46,7 +46,6 @@ export function GoPoint(props: {
       className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
         props.hover ? classes.hover : ""
       } ${props.valid ? classes.valid : ""} ${isInAtari ? classes.fadeLoopAnimation : ""}`}
-      title={player}
     >
       <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>

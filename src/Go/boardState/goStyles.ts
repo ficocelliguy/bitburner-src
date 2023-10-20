@@ -381,7 +381,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
     resetBoard: {
       padding: "0 20px",
     },
-    endGame: {
+    buttonHighlight: {
       borderStyle: "solid",
       borderWidth: "8px",
       borderColor: theme.colors.success,

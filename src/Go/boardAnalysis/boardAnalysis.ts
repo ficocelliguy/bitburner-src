@@ -17,6 +17,7 @@ import {
   getNewBoardState,
   getStateCopy,
   isDefined,
+  isNotNull,
   updateCaptures,
   updateChains,
 } from "../boardState/boardState";
@@ -34,36 +35,63 @@ import {
  *
  * @returns a validity explanation for if the move is legal or not
  */
-export function evaluateIfMoveIsValid(initialState: BoardState, x: number, y: number, player: PlayerColor) {
-  const point = initialState.board?.[x]?.[y];
+export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: number, player: PlayerColor) {
+  const point = boardState.board?.[x]?.[y];
 
-  if (initialState.previousPlayer === null) {
+  if (boardState.previousPlayer === null) {
     return validityReason.gameOver;
   }
-
-  if (initialState.previousPlayer === player) {
+  if (boardState.previousPlayer === player) {
     return validityReason.notYourTurn;
   }
-
   if (!point || point.player !== playerColors.empty) {
     return validityReason.pointNotEmpty;
   }
 
-  const boardState = getStateCopy(initialState);
-  boardState.history.push(getBoardCopy(boardState).board);
-  boardState.board[x][y].player = player;
-  boardState.previousPlayer = player;
-  const updatedBoardState = updateCaptures(boardState, player);
+  const moveHasBeenPlayedBefore = !!boardState.history.find((board) => board[x][y].player === player);
 
-  if (updatedBoardState.board[x][y].player !== player) {
-    return validityReason.noSuicide;
+  // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is thus legal
+  const hasLiberty = findAdjacentLibertiesForPoint(boardState, x, y);
+  if ((!moveHasBeenPlayedBefore && hasLiberty.north) || hasLiberty.east || hasLiberty.south || hasLiberty.west) {
+    return validityReason.valid;
   }
 
-  if (checkIfBoardStateIsRepeated(updatedBoardState)) {
+  // If a connected chain has more than one liberty, the move is not suicide. If the move is not repeated, it is thus legal
+  const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, x, y, player);
+  if (!moveHasBeenPlayedBefore && neighborChainLibertyCount > 1) {
+    return validityReason.valid;
+  }
+
+  const evaluationBoard = evaluateMoveResult(boardState, x, y, player);
+  if (evaluationBoard.board[x][y].player !== player) {
+    return validityReason.noSuicide;
+  }
+  if (checkIfBoardStateIsRepeated(evaluationBoard)) {
     return validityReason.boardRepeated;
   }
 
   return validityReason.valid;
+}
+
+export function evaluateMoveResult(boardState: BoardState, x: number, y: number, player: playerColors) {
+  const boardSize = boardState.board[0].length;
+  const newBoardState = getNewBoardState(boardSize, boardState.ai, boardState.board);
+  newBoardState.history = boardState.history.slice(-4);
+  newBoardState.history.push(getBoardCopy(boardState).board);
+
+  newBoardState.board[x][y].player = player;
+  newBoardState.previousPlayer = player;
+  return updateCaptures(newBoardState, player);
+}
+
+function findMaxLibertyCountOfAdjacentChains(boardState: BoardState, x: number, y: number, player: playerColors) {
+  const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
+  const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
+    .filter(isNotNull)
+    .filter(isDefined)
+    .filter((neighbor) => neighbor.player === player);
+
+  return friendlyNeighbors.reduce((max, neighbor) => Math.max(max, neighbor?.liberties?.length ?? 0), 0);
 }
 
 /**
@@ -341,9 +369,14 @@ export function findAdjacentLibertiesForPoint(boardState: BoardState, x: number,
  * Returns an object that includes which of the cardinal neighbors are either empty or contain the
  * current player's pieces. Used for making the connection map on the board
  */
-export function findAdjacentLibertiesAndAlliesForPoint(boardState: BoardState, x: number, y: number): Neighbor {
+export function findAdjacentLibertiesAndAlliesForPoint(
+  boardState: BoardState,
+  x: number,
+  y: number,
+  _player?: PlayerColor,
+): Neighbor {
   const currentPoint = boardState.board[x][y];
-  const player = currentPoint.player === playerColors.empty ? undefined : currentPoint.player;
+  const player = _player || currentPoint.player === playerColors.empty ? undefined : currentPoint.player;
   const adjacentLiberties = findAdjacentLibertiesForPoint(boardState, x, y);
   const neighbors = findNeighbors(boardState, x, y);
 

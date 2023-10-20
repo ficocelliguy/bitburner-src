@@ -59,23 +59,19 @@ export const GoStatusPage = (): React.ReactElement => {
           </TableRow>
           {opponentList.map((faction, index) => {
             return (
-              <>
-                <br key={index} />
-                <TableRow key={index}>
-                  <TableCell className={classes.cellNone}>
-                    <span>{faction}:</span>
-                  </TableCell>
-                  <TableCell className={classes.cellNone}>
-                    <strong className={classes.keyText}>+{getBonusText(faction)}</strong>
-                  </TableCell>
-                </TableRow>
-              </>
+              <TableRow key={index}>
+                <TableCell className={classes.cellNone}>
+                  <br />
+                  <span>{faction}:</span>
+                </TableCell>
+                <TableCell className={classes.cellNone}>
+                  <strong className={classes.keyText}>+{getBonusText(faction)}</strong>
+                </TableCell>
+              </TableRow>
             );
           })}
         </TableBody>
       </Table>
-      <br />
-      <br />
     </div>
   );
 };

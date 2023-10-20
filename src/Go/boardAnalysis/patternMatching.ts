@@ -1,8 +1,6 @@
 // Inspired by https://github.com/pasky/michi/blob/master/michi.py
-import { BoardState, PlayerColor, playerColors, PointState, validityReason } from "../boardState/goConstants";
+import { BoardState, PlayerColor, playerColors, PointState } from "../boardState/goConstants";
 import { sleep } from "./goAI";
-import { getStateCopy, updateCaptures } from "../boardState/boardState";
-import { evaluateIfMoveIsValid } from "./boardAnalysis";
 
 export const threeByThreePatterns = [
   // 3x3 piece patterns; X,O are color pieces; x,o are any state except the opposite color piece;
@@ -77,7 +75,11 @@ export const threeByThreePatterns = [
 /**
  * Searches the board for any point that matches the expanded pattern set
  */
-export async function findAnyMatchedPatterns(boardState: BoardState, player: PlayerColor) {
+export async function findAnyMatchedPatterns(
+  boardState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+) {
   const board = boardState.board;
   const boardSize = board[0].length;
   const patterns = expandAllThreeByThreePatterns();
@@ -85,13 +87,11 @@ export async function findAnyMatchedPatterns(boardState: BoardState, player: Pla
     for (let y = 0; y < boardSize; y++) {
       const neighborhood = getNeighborhood(boardState, x, y);
       const matchedPattern = patterns.find((pattern) => checkMatch(neighborhood, pattern, player));
-      if (matchedPattern) {
-        const evaluationBoard = getStateCopy(boardState);
-        const updatedBoard = updateCaptures(evaluationBoard, player);
-
-        if (evaluateIfMoveIsValid(updatedBoard, x, y, player) === validityReason.valid) {
-          return board[x][y];
-        }
+      if (
+        matchedPattern &&
+        availableSpaces.find((availablePoint) => availablePoint.x === x && availablePoint.y === y)
+      ) {
+        return board[x][y];
       }
     }
     await sleep(10);

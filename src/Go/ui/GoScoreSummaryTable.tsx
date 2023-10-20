@@ -44,9 +44,9 @@ export const GoScoreSummaryTable = ({ score, opponent }: IProps) => {
             <TableCell className={classes.cellNone}>{whiteScore.komi}</TableCell>
             <TableCell className={classes.cellNone} />
           </TableRow>
-          <br />
           <TableRow>
             <TableCell className={classes.cellNone}>
+              <br />
               <strong className={classes.keyText}>Total score:</strong>
             </TableCell>
             <TableCell className={classes.cellNone}>

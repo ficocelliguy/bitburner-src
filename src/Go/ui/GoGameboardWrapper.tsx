@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, Typography } from "@mui/material";
@@ -21,7 +21,7 @@ import { useRerender } from "../../ui/React/hooks";
 import { OptionSwitch } from "../../ui/React/OptionSwitch";
 import { boardStyles } from "../boardState/goStyles";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid } from "../boardAnalysis/boardAnalysis";
+import { evaluateIfMoveIsValid, getAllValidMoves } from "../boardAnalysis/boardAnalysis";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
@@ -45,19 +45,16 @@ interface IProps {
 export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactElement {
   const rerender = useRerender(400);
 
-  const boardState = (function () {
-    if (Player?.go?.boardState === null) throw new Error("Player.go should not be null");
-    return Player.go.boardState;
-  })();
+  const boardState = Player.go.boardState;
   const [traditional, setTraditional] = useState(false);
   const [showPriorMove, setShowPriorMove] = useState(false);
-  const [opponent, setOpponent] = useState<opponents>(Player.go.boardState.ai);
+  const [opponent, setOpponent] = useState<opponents>(boardState.ai);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState));
 
   const classes = boardStyles();
-  const boardSize = Player.go.boardState.board[0].length;
+  const boardSize = boardState.board[0].length;
 
   function clickHandler(x: number, y: number): void {
     if (showPriorMove) {
@@ -151,11 +148,12 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     if (boardState.previousPlayer !== null && boardState.history.length) {
       resetWinstreak(boardState.ai);
     }
-    updateBoard(getNewBoardState(newBoardSize, newOpponent));
 
+    const newBoardState = getNewBoardState(newBoardSize, newOpponent);
     if (newOpponent === opponents.Illuminati) {
-      updateBoard(applyHandicap(boardSize, 4));
+      applyHandicap(newBoardState, 4);
     }
+    updateBoard(newBoardState);
   }
 
   function updateBoard(newBoardState: BoardState) {
@@ -183,6 +181,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   }
 
   const endGameAvailable = boardState.previousPlayer !== playerColors.black && boardState.passCount;
+  const noLegalMoves = useMemo(
+    () => boardState.previousPlayer === playerColors.white && !getAllValidMoves(boardState, playerColors.black).length,
+    [boardState],
+  );
   const disablePassButton = opponent !== opponents.none && boardState.previousPlayer === playerColors.black;
 
   return (
@@ -227,7 +229,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
             <Button
               disabled={disablePassButton}
               onClick={passPlayerTurn}
-              className={endGameAvailable ? classes.endGame : classes.resetBoard}
+              className={endGameAvailable || noLegalMoves ? classes.buttonHighlight : classes.resetBoard}
             >
               {endGameAvailable ? "  End Game  " : "  Pass Turn  "}
             </Button>

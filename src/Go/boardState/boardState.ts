@@ -1,4 +1,5 @@
 import {
+  Board,
   BoardState,
   Move,
   Neighbor,
@@ -18,11 +19,12 @@ import {
 import { Player } from "@player";
 import { getScore } from "../boardAnalysis/scoring";
 import { getDifficultyMultiplier, getWinstreakMultiplier } from "../effects/effect";
+import { cloneDeep } from "lodash";
 
 /**
  * Generates a new BoardState object with the given opponent and size
  */
-export function getNewBoardState(boardSize: number, ai?: opponents): BoardState {
+export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?: Board): BoardState {
   return {
     history: [],
     previousPlayer: playerColors.white,
@@ -30,7 +32,7 @@ export function getNewBoardState(boardSize: number, ai?: opponents): BoardState 
     passCount: 0,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
-        player: playerColors.empty,
+        player: boardToCopy?.[x]?.[y]?.player ?? playerColors.empty,
         chain: -1,
         liberties: null,
         x,
@@ -123,15 +125,14 @@ export function resetWinstreak(opponent: opponents) {
 /**
  * Makes a number of random moves on the board before the game starts, to give one player an edge.
  */
-export function applyHandicap(boardSize: number, handicap: number) {
-  const newBoard = getNewBoardState(boardSize);
-  const availableMoves = getEmptySpaces(newBoard);
-  const handicapMoves = getExpansionMoveArray(newBoard, playerColors.black, availableMoves, handicap);
+export function applyHandicap(boardState: BoardState, handicap: number) {
+  const availableMoves = getEmptySpaces(boardState);
+  const handicapMoves = getExpansionMoveArray(boardState, playerColors.black, availableMoves, handicap);
 
   handicapMoves.forEach(
-    (move: Move) => move.point && (newBoard.board[move.point.x][move.point.y].player = playerColors.white),
+    (move: Move) => move.point && (boardState.board[move.point.x][move.point.y].player = playerColors.white),
   );
-  return newBoard;
+  return boardState;
 }
 
 /**
@@ -139,7 +140,7 @@ export function applyHandicap(boardSize: number, handicap: number) {
  * chain information and liberties.
  */
 export function updateChains(boardState: BoardState) {
-  boardState.board = clearChains(getBoardCopy(boardState)).board;
+  boardState.board = clearChains(boardState).board;
   const chains = [];
   let chainID = 0;
 
@@ -180,7 +181,7 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
   const chainToCapture = findAnyCapturedChain(chains, playerWhoMoved);
   if (chainToCapture) {
     captureChain(chainToCapture);
-    return updateCaptures(boardState, playerWhoMoved);
+    return updateChains(boardState);
   }
 
   return boardState;
@@ -252,7 +253,7 @@ export function getEmptySpaces(boardState: BoardState): PointState[] {
  * Makes a deep copy of the given board state
  */
 export function getStateCopy(initialState: BoardState) {
-  const boardState = updateChains(getBoardCopy(initialState));
+  const boardState = cloneDeep(initialState);
 
   boardState.history = [...initialState.history];
   boardState.previousPlayer = initialState.previousPlayer;

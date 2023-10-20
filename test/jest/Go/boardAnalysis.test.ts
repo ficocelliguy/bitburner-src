@@ -1,6 +1,10 @@
 import { setPlayer } from "@player";
 import { PlayerObject } from "../../../src/PersonObjects/Player/PlayerObject";
-import { getAllEyes, getBoardFromSimplifiedBoardState } from "../../../src/Go/boardAnalysis/boardAnalysis";
+import {
+  getAllEyes,
+  getAllValidMoves,
+  getBoardFromSimplifiedBoardState,
+} from "../../../src/Go/boardAnalysis/boardAnalysis";
 import { playerColors } from "../../../src/Go/boardState/goConstants";
 import { findAnyMatchedPatterns } from "../../../src/Go/boardAnalysis/patternMatching";
 
@@ -29,7 +33,11 @@ describe("Go board analysis tests", () => {
   it("identifies strong patterns on the board", async () => {
     const board = [".....", ".....", ".....", ".....", ".OXO."];
     const boardState = getBoardFromSimplifiedBoardState(board);
-    const point = await findAnyMatchedPatterns(boardState, playerColors.white);
+    const point = await findAnyMatchedPatterns(
+      boardState,
+      playerColors.white,
+      getAllValidMoves(boardState, playerColors.white),
+    );
 
     expect(point?.x).toEqual(3);
     expect(point?.y).toEqual(2);

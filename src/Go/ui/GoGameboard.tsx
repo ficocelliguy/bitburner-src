@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Grid from "@mui/material/Grid";
 
 import { getSizeClass, GoPoint } from "./GoPoint";
@@ -21,7 +21,11 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
     boardState.ai !== opponents.none || boardState.previousPlayer === playerColors.white
       ? playerColors.black
       : playerColors.white;
-  const availablePoints = hover ? getAllValidMoves(boardState, currentPlayer) : [];
+
+  const availablePoints = useMemo(
+    () => (hover ? getAllValidMoves(boardState, currentPlayer) : []),
+    [boardState, hover, currentPlayer],
+  );
 
   function pointIsValid(x: number, y: number) {
     return !!availablePoints.find((point) => point.x === x && point.y === y);

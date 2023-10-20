@@ -2,7 +2,7 @@ import React from "react";
 
 import Typography from "@mui/material/Typography";
 import { boardStyles } from "../boardState/goStyles";
-import { Grid } from "@mui/material";
+import { Grid, Link } from "@mui/material";
 import { GoGameboard } from "./GoGameboard";
 import { getBoardFromSimplifiedBoardState } from "../boardAnalysis/boardAnalysis";
 import { opponents, playerColors } from "../boardState/goConstants";
@@ -39,7 +39,7 @@ export const GoInstructionsPage = (): React.ReactElement => {
               capturing yours.
               <br />
               <br />
-              Your territory on the subnet is any space occupied by you routers, or fully encircled by them.
+              Your territory on the subnet is any space occupied by your routers, or fully encircled by them.
               <br />
               <br />
             </Typography>
@@ -122,9 +122,9 @@ export const GoInstructionsPage = (): React.ReactElement => {
               <br />
               * The best way to learn strategies is to experiment and find out what works! <br />
               <br />* This game is a slightly simplified version of Go. For more rule details and strategies try{" "}
-              <a href={"https://way-to-go.gitlab.io/#/en/capture-stones"} target={"_blank"} rel="noreferrer">
+              <Link href={"https://way-to-go.gitlab.io/#/en/capture-stones"} target={"_blank"} rel="noreferrer">
                 The Way to Go interactive guide.
-              </a>{" "}
+              </Link>{" "}
               <br />
               <br />
             </Typography>
@@ -177,15 +177,16 @@ export const GoInstructionsPage = (): React.ReactElement => {
             <br />
             <br />
             <Typography>
-              * You cannot place a router on a node with no open ports (or on a node that removes all open ports of a
-              network of your routers), unless it will capture a network of opponent's routers first.
+              * You cannot place a router on a node with no open ports (or on a node that removes all open ports your
+              network), unless it will capture a network of opponent's routers first.
               <br />
               <br />
-              To make sure your router networks are hard to capture, make sure to build around a few empty node ("eyes")
-              inside of the network, so you never completely run out of open ports!
+              To make sure your router networks are hard to capture, make sure to build around a few empty nodes
+              ("eyes") inside of the network, so you never completely run out of open ports!
               <br />
               <br />
-              * You cannot repeat previous board states. This prevents infinite loops of capturing and re-capturing.
+              * You cannot repeat previous board states. This rule prevents infinite loops of capturing and
+              re-capturing.
               <br />
               <br />
               Note that you CAN re-capture eventually, but you must play somewhere else on the board first, to make the
