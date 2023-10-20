@@ -48,7 +48,7 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
               ""
             )}
           </Typography>
-          <Button onClick={reset}>Find New Subnet</Button>
+          <Button onClick={reset}>New Subnet</Button>
         </div>
       </>
     </Modal>

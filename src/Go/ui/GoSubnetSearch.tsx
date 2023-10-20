@@ -3,19 +3,19 @@ import React, { useState } from "react";
 import { boardSizes, opponentDetails, opponents } from "../boardState/goConstants";
 import { Player } from "@player";
 import { boardStyles } from "../boardState/goStyles";
+import { Modal } from "../../ui/React/Modal";
 
 interface IProps {
+  open: boolean;
   search: (size: number, opponent: opponents) => void;
   cancel: () => void;
   showInstructions: () => void;
 }
 
-export const GoSubnetSearch = ({ search, cancel, showInstructions }: IProps): React.ReactElement => {
+export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProps): React.ReactElement => {
   const classes = boardStyles();
-  const [opponent, setOpponent] = useState<opponents>(
-    Player.go.previousGameFinalBoardState?.ai ?? opponents.SlumSnakes,
-  );
-  const [boardSize, setBoardSize] = useState(Player.go.previousGameFinalBoardState?.board?.[0]?.length ?? 7);
+  const [opponent, setOpponent] = useState<opponents>(Player.go.boardState?.ai ?? opponents.SlumSnakes);
+  const [boardSize, setBoardSize] = useState(Player.go.boardState?.board?.[0]?.length ?? 7);
 
   const opponentFactions = [
     opponents.none,
@@ -41,34 +41,52 @@ export const GoSubnetSearch = ({ search, cancel, showInstructions }: IProps): Re
   };
 
   return (
-    <>
-      <Typography variant="h4">IPvGO Subnet Search</Typography>
-      <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-        <Typography className={classes.opponentLabel}>{opponent !== opponents.none ? "Subnet owner: " : ""}</Typography>
-        <Select value={opponent} onChange={changeOpponent} sx={{ mr: 1 }}>
-          {opponentFactions.map((faction) => (
-            <MenuItem key={faction} value={faction}>
-              {`${faction} (${opponentDetails[faction].description})`}
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
-      <Typography>{opponentDetails[opponent].flavorText}</Typography>
-      <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-        <Typography className={classes.opponentLabel}>Subnet size: </Typography>
-        <Select value={`${boardSize}`} onChange={changeBoardSize} sx={{ mr: 1 }}>
-          {boardSizes.map((size) => (
-            <MenuItem key={size} value={size}>
-              {size}x{size}
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
-      <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-        <Button onClick={onSearch}>Search for Subnet</Button>
-        <Button onClick={cancel}>Cancel</Button>
-      </Box>
-      <Typography onClick={showInstructions}>How to Play</Typography>
-    </>
+    <Modal open={open} onClose={cancel}>
+      <div style={{ maxWidth: "550px" }}>
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography variant="h4">IPvGO Subnet Search</Typography>
+        </Box>
+        <br />
+        <br />
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography className={classes.opponentLabel}>
+            {opponent !== opponents.none ? "Opponent Faction: " : ""}
+          </Typography>
+          <Select value={opponent} onChange={changeOpponent} sx={{ mr: 1 }}>
+            {opponentFactions.map((faction) => (
+              <MenuItem key={faction} value={faction}>
+                {`${faction} (${opponentDetails[faction].description})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography className={classes.opponentLabel}>Subnet size: </Typography>
+          <Select value={`${boardSize}`} onChange={changeBoardSize} sx={{ mr: 1 }}>
+            {boardSizes.map((size) => (
+              <MenuItem key={size} value={size}>
+                {size}x{size}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+        <br />
+        <br />
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography style={{ maxWidth: "500px" }}>{opponentDetails[opponent].flavorText}</Typography>
+        </Box>
+        <br />
+        <br />
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Button onClick={onSearch}>Search for Subnet</Button>
+          <Button onClick={cancel}>Cancel</Button>
+        </Box>
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography onClick={showInstructions} className={classes.link}>
+            How to Play
+          </Typography>
+        </Box>
+      </div>
+    </Modal>
   );
 };

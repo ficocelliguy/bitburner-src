@@ -320,13 +320,13 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     gameboardWrapper: {
       position: "relative",
-      width: "650px",
-      height: "650px",
+      width: "750px",
+      height: "750px",
       padding: "5px",
     },
     boardFrame: {
       position: "relative",
-      width: "652px",
+      width: "752px",
     },
     statusPageGameboard: {
       position: "relative",
@@ -334,7 +334,8 @@ export const boardStyles = makeStyles((theme: Theme) =>
       height: "calc(min(400px, max(60vw - 250px, 300px)))",
     },
     statusPageScore: {
-      width: "300px",
+      width: "400px",
+      paddingLeft: "20px",
     },
     factionStatus: {
       padding: "10px",
@@ -362,6 +363,14 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     opponentTitle: {
       padding: "10px 0 0 0",
+    },
+    link: {
+      textDecoration: "underline",
+      opacity: 0.7,
+      cursor: "pointer",
+      "&:hover": {
+        opacity: 1,
+      },
     },
     inlineFlexBox: {
       display: "inline-flex",

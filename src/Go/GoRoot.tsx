@@ -25,7 +25,7 @@ export function GoRoot(): React.ReactElement {
         <Tab label="IPvGO Subnet" icon={<GridOn />} iconPosition={"start"} className={classes.tab} />
         <Tab label="Status" icon={<ManageSearch />} iconPosition={"start"} className={classes.tab} />
         <Tab label="History" icon={<History />} iconPosition={"start"} className={classes.tab} />
-        <Tab label="Instructions" icon={<Help />} iconPosition={"start"} className={classes.tab} />
+        <Tab label="How to Play" icon={<Help />} iconPosition={"start"} className={classes.tab} />
       </Tabs>
       {value === 0 && <GoGameboardWrapper showInstructions={showInstructions} />}
       {value === 1 && <GoStatusPage />}
