@@ -62,11 +62,13 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
     return validityReason.valid;
   }
 
+  // TODO: identify enemy adjacent chains. If there is any with only one liberty, the move is valid
+
   const evaluationBoard = evaluateMoveResult(boardState, x, y, player);
   if (evaluationBoard.board[x][y].player !== player) {
     return validityReason.noSuicide;
   }
-  if (checkIfBoardStateIsRepeated(evaluationBoard)) {
+  if (moveHasBeenPlayedBefore && checkIfBoardStateIsRepeated(evaluationBoard)) {
     return validityReason.boardRepeated;
   }
 
@@ -74,6 +76,10 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
 }
 
 export function evaluateMoveResult(boardState: BoardState, x: number, y: number, player: playerColors) {
+
+  // TODO: keep all chains except for friendly ones adjacent to the move
+  // TODO: Keep all liberties except for current point
+
   const boardSize = boardState.board[0].length;
   const newBoardState = getNewBoardState(boardSize, boardState.ai, boardState.board);
   newBoardState.history = boardState.history.slice(-4);
