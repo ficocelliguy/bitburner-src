@@ -43,10 +43,11 @@ export const GoScorePowerSummary = ({ finalScore, opponent }: IProps) => {
             <TableCell className={classes.cellNone}>{winStreak}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className={classes.cellNone}>Win Streak Multiplier:</TableCell>
-            <TableCell className={classes.cellNone}>{formatNumber(winstreakMultiplier, 2)}x</TableCell>
+            <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>Win Streak Multiplier:</TableCell>
+            <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
+              {formatNumber(winstreakMultiplier, 2)}x
+            </TableCell>
           </TableRow>
-          <br />
           <TableRow>
             <TableCell className={classes.cellNone}>Node power gained:</TableCell>
             <TableCell className={classes.cellNone}>{nodePowerIncrease}</TableCell>
@@ -57,10 +58,10 @@ export const GoScorePowerSummary = ({ finalScore, opponent }: IProps) => {
           </TableRow>
         </TableBody>
       </Table>
-      <div className={`${classes.centeredText} ${classes.keyText}`}>
+      <Typography className={`${classes.centeredText} ${classes.keyText}`}>
         <span>New Total Bonus: </span>
         <span>{getBonusText(opponent)}</span>
-      </div>
+      </Typography>
     </>
   );
 };

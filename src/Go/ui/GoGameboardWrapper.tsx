@@ -182,77 +182,80 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     return boardState;
   }
 
-  const endGameAvailable = boardState.previousPlayer !== playerColors.black && boardState.passCount;
+  const endGameAvailable = boardState.previousPlayer === playerColors.white && boardState.passCount;
   const noLegalMoves = useMemo(
     () => boardState.previousPlayer === playerColors.white && !getAllValidMoves(boardState, playerColors.black).length,
     [boardState],
   );
   const disablePassButton = opponent !== opponents.none && boardState.previousPlayer === playerColors.black;
+  const passButtonLabel = endGameAvailable
+    ? "End Game"
+    : boardState.previousPlayer === null
+    ? "View Final Score"
+    : "Pass Turn";
 
   return (
     <>
+      <GoSubnetSearch
+        open={searchOpen}
+        search={resetState}
+        cancel={() => setSearchOpen(false)}
+        showInstructions={showInstructions}
+      />
+      <GoScoreModal
+        open={scoreOpen}
+        onClose={() => setScoreOpen(false)}
+        reset={() => resetState()}
+        finalScore={score}
+        opponent={opponent}
+      ></GoScoreModal>
       <div className={classes.boardFrame}>
-        <GoSubnetSearch
-          open={searchOpen}
-          search={resetState}
-          cancel={() => setSearchOpen(false)}
-          showInstructions={showInstructions}
-        />
-        <>
-          <GoScoreModal
-            open={scoreOpen}
-            onClose={() => setScoreOpen(false)}
-            reset={() => resetState()}
-            finalScore={score}
-            opponent={opponent}
-          ></GoScoreModal>
-          {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
-          <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-            <Typography className={classes.opponentLabel}>
-              {opponent !== opponents.none ? "Subnet owner: " : ""}
-            </Typography>
-            <Typography className={classes.opponentName}>{opponent}</Typography>
-          </Box>
-          <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
-            <GoGameboard
-              boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
-              traditional={traditional}
-              clickHandler={clickHandler}
-              hover={!showPriorMove}
-            />
-          </div>
+        {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography className={classes.opponentLabel}>
+            {opponent !== opponents.none ? "Subnet owner: " : ""}
+          </Typography>
+          <Typography className={classes.opponentName}>{opponent}</Typography>
+        </Box>
+        <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
+          <GoGameboard
+            boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
+            traditional={traditional}
+            clickHandler={clickHandler}
+            hover={!showPriorMove}
+          />
+        </div>
+        <Box className={classes.inlineFlexBox}>
+          <Button onClick={() => setSearchOpen(true)} className={classes.resetBoard}>
+            Find New Subnet
+          </Button>
+          <Typography className={classes.scoreBox}>
+            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
+          </Typography>
+          <Button
+            disabled={disablePassButton}
+            onClick={passPlayerTurn}
+            className={endGameAvailable || noLegalMoves ? classes.buttonHighlight : classes.resetBoard}
+          >
+            {passButtonLabel}
+          </Button>
+        </Box>
+        <div className={classes.opponentLabel}>
           <Box className={classes.inlineFlexBox}>
-            <Button onClick={() => setSearchOpen(true)} className={classes.resetBoard}>
-              Find New Subnet
-            </Button>
-            <Typography className={classes.scoreBox}>
-              Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
-            </Typography>
-            <Button
-              disabled={disablePassButton}
-              onClick={passPlayerTurn}
-              className={endGameAvailable || noLegalMoves ? classes.buttonHighlight : classes.resetBoard}
-            >
-              {endGameAvailable ? "  End Game  " : "  Pass Turn  "}
-            </Button>
+            <OptionSwitch
+              checked={traditional}
+              onChange={(newValue) => setTraditional(newValue)}
+              text="Traditional Go look"
+              tooltip={<>Show stones and grid as if it was a standard Go board</>}
+            />
+            <OptionSwitch
+              checked={showPriorMove}
+              onChange={(newValue) => setShowPriorMove(newValue)}
+              text="Show previous move"
+              tooltip={<>Show the board as it was before the last move</>}
+            />
           </Box>
-          <div className={classes.opponentLabel}>
-            <Box className={classes.inlineFlexBox}>
-              <OptionSwitch
-                checked={traditional}
-                onChange={(newValue) => setTraditional(newValue)}
-                text="Traditional Go look"
-                tooltip={<>Show stones and grid as if it was a standard Go board</>}
-              />
-              <OptionSwitch
-                checked={showPriorMove}
-                onChange={(newValue) => setShowPriorMove(newValue)}
-                text="Show previous move"
-                tooltip={<>Show the board as it was before the last move</>}
-              />
-            </Box>
-          </div>
-        </>
+        </div>
       </div>
     </>
   );

@@ -32,22 +32,20 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
             Game complete!
           </Typography>
           <GoScoreSummaryTable score={finalScore} opponent={opponent} />
-          <Typography>
-            <br />
-            <Typography variant="h5" className={classes.centeredText}>
-              {blackScore.sum > whiteScore.sum ? playerWinsText : opponentWinsText}
-            </Typography>
-            <br />
-            {opponent !== opponents.none ? (
-              <>
-                <GoScorePowerSummary opponent={opponent} finalScore={finalScore} />
-                <br />
-                <br />
-              </>
-            ) : (
-              ""
-            )}
+          <br />
+          <Typography variant="h5" className={classes.centeredText}>
+            {blackScore.sum > whiteScore.sum ? playerWinsText : opponentWinsText}
           </Typography>
+          <br />
+          {opponent !== opponents.none ? (
+            <>
+              <GoScorePowerSummary opponent={opponent} finalScore={finalScore} />
+              <br />
+              <br />
+            </>
+          ) : (
+            ""
+          )}
           <Button onClick={reset}>New Subnet</Button>
         </div>
       </>

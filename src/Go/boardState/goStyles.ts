@@ -467,6 +467,9 @@ export const boardStyles = makeStyles((theme: Theme) =>
       margin: 0,
       color: theme.colors.success,
     },
+    cellBottomPadding: {
+      paddingBottom: "20px",
+    },
     keyText: {
       paddingTop: "10px",
       color: theme.colors.int,
