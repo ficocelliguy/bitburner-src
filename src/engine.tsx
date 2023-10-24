@@ -9,7 +9,6 @@ import { staneksGift } from "./CotMG/Helper";
 import { processPassiveFactionRepGain, inviteToFaction } from "./Faction/FactionHelpers";
 import { Router } from "./ui/GameRoot";
 import { Page } from "./ui/Router";
-import { SetupTextEditor } from "./ScriptEditor/ui/ScriptEditorRoot";
 import "./PersonObjects/Player/PlayerObject"; // For side-effect of creating Player
 
 import {
@@ -229,8 +228,6 @@ const Engine: {
     if (loadGame(saveString)) {
       FormatsNeedToChange.emit();
       initBitNodeMultipliers();
-      Player.reapplyAllAugmentations();
-      Player.reapplyAllSourceFiles();
       if (Player.hasWseAccount) {
         initSymbolToStockMap();
       }
@@ -264,7 +261,8 @@ const Engine: {
       }
 
       let offlineReputation = 0;
-      const offlineHackingIncome = (Player.moneySourceA.hacking / Player.playtimeSinceLastAug) * timeOffline * 0.75;
+      const offlineHackingIncome =
+        (Player.moneySourceA.hacking / Player.playtimeSinceLastAug) * timeOffline * CONSTANTS.OfflineHackingIncome;
       Player.gainMoney(offlineHackingIncome, "hacking");
       // Process offline progress
 
@@ -378,7 +376,6 @@ const Engine: {
       // Start interactive tutorial
       iTutorialStart();
     }
-    SetupTextEditor();
   },
 
   start: function () {

@@ -19,6 +19,8 @@ import { formatMoney } from "../ui/formatNumber";
 import { isPositiveInteger } from "../types";
 import { createEnumKeyedRecord, getRecordValues } from "../Types/Record";
 
+export const CorporationResolvers: ((prevState: CorpStateName) => void)[] = [];
+
 interface IParams {
   name?: string;
   seedFunded?: boolean;
@@ -92,8 +94,8 @@ export class Corporation {
     this.funds += amt;
   }
 
-  getState(): CorpStateName {
-    return this.state.getState();
+  getNextState(): CorpStateName {
+    return this.state.nextName;
   }
 
   storeCycles(numCycles: number): void {
@@ -104,7 +106,7 @@ export class Corporation {
     if (this.storedCycles < 0) this.storedCycles = 0;
 
     if (this.storedCycles >= corpConstants.gameCyclesPerCorpStateCycle) {
-      const state = this.getState();
+      const state = this.getNextState();
       const marketCycles = 1;
       const gameCycles = marketCycles * corpConstants.gameCyclesPerCorpStateCycle;
       this.storedCycles -= gameCycles;
@@ -115,7 +117,7 @@ export class Corporation {
         ind.resetImports(state);
       }
       for (const ind of this.divisions.values()) {
-        ind.process(marketCycles, state, this);
+        ind.process(marketCycles, this);
       }
 
       // Process cooldowns
@@ -169,7 +171,12 @@ export class Corporation {
         this.updateSharePrice();
       }
 
-      this.state.nextState();
+      this.state.incrementState();
+
+      // Handle "nextUpdate" resolvers after this update
+      for (const resolve of CorporationResolvers.splice(0)) {
+        resolve(state);
+      }
     }
   }
 

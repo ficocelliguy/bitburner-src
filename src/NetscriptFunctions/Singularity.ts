@@ -8,6 +8,7 @@ import {
   FactionName,
   FactionWorkType,
   GymType,
+  JobField,
   LocationName,
   UniversityClassType,
 } from "@enums";
@@ -92,9 +93,7 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
       }
       return res;
     },
-    getOwnedSourceFiles: () => () => {
-      return [...Player.sourceFiles].map(([n, lvl]) => ({ n, lvl }));
-    },
+    getOwnedSourceFiles: () => () => [...Player.sourceFiles].map(([n, lvl]) => ({ n, lvl })),
     getAugmentationFactions: (ctx) => (_augName) => {
       helpers.checkSingularityAccess(ctx);
       const augName = getEnumHelper("AugmentationName").nsGetMember(ctx, _augName);
@@ -452,14 +451,14 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
         return false;
       }
 
-      if (Player.money < item.price) {
-        helpers.log(ctx, () => `Not enough money to purchase '${item.program}'. Need ${formatMoney(item.price)}`);
-        return false;
-      }
-
       if (Player.hasProgram(item.program)) {
         helpers.log(ctx, () => `You already have the '${item.program}' program`);
         return true;
+      }
+
+      if (Player.money < item.price) {
+        helpers.log(ctx, () => `Not enough money to purchase '${item.program}'. Need ${formatMoney(item.price)}`);
+        return false;
       }
 
       Player.getHomeComputer().pushProgram(item.program);
@@ -689,6 +688,7 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
       const job = CompanyPositions[positionName];
       const res = {
         name: CompanyPositions[positionName].name,
+        field: CompanyPositions[positionName].field,
         nextPosition: CompanyPositions[positionName].nextPosition,
         salary: CompanyPositions[positionName].baseSalary * company.salaryMultiplier,
         requiredReputation: CompanyPositions[positionName].requiredReputation,
@@ -738,48 +738,48 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
     applyToCompany: (ctx) => (_companyName, _field) => {
       helpers.checkSingularityAccess(ctx);
       const companyName = getEnumHelper("CompanyName").nsGetMember(ctx, _companyName);
-      const field = helpers.string(ctx, "field", _field);
+      const field = getEnumHelper("JobField").nsGetMember(ctx, _field, "field", { fuzzy: true });
 
       Player.location = companyNameAsLocationName(companyName);
       let res;
-      switch (field.toLowerCase()) {
-        case "software":
+      switch (field) {
+        case JobField.software:
           res = Player.applyForSoftwareJob(true);
           break;
-        case "software consultant":
+        case JobField.softwareConsultant:
           res = Player.applyForSoftwareConsultantJob(true);
           break;
-        case "it":
+        case JobField.it:
           res = Player.applyForItJob(true);
           break;
-        case "security engineer":
+        case JobField.securityEngineer:
           res = Player.applyForSecurityEngineerJob(true);
           break;
-        case "network engineer":
+        case JobField.networkEngineer:
           res = Player.applyForNetworkEngineerJob(true);
           break;
-        case "business":
+        case JobField.business:
           res = Player.applyForBusinessJob(true);
           break;
-        case "business consultant":
+        case JobField.businessConsultant:
           res = Player.applyForBusinessConsultantJob(true);
           break;
-        case "security":
+        case JobField.security:
           res = Player.applyForSecurityJob(true);
           break;
-        case "agent":
+        case JobField.agent:
           res = Player.applyForAgentJob(true);
           break;
-        case "employee":
+        case JobField.employee:
           res = Player.applyForEmployeeJob(true);
           break;
-        case "part-time employee":
+        case JobField.partTimeEmployee:
           res = Player.applyForPartTimeEmployeeJob(true);
           break;
-        case "waiter":
+        case JobField.waiter:
           res = Player.applyForWaiterJob(true);
           break;
-        case "part-time waiter":
+        case JobField.partTimeWaiter:
           res = Player.applyForPartTimeWaiterJob(true);
           break;
         default:

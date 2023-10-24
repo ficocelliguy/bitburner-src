@@ -9,6 +9,7 @@ export const CONSTANTS: {
   VersionNumber: number;
   MaxSkillLevel: number;
   MilliPerCycle: number;
+  OfflineHackingIncome: number;
   CorpFactionRepRequirement: number;
   BaseFocusBonus: number;
   BaseCostFor1GBOfRamHome: number;
@@ -83,9 +84,9 @@ export const CONSTANTS: {
   Donations: number; // number of blood/plasma/palette donation the dev have verified., boosts NFG
   LatestUpdate: string;
 } = {
-  VersionString: "2.5.0dev",
+  VersionString: "2.5.1dev",
   isDevBranch: true,
-  VersionNumber: 34,
+  VersionNumber: 35,
 
   /** Max level for any skill, assuming no multipliers. Determined by max numerical value in javascript for experience
    * and the skill level formula in Player.js. Note that all this means it that when experience hits MAX_INT, then
@@ -95,6 +96,9 @@ export const CONSTANTS: {
 
   // Milliseconds per game cycle
   MilliPerCycle: 200,
+
+  // Multiplier for hacking income earned from offline scripts
+  OfflineHackingIncome: 0.75,
 
   // How much reputation is needed to join a megacorporation's faction
   CorpFactionRepRequirement: 400e3,
@@ -219,56 +223,52 @@ export const CONSTANTS: {
 
   // Also update doc/source/changelog.rst
   LatestUpdate: `
-## v2.5.0 dev changelog (last updated 9/24/23)
-
-See 2.4.1 changelog: https://github.com/bitburner-official/bitburner-src/blob/stable/src/Documentation/doc/changelog.md
+## v2.5.1 dev changelog (last updated 10/23/2023)
 
 ### NOTES
-(Corporation) The gameplay balance of the Corporation mechanic will be significantly different this patch, due to bugfixes for both share price and valuation. Fully automated scripts and overall gameplay strategies for Corporation may need to be adjusted.
+For the Steam version, this update includes a change that may result in your menu options reverting to default settings. If you experience issues with the correct savegame not loading, or you need to use Steam Cloud integration, check these menu settings after starting the game.
 
-### API CHANGES:
-- ns.print and ns.tprint now handle Set and Map. (@ficocelliguy)
-- (Corporation) Added CorporationDivisions property to BitNodeMultipliers interface (@Caldwell-74)
-- (Corporation) Added makesMaterials and makesProducts properties to CorpIndustryData interface. (@Caldwell-74)
-- (Corporation) Added issueNewSharesCooldown property to the CorporationInfo interface.
-- (Gang) Added ns.gang.getRecruitsAvailable: Gets the number of additional gang members that can currently be recruited (@myCatsName)
-- (Gang) Added ns.gang.respectForNextRecruit: Gets the respect threshold for recruiting the next gang member (@myCatsName)
-- (Gang) Added ns.gang.renameMember: Renames a gang member (@myCatsName)
+See 2.5.0 changelog at https://github.com/bitburner-official/bitburner-src/blob/stable/src/Documentation/doc/changelog.md
+
+### API
+
+- (Bladeburner) Added ns.bladeburner.nextUpdate, which allows waiting for the next update of the bladeburner mechanic (@jjclark1982)
+- (Bladeburner) Added ns.bladeburner.getNextBlackOp, which provides name and rank info for the next Black Operation that can be completed (@myCatsName)
+- (Corporation) Added ns.corporation.nextUpdate, which allows waiting for the next update of the corporation mechanic (@jjclark1982)
+- (Corporation) ns.corporation.getCorporation return value: 'state' property is deprecated. Added 'prevState' and 'nextState' properties. (@Caldwell-74)
+- (Gang) Added ns.gang.nextUpdate, which allows waiting for the next update of the gang mechanic (@jjclark1982)
+- (Singularity) Added a JobField enum, and used this for the ns.singularity.applyToCompany function (@alutman)
+- (Singularity) ns.singularity.purchaseProgram now returns true for programs that are already owned even if the player doesn't have enough money to re-buy the program (@ncharris93)
+- (Stock) Added ns.stock.nextUpdate, which allows waiting for the next update of the stock mechanic (@jjclark1982)
 
 ### BUGFIX
-- Taking a university class no longer gives the player an achievement for working out in a gym. (@myCatsName)
-- Bash keybind ctrl-C clears an ongoing terminal history search (@ncharris93)
-- (Corporation): Fix bug in valuation calculation (@yichizhng)
-- (Corporation): Fix bug in share price calculation (@jjclark1982)
-- (Corporation) "Same sell amount in all cities" works with Products again. (@Caldwell-74)
-- (Hashnet) Buying multiple company favor upgrades at the same time will actually apply them all instead of just one. (@aschmider)
 
-### OTHER CHANGES
-- MISC: Improved handling of aliases in the Terminal (@ficocelliguy)
-- MISC: Improved error messages for ns.getPurchasedServer (@ficocelliguy)
-- MISC: ns.sleep and ns.asleep now show a formatted time in the script log. (@ficocelliguy)
-- MISC: Fix an exploit that allowed over 100% utilization of a server's ram (@d0sboots)
-- MISC: (Bladeburner / Sleeve) Bladeburner training action is available for sleeves (@Zelow79)
-- UI: Tail windows now remain on the page, but hidden, when on pages like Infiltration where they should not be shown. This means any modifications made to the tail window directly will persist through an infiltration, and React content added via printRaw will no longer unmount and remount. Scripts that relied on the previous behavior might need to be adjusted. (@ficocelliguy)
-- UI: Faction augmentation page updates more reliably (@zerbosh)
-- UI: Added a text filter on the Faction Augmentations page (@ficocelliguy)
-- UI: Improved pagination of Active Scripts page (@Ookamiko, @ficocelliguy)
-- UI: Icarus message no longer shows repeatedly for players that are in the endgame. (@ficocelliguy)
-- UI: Remove work completion dialogs when performing an augmentation install (@ficocelliguy)
-- UI: Improve soft reset dialog, and always show dialog when soft resetting (@myCatsName)
-- UI: While closing, modals no longer update displayed info and become inert (@Snarling)
-- UI: (Bladeburner) Fix a possible NaN display value in Bladeburner (@zerbosh)
-- UI: (Corporation) Multiple UI improvements for Corporation (@jjclark1982)
-- UI: (Corporation) Tweaked some number formatting to look better in Corp and Stats page (@zerbosh)
-- UI: (Corporation) Market TA no longer has its own dialog box, it's set in the normal sell dialog (@Caldwell-74)
-- UI: (Corporation) Fix an incorrect value in the party dialog box (@aschmider)
-- UI: (Corporation) Improved the descriptions for Corporation states (@Caldwell-74)
-- UI: (Gang) Various UI improvements for Gang (@myCatsName)
-- DOCS: Improve documentation for ports (@muesli4brekkies)
-- DOCS: Updated documentation for ns.tail and ns.getScriptLogs to make it clear a PID can be used. (@myCatsName)
-- DOCS: Improve documentation for FilenameOrPID functions (@VictorS)
-- DOCS: Improved various existing ingame documentation pages (@myCatsName)
-- DOCS: (Bladeburner / Gang) Added initial ingame documentation for Bladeburner and Gang (@myCatsName)
-- DOCS: (Bladeburner / Gang) Improve API documentation for Bladeburner and Gang functions (@myCatsName)
+- (Corporation) Fix an incorrect calculation when adding more employees to an office (@Caldwell-74)
+- (Corporation) Bulk purchase can no longer be used to exceed maximum warehouse capacity (@TheAimMan)
+- (Sleeve) Sleeve crime work can no longer cause an overflow of %completion when performing quick crimes during bonus time (@TheAimMan)
+- (Stanek) Multipliers from Stanek are now calculated correctly even if the player has Entropy (@yichizhng)
+- Fix a bug that could cause the wrong coding contract to be deleted when using rm (@TheAimMan)
+- Scripts no longer show $0 for offline money income (@alutman)
+- Faction invitations are now cleared properly when performing a reset (@alutman)
+- API functions that work on a hostname no longer work on servers that have not been added to the network. (@TheAimMan)
+- Fix an issue where the "True Recursion" achievement could be granted incorrectly (@jjclark1982)
+
+### MISC
+
+- Updated lots of dependencies (@Caldwell-74)
+- Updated electron to the latest version (Steam version only) (@Snarling)
+- Various spelling / grammar / wording fixes (@ficocelliguy, @Squirlll, @Warrobot10)
+- Minor reorganization and streamlining in Script Editor code (@Snarling)
+- Tweaked the .lit file referencing Illuminati to give a better idea about joining requirements (@d0sboots)
+- (Steam version) Replaced outdated electron-config with electron-store (@tiziodcaio)
+
+### UI
+
+- (Corporation) Improved the display of corporation state. (@Caldwell-74)
+- (Corporation) Improved various Corporation UIs (@jjclark1982)
+- (Gang) Removed the territory warfare toggle from the main Gang screen (@Tyasuh)
+- Added number of exploits to import savegame comparison (@myCatsName)
+- Dev menu improvements (@myCatsName, @Snarling)
+- Added a credits button on the options page (@myCatsName)
 `,
 };

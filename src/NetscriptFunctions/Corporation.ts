@@ -5,9 +5,9 @@ import { Product } from "../Corporation/Product";
 import { Material } from "../Corporation/Material";
 import { Warehouse } from "../Corporation/Warehouse";
 import { Division } from "../Corporation/Division";
-import { Corporation } from "../Corporation/Corporation";
+import { Corporation, CorporationResolvers } from "../Corporation/Corporation";
 import { cloneDeep, omit } from "lodash";
-
+import { setDeprecatedProperties } from "../utils/DeprecationHelper";
 import {
   Corporation as NSCorporation,
   Division as NSDivision,
@@ -15,6 +15,7 @@ import {
   OfficeAPI,
   CorpResearchName,
   CorpMaterialName,
+  CorpStateName,
 } from "@nsdefs";
 
 import {
@@ -697,7 +698,7 @@ export function NetscriptCorporation(): InternalAPI<NSCorporation> {
     getCorporation: (ctx) => () => {
       checkAccess(ctx);
       const corporation = getCorporation();
-      return {
+      const data = {
         name: corporation.name,
         funds: corporation.funds,
         revenue: corporation.revenue,
@@ -713,9 +714,18 @@ export function NetscriptCorporation(): InternalAPI<NSCorporation> {
         dividendRate: corporation.dividendRate,
         dividendTax: corporation.dividendTax,
         dividendEarnings: corporation.getCycleDividends() / corpConstants.secondsPerMarketCycle,
-        state: corporation.state.getState(),
+        nextState: corporation.state.nextName,
+        prevState: corporation.state.prevName,
         divisions: [...corporation.divisions.keys()],
       };
+      setDeprecatedProperties(data, {
+        state: {
+          identifier: "ns.corporation.getCorporation().state",
+          message: "Use ns.corporation.getCorporation().nextState instead.",
+          value: corporation.state.nextName,
+        },
+      });
+      return data;
     },
     createCorporation:
       (ctx) =>
@@ -786,6 +796,10 @@ export function NetscriptCorporation(): InternalAPI<NSCorporation> {
     getBonusTime: (ctx) => () => {
       checkAccess(ctx);
       return Math.round(getCorporation().storedCycles / 5) * 1000;
+    },
+    nextUpdate: (ctx) => () => {
+      checkAccess(ctx);
+      return new Promise<CorpStateName>((res) => CorporationResolvers.push(res));
     },
   };
 
