@@ -97,6 +97,7 @@ export type MoveOptions = {
   expansion: Move | null;
   defend: Move | null;
   surround: Move | null;
+  random: PointState | null;
 };
 
 export type Move = {

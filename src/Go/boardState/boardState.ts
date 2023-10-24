@@ -28,7 +28,7 @@ export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?
   return {
     history: [],
     previousPlayer: playerColors.white,
-    ai: ai ?? opponents.SlumSnakes,
+    ai: ai ?? opponents.Netburners,
     passCount: 0,
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({

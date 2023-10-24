@@ -32,8 +32,6 @@ interface IProps {
 
 // TODO: interactive examples on instructions page
 
-// TODO: re-word instructions page in terms of empty nodes
-
 // TODO: Subnet searcher styles
 
 // TODO: faction status layout: left-align text, table?
@@ -58,7 +56,11 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
 
   function clickHandler(x: number, y: number): void {
     if (showPriorMove) {
-      SnackbarEvents.emit(`Currently showing a past board state.`, ToastVariant.WARNING, 2000);
+      SnackbarEvents.emit(
+        `Currently showing a past board state. Please disable "Show previous move" to continue.`,
+        ToastVariant.WARNING,
+        2000,
+      );
       return;
     }
 

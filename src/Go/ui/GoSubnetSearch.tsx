@@ -78,6 +78,13 @@ export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProp
         <br />
         <br />
         <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <Typography style={{ maxWidth: "500px" }}>
+            Bonus for capturing this faction's subnets: {opponentDetails[opponent].bonusDescription}
+          </Typography>
+        </Box>
+        <br />
+        <br />
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
           <Button onClick={onSearch}>Search for Subnet</Button>
           <Button onClick={cancel}>Cancel</Button>
         </Box>

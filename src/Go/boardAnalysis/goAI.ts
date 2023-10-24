@@ -39,8 +39,8 @@ import { Player } from "@player";
  * @returns a promise that will resolve with a move (or pass) from the designated AI opponent.
  */
 export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents) {
-  const moves = await getMoveOptions(boardState, player);
   const rng = new WHRNG(Player.totalPlaytime).random();
+  const moves = await getMoveOptions(boardState, player, rng);
 
   const priorityMove = getFactionMove(moves, opponent, rng);
   if (priorityMove) {
@@ -132,6 +132,8 @@ function getNetburnersPriorityMove(moves: MoveOptions, rng: number): PointState 
     return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.5 && moves.expansion) {
     return moves.expansion.point;
+  } else if (rng < 0.65) {
+    return moves.random;
   }
 
   return null;
@@ -150,6 +152,8 @@ function getSlumSnakesPriorityMove(moves: MoveOptions, rng: number): PointState 
     return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.6 && moves.growth) {
     return moves.growth.point;
+  } else if (rng < 0.65) {
+    return moves.random;
   }
 
   return null;
@@ -178,6 +182,8 @@ function getBlackHandPriorityMove(moves: MoveOptions, rng: number): PointState |
     return getIlluminatiPriorityMove(moves);
   } else if (rng < 0.75 && moves.surround) {
     return moves.surround.point;
+  } else if (rng < 0.8) {
+    return moves.random;
   }
 
   return null;
@@ -187,11 +193,11 @@ function getBlackHandPriorityMove(moves: MoveOptions, rng: number): PointState |
  * Daedalus almost always picks the Illuminati move, but very occasionally gets distracted.
  */
 function getDaedalusPriorityMove(moves: MoveOptions, rng: number): PointState | null {
-  if (rng < 0.1) {
-    return null;
+  if (rng < 0.9) {
+    return getIlluminatiPriorityMove(moves);
   }
 
-  return getIlluminatiPriorityMove(moves);
+  return null;
 }
 
 /**
@@ -491,7 +497,7 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availab
 /**
  * Gets a group of reasonable moves based on the current board state, to be passed to the factions' AI to decide on
  */
-async function getMoveOptions(boardState: BoardState, player: PlayerColor): Promise<MoveOptions> {
+async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: number): Promise<MoveOptions> {
   const availableSpaces = getAllValidMoves(boardState, player);
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
@@ -507,6 +513,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   const eyeBlock = getEyeBlockingMove(boardState, player, availableSpaces);
   await sleep(80);
   const pattern = await findAnyMatchedPatterns(boardState, player, availableSpaces);
+  const random = availableSpaces[floor(rng * availableSpaces.length)];
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
   const defendCaptureMove =
@@ -515,13 +522,14 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
   console.log("---------------------");
   console.log("capture: ", captureMove?.point?.x, captureMove?.point?.y);
   console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
-  //console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
+  console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
   console.log("eyeBlock: ", eyeBlock?.point?.x, eyeBlock?.point?.y);
   console.log("pattern: ", pattern?.x, pattern?.y);
   console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
   console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
   console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
   console.log("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
+  console.log("Random: ", expansionMove?.point?.x, expansionMove?.point?.y);
 
   return {
     capture: captureMove,
@@ -533,6 +541,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor): Prom
     expansion: expansionMove,
     defend: defendMove,
     surround: surroundMove,
+    random: random,
   };
 }
 

@@ -1,7 +1,7 @@
 import { Container, Tab, Tabs } from "@mui/material";
 import React from "react";
 import { GoInstructionsPage } from "./ui/GoInstructionsPage";
-import { GridOn, Help, ManageSearch, History } from "@mui/icons-material";
+import { BorderInnerSharp, Help, ManageSearch, History } from "@mui/icons-material";
 import { GoStatusPage } from "./ui/GoStatusPage";
 import { GoHistoryPage } from "./ui/GoHistoryPage";
 import { GoGameboardWrapper } from "./ui/GoGameboardWrapper";
@@ -22,7 +22,7 @@ export function GoRoot(): React.ReactElement {
   return (
     <Container disableGutters maxWidth="lg" sx={{ mx: 0 }}>
       <Tabs variant="fullWidth" value={value} onChange={handleChange} sx={{ minWidth: "fit-content", maxWidth: "45%" }}>
-        <Tab label="IPvGO Subnet" icon={<GridOn />} iconPosition={"start"} className={classes.tab} />
+        <Tab label="IPvGO Subnet" icon={<BorderInnerSharp />} iconPosition={"start"} className={classes.tab} />
         <Tab label="Status" icon={<ManageSearch />} iconPosition={"start"} className={classes.tab} />
         <Tab label="History" icon={<History />} iconPosition={"start"} className={classes.tab} />
         <Tab label="How to Play" icon={<Help />} iconPosition={"start"} className={classes.tab} />

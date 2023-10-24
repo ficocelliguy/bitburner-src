@@ -76,7 +76,6 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
 }
 
 export function evaluateMoveResult(boardState: BoardState, x: number, y: number, player: playerColors) {
-
   // TODO: keep all chains except for friendly ones adjacent to the move
   // TODO: Keep all liberties except for current point
 
