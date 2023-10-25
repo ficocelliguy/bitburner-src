@@ -32,13 +32,19 @@ interface IProps {
 
 // TODO: interactive examples on instructions page
 
-// TODO: Subnet searcher styles
+// TODO: Subnet searcher styles, field descriptions/labels?
+
+// TODO: show formula on score screen
+// TODO: mouseovers on score screen
+// TODO: point breakdown section heading?
 
 // TODO: faction status layout: left-align text, table?
 
 // TODO: Show current player
 
 // TODO: harden against interrupts for AI plays?
+
+// TODO: test link on Electron
 
 export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactElement {
   const rerender = useRerender(400);
