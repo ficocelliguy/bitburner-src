@@ -1,11 +1,83 @@
 import React from "react";
-
-import Typography from "@mui/material/Typography";
 import { boardStyles } from "../boardState/goStyles";
-import { Grid, Link } from "@mui/material";
-import { GoGameboard } from "./GoGameboard";
+import { Grid, Link, Typography } from "@mui/material";
 import { getBoardFromSimplifiedBoardState } from "../boardAnalysis/boardAnalysis";
 import { opponents, playerColors } from "../boardState/goConstants";
+import { GoTutorialChallenge } from "./GoTutorialChallenge";
+
+const captureChallenge = (
+  <GoTutorialChallenge
+    state={getBoardFromSimplifiedBoardState(
+      [".....", "OX...", "OXX..", "OOX..", "OOX.."],
+      opponents.none,
+      playerColors.white,
+    )}
+    description={
+      "CHALLENGE: This white network is vulnerable! Capture the white pieces by cutting off their access to any empty nodes."
+    }
+    correctMoves={[{ x: 0, y: 0 }]}
+    correctText={"Correct! With no open ports, the white routers are destroyed."}
+    incorrectText={"Unfortunately the white routers still touch at least one empty node. Hit 'Reset' to try again."}
+  />
+);
+
+const saveTheNetworkChallenge = (
+  <GoTutorialChallenge
+    state={getBoardFromSimplifiedBoardState(
+      ["OO...", "XO...", "XX...", "XO...", "XO..."],
+      opponents.none,
+      playerColors.white,
+    )}
+    description={
+      "CHALLENGE: Your routers are in trouble! They only have one open port. Save the black network by connecting them to more empty nodes."
+    }
+    correctMoves={[{ x: 2, y: 2 }]}
+    correctText={
+      "Correct! Now the network touches three empty nodes instead of one, making it much harder to cut them off."
+    }
+    incorrectText={
+      "Unfortunately your network can still be cut off from all empty ports in just one move by white. Hit 'Reset' to try again."
+    }
+  />
+);
+
+const onlyGoodMoveChallenge = (
+  <GoTutorialChallenge
+    state={getBoardFromSimplifiedBoardState(
+      ["XXO.O", "XO.O.", ".OOOO", "XXXXX", "X.X.X"],
+      opponents.none,
+      playerColors.white,
+    )}
+    description={"CHALLENGE: Save the black network on the left! Connect the network to more than one empty node."}
+    correctMoves={[{ x: 2, y: 0 }]}
+    correctText={
+      "Correct! Now the network touches two empty nodes instead of one, making it much harder to cut them off."
+    }
+    incorrectText={
+      "Incorrect. Your left network can still be cut off from empty ports in just one move. Also, you blocked one of your only open ports from your right network!"
+    }
+  />
+);
+
+const makeTwoEyesChallenge = (
+  <GoTutorialChallenge
+    state={getBoardFromSimplifiedBoardState(
+      ["XXOO.", ".XXOO", ".XXO.", ".XXOO", "XXOO."],
+      opponents.none,
+      playerColors.white,
+    )}
+    description={
+      "CHALLENGE: Your routers are only connected to one empty-node group. Place a router such that they are connected to TWO empty node groups instead."
+    }
+    correctMoves={[{ x: 2, y: 0 }]}
+    correctText={
+      "Correct! Now that your network surrounds empty nodes in multiple different areas, it is impossible for the network to be destroyed (unless you fill in and block your own open ports!)."
+    }
+    incorrectText={
+      "Incorrect. The black network still only touches one group of open nodes. (Hint: Try dividing up the bottom open-node group.) Hit 'Reset' to try again."
+    }
+  />
+);
 
 export const GoInstructionsPage = (): React.ReactElement => {
   const classes = boardStyles();
@@ -48,43 +120,14 @@ export const GoInstructionsPage = (): React.ReactElement => {
             </Typography>
           </Grid>
           <Grid item className={classes.instructionBoardWrapper}>
-            <div className={classes.instructionBoard}>
-              <GoGameboard
-                boardState={getBoardFromSimplifiedBoardState(
-                  [".....", "XO...", "XOO..", "XXO..", "XXO.."],
-                  opponents.none,
-                  playerColors.black,
-                )}
-                traditional={false}
-                clickHandler={(x, y) => ({ x, y })}
-                hover={true}
-              />
-            </div>
-            <Typography variant="caption">
-              This network of black routers is in trouble: they only have one open port, in the bottom-left. If their
-              opponent puts a router there, the entire group will be captured!
-            </Typography>
+            {captureChallenge}
           </Grid>
         </Grid>
         <br />
         <br />
         <Grid container>
           <Grid item className={classes.instructionBoardWrapper}>
-            <div className={classes.instructionBoard}>
-              <GoGameboard
-                boardState={getBoardFromSimplifiedBoardState(
-                  ["OO.O.", "XOOOO", "XXXXX", "X..X.", "..XX."],
-                  opponents.none,
-                  playerColors.black,
-                )}
-                traditional={false}
-                clickHandler={(x, y) => ({ x, y })}
-                hover={true}
-              />
-            </div>
-            <Typography variant="caption">
-              In this completed game, the black routers surround many more empty nodes than white's network does.
-            </Typography>
+            {saveTheNetworkChallenge}
           </Grid>
           <Grid item className={classes.instructionsBlurb}>
             <Typography variant="h5">Winning the Subnet</Typography>
@@ -132,47 +175,14 @@ export const GoInstructionsPage = (): React.ReactElement => {
             </Typography>
           </Grid>
           <Grid item className={classes.instructionBoardWrapper}>
-            <div className={classes.instructionBoard}>
-              <GoGameboard
-                boardState={getBoardFromSimplifiedBoardState(
-                  [".....", ".....", "...XX", "XXXX.", "X.X.."],
-                  opponents.none,
-                  playerColors.black,
-                )}
-                traditional={false}
-                clickHandler={(x, y) => ({ x, y })}
-                hover={true}
-              />
-            </div>
-            <Typography variant="caption">
-              This black network is very secure and hard to capture, because it has many open ports.
-            </Typography>
+            {onlyGoodMoveChallenge}
           </Grid>
         </Grid>
         <br />
         <br />
         <Grid container>
           <Grid item className={classes.instructionBoardWrapper}>
-            <div className={classes.instructionBoard}>
-              <GoGameboard
-                boardState={getBoardFromSimplifiedBoardState(
-                  [".XXXX", "XXOOO", "OO...", "....O", "...O."],
-                  opponents.none,
-                  playerColors.black,
-                )}
-                traditional={false}
-                clickHandler={(x, y) => ({ x, y })}
-                hover={true}
-              />
-            </div>
-            <Typography variant="caption">
-              The black player cannot put a router in the bottom-left corner (A.1) or the top-right corner (E.5), as it
-              would cause their routers to suicide.
-              <br />
-              <br />
-              However, the white player CAN place a router in the bottom-left node: it is a legal move ONLY because it
-              captures the surrounding pieces.
-            </Typography>
+            {makeTwoEyesChallenge}
           </Grid>
           <Grid item className={classes.instructionsBlurb}>
             <Typography variant="h5">Strategy</Typography>

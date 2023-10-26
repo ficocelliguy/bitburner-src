@@ -30,8 +30,6 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: interactive examples on instructions page
-
 // TODO: Subnet searcher styles, field descriptions/labels?
 
 // TODO: show formula on score screen

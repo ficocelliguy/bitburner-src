@@ -450,7 +450,8 @@ export const boardStyles = makeStyles((theme: Theme) =>
       height: "350px",
     },
     instructionBoardWrapper: {
-      maxWidth: "350px",
+      maxWidth: "400px",
+      minHeight: "485px",
       marginRight: "20px",
     },
     instructionsBlurb: {
