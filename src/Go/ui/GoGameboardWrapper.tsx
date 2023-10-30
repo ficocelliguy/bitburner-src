@@ -30,15 +30,9 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: Subnet searcher styles, field descriptions/labels?
-
 // TODO: show formula on score screen
 // TODO: mouseovers on score screen
 // TODO: point breakdown section heading?
-
-// TODO: faction status layout: left-align text, table?
-
-// TODO: Show current player
 
 // TODO: harden against interrupts for AI plays?
 // TODO: handle game saving during AI move?
@@ -59,6 +53,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
 
   const classes = boardStyles();
   const boardSize = boardState.board[0].length;
+  const currentPlayer = boardState.previousPlayer === playerColors.white ? playerColors.black : playerColors.white;
 
   async function clickHandler(x: number, y: number) {
     if (showPriorMove) {
@@ -82,7 +77,6 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
       return;
     }
 
-    const currentPlayer = boardState.previousPlayer === playerColors.white ? playerColors.black : playerColors.white;
     const validity = evaluateIfMoveIsValid(boardState, x, y, currentPlayer);
     if (validity != validityReason.valid) {
       SnackbarEvents.emit(`Invalid move: ${validity}`, ToastVariant.ERROR, 2000);
@@ -199,11 +193,19 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   );
   const disablePassButton =
     opponent !== opponents.none && boardState.previousPlayer === playerColors.black && waitingOnAI;
-  const passButtonLabel = endGameAvailable
-    ? "End Game"
-    : boardState.previousPlayer === null
-    ? "View Final Score"
-    : "Pass Turn";
+
+  const getPassButtonLabel = () => {
+    if (endGameAvailable) {
+      return "End Game";
+    }
+    if (boardState.previousPlayer === null) {
+      return "View Final Score";
+    }
+    if (boardState.previousPlayer === playerColors.black && waitingOnAI) {
+      return "Waiting for opponent";
+    }
+    return "Pass Turn";
+  };
 
   return (
     <>
@@ -248,7 +250,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
             onClick={passPlayerTurn}
             className={endGameAvailable || noLegalMoves ? classes.buttonHighlight : classes.resetBoard}
           >
-            {passButtonLabel}
+            {getPassButtonLabel()}
           </Button>
         </Box>
         <div className={classes.opponentLabel}>

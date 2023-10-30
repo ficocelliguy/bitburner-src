@@ -65,7 +65,7 @@ export const GoStatusPage = (): React.ReactElement => {
                   <span>{faction}:</span>
                 </TableCell>
                 <TableCell className={classes.cellNone}>
-                  <strong className={classes.keyText}>+{getBonusText(faction)}</strong>
+                  <strong className={classes.keyText}>{getBonusText(faction)}</strong>
                 </TableCell>
               </TableRow>
             );

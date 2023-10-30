@@ -16,7 +16,7 @@ export function getBonusText(opponent: opponents) {
   const nodePower = Player.go.status[opponent].nodePower;
   const effectSize = formatPercent(CalculateEffect(nodePower, opponent));
   const effectDescription = getEffectTypeForFaction(opponent);
-  return `${effectSize}% ${effectDescription}?`;
+  return `${effectSize > 0 ? "+" : ""}${effectSize}% ${effectDescription}?`;
 }
 
 function formatPercent(n: number) {

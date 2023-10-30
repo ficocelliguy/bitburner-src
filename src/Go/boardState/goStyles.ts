@@ -333,6 +333,11 @@ export const boardStyles = makeStyles((theme: Theme) =>
       width: "calc(min(400px, max(60vw - 250px, 300px)))",
       height: "calc(min(400px, max(60vw - 250px, 300px)))",
     },
+    historyPageGameboard: {
+      position: "relative",
+      width: "calc(min(300px, max(60vw - 250px, 250px)))",
+      height: "calc(min(300px, max(60vw - 250px, 250px)))",
+    },
     statusPageScore: {
       width: "400px",
       paddingLeft: "20px",
@@ -343,7 +348,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       borderWidth: "1px",
       borderStyle: "solid",
       borderColor: theme.colors.success,
-      width: "270px",
+      width: "320px",
     },
     board: {
       width: "100%",
@@ -364,6 +369,10 @@ export const boardStyles = makeStyles((theme: Theme) =>
     opponentTitle: {
       padding: "10px 0 0 0",
     },
+    flavorText: {
+      minHeight: "120px",
+      padding: "0px 10px 0 12px",
+    },
     link: {
       textDecoration: "underline",
       opacity: 0.7,
@@ -379,13 +388,14 @@ export const boardStyles = makeStyles((theme: Theme) =>
       justifyContent: "center",
     },
     resetBoard: {
-      padding: "0 20px",
+      width: "200px",
     },
     buttonHighlight: {
       borderStyle: "solid",
       borderWidth: "8px",
       borderColor: theme.colors.success,
       padding: "0 12px",
+      width: "200px",
       animation: `$fadeLoop 600ms ${theme.transitions.easing.easeInOut} infinite alternate`,
     },
     "@keyframes fadeLoop": {
@@ -401,6 +411,10 @@ export const boardStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       whiteSpace: "pre",
       padding: "10px 30px",
+    },
+    searchBox: {
+      maxWidth: "550px",
+      minHeight: "500px",
     },
     fiveByFive: {
       height: "20%",
@@ -435,7 +449,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       opacity: 0.09,
       color: theme.colors.white,
       fontFamily: "monospace",
-      fontSize: "4.1px",
+      fontSize: "4.6px",
       whiteSpace: "pre",
       pointerEvents: "none",
       paddingTop: "15px",

@@ -42,7 +42,7 @@ export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProp
 
   return (
     <Modal open={open} onClose={cancel}>
-      <div style={{ maxWidth: "550px" }}>
+      <div className={classes.searchBox}>
         <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
           <Typography variant="h4">IPvGO Subnet Search</Typography>
         </Box>
@@ -72,14 +72,14 @@ export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProp
         </Box>
         <br />
         <br />
-        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-          <Typography style={{ maxWidth: "500px" }}>{opponentDetails[opponent].flavorText}</Typography>
+        <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle} ${classes.flavorText}`}>
+          <Typography>{opponentDetails[opponent].flavorText}</Typography>
         </Box>
         <br />
         <br />
         <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-          <Typography style={{ maxWidth: "500px" }}>
-            Bonus for capturing this faction's subnets: {opponentDetails[opponent].bonusDescription}
+          <Typography>
+            {opponent !== opponents.none ? "Faction subnet bonus:" : ""} {opponentDetails[opponent].bonusDescription}
           </Typography>
         </Box>
         <br />
