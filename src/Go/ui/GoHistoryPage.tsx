@@ -1,5 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
+import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 
 import { opponents } from "../boardState/goConstants";
 import { getScore } from "../boardAnalysis/scoring";
@@ -35,7 +36,7 @@ export const GoHistoryPage = (): React.ReactElement => {
           </div>
         </Grid>
         <Grid item>
-          <div className={`${classes.statusPageGameboard} ${classes.translucent}`}>
+          <div className={`${classes.historyPageGameboard} ${classes.translucent}`}>
             <GoGameboard
               boardState={Player.go.previousGameFinalBoardState}
               traditional={false}
@@ -48,30 +49,47 @@ export const GoHistoryPage = (): React.ReactElement => {
       <br />
       <br />
       <Typography variant="h5">Faction Stats:</Typography>
-      <Grid container style={{ maxWidth: "875px" }}>
+      <Grid container style={{ maxWidth: "1020px" }}>
         {opponentList.map((faction, index) => {
           const data = Player.go.status[faction];
           return (
             <Grid item key={opponentList[index]} className={classes.factionStatus}>
               <Typography>
-                <strong>{faction}</strong>
-                <br />
-                Wins: {data.wins} / {data.losses + data.wins}
-                <br />
-                Current winstreak: {data.winStreak}
-                <br />
-                Highest winstreak: {data.highestWinStreak}
-                <br />
-                <br />
-                Captured nodes: {data.nodes}
-                <br />
-                Node power: {formatNumber(data.nodePower, 2)}
-                <br />
-                <br />
-                <strong>Bonus:</strong>
-                <br />
-                <span className={classes.keyText}>+{getBonusText(faction)}</span>
-                <br />
+                {" "}
+                <strong className={classes.keyText}>{faction}</strong>
+              </Typography>
+              <Table sx={{ display: "table", mb: 1, width: "100%" }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className={classes.cellNone}>Wins:</TableCell>
+                    <TableCell className={classes.cellNone}>
+                      {data.wins} / {data.losses + data.wins}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={classes.cellNone}>Current winstreak:</TableCell>
+                    <TableCell className={classes.cellNone}>{data.winStreak}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
+                      Highest winstreak:
+                    </TableCell>
+                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
+                      {data.highestWinStreak}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={classes.cellNone}>Captured nodes:</TableCell>
+                    <TableCell className={classes.cellNone}>{data.nodes}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={classes.cellNone}>Node power:</TableCell>
+                    <TableCell className={classes.cellNone}>{formatNumber(data.nodePower, 2)}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Typography>
+                <strong className={classes.keyText}>Bonus: {getBonusText(faction)}</strong>
               </Typography>
             </Grid>
           );
