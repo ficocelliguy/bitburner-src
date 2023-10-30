@@ -85,7 +85,7 @@ export function logBoard(boardState: BoardState): void {
     let output = `${x}: `;
     for (let y = 0; y < state[x].length; y++) {
       const point = state[x][y];
-      output += ` ${point?.chain ?? -1}`;
+      output += ` ${point?.chain ?? ""}`;
     }
     console.log(output);
   }

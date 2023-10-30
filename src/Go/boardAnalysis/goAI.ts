@@ -15,6 +15,7 @@ import {
   evaluateIfMoveIsValid,
   evaluateMoveResult,
   findChainLibertiesForPoint,
+  findClaimedTerritory,
   getAllChains,
   getAllEyes,
   getAllValidMoves,
@@ -498,7 +499,11 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availab
  * Gets a group of reasonable moves based on the current board state, to be passed to the factions' AI to decide on
  */
 async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: number): Promise<MoveOptions> {
-  const availableSpaces = getAllValidMoves(boardState, player);
+  const validMoves = getAllValidMoves(boardState, player);
+  const eyePoints = findClaimedTerritory(boardState);
+  const availableSpaces = validMoves.filter(
+    (move) => !eyePoints.find((point) => point.x === move.x && point.y === move.y),
+  );
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
   await sleep(80);

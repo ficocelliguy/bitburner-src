@@ -121,7 +121,7 @@ export type BoardState = {
 
 export type PointState = {
   player: PlayerColor;
-  chain: number;
+  chain: string;
   liberties: (PointState | null)[] | null;
   x: number;
   y: number;

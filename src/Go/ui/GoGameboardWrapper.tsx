@@ -41,6 +41,7 @@ interface IProps {
 // TODO: Show current player
 
 // TODO: harden against interrupts for AI plays?
+// TODO: handle game saving during AI move?
 
 // TODO: test link on Electron
 
@@ -54,11 +55,12 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   const [scoreOpen, setScoreOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [score, setScore] = useState<goScore>(getScore(boardState));
+  const [waitingOnAI, setWaitingOnAI] = useState(false);
 
   const classes = boardStyles();
   const boardSize = boardState.board[0].length;
 
-  function clickHandler(x: number, y: number): void {
+  async function clickHandler(x: number, y: number) {
     if (showPriorMove) {
       SnackbarEvents.emit(
         `Currently showing a past board state. Please disable "Show previous move" to continue.`,
@@ -101,8 +103,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   }
 
   function passPlayerTurn() {
-    passTurn(boardState);
-    updateBoard(boardState);
+    if (boardState.previousPlayer === playerColors.white) {
+      passTurn(boardState);
+      updateBoard(boardState);
+    }
     if (boardState.previousPlayer === null) {
       endGame();
       return;
@@ -117,6 +121,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     if (board.previousPlayer === null) {
       return;
     }
+    setWaitingOnAI(true);
     const initialState = getStateCopy(board);
     const move = await getMove(initialState, playerColors.white, opponent);
 
@@ -142,6 +147,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
         setTimeout(() => {
           const newBoard = updateCaptures(updatedBoard, playerColors.white);
           updateBoard(newBoard);
+          setWaitingOnAI(false);
         }, 100);
       }, 500);
     }
@@ -191,7 +197,8 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     () => boardState.previousPlayer === playerColors.white && !getAllValidMoves(boardState, playerColors.black).length,
     [boardState],
   );
-  const disablePassButton = opponent !== opponents.none && boardState.previousPlayer === playerColors.black;
+  const disablePassButton =
+    opponent !== opponents.none && boardState.previousPlayer === playerColors.black && waitingOnAI;
   const passButtonLabel = endGameAvailable
     ? "End Game"
     : boardState.previousPlayer === null

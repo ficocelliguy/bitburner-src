@@ -33,7 +33,7 @@ export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?
     board: Array.from({ length: boardSize }, (_, x) =>
       Array.from({ length: boardSize }, (_, y) => ({
         player: boardToCopy?.[x]?.[y]?.player ?? playerColors.empty,
-        chain: -1,
+        chain: "",
         liberties: null,
         x,
         y,
@@ -139,29 +139,25 @@ export function applyHandicap(boardState: BoardState, handicap: number) {
  * Finds all groups of connected stones on the board, and updates the points in them with their
  * chain information and liberties.
  */
-export function updateChains(boardState: BoardState) {
-  boardState.board = clearChains(boardState).board;
-  const chains = [];
-  let chainID = 0;
+export function updateChains(boardState: BoardState, resetChains = true) {
+  resetChains && (boardState.board = clearChains(boardState).board);
 
   for (let x = 0; x < boardState.board.length; x++) {
     for (let y = 0; y < boardState.board[x].length; y++) {
       const point = boardState.board[x][y];
       // If the current point is already analyzed, skip it
-      if (point.chain !== -1) {
+      if (point.chain !== "") {
         continue;
       }
 
       const chainMembers = findAdjacentPointsInChain(boardState, x, y);
       const libertiesForChain = findLibertiesForChain(boardState, chainMembers);
+      const id = `${point.x}${point.y}`;
 
       chainMembers.forEach((member) => {
-        member.chain = chainID;
+        member.chain = id;
         member.liberties = libertiesForChain;
       });
-      chains[chainID] = chainMembers;
-
-      chainID++;
     }
   }
 
@@ -174,8 +170,8 @@ export function updateChains(boardState: BoardState) {
  *
  * Then, remove any chains with no liberties.
  */
-export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerColor): BoardState {
-  const boardState = updateChains(initialState);
+export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerColor, resetChains = true): BoardState {
+  const boardState = updateChains(initialState, resetChains);
   const chains = getAllChains(boardState);
 
   const chainToCapture = findAnyCapturedChain(chains, playerWhoMoved);
@@ -196,7 +192,7 @@ function captureChain(chain: PointState[]) {
 function clearChains(boardState: BoardState): BoardState {
   for (const x in boardState.board) {
     for (const y in boardState.board[x]) {
-      boardState.board[x][y].chain = -1;
+      boardState.board[x][y].chain = "";
       boardState.board[x][y].liberties = null;
     }
   }
@@ -294,7 +290,9 @@ export function findNeighbors(boardState: BoardState, x: number, y: number): Nei
 }
 
 export function getArrayFromNeighbor(neighborObject: Neighbor): PointState[] {
-  return [neighborObject.north, neighborObject.east, neighborObject.south, neighborObject.west].filter(isNotNull);
+  return [neighborObject.north, neighborObject.east, neighborObject.south, neighborObject.west]
+    .filter(isNotNull)
+    .filter(isDefined);
 }
 
 export function isNotNull<T>(argument: T | null): argument is T {
