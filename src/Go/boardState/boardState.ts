@@ -95,8 +95,7 @@ export function endGoGame(boardState: BoardState) {
   const score = getScore(boardState);
 
   if (score[playerColors.black].sum < score[playerColors.white].sum) {
-    statusToUpdate.losses++;
-    statusToUpdate.winStreak = 0;
+    resetWinstreak(boardState.ai);
     statusToUpdate.nodePower += floor(score[playerColors.black].sum * 0.25);
   } else {
     statusToUpdate.wins++;
@@ -114,8 +113,14 @@ export function endGoGame(boardState: BoardState) {
 
   statusToUpdate.nodes += score[playerColors.black].sum;
   Player.go.previousGameFinalBoardState = boardState;
+
+  // Update multipliers with new bonuses, once at the end of the game
+  Player.applyEntropy(Player.entropy);
 }
 
+/**
+ * Sets the winstreak to zero for the given opponent, and adds a loss
+ */
 export function resetWinstreak(opponent: opponents) {
   const statusToUpdate = Player.go.status[opponent];
   statusToUpdate.losses++;
@@ -183,12 +188,20 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
   return boardState;
 }
 
+/**
+ * Removes a chain from the board, after being captured
+ */
 function captureChain(chain: PointState[]) {
   chain.forEach((point) => {
     point.player = playerColors.empty;
+    point.chain = "";
+    point.liberties = [];
   });
 }
 
+/**
+ * Removes the chain data from given points, in preparation for being recalculated later
+ */
 function clearChains(boardState: BoardState): BoardState {
   for (const x in boardState.board) {
     for (const y in boardState.board[x]) {

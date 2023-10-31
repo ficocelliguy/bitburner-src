@@ -50,19 +50,20 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
 
   const moveHasBeenPlayedBefore = !!boardState.history.find((board) => board[x][y].player === player);
 
-  // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is thus legal
+  // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is legal
   const hasLiberty = findAdjacentLibertiesForPoint(boardState, x, y);
   if (!moveHasBeenPlayedBefore && (hasLiberty.north || hasLiberty.east || hasLiberty.south || hasLiberty.west)) {
     return validityReason.valid;
   }
 
-  // If a connected friendly chain has more than one liberty, the move is not suicide. If the move is not repeated, it is thus legal
+  // If a connected friendly chain has more than one liberty, the move is not suicide. If the move is not repeated, it is legal
   const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, x, y, player);
   if (!moveHasBeenPlayedBefore && neighborChainLibertyCount > 1) {
     return validityReason.valid;
   }
 
-  // TIf there is any neighboring enemy chain with only one liberty, and the move is not repeated, it is valid
+  // If there is any neighboring enemy chain with only one liberty, and the move is not repeated, it is valid,
+  // because it would capture the enemy chain and free up some liberties for itself
   const potentialCaptureChainLibertyCount = findMinLibertyCountOfAdjacentChains(
     boardState,
     x,
@@ -71,6 +72,17 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
   );
   if (!moveHasBeenPlayedBefore && potentialCaptureChainLibertyCount < 2) {
     return validityReason.valid;
+  }
+
+  // If there is no direct liberties for the move, no captures, and no neighboring friendly chains with multiple liberties,
+  // the move is not valid because it would suicide the piece
+  if (
+    !moveHasBeenPlayedBefore &&
+    !hasLiberty &&
+    potentialCaptureChainLibertyCount >= 2 &&
+    neighborChainLibertyCount <= 1
+  ) {
+    return validityReason.noSuicide;
   }
 
   const evaluationBoard = evaluateMoveResult(boardState, x, y, player);
@@ -84,29 +96,38 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
   return validityReason.valid;
 }
 
-export function evaluateMoveResult(boardState: BoardState, x: number, y: number, player: playerColors) {
-  // TODO: keep all chains except for friendly ones adjacent to the move
-  // TODO: Keep all liberties except for current point
+/**
+ * Create a new evaluation board and play out the results of the given move on the new board
+ */
+export function evaluateMoveResult(initialBoardState: BoardState, x: number, y: number, player: playerColors) {
+  const boardSize = initialBoardState.board[0].length;
+  const boardState = getNewBoardState(boardSize, initialBoardState.ai, initialBoardState.board);
+  boardState.history = initialBoardState.history.slice(-4);
+  boardState.history.push(getBoardCopy(initialBoardState).board);
 
-  const boardSize = boardState.board[0].length;
-  const newBoardState = getNewBoardState(boardSize, boardState.ai, boardState.board);
-  newBoardState.history = boardState.history.slice(-4);
-  newBoardState.history.push(getBoardCopy(boardState).board);
-
-  newBoardState.board[x][y].player = player;
-  newBoardState.previousPlayer = player;
+  boardState.board[x][y].player = player;
+  boardState.previousPlayer = player;
 
   const chainIdsToUpdate = getArrayFromNeighbor(findNeighbors(boardState, x, y)).map((point) => point.chain);
   resetChainsById(boardState, chainIdsToUpdate);
 
-  return updateCaptures(newBoardState, player, false);
+  return updateCaptures(boardState, player, false);
 }
 
+/**
+  Clear the chain and liberty data of all points in the given chains
+ */
 const resetChainsById = (boardState: BoardState, chainIds: string[]) => {
   const chainsToUpdate = getAllChains(boardState).filter((chain) => chainIds.includes(chain[0].chain));
-  chainsToUpdate.flat().forEach((point) => (point.chain = ""));
+  chainsToUpdate.flat().forEach((point) => {
+    point.chain = "";
+    point.liberties = [];
+  });
 };
 
+/**
+ * Find the number of open spaces that are connected to chains adjacent to a given point, and return the maximum
+ */
 function findMaxLibertyCountOfAdjacentChains(boardState: BoardState, x: number, y: number, player: playerColors) {
   const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
   const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
@@ -117,6 +138,9 @@ function findMaxLibertyCountOfAdjacentChains(boardState: BoardState, x: number, 
   return friendlyNeighbors.reduce((max, neighbor) => Math.max(max, neighbor?.liberties?.length ?? 0), 0);
 }
 
+/**
+ * Find the number of open spaces that are connected to chains adjacent to a given point, and return the minimum
+ */
 function findMinLibertyCountOfAdjacentChains(boardState: BoardState, x: number, y: number, player: playerColors) {
   const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
   const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
