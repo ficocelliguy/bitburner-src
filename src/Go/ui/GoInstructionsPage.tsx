@@ -13,7 +13,7 @@ const captureChallenge = (
       playerColors.white,
     )}
     description={
-      "CHALLENGE: This white network is vulnerable! Capture the white pieces by cutting off their access to any empty nodes."
+      "CHALLENGE: This white network is vulnerable! Click on the board to place a router. Capture the white pieces by cutting off their access to any empty nodes."
     }
     correctMoves={[{ x: 0, y: 0 }]}
     correctText={"Correct! With no open ports, the white routers are destroyed."}
@@ -67,7 +67,7 @@ const makeTwoEyesChallenge = (
       playerColors.white,
     )}
     description={
-      "CHALLENGE: Your routers are only connected to one empty-node group. Place a router such that they are connected to TWO empty node groups instead."
+      "CHALLENGE: The black routers are only connected to one empty-node group. Place a router such that they are connected to TWO empty node groups instead."
     }
     correctMoves={[{ x: 2, y: 0 }]}
     correctText={
@@ -192,12 +192,13 @@ export const GoInstructionsPage = (): React.ReactElement => {
               * You can place routers and look at the board state via the "go" api.
               <br />
               <br />
+              * If a network is connected to two separated empty nodes, the network can never be captured, because the suicide
+              rule prevents the other player from filling up both empty nodes. Try to place your networks surround several
+              different empty nodes, and avoid filling in your network's empty nodes when possible.
+              <br />
+              <br />
               * Pay attention to when a network of routers has only one or two open ports to empty spaces! That is your
               opportunity to defend your network, or capture the opposing faction's.
-              <br />
-              <br />
-              To make sure your router networks are hard to capture, make sure to build around a few empty nodes inside
-              of the network, so you never completely run out of open ports!
               <br />
               <br />
               * Every faction has a different style, and different weaknesses. Try to identify what they are good and

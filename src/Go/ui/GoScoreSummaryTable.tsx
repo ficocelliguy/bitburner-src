@@ -30,12 +30,12 @@ export const GoScoreSummaryTable = ({ score, opponent }: IProps) => {
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className={classes.cellNone}>Territory:</TableCell>
+            <TableCell className={classes.cellNone}>Owned Empty Nodes:</TableCell>
             <TableCell className={classes.cellNone}>{whiteScore.territory}</TableCell>
             <TableCell className={classes.cellNone}>{blackScore.territory}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className={classes.cellNone}>Pieces:</TableCell>
+            <TableCell className={classes.cellNone}>Routers placed:</TableCell>
             <TableCell className={classes.cellNone}>{whiteScore.pieces}</TableCell>
             <TableCell className={classes.cellNone}>{blackScore.pieces}</TableCell>
           </TableRow>
