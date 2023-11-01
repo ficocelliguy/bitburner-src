@@ -11,11 +11,11 @@ interface IProps {
   open: boolean;
   onClose: () => void;
   finalScore: goScore;
-  reset: () => void;
+  newSubnet: () => void;
   opponent: opponents;
 }
 
-export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IProps): React.ReactElement => {
+export const GoScoreModal = ({ open, onClose, finalScore, newSubnet, opponent }: IProps): React.ReactElement => {
   const classes = boardStyles();
 
   const blackScore = finalScore[playerColors.black];
@@ -46,7 +46,7 @@ export const GoScoreModal = ({ open, onClose, finalScore, reset, opponent }: IPr
           ) : (
             ""
           )}
-          <Button onClick={reset}>New Subnet</Button>
+          <Button onClick={newSubnet}>New Subnet</Button>
         </div>
       </>
     </Modal>

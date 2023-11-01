@@ -13,6 +13,7 @@ export function GoPoint(props: {
   traditional: boolean;
   hover: boolean;
   valid: boolean;
+  emptyPointOwner: playerColors;
 }): React.ReactElement {
   const classes = pointStyle();
 
@@ -41,6 +42,13 @@ export function GoPoint(props: {
 
   const sizeClass = getSizeClass(props.state.board[0].length, classes);
 
+  const emptyPointColorClass =
+    props.emptyPointOwner === playerColors.white
+      ? classes.libertyWhite
+      : props.emptyPointOwner === playerColors.black
+      ? classes.libertyBlack
+      : "";
+
   return (
     <div
       className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
@@ -52,7 +60,9 @@ export function GoPoint(props: {
       <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasWestLiberty ? `${classes.westLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={`${classes.innerPoint} `}>
-        <div className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : ""}`}></div>
+        <div
+          className={`${pointClass} ${player !== playerColors.empty ? classes.filledPoint : emptyPointColorClass}`}
+        ></div>
       </div>
       <div className={`${pointClass} ${classes.tradStone}`} />
       <div className={classes.coordinates}>

@@ -207,12 +207,21 @@ export function getAllEyes(boardState: BoardState, player: playerColors) {
   For each player chain number, add any empty space chains that are completely surrounded by a single player's color to
    an array at that chain number's index.
  */
-function getAllPotentialEyes(boardState: BoardState, allChains: PointState[][], player: playerColors) {
+export function getAllPotentialEyes(
+  boardState: BoardState,
+  allChains: PointState[][],
+  player: playerColors,
+  maxSize = 9,
+) {
+  if (boardState.history.length < 2) {
+    return [];
+  }
+
   const emptyPointChains = allChains.filter((chain) => chain[0].player === playerColors.empty);
   const eyeCandidates: { neighbors: PointState[][]; chain: PointState[]; id: string }[] = [];
 
   emptyPointChains
-    .filter((chain) => chain.length < 9)
+    .filter((chain) => chain.length < maxSize)
     .forEach((chain) => {
       const neighboringChains = getAllNeighboringChains(boardState, chain, allChains);
 

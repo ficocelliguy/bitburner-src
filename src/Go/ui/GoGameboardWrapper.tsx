@@ -147,6 +147,11 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     }
   }
 
+  function newSubnet() {
+    setScoreOpen(false);
+    setSearchOpen(true);
+  }
+
   function resetState(newBoardSize = boardSize, newOpponent = opponent) {
     setScoreOpen(false);
     setSearchOpen(false);
@@ -162,9 +167,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     updateBoard(newBoardState);
   }
 
-  function updateBoard(newBoardState: BoardState) {
-    Player.go.boardState = newBoardState;
-    setScore(getScore(newBoardState));
+  function updateBoard(initialBoardState: BoardState) {
+    const boardState = getStateCopy(initialBoardState);
+    Player.go.boardState = boardState;
+    setScore(getScore(boardState));
     rerender();
   }
 
@@ -194,6 +200,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   const disablePassButton =
     opponent !== opponents.none && boardState.previousPlayer === playerColors.black && waitingOnAI;
 
+  const scoreBoxText = boardState.history.length
+    ? `Score: Black: ${score[playerColors.black].sum} White: ${score[playerColors.white].sum}`
+    : "Place a router to begin!";
+
   const getPassButtonLabel = () => {
     if (endGameAvailable) {
       return "End Game";
@@ -218,7 +228,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
       <GoScoreModal
         open={scoreOpen}
         onClose={() => setScoreOpen(false)}
-        reset={() => resetState()}
+        newSubnet={() => newSubnet()}
         finalScore={score}
         opponent={opponent}
       ></GoScoreModal>
@@ -242,9 +252,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
           <Button onClick={() => setSearchOpen(true)} className={classes.resetBoard}>
             Find New Subnet
           </Button>
-          <Typography className={classes.scoreBox}>
-            Score: Black: {score[playerColors.black].sum} White: {score[playerColors.white].sum}
-          </Typography>
+          <Typography className={classes.scoreBox}>{scoreBoxText}</Typography>
           <Button
             disabled={disablePassButton}
             onClick={passPlayerTurn}

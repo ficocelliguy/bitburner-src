@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../../ui/React/hooks";
 import { boardStyles } from "../boardState/goStyles";
-import { getAllValidMoves } from "../boardAnalysis/boardAnalysis";
+import { getAllChains, getAllPotentialEyes, getAllValidMoves } from "../boardAnalysis/boardAnalysis";
 import { BoardState, opponents, playerColors } from "../boardState/goConstants";
 
 interface IProps {
@@ -26,6 +26,27 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
     () => (hover ? getAllValidMoves(boardState, currentPlayer) : []),
     [boardState, hover, currentPlayer],
   );
+
+  const capturedPoints = useMemo(() => {
+    const chains = getAllChains(boardState);
+    const length = boardState.board[0].length;
+    const whiteControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.white, length ** 2)
+      .map((eye) => eye.chain)
+      .flat();
+    const blackControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.black, length ** 2)
+      .map((eye) => eye.chain)
+      .flat();
+
+    const capturedPointGrid = Array.from({ length }, () => Array.from({ length }, () => playerColors.empty));
+    whiteControlledEmptyNodes.forEach((node) => {
+      capturedPointGrid[node.x][node.y] = playerColors.white;
+    });
+    blackControlledEmptyNodes.forEach((node) => {
+      capturedPointGrid[node.x][node.y] = playerColors.black;
+    });
+
+    return capturedPointGrid;
+  }, [boardState]);
 
   function pointIsValid(x: number, y: number) {
     return !!availablePoints.find((point) => point.x === x && point.y === y);
@@ -57,6 +78,7 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
                       traditional={traditional}
                       hover={hover}
                       valid={pointIsValid(xIndex, yIndex)}
+                      emptyPointOwner={capturedPoints[xIndex][yIndex]}
                     />
                   </Grid>
                 );
