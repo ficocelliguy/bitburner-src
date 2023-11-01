@@ -8,15 +8,17 @@ import { GoTutorialChallenge } from "./GoTutorialChallenge";
 const captureChallenge = (
   <GoTutorialChallenge
     state={getBoardFromSimplifiedBoardState(
-      [".....", "OX...", "OXX..", "OOX..", "OOX.."],
+      [".....", "OX...", "OXX..", "OOX.O", "OOX.."],
       opponents.none,
       playerColors.white,
     )}
     description={
-      "CHALLENGE: This white network is vulnerable! Click on the board to place a router. Capture the white pieces by cutting off their access to any empty nodes."
+      "CHALLENGE: This white network on the bottom is vulnerable! Click on the board to place a router. Capture some white pieces by cutting off their access to any empty nodes."
     }
     correctMoves={[{ x: 0, y: 0 }]}
-    correctText={"Correct! With no open ports, the white routers are destroyed."}
+    correctText={
+      "Correct! With no open ports, the white routers are destroyed. Now you surround and control the empty nodes in the bottom-right."
+    }
     incorrectText={"Unfortunately the white routers still touch at least one empty node. Hit 'Reset' to try again."}
   />
 );
@@ -71,7 +73,7 @@ const makeTwoEyesChallenge = (
     }
     correctMoves={[{ x: 2, y: 0 }]}
     correctText={
-      "Correct! Now that your network surrounds empty nodes in multiple different areas, it is impossible for the network to be destroyed (unless you fill in and block your own open ports!)."
+      "Correct! Now that your network surrounds empty nodes in multiple different areas, it is impossible for the network to be captured by white because of the suicide rule (unless you fill in your own empty nodes!)."
     }
     incorrectText={
       "Incorrect. The black network still only touches one group of open nodes. (Hint: Try dividing up the bottom open-node group.) Hit 'Reset' to try again."

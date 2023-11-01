@@ -43,7 +43,7 @@ export function GoTutorialChallenge(props: {
     const updatedBoard = makeMove(currentState, x, y, playerColors.black);
 
     if (updatedBoard) {
-      setCurrentState(updatedBoard);
+      setCurrentState(getStateCopy(updatedBoard));
 
       if (props.correctMoves.find((move) => move.x === x && move.y === y)) {
         setDisplayText(props.correctText);

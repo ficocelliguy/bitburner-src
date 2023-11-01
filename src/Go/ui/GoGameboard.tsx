@@ -27,25 +27,25 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
     [boardState, hover, currentPlayer],
   );
 
-  const capturedPoints = useMemo(() => {
+  const ownedEmptyNodes = useMemo(() => {
     const chains = getAllChains(boardState);
     const length = boardState.board[0].length;
-    const whiteControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.white, length ** 2)
+    const whiteControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.white, length * 2)
       .map((eye) => eye.chain)
       .flat();
-    const blackControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.black, length ** 2)
+    const blackControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.black, length * 2)
       .map((eye) => eye.chain)
       .flat();
 
-    const capturedPointGrid = Array.from({ length }, () => Array.from({ length }, () => playerColors.empty));
+    const ownedPointGrid = Array.from({ length }, () => Array.from({ length }, () => playerColors.empty));
     whiteControlledEmptyNodes.forEach((node) => {
-      capturedPointGrid[node.x][node.y] = playerColors.white;
+      ownedPointGrid[node.x][node.y] = playerColors.white;
     });
     blackControlledEmptyNodes.forEach((node) => {
-      capturedPointGrid[node.x][node.y] = playerColors.black;
+      ownedPointGrid[node.x][node.y] = playerColors.black;
     });
 
-    return capturedPointGrid;
+    return ownedPointGrid;
   }, [boardState]);
 
   function pointIsValid(x: number, y: number) {
@@ -78,7 +78,7 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
                       traditional={traditional}
                       hover={hover}
                       valid={pointIsValid(xIndex, yIndex)}
-                      emptyPointOwner={capturedPoints[xIndex][yIndex]}
+                      emptyPointOwner={ownedEmptyNodes[xIndex][yIndex]}
                     />
                   </Grid>
                 );
