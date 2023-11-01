@@ -131,9 +131,11 @@ function getFactionMove(moves: MoveOptions, faction: opponents, rng: number): Po
 function getNetburnersPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (rng < 0.2) {
     return getIlluminatiPriorityMove(moves);
-  } else if (rng < 0.5 && moves.expansion) {
+  } else if (rng < 0.4 && moves.expansion) {
     return moves.expansion.point;
-  } else if (rng < 0.65) {
+  } else if (rng < 0.6 && moves.growth) {
+    return moves.growth.point;
+  } else if (rng < 0.75) {
     return moves.random;
   }
 

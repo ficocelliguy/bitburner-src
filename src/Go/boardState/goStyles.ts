@@ -320,8 +320,8 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     gameboardWrapper: {
       position: "relative",
-      width: "750px",
-      height: "750px",
+      width: "calc(min(100vw - 250px, 90vh - 200px, 750px))",
+      height: "calc(min(100vw - 250px, 90vh - 200px, 750px))",
       padding: "5px",
     },
     boardFrame: {
