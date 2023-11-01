@@ -4518,6 +4518,7 @@ interface Fragment {
   type: number;
   power: number;
   limit: number;
+  effect: string;
 }
 
 /** @public */
@@ -7994,6 +7995,8 @@ interface Product {
   advertisingInvestment: number;
   /** Funds that were spent on designing the product */
   designInvestment: number;
+  /** How much warehouse space is occupied per unit of this product */
+  size: number;
 }
 
 /**
