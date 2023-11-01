@@ -12,7 +12,7 @@ import {
 import { getExpansionMoveArray } from "../boardAnalysis/goAI";
 import {
   evaluateIfMoveIsValid,
-  findAnyCapturedChain,
+  findAllCapturedChains,
   findLibertiesForChain,
   getAllChains,
 } from "../boardAnalysis/boardAnalysis";
@@ -179,13 +179,13 @@ export function updateCaptures(initialState: BoardState, playerWhoMoved: PlayerC
   const boardState = updateChains(initialState, resetChains);
   const chains = getAllChains(boardState);
 
-  const chainToCapture = findAnyCapturedChain(chains, playerWhoMoved);
-  if (chainToCapture) {
-    captureChain(chainToCapture);
-    return updateChains(boardState);
+  const chainsToCapture = findAllCapturedChains(chains, playerWhoMoved);
+  if (!chainsToCapture?.length) {
+    return boardState;
   }
 
-  return boardState;
+  chainsToCapture?.forEach((chain) => captureChain(chain));
+  return updateChains(boardState);
 }
 
 /**

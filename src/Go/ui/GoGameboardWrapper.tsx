@@ -30,6 +30,8 @@ interface IProps {
   showInstructions: () => void;
 }
 
+// TODO: space between toggles
+
 // TODO: show formula on score screen
 // TODO: mouseovers on score screen
 // TODO: point breakdown section heading?

@@ -379,22 +379,22 @@ export function getAllChains(boardState: BoardState): PointState[][] {
 /**
  * Find any group of stones with no liberties (who therefore are to be removed from the board)
  */
-export function findAnyCapturedChain(chainList: PointState[][], playerWhoMoved: PlayerColor) {
+export function findAllCapturedChains(chainList: PointState[][], playerWhoMoved: PlayerColor) {
   const opposingPlayer = playerWhoMoved === playerColors.white ? playerColors.black : playerColors.white;
-  const enemyChainToCapture = findCapturedChainOfColor(chainList, opposingPlayer);
+  const enemyChainsToCapture = findCapturedChainOfColor(chainList, opposingPlayer);
 
-  if (enemyChainToCapture) {
-    return enemyChainToCapture;
+  if (enemyChainsToCapture) {
+    return enemyChainsToCapture;
   }
 
-  const friendlyChainToCapture = findCapturedChainOfColor(chainList, playerWhoMoved);
-  if (friendlyChainToCapture) {
-    return friendlyChainToCapture;
+  const friendlyChainsToCapture = findCapturedChainOfColor(chainList, playerWhoMoved);
+  if (friendlyChainsToCapture) {
+    return friendlyChainsToCapture;
   }
 }
 
 function findCapturedChainOfColor(chainList: PointState[][], playerColor: PlayerColor) {
-  return chainList.find((chain) => chain?.[0].player === playerColor && chain?.[0].liberties?.length === 0);
+  return chainList.filter((chain) => chain?.[0].player === playerColor && chain?.[0].liberties?.length === 0);
 }
 
 /**
