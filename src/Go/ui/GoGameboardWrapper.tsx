@@ -30,11 +30,8 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: space between toggles
-
 // TODO: show formula on score screen
 // TODO: mouseovers on score screen
-// TODO: point breakdown section heading?
 
 // TODO: harden against interrupts for AI plays?
 // TODO: handle game saving during AI move?
@@ -237,10 +234,11 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
       <div className={classes.boardFrame}>
         {traditional ? "" : <div className={classes.background}>{weiArt}</div>}
         <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
-          <Typography className={classes.opponentLabel}>
-            {opponent !== opponents.none ? "Subnet owner: " : ""}
+          <br />
+          <Typography variant={"h6"} className={classes.opponentLabel}>
+            {opponent !== opponents.none ? "Subnet owner: " : ""} {opponent}
           </Typography>
-          <Typography className={classes.opponentName}>{opponent}</Typography>
+          <br />
         </Box>
         <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
           <GoGameboard
@@ -265,6 +263,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
         </Box>
         <div className={classes.opponentLabel}>
           <Box className={classes.inlineFlexBox}>
+            <br />
             <OptionSwitch
               checked={traditional}
               onChange={(newValue) => setTraditional(newValue)}

@@ -320,8 +320,8 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     gameboardWrapper: {
       position: "relative",
-      width: "calc(min(100vw - 250px, 90vh - 200px, 750px))",
-      height: "calc(min(100vw - 250px, 90vh - 200px, 750px))",
+      width: "calc(min(100vw - 250px, 90vh - 150px, 800px))",
+      height: "calc(min(100vw - 250px, 90vh - 150px, 800px))",
       padding: "5px",
     },
     boardFrame: {
@@ -371,7 +371,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     flavorText: {
       minHeight: "120px",
-      padding: "0px 10px 0 12px",
+      padding: "0px 12px",
     },
     link: {
       textDecoration: "underline",
@@ -385,7 +385,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       display: "inline-flex",
       flexDirection: "row",
       width: "100%",
-      justifyContent: "center",
+      justifyContent: "space-between",
     },
     resetBoard: {
       width: "200px",
@@ -414,7 +414,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
     },
     searchBox: {
       maxWidth: "550px",
-      minHeight: "500px",
+      minHeight: "460px",
     },
     fiveByFive: {
       height: "20%",
@@ -449,7 +449,7 @@ export const boardStyles = makeStyles((theme: Theme) =>
       opacity: 0.09,
       color: theme.colors.white,
       fontFamily: "monospace",
-      fontSize: "4.6px",
+      fontSize: "calc(min(.65vh - 2px, 0.65vw - 2px))",
       whiteSpace: "pre",
       pointerEvents: "none",
       paddingTop: "15px",

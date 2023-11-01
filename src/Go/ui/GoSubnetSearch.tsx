@@ -44,7 +44,9 @@ export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProp
     <Modal open={open} onClose={cancel}>
       <div className={classes.searchBox}>
         <Box className={`${classes.inlineFlexBox} ${classes.opponentTitle}`}>
+          <br />
           <Typography variant="h4">IPvGO Subnet Search</Typography>
+          <br />
         </Box>
         <br />
         <br />

@@ -191,7 +191,7 @@ export const GoInstructionsPage = (): React.ReactElement => {
             <br />
             <br />
             <Typography>
-              * You can place routers and look at the board state via the "go" api.
+              * You can place routers and look at the board state via the "ns.go" api.
               <br />
               <br />
               * If a network is connected to two separated empty nodes, the network can never be captured, because the
