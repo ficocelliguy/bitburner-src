@@ -438,7 +438,12 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
  * If a chain has multiple eyes, it cannot be captured by the opponent (since they can only fill one eye at a time,
  *  and suiciding your own pieces is not legal unless it captures the opponents' first)
  */
-function getEyeCreationMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+function getEyeCreationMoves(
+  boardState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+  maxLiberties = 99,
+) {
   const currentEyes = getAllEyes(boardState, player);
   const currentLivingGroupsCount = currentEyes.filter((eye) => eye.length >= 2);
   const currentEyeCount = currentEyes.filter((eye) => eye.length);
@@ -446,6 +451,8 @@ function getEyeCreationMoves(boardState: BoardState, player: PlayerColor, availa
   const chains = getAllChains(boardState);
   const friendlyLiberties = chains
     .filter((chain) => chain[0].player === player)
+    .filter((chain) => chain.length > 1)
+    .filter((chain) => chain[0].liberties && chain[0].liberties?.length <= maxLiberties)
     .map((chain) => chain[0].liberties)
     .flat()
     .filter(isNotNull)
@@ -482,7 +489,7 @@ function getEyeCreationMove(boardState: BoardState, player: PlayerColor, availab
  */
 function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availablePoints: PointState[]) {
   const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
-  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer, availablePoints);
+  const opponentEyeMoves = getEyeCreationMoves(boardState, opposingPlayer, availablePoints, 5);
   const twoEyeMoves = opponentEyeMoves.filter((move) => move.createsLife);
   const oneEyeMoves = opponentEyeMoves.filter((move) => !move.createsLife);
 

@@ -21,13 +21,14 @@ export function GoPoint(props: {
   const player = currentPoint.player;
 
   const isInAtari = currentPoint.liberties?.length === 1 && player !== playerColors.empty && !props.traditional;
-  const liberties = findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y);
+  const liberties =
+    player !== playerColors.empty ? findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y) : null;
   const neighbors = findNeighbors(props.state, props.x, props.y);
 
-  const hasNorthLiberty = props.traditional ? neighbors.north : liberties.north;
-  const hasEastLiberty = props.traditional ? neighbors.east : liberties.east;
-  const hasSouthLiberty = props.traditional ? neighbors.south : liberties.south;
-  const hasWestLiberty = props.traditional ? neighbors.west : liberties.west;
+  const hasNorthLiberty = props.traditional ? neighbors.north : liberties?.north;
+  const hasEastLiberty = props.traditional ? neighbors.east : liberties?.east;
+  const hasSouthLiberty = props.traditional ? neighbors.south : liberties?.south;
+  const hasWestLiberty = props.traditional ? neighbors.west : liberties?.west;
 
   const pointClass =
     player === playerColors.white

@@ -411,18 +411,12 @@ export function findChainLibertiesForPoint(boardState: BoardState, x: number, y:
  * (adjacent 'liberties' of the current piece )
  */
 export function findAdjacentLibertiesForPoint(boardState: BoardState, x: number, y: number): Neighbor {
-  const currentPoint = boardState.board[x][y];
-  const player = currentPoint.player;
   const neighbors = findNeighbors(boardState, x, y);
 
-  const hasNorthLiberty =
-    player !== playerColors.empty && neighbors.north && neighbors.north.player === playerColors.empty;
-  const hasEastLiberty =
-    player !== playerColors.empty && neighbors.east && neighbors.east.player === playerColors.empty;
-  const hasSouthLiberty =
-    player !== playerColors.empty && neighbors.south && neighbors.south.player === playerColors.empty;
-  const hasWestLiberty =
-    player !== playerColors.empty && neighbors.west && neighbors.west.player === playerColors.empty;
+  const hasNorthLiberty = neighbors.north && neighbors.north.player === playerColors.empty;
+  const hasEastLiberty = neighbors.east && neighbors.east.player === playerColors.empty;
+  const hasSouthLiberty = neighbors.south && neighbors.south.player === playerColors.empty;
+  const hasWestLiberty = neighbors.west && neighbors.west.player === playerColors.empty;
 
   return {
     north: hasNorthLiberty ? neighbors.north : null,
