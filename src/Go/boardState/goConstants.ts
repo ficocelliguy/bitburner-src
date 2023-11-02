@@ -156,7 +156,21 @@ export type goScore = {
 
 export const columnIndexes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-export function getGoPlayerStartingState() {
+type opponentHistory = {
+  wins: number;
+  losses: number;
+  nodes: number;
+  nodePower: number;
+  winStreak: number;
+  highestWinStreak: number;
+};
+
+export function getGoPlayerStartingState(): {
+  previousGameFinalBoardState: BoardState | null;
+  boardState: BoardState;
+  status: { [o in opponents]: opponentHistory };
+} {
+  const previousGame: BoardState | null = null;
   return {
     boardState: getNewBoardState(7),
     status: {
@@ -209,6 +223,6 @@ export function getGoPlayerStartingState() {
         highestWinStreak: 0,
       },
     },
-    previousGameFinalBoardState: getNewBoardState(7),
+    previousGameFinalBoardState: previousGame,
   };
 }

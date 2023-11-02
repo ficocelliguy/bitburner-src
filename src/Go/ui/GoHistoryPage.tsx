@@ -12,12 +12,14 @@ import { useRerender } from "../../ui/React/hooks";
 import { getBonusText } from "../effects/effect";
 import { formatNumber } from "../../ui/formatNumber";
 import { GoScoreSummaryTable } from "./GoScoreSummaryTable";
+import { getNewBoardState } from "../boardState/boardState";
 
 export const GoHistoryPage = (): React.ReactElement => {
   useRerender(400);
   const classes = boardStyles();
-  const score = getScore(Player.go.previousGameFinalBoardState);
-  const opponent = Player.go.previousGameFinalBoardState.ai;
+  const priorBoard = Player.go.previousGameFinalBoardState ?? getNewBoardState(7);
+  const score = getScore(priorBoard);
+  const opponent = priorBoard.ai;
   const opponentList = [
     opponents.Netburners,
     opponents.SlumSnakes,
@@ -38,7 +40,7 @@ export const GoHistoryPage = (): React.ReactElement => {
         <Grid item>
           <div className={`${classes.historyPageGameboard} ${classes.translucent}`}>
             <GoGameboard
-              boardState={Player.go.previousGameFinalBoardState}
+              boardState={priorBoard}
               traditional={false}
               clickHandler={(x, y) => ({ x, y })}
               hover={false}

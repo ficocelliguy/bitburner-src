@@ -48,11 +48,13 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
     return validityReason.pointNotEmpty;
   }
 
+  // Detect if the current player has ever previously played this move. Used to detect potential repeated board states
   const moveHasBeenPlayedBefore = !!boardState.history.find((board) => board[x][y].player === player);
 
   // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is legal
-  const hasLiberty = findAdjacentLibertiesForPoint(boardState, x, y);
-  if (!moveHasBeenPlayedBefore && (hasLiberty.north || hasLiberty.east || hasLiberty.south || hasLiberty.west)) {
+  const liberties = findAdjacentLibertiesForPoint(boardState, x, y);
+  const hasLiberty = liberties.north || liberties.east || liberties.south || liberties.west;
+  if (!moveHasBeenPlayedBefore && hasLiberty) {
     return validityReason.valid;
   }
 
@@ -76,15 +78,12 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
 
   // If there is no direct liberties for the move, no captures, and no neighboring friendly chains with multiple liberties,
   // the move is not valid because it would suicide the piece
-  if (
-    !moveHasBeenPlayedBefore &&
-    !hasLiberty &&
-    potentialCaptureChainLibertyCount >= 2 &&
-    neighborChainLibertyCount <= 1
-  ) {
+  if (!hasLiberty && potentialCaptureChainLibertyCount >= 2 && neighborChainLibertyCount <= 1) {
     return validityReason.noSuicide;
   }
 
+  // If the move has been played before and is not obviously illegal, we have to actually play it out to determine
+  // if it is a repeated move, or if it is a valid move
   const evaluationBoard = evaluateMoveResult(boardState, x, y, player);
   if (evaluationBoard.board[x][y].player !== player) {
     return validityReason.noSuicide;
@@ -100,15 +99,14 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
  * Create a new evaluation board and play out the results of the given move on the new board
  */
 export function evaluateMoveResult(initialBoardState: BoardState, x: number, y: number, player: playerColors) {
-  const boardSize = initialBoardState.board[0].length;
-  const boardState = getNewBoardState(boardSize, initialBoardState.ai, initialBoardState.board);
-  boardState.history = initialBoardState.history.slice(-4);
-  boardState.history.push(getBoardCopy(initialBoardState).board);
+  const boardState = getStateCopy(initialBoardState);
+  boardState.history.push(getBoardCopy(boardState).board);
 
   boardState.board[x][y].player = player;
   boardState.previousPlayer = player;
 
-  const chainIdsToUpdate = getArrayFromNeighbor(findNeighbors(boardState, x, y)).map((point) => point.chain);
+  const neighbors = getArrayFromNeighbor(findNeighbors(boardState, x, y));
+  const chainIdsToUpdate = [boardState.board[x][y].chain, ...neighbors.map((point) => point.chain)];
   resetChainsById(boardState, chainIdsToUpdate);
 
   return updateCaptures(boardState, player, false);

@@ -12,7 +12,6 @@ import {
 } from "../boardState/goConstants";
 import { endGoGame, findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
 import {
-  evaluateIfMoveIsValid,
   evaluateMoveResult,
   findChainLibertiesForPoint,
   findClaimedTerritory,
@@ -323,8 +322,7 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
         newLibertyCount,
       };
     })
-    .filter((newLiberty) => newLiberty.newLibertyCount > 1)
-    .filter((newLiberty) => evaluateIfMoveIsValid(boardState, newLiberty.point.x, newLiberty.point.y, player));
+    .filter((newLiberty) => newLiberty.newLibertyCount > 1);
 }
 
 /**
