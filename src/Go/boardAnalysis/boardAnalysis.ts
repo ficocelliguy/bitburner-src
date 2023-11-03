@@ -116,8 +116,8 @@ export function evaluateMoveResult(initialBoardState: BoardState, x: number, y: 
   Clear the chain and liberty data of all points in the given chains
  */
 const resetChainsById = (boardState: BoardState, chainIds: string[]) => {
-  const chainsToUpdate = getAllChains(boardState).filter((chain) => chainIds.includes(chain[0].chain));
-  chainsToUpdate.flat().forEach((point) => {
+  const pointsToUpdate = boardState.board.flat().filter((point) => chainIds.includes(point.chain));
+  pointsToUpdate.forEach((point) => {
     point.chain = "";
     point.liberties = [];
   });

@@ -27,8 +27,8 @@ describe("Go AI tests", () => {
 
   it("prioritizes eye creation moves for Illuminati", async () => {
     const board = ["...O...", "OOOO...", ".......", ".......", ".......", ".......", "......."];
-    const boardState = getBoardFromSimplifiedBoardState(board, opponents.SlumSnakes);
-    const move = await getMove(boardState, playerColors.white, opponents.SlumSnakes);
+    const boardState = getBoardFromSimplifiedBoardState(board, opponents.Illuminati);
+    const move = await getMove(boardState, playerColors.white, opponents.Illuminati);
 
     console.log(move);
 

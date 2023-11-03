@@ -283,11 +283,6 @@ export function getExpansionMoveArray(
  * Finds all moves that increases the liberties of the player's pieces, making them harder to capture and occupy more space on the board.
  */
 async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const friendlyEyes = getAllEyes(boardState, player).flat().flat();
-  const growableSpaces = availableSpaces.filter(
-    (point) => !friendlyEyes.find((eye) => eye.x === point.x && eye.y == point.y),
-  );
-
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
 
   if (!friendlyChains.length) {
@@ -305,7 +300,7 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
     .filter(isNotNull)
     .filter(isDefined)
     .filter((liberty) =>
-      growableSpaces.find((point) => liberty.libertyPoint.x === point.x && liberty.libertyPoint.y === point.y),
+      availableSpaces.find((point) => liberty.libertyPoint.x === point.x && liberty.libertyPoint.y === point.y),
     );
 
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
