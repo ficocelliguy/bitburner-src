@@ -156,7 +156,10 @@ export function findMinLibertyCountOfAdjacentChains(
     .filter(isDefined)
     .filter((neighbor) => neighbor.player === player);
 
-  return friendlyNeighbors.reduce((min, neighbor) => Math.min(min, neighbor?.liberties?.length ?? 0), 4);
+  return friendlyNeighbors.reduce(
+    (min, neighbor) => Math.min(min, neighbor?.liberties?.length ?? 0),
+    friendlyNeighbors?.[0]?.liberties?.length ?? 99,
+  );
 }
 
 /**

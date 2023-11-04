@@ -331,13 +331,13 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
         .filter(isNotNull);
 
       // Get all empty spaces that the new move connects to that aren't already part of friendly liberties
-      const directLiberties = neighborPoints.filter(
-        (neighbor) =>
-          neighbor.player === playerColors.empty &&
-          !allyNeighborChainLiberties.find((liberty) => liberty.x === neighbor.x && liberty.y === neighbor.y),
-      );
+      const directLiberties = neighborPoints.filter((neighbor) => neighbor.player === playerColors.empty);
 
       const allLiberties = [...directLiberties, ...allyNeighborChainLiberties];
+      const allLibertiesWithoutDuplicates = allLiberties.filter(
+        (liberty, index) =>
+          allLiberties.findIndex((neighbor) => liberty.x === neighbor.x && liberty.y === neighbor.y) === index,
+      );
 
       // Get the smallest liberty count of connected chains to represent the old state
       const oldLibertyCount = findMinLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
@@ -345,7 +345,7 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
       return {
         point: move,
         oldLibertyCount: oldLibertyCount,
-        newLibertyCount: allLiberties.length - 1, // the new move always covers one liberty
+        newLibertyCount: allLibertiesWithoutDuplicates.length - 1, // the new move always covers one liberty
       };
     })
     .filter((move) => move.newLibertyCount > 1 && move.newLibertyCount >= move.oldLibertyCount);
@@ -439,7 +439,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
       });
     }
 
-    // If the move will not immediately get re-captured
+    // If the move will not immediately get re-captured, and limit's the opponent's liberties
     else if (neighborChainLibertyCount > 2 || directLibertyCount >= 2) {
       surroundMoves.push({
         point: move,
