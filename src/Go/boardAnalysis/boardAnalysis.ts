@@ -209,13 +209,13 @@ export function getAllPotentialEyes(
   boardState: BoardState,
   allChains: PointState[][],
   player: playerColors,
-  maxSize = 9,
+  maxSize = 8,
 ) {
   const emptyPointChains = allChains.filter((chain) => chain[0].player === playerColors.empty);
   const eyeCandidates: { neighbors: PointState[][]; chain: PointState[]; id: string }[] = [];
 
   emptyPointChains
-    .filter((chain) => chain.length < maxSize)
+    .filter((chain) => chain.length <= maxSize)
     .forEach((chain) => {
       const neighboringChains = getAllNeighboringChains(boardState, chain, allChains);
 

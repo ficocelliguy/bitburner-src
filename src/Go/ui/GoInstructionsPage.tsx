@@ -169,7 +169,8 @@ export const GoInstructionsPage = (): React.ReactElement => {
               <br />
               <br />
               * You cannot repeat previous board states. This rule prevents infinite loops of capturing and
-              re-capturing.
+              re-capturing. This means that in some cases you cannot immediately capture an enemy network that is
+              flashing and vulnerable.
               <br />
               <br />
               Note that you CAN re-capture eventually, but you must play somewhere else on the board first, to make the
@@ -194,9 +195,11 @@ export const GoInstructionsPage = (): React.ReactElement => {
               * You can place routers and look at the board state via the "ns.go" api.
               <br />
               <br />
-              * If a network is connected to two separated empty nodes, the network can never be captured, because the
-              suicide rule prevents the other player from filling up both empty nodes. Try to place your networks
-              surround several different empty nodes, and avoid filling in your network's empty nodes when possible.
+              * If a network surrounds a single empty node, the opponent can eventually capture it by filling in that
+              node. However, if your network has two separate empty nodes inside of it, the suicide rule prevents the
+              opponent from filling up either of them. This means your network cannot be captured! Try to place your
+              networks surround several different empty nodes, and avoid filling in your network's empty nodes when
+              possible.
               <br />
               <br />
               * Pay attention to when a network of routers has only one or two open ports to empty spaces! That is your

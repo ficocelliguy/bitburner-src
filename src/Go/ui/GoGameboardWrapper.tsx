@@ -31,6 +31,7 @@ interface IProps {
 }
 
 // TODO: improve surround move to not use evaluation call
+// TODO: improve liberty growth move to not use evaluation call
 
 // TODO: show formula on score screen
 // TODO: mouseovers on score screen
@@ -184,13 +185,22 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   }
 
   function getPriorMove() {
-    const priorBoard = Player.go.boardState.history.slice(-1)[0];
-    const boardState = getStateCopy(Player.go.boardState);
-    boardState.board = priorBoard;
-    boardState.previousPlayer =
+    if (!boardState.history.length) {
+      return Player.go.boardState;
+    }
+    const priorBoard = boardState.history.slice(-1)[0];
+    const updatedState = getStateCopy(Player.go.boardState);
+    updatedState.board = priorBoard;
+    updatedState.previousPlayer =
       boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
 
-    return boardState;
+    return updatedState;
+  }
+
+  function showPreviousMove(newValue: boolean) {
+    if (boardState.history.length) {
+      setShowPriorMove(newValue);
+    }
   }
 
   const endGameAvailable = boardState.previousPlayer === playerColors.white && boardState.passCount;
@@ -274,7 +284,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
             />
             <OptionSwitch
               checked={showPriorMove}
-              onChange={(newValue) => setShowPriorMove(newValue)}
+              onChange={(newValue) => showPreviousMove(newValue)}
               text="Show previous move"
               tooltip={<>Show the board as it was before the last move</>}
             />
