@@ -126,7 +126,12 @@ const resetChainsById = (boardState: BoardState, chainIds: string[]) => {
 /**
  * Find the number of open spaces that are connected to chains adjacent to a given point, and return the maximum
  */
-function findMaxLibertyCountOfAdjacentChains(boardState: BoardState, x: number, y: number, player: playerColors) {
+export function findMaxLibertyCountOfAdjacentChains(
+  boardState: BoardState,
+  x: number,
+  y: number,
+  player: playerColors,
+) {
   const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
   const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
     .filter(isNotNull)
@@ -139,7 +144,12 @@ function findMaxLibertyCountOfAdjacentChains(boardState: BoardState, x: number, 
 /**
  * Find the number of open spaces that are connected to chains adjacent to a given point, and return the minimum
  */
-function findMinLibertyCountOfAdjacentChains(boardState: BoardState, x: number, y: number, player: playerColors) {
+export function findMinLibertyCountOfAdjacentChains(
+  boardState: BoardState,
+  x: number,
+  y: number,
+  player: playerColors,
+) {
   const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
   const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
     .filter(isNotNull)

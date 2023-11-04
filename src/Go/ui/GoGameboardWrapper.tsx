@@ -30,9 +30,6 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: improve surround move to not use evaluation call
-// TODO: improve liberty growth move to not use evaluation call
-
 // TODO: show formula on score screen
 // TODO: mouseovers on score screen
 

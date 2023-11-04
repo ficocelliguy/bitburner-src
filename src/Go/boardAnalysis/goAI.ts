@@ -13,8 +13,11 @@ import {
 import { endGoGame, findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
 import {
   evaluateMoveResult,
-  findChainLibertiesForPoint,
+  findAdjacentLibertiesAndAlliesForPoint,
+  findAdjacentLibertiesForPoint,
   findClaimedTerritory,
+  findMaxLibertyCountOfAdjacentChains,
+  findMinLibertyCountOfAdjacentChains,
   getAllChains,
   getAllEyes,
   getAllValidMoves,
@@ -26,9 +29,12 @@ import { Player } from "@player";
 /*
   Basic GO AIs, each with some personality and weaknesses
 
-  The basic logic is pulled from https://archive.org/details/byte-magazine-1981-04/page/n101/mode/2up?view=theater
+  The AIs are aware of chains of connected pieces, their liberties, and their eyes.
+  They know how to lok for moves that capture or threaten capture, moves that create eyes, and moves that take
+     away liberties from their opponent, as well as some pattern matching on strong move ideas.
 
-  In addition, knowledge of claimed territory and eyes has been added, to aid in narrowing down which spaces to play on
+  They do not know about larger jump moves, nor about frameworks on the board. Also, they each have a tendancy to
+     over-focus on a different type of move, giving each AI a different playstyle and weakness to exploit.
  */
 
 /**
@@ -67,14 +73,14 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
   const chosenMove = moveOptions[floor(rng * moveOptions.length)];
 
   if (chosenMove) {
-    console.log(`Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}`);
+    console.debug(`Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}`);
     return {
       type: playTypes.move,
       x: chosenMove.x,
       y: chosenMove.y,
     };
   } else {
-    console.log("No valid moves found");
+    console.debug("No valid moves found");
     return handleNoMoveFound(boardState);
   }
 }
@@ -146,7 +152,7 @@ function getNetburnersPriorityMove(moves: MoveOptions, rng: number): PointState 
  */
 function getSlumSnakesPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (moves.defendCapture) {
-    console.log("defend capture: defend move chosen");
+    console.debug("defend capture: defend move chosen");
     return moves.defendCapture.point;
   }
 
@@ -166,17 +172,17 @@ function getSlumSnakesPriorityMove(moves: MoveOptions, rng: number): PointState 
  */
 function getBlackHandPriorityMove(moves: MoveOptions, rng: number): PointState | null {
   if (moves.capture) {
-    console.log("capture: capture move chosen");
+    console.debug("capture: capture move chosen");
     return moves.capture.point;
   }
 
   if (moves.surround && moves.surround.point && (moves.surround?.newLibertyCount ?? 999) <= 1) {
-    console.log("surround move chosen");
+    console.debug("surround move chosen");
     return moves.surround.point;
   }
 
   if (moves.defendCapture) {
-    console.log("defend capture: defend move chosen");
+    console.debug("defend capture: defend move chosen");
     return moves.defendCapture.point;
   }
 
@@ -212,32 +218,32 @@ function getDaedalusPriorityMove(moves: MoveOptions, rng: number): PointState | 
  */
 function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
   if (moves.capture) {
-    console.log("capture: capture move chosen");
+    console.debug("capture: capture move chosen");
     return moves.capture.point;
   }
 
   if (moves.defendCapture) {
-    console.log("defend capture: defend move chosen");
+    console.debug("defend capture: defend move chosen");
     return moves.defendCapture.point;
   }
 
   if (moves.eyeMove) {
-    console.log("Create eye move chosen");
+    console.debug("Create eye move chosen");
     return moves.eyeMove.point;
   }
 
   if (moves.surround && moves.surround.point && (moves.surround?.newLibertyCount ?? 9) <= 1) {
-    console.log("surround move chosen");
+    console.debug("surround move chosen");
     return moves.surround.point;
   }
 
   if (moves.eyeBlock) {
-    console.log("Block eye move chosen");
+    console.debug("Block eye move chosen");
     return moves.eyeBlock.point;
   }
 
   if (moves.pattern) {
-    console.log("pattern match move chosen");
+    console.debug("pattern match move chosen");
     return moves.pattern;
   }
 
@@ -286,9 +292,10 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
   const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
 
   if (!friendlyChains.length) {
-    return null;
+    return [];
   }
 
+  // Get all liberties of friendly chains as potential growth move options
   const liberties = friendlyChains
     .map((chain) =>
       chain[0].liberties?.filter(isNotNull).map((liberty) => ({
@@ -305,19 +312,43 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
 
   // Find a liberty where playing a piece increases the liberty of the chain (aka expands or defends the chain)
   return liberties
-    .map((point) => {
-      const stateAfterMove = evaluateMoveResult(boardState, point.libertyPoint.x, point.libertyPoint.y, player);
-      const oldLibertyCount = point?.oldLibertyCount ?? 0;
-      const newLibertyCount = stateAfterMove
-        ? findChainLibertiesForPoint(stateAfterMove, point.libertyPoint.x, point.libertyPoint.y).length
-        : -1;
+    .map((liberty) => {
+      const move = liberty.libertyPoint;
+
+      const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, move.x, move.y, player);
+      const neighborPoints = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
+        .filter(isNotNull)
+        .filter(isDefined);
+
+      // Get all chains that the new move will connect to
+      const allyNeighbors = neighborPoints.filter((neighbor) => neighbor.player === player);
+      const allyNeighborChainLiberties = allyNeighbors
+        .map((neighbor) => {
+          const chain = friendlyChains.find((chain) => chain[0].chain === neighbor.chain);
+          return chain?.[0]?.liberties ?? null;
+        })
+        .flat()
+        .filter(isNotNull);
+
+      // Get all empty spaces that the new move connects to that aren't already part of friendly liberties
+      const directLiberties = neighborPoints.filter(
+        (neighbor) =>
+          neighbor.player === playerColors.empty &&
+          !allyNeighborChainLiberties.find((liberty) => liberty.x === neighbor.x && liberty.y === neighbor.y),
+      );
+
+      const allLiberties = [...directLiberties, ...allyNeighborChainLiberties];
+
+      // Get the smallest liberty count of connected chains to represent the old state
+      const oldLibertyCount = findMinLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
+
       return {
-        point: point.libertyPoint,
-        oldLibertyCount,
-        newLibertyCount,
+        point: move,
+        oldLibertyCount: oldLibertyCount,
+        newLibertyCount: allLiberties.length - 1, // the new move always covers one liberty
       };
     })
-    .filter((newLiberty) => newLiberty.newLibertyCount > 1);
+    .filter((move) => move.newLibertyCount > 1 && move.newLibertyCount >= move.oldLibertyCount);
 }
 
 /**
@@ -325,15 +356,10 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
  */
 async function getGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const growthMoves = await getLibertyGrowthMoves(initialState, player, availableSpaces);
-  const libertyIncreases = growthMoves?.filter((move) => move.newLibertyCount >= move.oldLibertyCount) ?? [];
 
-  const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
+  const maxLibertyCount = Math.max(...growthMoves.map((l) => l.newLibertyCount - l.oldLibertyCount));
 
-  if (maxLibertyCount <= 2) {
-    return null;
-  }
-
-  const moveCandidates = libertyIncreases.filter((l) => l.newLibertyCount === maxLibertyCount);
+  const moveCandidates = growthMoves.filter((l) => l.newLibertyCount - l.oldLibertyCount === maxLibertyCount);
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
@@ -343,15 +369,15 @@ async function getGrowthMove(initialState: BoardState, player: PlayerColor, avai
 async function getDefendMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
   const growthMoves = await getLibertyGrowthMoves(initialState, player, availableSpaces);
   const libertyIncreases =
-    growthMoves?.filter((move) => move.oldLibertyCount <= 1 && move.newLibertyCount >= move.oldLibertyCount) ?? [];
+    growthMoves?.filter((move) => move.oldLibertyCount <= 1 && move.newLibertyCount > move.oldLibertyCount) ?? [];
 
-  const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount));
+  const maxLibertyCount = Math.max(...libertyIncreases.map((l) => l.newLibertyCount - l.oldLibertyCount));
 
-  if (maxLibertyCount <= 1) {
+  if (maxLibertyCount < 1) {
     return null;
   }
 
-  const moveCandidates = libertyIncreases.filter((l) => l.newLibertyCount === maxLibertyCount);
+  const moveCandidates = libertyIncreases.filter((l) => l.newLibertyCount - l.oldLibertyCount === maxLibertyCount);
   return moveCandidates[floor(Math.random() * moveCandidates.length)];
 }
 
@@ -363,67 +389,67 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
   const enemyChains = getAllChains(boardState).filter((chain) => chain[0].player === opposingPlayer);
 
-  if (!enemyChains.length) {
+  if (!enemyChains.length || !availableSpaces.length) {
     return null;
   }
 
-  // Get a point from each enemy chain to use as a reference point later
-  const enemyChainRepresentatives = enemyChains
-    .map((chain) => chain[0])
-    .map((point) =>
-      point.liberties
-        ?.filter(isNotNull)
-        .filter(isDefined)
-        .map((liberty) => ({
-          liberty: liberty,
-          examplePoint: point,
-        })),
-    )
+  const enemyLiberties = enemyChains
+    .map((chain) => chain[0].liberties)
     .flat()
-    .filter(isDefined)
-    .filter((liberty) =>
-      availableSpaces.find((point) => liberty.liberty.x === point.x && liberty.liberty.y === point.y),
+    .filter((liberty) => availableSpaces.find((point) => liberty?.x === point.x && liberty?.y === point.y))
+    .filter(isNotNull);
+
+  const captureMoves: Move[] = [];
+  const atariMoves: Move[] = [];
+  const surroundMoves: Move[] = [];
+
+  enemyLiberties.forEach((move) => {
+    const liberties = findAdjacentLibertiesForPoint(boardState, move.x, move.y);
+    const directLibertyCount = +!!liberties.north || +!!liberties.east || +!!liberties.south || +!!liberties.west;
+
+    const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
+
+    const enemyChainLibertyCount = findMinLibertyCountOfAdjacentChains(
+      boardState,
+      move.x,
+      move.y,
+      player === playerColors.black ? playerColors.white : playerColors.black,
     );
 
-  // Find a liberty where playing a piece decreases the liberty of the enemy chain (aka smothers or captures the chain)
-  const libertyDecreases = enemyChainRepresentatives
-    .map((point) => {
-      const stateAfterMove = evaluateMoveResult(boardState, point.liberty.x, point.liberty.y, player);
-      if (!stateAfterMove) {
-        return null;
-      }
+    // Do not suggest moves that do not capture anything and let your opponent immediately capture
+    if (neighborChainLibertyCount <= 2 && directLibertyCount <= 1 && enemyChainLibertyCount > 1) {
+      return;
+    }
 
-      const newEnemyLibertyCount = findChainLibertiesForPoint(
-        stateAfterMove,
-        point.examplePoint.x,
-        point.examplePoint.y,
-      ).length;
-      const newMoveLibertyCount = findChainLibertiesForPoint(stateAfterMove, point.liberty.x, point.liberty.y).length;
-      if (newEnemyLibertyCount > 0 && newMoveLibertyCount < 2) {
-        return null;
-      }
+    // If a neighboring enemy chain has only one liberty, the current move suggestion will capture
+    if (enemyChainLibertyCount <= 1) {
+      captureMoves.push({
+        point: move,
+        oldLibertyCount: enemyChainLibertyCount,
+        newLibertyCount: enemyChainLibertyCount - 1,
+      });
+    }
 
-      return {
-        point: point.liberty,
-        oldLibertyCount: -1,
-        newLibertyCount: newEnemyLibertyCount,
-      };
-    })
-    .filter(isNotNull)
-    .filter((libertyDecrease) =>
-      availableSpaces.find(
-        (availablePoint) =>
-          availablePoint.x === libertyDecrease.point.x && availablePoint.y === libertyDecrease.point.y,
-      ),
-    );
-  if (!libertyDecreases.length) {
-    return null;
-  }
+    // If the move will not immediately get re-captured, and it puts the enemy chain in threat of capture
+    else if (enemyChainLibertyCount === 2 && (neighborChainLibertyCount > 2 || directLibertyCount >= 2)) {
+      atariMoves.push({
+        point: move,
+        oldLibertyCount: enemyChainLibertyCount,
+        newLibertyCount: enemyChainLibertyCount - 1,
+      });
+    }
 
-  const minLibertyCount = Math.min(...libertyDecreases.map((l) => l.newLibertyCount));
-  const moveCandidates = libertyDecreases.filter((l) => l.newLibertyCount === minLibertyCount);
+    // If the move will not immediately get re-captured
+    else if (neighborChainLibertyCount > 2 || directLibertyCount >= 2) {
+      surroundMoves.push({
+        point: move,
+        oldLibertyCount: enemyChainLibertyCount,
+        newLibertyCount: enemyChainLibertyCount - 1,
+      });
+    }
+  });
 
-  return moveCandidates[floor(Math.random() * moveCandidates.length)];
+  return [...captureMoves, ...atariMoves, ...surroundMoves][0];
 }
 
 /**
@@ -526,17 +552,17 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: 
   const defendCaptureMove =
     defendMove && defendMove.oldLibertyCount == 1 && defendMove?.newLibertyCount > 1 ? defendMove : null;
 
-  console.log("---------------------");
-  console.log("capture: ", captureMove?.point?.x, captureMove?.point?.y);
-  console.log("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
-  console.log("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
-  console.log("eyeBlock: ", eyeBlock?.point?.x, eyeBlock?.point?.y);
-  console.log("pattern: ", pattern?.x, pattern?.y);
-  console.log("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
-  console.log("defend: ", defendMove?.point?.x, defendMove?.point?.y);
-  console.log("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
-  console.log("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
-  console.log("Random: ", expansionMove?.point?.x, expansionMove?.point?.y);
+  console.debug("---------------------");
+  console.debug("capture: ", captureMove?.point?.x, captureMove?.point?.y);
+  console.debug("defendCapture: ", defendCaptureMove?.point?.x, defendCaptureMove?.point?.y);
+  console.debug("eyeMove: ", eyeMove?.point?.x, eyeMove?.point?.y);
+  console.debug("eyeBlock: ", eyeBlock?.point?.x, eyeBlock?.point?.y);
+  console.debug("pattern: ", pattern?.x, pattern?.y);
+  console.debug("surround: ", surroundMove?.point?.x, surroundMove?.point?.y);
+  console.debug("defend: ", defendMove?.point?.x, defendMove?.point?.y);
+  console.debug("Growth: ", growthMove?.point?.x, growthMove?.point?.y);
+  console.debug("Expansion: ", expansionMove?.point?.x, expansionMove?.point?.y);
+  console.debug("Random: ", expansionMove?.point?.x, expansionMove?.point?.y);
 
   return {
     capture: captureMove,
