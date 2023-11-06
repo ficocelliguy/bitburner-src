@@ -988,6 +988,7 @@ type SleeveBladeburnerTask = {
   actionName: string;
   cyclesWorked: number;
   cyclesNeeded: number;
+  nextCompletion: Promise<void>;
 };
 
 /** @public */
@@ -1935,6 +1936,31 @@ export interface Singularity {
    * @returns Amount of favor you gain at the specified company when you reset by installing Augmentations.
    */
   getCompanyFavorGain(companyName: CompanyName | `${CompanyName}`): number;
+
+  /**
+   * List conditions for being invited to a faction.
+   * @remarks
+   * RAM cost: 3 GB * 16/4/1
+   *
+   *
+   * @param faction - Name of the faction.
+   * @returns Array of strings describing conditions for receiving an invitation to the faction.
+   *
+   * @example
+   * ```js
+   * ns.singularity.getFactionInviteRequirements("The Syndicate")
+   * [
+   *   "Located in Aevum or Sector-12",
+   *   "Not working for the Central Intelligence Agency",
+   *   "Not working for the National Security Agency",
+   *   "-90 karma",
+   *   "Have $10.000m",
+   *   "Hacking level 200",
+   *   "All combat skills level 200"
+   * ]
+   * ```
+   */
+  getFactionInviteRequirements(faction: string): string[];
 
   /**
    * List all current faction invitations.
@@ -2887,6 +2913,12 @@ export interface Bladeburner {
    *
    * Attempts to start the specified Bladeburner action.
    * Returns true if the action was started successfully, and false otherwise.
+   *@example
+   * ```js
+   * ns.bladeburner.startAction("Contracts", "Tracking")
+   *
+   * // This will start the Bladeburner Contracts action of Tracking
+   * ```
    *
    * @param type - Type of action.
    * @param name - Name of action. Must be an exact match
@@ -2948,6 +2980,7 @@ export interface Bladeburner {
    * Returns the estimated success chance for the specified action.
    * This chance is returned as a decimal value, NOT a percentage
    * (e.g. if you have an estimated success chance of 80%, then this function will return 0.80, NOT 80).
+   * Returns 2 values, value[0] - MIN Chance, value[1] - MAX Chance
    *
    * @param type - Type of action.
    * @param name - Name of action. Must be an exact match.
