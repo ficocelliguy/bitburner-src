@@ -25,6 +25,14 @@ import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
+// FUTURE: Confirm balance of rewards
+// FUTURE: Confirm if rewards should be reset on augmentation
+// FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?
+
+// FUTURE: New bitnode? API access given? Boosts to effects?
+// FUTURE: Augmentations?
+
+
 interface IProps {
   showInstructions: () => void;
 }
