@@ -14,6 +14,7 @@ import {
 import { getMove } from "../Go/boardAnalysis/goAI";
 import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/boardAnalysis/boardAnalysis";
 import { Go } from "@nsdefs";
+import { WorkerScript } from "../Netscript/WorkerScript";
 
 async function getAIMove(ctx: NetscriptContext, boardState: BoardState, traditionalNotation: boolean): Promise<Play> {
   let resolve: (value: Play) => void;
@@ -64,6 +65,10 @@ async function makePlayerMove(ctx: NetscriptContext, x: number, y: number, tradi
   return getAIMove(ctx, playerUpdatedBoard, traditional);
 }
 
+function throwError(ws: WorkerScript, errorMessage: string) {
+  throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n ${errorMessage}`;
+}
+
 export function NetscriptGo(): InternalAPI<Go> {
   return {
     makeMoveTraditional:
@@ -73,6 +78,18 @@ export function NetscriptGo(): InternalAPI<Go> {
         const y = helpers.number(ctx, "y", _y);
         const xIndex = columnIndexes.indexOf(x.toUpperCase());
         const yIndex = y + 1;
+        const boardSize = Player.go.boardState.board.length;
+
+        if (xIndex < 1 || xIndex > boardSize) {
+          throwError(
+            ctx.workerScript,
+            `Invalid column letter (${x}), column must be a letter A through ${columnIndexes[boardSize - 1]}`,
+          );
+        }
+
+        if (yIndex < 1 || yIndex > boardSize) {
+          throwError(ctx.workerScript, `Invalid row number (${y}), column must be a number 1 through ${boardSize}`);
+        }
 
         return await makePlayerMove(ctx, xIndex, yIndex, true);
       },
@@ -81,6 +98,15 @@ export function NetscriptGo(): InternalAPI<Go> {
       async (_x, _y): Promise<Play> => {
         const x = helpers.number(ctx, "x", _x);
         const y = helpers.number(ctx, "y", _y);
+        const boardSize = Player.go.boardState.board.length;
+
+        if (x < 1 || x > boardSize) {
+          throwError(ctx.workerScript, `Invalid row number (${x}), column must be a number 1 through ${boardSize}`);
+        }
+        if (y < 1 || y > boardSize) {
+          throwError(ctx.workerScript, `Invalid row number (${y}), column must be a number 1 through ${boardSize}`);
+        }
+
         return await makePlayerMove(ctx, x, y, false);
       },
     passTurn:
@@ -114,14 +140,13 @@ export function NetscriptGo(): InternalAPI<Go> {
 
       const boardSize = helpers.number(ctx, "boardSize", _boardSize);
       if (![5, 7, 9, 13].includes(boardSize)) {
-        const ws = ctx.workerScript;
-        throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n Invalid subnet size requested (${boardSize}), size must be 5, 7, 9, or 13`;
+        throwError(ctx.workerScript, `Invalid subnet size requested (${boardSize}, size must be 5, 7, 9, or 13`);
       }
       if (!opponent) {
-        const ws = ctx.workerScript;
-        throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${
-          ws.pid
-        })\n\n Invalid opponent requested (${opponentString}), valid options are ${opponentOptions.join(", ")}`;
+        throwError(
+          ctx.workerScript,
+          `Invalid opponent requested (${opponentString}), valid options are ${opponentOptions.join(", ")}`,
+        );
       }
       if (oldBoardState.previousPlayer !== null && oldBoardState.history.length) {
         resetWinstreak(oldBoardState.ai);

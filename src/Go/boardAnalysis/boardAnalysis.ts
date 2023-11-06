@@ -176,7 +176,7 @@ export function getAllValidMoves(boardState: BoardState, player: PlayerColor) {
   * all of its immediate surrounding player-controlled points are in the same continuous chain, or
   * it is completely surrounded by some single larger chain and the edge of the board
 
-  Eyes are important because a chain of pieces cannot be captured if it contains two or more eyes within it.
+  Eyes are important, because a chain of pieces cannot be captured if it fully surrounds two or more eyes.
  */
 export function getAllEyes(boardState: BoardState, player: playerColors) {
   const allChains = getAllChains(boardState);

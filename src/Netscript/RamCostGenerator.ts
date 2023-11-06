@@ -243,7 +243,7 @@ const gang = {
   nextUpdate: RamCostConstants.CycleTiming,
 } as const;
 
-// Gang API
+// Go API
 const go = {
   makeMove: 2,
   makeMoveTraditional: 2,
