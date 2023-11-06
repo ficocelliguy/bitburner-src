@@ -1,5 +1,5 @@
 import { currentNodeMults } from "../../BitNode/BitNodeMultipliers";
-import { opponentDetails, opponents } from "../boardState/goConstants";
+import { getGoPlayerStartingState, opponentDetails, opponents } from "../boardState/goConstants";
 import { floor } from "../boardState/boardState";
 import { Player } from "@player";
 import { defaultMultipliers, mergeMultipliers, Multipliers } from "../../PersonObjects/Multipliers";
@@ -44,6 +44,10 @@ function calculateMults(): Multipliers {
     opponents.Daedalus,
     opponents.Illuminati,
   ].forEach((opponent) => {
+    if (!Player.go?.status?.[opponent]) {
+      Player.go = getGoPlayerStartingState();
+    }
+
     const effect = CalculateEffect(Player.go.status[opponent].nodePower, opponent);
     switch (opponent) {
       case opponents.Netburners:

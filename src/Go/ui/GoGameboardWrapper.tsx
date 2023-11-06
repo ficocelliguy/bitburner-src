@@ -29,14 +29,6 @@ interface IProps {
   showInstructions: () => void;
 }
 
-// TODO: show formula on score screen
-// TODO: mouseovers on score screen
-
-// TODO: harden against interrupts for AI plays?
-// TODO: handle game saving during AI move? https://www.perssondennis.com/articles/react-hook-use-run-once
-
-// TODO: test link on Electron
-
 export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactElement {
   const rerender = useRerender(400);
 
