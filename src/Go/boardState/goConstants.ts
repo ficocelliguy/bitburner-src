@@ -73,7 +73,7 @@ export const opponentDetails = {
   [opponents.Illuminati]: {
     komi: 7.5,
     boardSizes: [5, 7, 9, 13],
-    description: "4 node handicap",
+    description: "Hard AI",
     flavorText:
       "The Illuminati are thought to only exist in myth. Said to always have prepared defenses in their IPvGO subnets. Provoke them at your own risk.",
     bonusDescription: "grow() power",

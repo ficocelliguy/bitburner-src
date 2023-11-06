@@ -25,7 +25,7 @@ import { cloneDeep } from "lodash";
  * Generates a new BoardState object with the given opponent and size
  */
 export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?: Board): BoardState {
-  return {
+  const newBoardState = {
     history: [],
     previousPlayer: playerColors.white,
     ai: ai ?? opponents.Netburners,
@@ -40,6 +40,12 @@ export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?
       })),
     ),
   };
+
+  // Illuminati get a few starting routers
+  if (ai === opponents.Illuminati) {
+    applyHandicap(newBoardState, ceil(boardSize * 0.35));
+  }
+  return newBoardState;
 }
 /**
  * Make a new move on the given board, and update the board state accordingly
@@ -317,4 +323,8 @@ export function isDefined<T>(argument: T | undefined): argument is T {
 
 export function floor(n: number) {
   return ~~n;
+}
+export function ceil(n: number) {
+  const floored = floor(n);
+  return floored === n ? n : floored + 1;
 }

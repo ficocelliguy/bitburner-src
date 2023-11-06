@@ -1,11 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, Typography } from "@mui/material";
 
 import { BoardState, goScore, opponents, playerColors, playTypes, validityReason } from "../boardState/goConstants";
 import {
-  applyHandicap,
   endGoGame,
   getNewBoardState,
   getStateCopy,
@@ -53,6 +52,14 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   const classes = boardStyles();
   const boardSize = boardState.board[0].length;
   const currentPlayer = boardState.previousPlayer === playerColors.white ? playerColors.black : playerColors.white;
+
+  // Only run this once on first component mount, to handle scenarios where the game was saved or closed while waiting on the AI to make a move
+  useEffect(() => {
+    if (boardState.previousPlayer === playerColors.black && !waitingOnAI) {
+      takeAiTurn(boardState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function clickHandler(x: number, y: number) {
     if (showPriorMove) {
@@ -160,9 +167,6 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     }
 
     const newBoardState = getNewBoardState(newBoardSize, newOpponent);
-    if (newOpponent === opponents.Illuminati) {
-      applyHandicap(newBoardState, 4);
-    }
     updateBoard(newBoardState);
   }
 
@@ -178,7 +182,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     const finalScore = getScore(boardState);
     setScore(finalScore);
     setScoreOpen(true);
-    rerender();
+    updateBoard(boardState);
   }
 
   function getPriorMove() {

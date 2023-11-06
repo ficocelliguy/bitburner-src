@@ -3798,6 +3798,9 @@ export interface Go {
   /**
    * Pass the player's turn rather than making a move, and await the opponent's response.
    *
+   * This can also be used if you pick up the game in a state where the opponent needs to play next. For example: if BitBurner was
+   * closed while waiting for the opponent to make a move, you may need to call passTurn() to get them to play their move on game start.
+   *
    * @remarks
    * RAM cost: 0 GB
    *
