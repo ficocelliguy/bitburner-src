@@ -284,7 +284,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
             />
             <OptionSwitch
               checked={showPriorMove}
-              disabled={!!boardState.history.length}
+              disabled={!boardState.history.length}
               onChange={(newValue) => showPreviousMove(newValue)}
               text="Show previous move"
               tooltip={<>Show the board as it was before the last move</>}
