@@ -25,12 +25,19 @@ import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
+// TODO: show last played stone
+
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation
 // FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?
 
+// FUTURE: Cheating? scales with crime success chance?
+
 // FUTURE: New bitnode? API access given? Boosts to effects?
 // FUTURE: Augmentations?
+// FUTURE: Unlock larger boards with bitnodes?
+// FUTURE: Directly award favor?
+// FUTURE: ways to reduce opponent handicap?
 
 interface IProps {
   showInstructions: () => void;
