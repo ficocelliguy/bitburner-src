@@ -11,7 +11,6 @@ import {
   makeMove,
   passTurn,
   resetWinstreak,
-  updateCaptures,
 } from "../boardState/boardState";
 import { getMove } from "../boardAnalysis/goAI";
 import { weiArt } from "../boardState/asciiArt";
@@ -95,16 +94,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
       return;
     }
 
-    const updatedBoard = makeMove(boardState, x, y, currentPlayer, false);
+    const updatedBoard = makeMove(boardState, x, y, currentPlayer);
     if (updatedBoard) {
       updateBoard(updatedBoard);
-
-      // Delay captures a short amount to make them easier to see
-      setTimeout(() => {
-        const captureUpdatedBoard = updateCaptures(updatedBoard, currentPlayer);
-        Player.go.boardState = captureUpdatedBoard;
-        opponent !== opponents.none && takeAiTurn(captureUpdatedBoard);
-      }, 100);
+      opponent !== opponents.none && takeAiTurn(updatedBoard);
     }
   }
 
@@ -142,19 +135,12 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
       return;
     }
 
-    const updatedBoard = await makeMove(initialState, move.x, move.y, playerColors.white, false);
+    const updatedBoard = await makeMove(initialState, move.x, move.y, playerColors.white);
 
     if (updatedBoard) {
       setTimeout(() => {
-        Player.go.boardState = updatedBoard;
-        rerender();
-
-        // Delay captures a short amount to make them easier to see
-        setTimeout(() => {
-          const newBoard = updateCaptures(updatedBoard, playerColors.white);
-          updateBoard(newBoard);
-          setWaitingOnAI(false);
-        }, 100);
+        updateBoard(updatedBoard);
+        setWaitingOnAI(false);
       }, 500);
     }
   }
@@ -193,10 +179,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
 
   function getPriorMove() {
     if (!boardState.history.length) {
-      return Player.go.boardState;
+      return boardState;
     }
     const priorBoard = boardState.history.slice(-1)[0];
-    const updatedState = getStateCopy(Player.go.boardState);
+    const updatedState = getStateCopy(boardState);
     updatedState.board = priorBoard;
     updatedState.previousPlayer =
       boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
@@ -261,7 +247,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
         </Box>
         <div className={`${classes.gameboardWrapper} ${showPriorMove ? classes.translucent : ""}`}>
           <GoGameboard
-            boardState={showPriorMove ? getPriorMove() : Player.go.boardState}
+            boardState={showPriorMove ? getPriorMove() : boardState}
             traditional={traditional}
             clickHandler={clickHandler}
             hover={!showPriorMove}
