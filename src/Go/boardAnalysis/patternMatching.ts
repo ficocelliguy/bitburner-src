@@ -160,9 +160,14 @@ function matches(stringPoint: string, point: PointState | null, player: PlayerCo
  * Finds all variations of the pattern list, by expanding it using rotation and mirroring
  */
 function expandAllThreeByThreePatterns() {
-  const patterns1 = [...threeByThreePatterns, ...threeByThreePatterns.map(rotate90Degrees)];
-  const patterns2 = [...patterns1, ...patterns1.map(verticalMirror)];
-  return [...patterns2, ...patterns2.map(horizontalMirror)];
+  const rotatedPatterns = [
+    ...threeByThreePatterns,
+    ...threeByThreePatterns.map(rotate90Degrees),
+    ...threeByThreePatterns.map(rotate90Degrees).map(rotate90Degrees),
+    ...threeByThreePatterns.map(rotate90Degrees).map(rotate90Degrees).map(rotate90Degrees),
+  ];
+  const mirroredPatterns = [...rotatedPatterns, ...rotatedPatterns.map(verticalMirror)];
+  return [...mirroredPatterns, ...mirroredPatterns.map(horizontalMirror)];
 }
 
 function rotate90Degrees(pattern: string[]) {

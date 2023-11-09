@@ -150,16 +150,30 @@ export function findMinLibertyCountOfAdjacentChains(
   y: number,
   player: playerColors,
 ) {
+  const chain = findEnemyNeighborChainWithFewestLiberties(boardState, x, y, player);
+  return chain?.[0]?.liberties?.length ?? 99;
+}
+
+export function findEnemyNeighborChainWithFewestLiberties(
+  boardState: BoardState,
+  x: number,
+  y: number,
+  player: playerColors,
+) {
+  const chains = getAllChains(boardState);
   const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
   const friendlyNeighbors = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
     .filter(isNotNull)
     .filter(isDefined)
     .filter((neighbor) => neighbor.player === player);
 
-  return friendlyNeighbors.reduce(
+  const minimumLiberties = friendlyNeighbors.reduce(
     (min, neighbor) => Math.min(min, neighbor?.liberties?.length ?? 0),
     friendlyNeighbors?.[0]?.liberties?.length ?? 99,
   );
+
+  const chainId = friendlyNeighbors.find((neighbor) => neighbor?.liberties?.length === minimumLiberties)?.chain;
+  return chains.find((chain) => chain[0].chain === chainId);
 }
 
 /**

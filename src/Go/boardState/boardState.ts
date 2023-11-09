@@ -138,7 +138,15 @@ export function resetWinstreak(opponent: opponents) {
  */
 export function applyHandicap(boardState: BoardState, handicap: number) {
   const availableMoves = getEmptySpaces(boardState);
-  const handicapMoves = getExpansionMoveArray(boardState, playerColors.black, availableMoves, handicap);
+  const handicapMoveOptions = getExpansionMoveArray(boardState, playerColors.black, availableMoves);
+  const handicapMoves: Move[] = [];
+
+  // select random distinct moves from the move options list up to the specified handicap amount
+  for (let i = 0; i < handicap && i < handicapMoveOptions.length; i++) {
+    const index = floor(Math.random() * handicapMoveOptions.length);
+    handicapMoves.push(handicapMoveOptions[index]);
+    handicapMoveOptions.splice(index, 1);
+  }
 
   handicapMoves.forEach(
     (move: Move) => move.point && (boardState.board[move.point.x][move.point.y].player = playerColors.white),

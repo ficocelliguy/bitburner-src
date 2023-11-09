@@ -15,6 +15,7 @@ import {
   evaluateMoveResult,
   findAdjacentLibertiesAndAlliesForPoint,
   findAdjacentLibertiesForPoint,
+  findEnemyNeighborChainWithFewestLiberties,
   findMaxLibertyCountOfAdjacentChains,
   findMinLibertyCountOfAdjacentChains,
   getAllChains,
@@ -251,8 +252,10 @@ function getIlluminatiPriorityMove(moves: MoveOptions): PointState | null {
   return null;
 }
 
-function getExpansionMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  return getExpansionMoveArray(boardState, player, availableSpaces)?.[0] ?? null;
+function getExpansionMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[], rng: number) {
+  const moveOptions = getExpansionMoveArray(boardState, player, availableSpaces);
+  const randomIndex = floor(rng * moveOptions.length);
+  return moveOptions[randomIndex];
 }
 
 /**
@@ -262,7 +265,6 @@ export function getExpansionMoveArray(
   boardState: BoardState,
   player: PlayerColor,
   availableSpaces: PointState[],
-  moveCount = 1,
 ): Move[] {
   // Look for any empty spaces fully surrounded by empty spaces to expand into
   const emptySpaces = availableSpaces.filter((space) => {
@@ -276,25 +278,26 @@ export function getExpansionMoveArray(
 
   // Once no such empty areas exist anymore, instead expand into any disputed territory
   // to gain a few more points in endgame
-  const disputedSpaces = emptySpaces.length ? [] : getDisputedTerritoryMoves(boardState, player, availableSpaces);
+  const disputedSpaces = emptySpaces.length ? [] : getDisputedTerritoryMoves(boardState, player, availableSpaces, 1);
 
   const moveOptions = [...emptySpaces, ...disputedSpaces];
 
-  const randomIndex = floor(Math.random() * moveOptions.length);
-
-  const boardSize = boardState.board[0].length;
-  return new Array(moveCount).fill(null).map((_, index) => {
-    const spaceIndex = Math.floor(randomIndex + (boardSize / 3) * index) % moveOptions.length;
+  return moveOptions.map((point) => {
     return {
-      point: moveOptions[spaceIndex],
+      point: point,
       newLibertyCount: -1,
       oldLibertyCount: -1,
     };
   });
 }
 
-function getDisputedTerritoryMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
-  const chains = getAllChains(boardState);
+function getDisputedTerritoryMoves(
+  boardState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+  maxChainSize = 99,
+) {
+  const chains = getAllChains(boardState).filter((chain) => chain.length <= maxChainSize);
 
   return availableSpaces.filter((space) => {
     const chain = chains.find((chain) => chain[0].chain === space.chain) ?? [];
@@ -430,16 +433,25 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
 
   enemyLiberties.forEach((move) => {
     const liberties = findAdjacentLibertiesForPoint(boardState, move.x, move.y);
-    const directLibertyCount = +!!liberties.north || +!!liberties.east || +!!liberties.south || +!!liberties.west;
+    const directLibertyCount = +!!liberties.north + +!!liberties.east + +!!liberties.south + +!!liberties.west;
 
     const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
 
-    const enemyChainLibertyCount = findMinLibertyCountOfAdjacentChains(
+    const weakestEnemyChain = findEnemyNeighborChainWithFewestLiberties(
       boardState,
       move.x,
       move.y,
       player === playerColors.black ? playerColors.white : playerColors.black,
     );
+
+    const enemyChainLibertyCount = weakestEnemyChain?.[0]?.liberties?.length ?? 99;
+
+    const enemyLibertyGroups = [
+      ...(weakestEnemyChain?.[0]?.liberties ?? []).reduce(
+        (chainIDs, point) => chainIDs.add(point?.chain ?? ""),
+        new Set<string>(),
+      ),
+    ];
 
     // Do not suggest moves that do not capture anything and let your opponent immediately capture
     if (neighborChainLibertyCount <= 2 && directLibertyCount <= 1 && enemyChainLibertyCount > 2) {
@@ -455,8 +467,9 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
       });
     }
 
-    // If the move puts the enemy chain in threat of capture, it forces the opponent to respond
-    else if (enemyChainLibertyCount === 2) {
+    // If the move puts the enemy chain in threat of capture, it forces the opponent to respond.
+    // Only do this if your piece cannot be captured, or if the enemy group is surrounded and vulnerable to losing its only interior space
+    else if (enemyChainLibertyCount === 2 && (directLibertyCount >= 2 || enemyLibertyGroups.length === 1)) {
       atariMoves.push({
         point: move,
         oldLibertyCount: enemyChainLibertyCount,
@@ -561,7 +574,7 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: 
 
   const growthMove = endGameAvailable ? null : await getGrowthMove(boardState, player, availableSpaces);
   await sleep(80);
-  const expansionMove = await getExpansionMove(boardState, player, availableSpaces);
+  const expansionMove = await getExpansionMove(boardState, player, availableSpaces, rng);
   await sleep(80);
   const defendMove = await getDefendMove(boardState, player, availableSpaces);
   await sleep(80);
