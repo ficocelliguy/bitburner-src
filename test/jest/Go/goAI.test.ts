@@ -12,8 +12,7 @@ describe("Go AI tests", () => {
     const boardState = getBoardFromSimplifiedBoardState(board, opponents.TheBlackHand);
     const move = await getMove(boardState, playerColors.white, opponents.TheBlackHand);
 
-    expect(move.x).toEqual(1);
-    expect(move.y).toEqual(0);
+    expect([move.x, move.y]).toEqual([1, 0]);
   });
 
   it("prioritizes defense for Slum Snakes", async () => {
@@ -21,18 +20,16 @@ describe("Go AI tests", () => {
     const boardState = getBoardFromSimplifiedBoardState(board, opponents.SlumSnakes);
     const move = await getMove(boardState, playerColors.white, opponents.SlumSnakes);
 
-    expect(move.x).toEqual(1);
-    expect(move.y).toEqual(0);
+    expect([move.x, move.y]).toEqual([1, 0]);
   });
 
   it("prioritizes eye creation moves for Illuminati", async () => {
     const board = ["...O...", "OOOO...", ".......", ".......", ".......", ".......", "......."];
-    const boardState = getBoardFromSimplifiedBoardState(board, opponents.Illuminati);
-    const move = await getMove(boardState, playerColors.white, opponents.Illuminati);
+    const boardState = getBoardFromSimplifiedBoardState(board, opponents.Daedalus);
+    const move = await getMove(boardState, playerColors.white, opponents.Daedalus, 0);
 
     console.log(move);
 
-    expect(move.x).toEqual(0);
-    expect(move.y).toEqual(1);
+    expect([move.x, move.y]).toEqual([0, 1]);
   });
 });

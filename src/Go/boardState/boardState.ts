@@ -143,7 +143,7 @@ export function applyHandicap(boardState: BoardState, handicap: number) {
   handicapMoves.forEach(
     (move: Move) => move.point && (boardState.board[move.point.x][move.point.y].player = playerColors.white),
   );
-  return boardState;
+  return updateChains(boardState);
 }
 
 /**

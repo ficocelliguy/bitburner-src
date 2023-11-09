@@ -45,8 +45,8 @@ import { Player } from "@player";
  *
  * @returns a promise that will resolve with a move (or pass) from the designated AI opponent.
  */
-export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents) {
-  const rng = new WHRNG(Player.totalPlaytime).random();
+export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents, rngOverride?: number) {
+  const rng = new WHRNG(rngOverride || Player.totalPlaytime).random();
   const moves = await getMoveOptions(boardState, player, rng);
 
   const priorityMove = getFactionMove(moves, opponent, rng);
@@ -264,7 +264,6 @@ export function getExpansionMoveArray(
   availableSpaces: PointState[],
   moveCount = 1,
 ): Move[] {
-  const chains = getAllChains(boardState);
   // Look for any empty spaces fully surrounded by empty spaces to expand into
   const emptySpaces = availableSpaces.filter((space) => {
     const neighbors = findNeighbors(boardState, space.x, space.y);
@@ -277,20 +276,7 @@ export function getExpansionMoveArray(
 
   // Once no such empty areas exist anymore, instead expand into any disputed territory
   // to gain a few more points in endgame
-  const disputedSpaces = emptySpaces.length
-    ? []
-    : availableSpaces.filter((space) => {
-        const chain = chains.find((chain) => chain[0].chain === space.chain) ?? [];
-        const playerNeighbors = getAllNeighboringChains(boardState, chain, chains);
-        const hasWhitePieceNeighbor = playerNeighbors.find(
-          (neighborChain) => neighborChain[0]?.player === playerColors.white,
-        );
-        const hasBlackPieceNeighbor = playerNeighbors.find(
-          (neighborChain) => neighborChain[0]?.player === playerColors.black,
-        );
-
-        return hasWhitePieceNeighbor && hasBlackPieceNeighbor;
-      });
+  const disputedSpaces = emptySpaces.length ? [] : getDisputedTerritoryMoves(boardState, player, availableSpaces);
 
   const moveOptions = [...emptySpaces, ...disputedSpaces];
 
@@ -304,6 +290,23 @@ export function getExpansionMoveArray(
       newLibertyCount: -1,
       oldLibertyCount: -1,
     };
+  });
+}
+
+function getDisputedTerritoryMoves(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+  const chains = getAllChains(boardState);
+
+  return availableSpaces.filter((space) => {
+    const chain = chains.find((chain) => chain[0].chain === space.chain) ?? [];
+    const playerNeighbors = getAllNeighboringChains(boardState, chain, chains);
+    const hasWhitePieceNeighbor = playerNeighbors.find(
+      (neighborChain) => neighborChain[0]?.player === playerColors.white,
+    );
+    const hasBlackPieceNeighbor = playerNeighbors.find(
+      (neighborChain) => neighborChain[0]?.player === playerColors.black,
+    );
+
+    return hasWhitePieceNeighbor && hasBlackPieceNeighbor;
   });
 }
 
@@ -550,8 +553,13 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availab
  */
 async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: number): Promise<MoveOptions> {
   const availableSpaces = findDisputedTerritory(boardState, player);
+  const contestedPoints = getDisputedTerritoryMoves(boardState, player, availableSpaces);
 
-  const growthMove = await getGrowthMove(boardState, player, availableSpaces);
+  // If the player is passing, and all territory is surrounded by a single color: do not suggest moves that
+  // needlessly extend the game, unless they actually can change the score
+  const endGameAvailable = !contestedPoints.length && boardState.passCount;
+
+  const growthMove = endGameAvailable ? null : await getGrowthMove(boardState, player, availableSpaces);
   await sleep(80);
   const expansionMove = await getExpansionMove(boardState, player, availableSpaces);
   await sleep(80);
@@ -559,11 +567,11 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: 
   await sleep(80);
   const surroundMove = await getSurroundMove(boardState, player, availableSpaces);
   await sleep(80);
-  const eyeMove = getEyeCreationMove(boardState, player, availableSpaces);
+  const eyeMove = endGameAvailable ? null : getEyeCreationMove(boardState, player, availableSpaces);
   await sleep(80);
-  const eyeBlock = getEyeBlockingMove(boardState, player, availableSpaces);
+  const eyeBlock = endGameAvailable ? null : getEyeBlockingMove(boardState, player, availableSpaces);
   await sleep(80);
-  const pattern = await findAnyMatchedPatterns(boardState, player, availableSpaces);
+  const pattern = endGameAvailable ? null : await findAnyMatchedPatterns(boardState, player, availableSpaces);
   const random = availableSpaces[floor(rng * availableSpaces.length)];
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
