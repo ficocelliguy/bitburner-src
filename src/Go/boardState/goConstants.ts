@@ -49,8 +49,8 @@ export const opponentDetails = {
     description: "Spread AI",
     flavorText:
       "The Slum Snakes faction are a small-time street gang who turned to organized crime using their subnets. They are known to use long router chains snaking across the subnet to encircle territory.",
-    bonusDescription: "crime money",
-    bonusPower: 1.1,
+    bonusDescription: "crime success rate",
+    bonusPower: 0.9,
   },
   [opponents.TheBlackHand]: {
     komi: 3.5,
@@ -76,7 +76,7 @@ export const opponentDetails = {
     description: "Hard AI",
     flavorText:
       "The Illuminati are thought to only exist in myth. Said to always have prepared defenses in their IPvGO subnets. Provoke them at your own risk.",
-    bonusDescription: "grow() power",
+    bonusDescription: "faster hack(), grow(), and weaken()",
     bonusPower: 0.6,
   },
 };

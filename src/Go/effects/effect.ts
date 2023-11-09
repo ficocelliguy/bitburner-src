@@ -20,7 +20,7 @@ export function getBonusText(opponent: opponents) {
   const nodePower = Player.go.status[opponent].nodePower;
   const effectSize = formatPercent(CalculateEffect(nodePower, opponent));
   const effectDescription = getEffectTypeForFaction(opponent);
-  return `${effectSize > 0 ? "+" : ""}${effectSize}% ${effectDescription}?`;
+  return `${effectSize > 0 ? "+" : ""}${effectSize}% ${effectDescription}`;
 }
 
 /**
@@ -54,7 +54,7 @@ function calculateMults(): Multipliers {
         mults.hacknet_node_purchase_cost *= effect;
         break;
       case opponents.SlumSnakes:
-        mults.crime_money *= effect;
+        mults.crime_success *= effect;
         break;
       case opponents.TheBlackHand:
         mults.hacking_exp *= effect;
@@ -64,7 +64,7 @@ function calculateMults(): Multipliers {
         mults.faction_rep *= effect;
         break;
       case opponents.Illuminati:
-        mults.hacking_grow *= effect;
+        mults.hacking_speed *= effect;
         break;
     }
   });

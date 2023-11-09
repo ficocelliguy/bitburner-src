@@ -15,13 +15,14 @@ import {
   evaluateMoveResult,
   findAdjacentLibertiesAndAlliesForPoint,
   findAdjacentLibertiesForPoint,
-  findClaimedTerritory,
   findMaxLibertyCountOfAdjacentChains,
   findMinLibertyCountOfAdjacentChains,
   getAllChains,
   getAllEyes,
+  getAllNeighboringChains,
   getAllValidMoves,
 } from "./boardAnalysis";
+import { findDisputedTerritory } from "./controlledTerritory";
 import { findAnyMatchedPatterns } from "./patternMatching";
 import { WHRNG } from "../../Casino/RNG";
 import { Player } from "@player";
@@ -263,6 +264,8 @@ export function getExpansionMoveArray(
   availableSpaces: PointState[],
   moveCount = 1,
 ): Move[] {
+  const chains = getAllChains(boardState);
+  // Look for any empty spaces fully surrounded by empty spaces to expand into
   const emptySpaces = availableSpaces.filter((space) => {
     const neighbors = findNeighbors(boardState, space.x, space.y);
     return (
@@ -272,13 +275,32 @@ export function getExpansionMoveArray(
     );
   });
 
-  const randomIndex = floor(Math.random() * emptySpaces.length);
+  // Once no such empty areas exist anymore, instead expand into any disputed territory
+  // to gain a few more points in endgame
+  const disputedSpaces = emptySpaces.length
+    ? []
+    : availableSpaces.filter((space) => {
+        const chain = chains.find((chain) => chain[0].chain === space.chain) ?? [];
+        const playerNeighbors = getAllNeighboringChains(boardState, chain, chains);
+        const hasWhitePieceNeighbor = playerNeighbors.find(
+          (neighborChain) => neighborChain[0]?.player === playerColors.white,
+        );
+        const hasBlackPieceNeighbor = playerNeighbors.find(
+          (neighborChain) => neighborChain[0]?.player === playerColors.black,
+        );
+
+        return hasWhitePieceNeighbor && hasBlackPieceNeighbor;
+      });
+
+  const moveOptions = [...emptySpaces, ...disputedSpaces];
+
+  const randomIndex = floor(Math.random() * moveOptions.length);
 
   const boardSize = boardState.board[0].length;
   return new Array(moveCount).fill(null).map((_, index) => {
-    const spaceIndex = Math.floor(randomIndex + (boardSize / 3) * index) % emptySpaces.length;
+    const spaceIndex = Math.floor(randomIndex + (boardSize / 3) * index) % moveOptions.length;
     return {
-      point: emptySpaces[spaceIndex],
+      point: moveOptions[spaceIndex],
       newLibertyCount: -1,
       oldLibertyCount: -1,
     };
@@ -417,7 +439,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
     );
 
     // Do not suggest moves that do not capture anything and let your opponent immediately capture
-    if (neighborChainLibertyCount <= 2 && directLibertyCount <= 1 && enemyChainLibertyCount > 1) {
+    if (neighborChainLibertyCount <= 2 && directLibertyCount <= 1 && enemyChainLibertyCount > 2) {
       return;
     }
 
@@ -430,8 +452,8 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
       });
     }
 
-    // If the move will not immediately get re-captured, and it puts the enemy chain in threat of capture
-    else if (enemyChainLibertyCount === 2 && (neighborChainLibertyCount > 2 || directLibertyCount >= 2)) {
+    // If the move puts the enemy chain in threat of capture, it forces the opponent to respond
+    else if (enemyChainLibertyCount === 2) {
       atariMoves.push({
         point: move,
         oldLibertyCount: enemyChainLibertyCount,
@@ -527,11 +549,7 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availab
  * Gets a group of reasonable moves based on the current board state, to be passed to the factions' AI to decide on
  */
 async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: number): Promise<MoveOptions> {
-  const validMoves = getAllValidMoves(boardState, player);
-  const eyePoints = findClaimedTerritory(boardState);
-  const availableSpaces = validMoves.filter(
-    (move) => !eyePoints.find((point) => point.x === move.x && point.y === move.y),
-  );
+  const availableSpaces = findDisputedTerritory(boardState, player);
 
   const growthMove = await getGrowthMove(boardState, player, availableSpaces);
   await sleep(80);

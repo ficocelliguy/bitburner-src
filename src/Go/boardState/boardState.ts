@@ -294,7 +294,7 @@ export function getBoardCopy(boardState: BoardState) {
   return boardCopy;
 }
 
-function contains(arr: PointState[], point: PointState) {
+export function contains(arr: PointState[], point: PointState) {
   return !!arr.find((p) => p && p.x === point.x && p.y === point.y);
 }
 

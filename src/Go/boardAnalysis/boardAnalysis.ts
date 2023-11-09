@@ -222,7 +222,7 @@ export function getAllPotentialEyes(
   boardState: BoardState,
   allChains: PointState[][],
   player: playerColors,
-  maxSize = 8,
+  maxSize = Math.min(boardState.board.length * 2, 12),
 ) {
   const emptyPointChains = allChains.filter((chain) => chain[0].player === playerColors.empty);
   const eyeCandidates: { neighbors: PointState[][]; chain: PointState[]; id: string }[] = [];
@@ -282,13 +282,19 @@ function findNeighboringChainsThatFullyEncircleEmptySpace(
   });
 }
 
+/**
+ * Removes an element from an array at the given index
+ */
 function removePointAtIndex(arr: PointState[][], index: number) {
   const newArr = [...arr];
   newArr.splice(index, 1);
   return newArr;
 }
 
-function getAllNeighboringChains(boardState: BoardState, chain: PointState[], allChains: PointState[][]) {
+/**
+ * Get all player chains that are adjacent / touching the current chain
+ */
+export function getAllNeighboringChains(boardState: BoardState, chain: PointState[], allChains: PointState[][]) {
   const playerNeighbors = getPlayerNeighbors(boardState, chain);
 
   const neighboringChains = playerNeighbors.reduce(
@@ -298,22 +304,6 @@ function getAllNeighboringChains(boardState: BoardState, chain: PointState[], al
   );
 
   return [...neighboringChains];
-}
-
-/**
-  If a group of stones has more than one empty holes that it completely surrounds, it cannot be captured, because white can
-  only play one stone at a time.
-  Thus, the empty space of those holes is firmly claimed by the player surrounding them, and it can be ignored as a play area
-  Once all points are either stones or claimed territory in this way, the game is over
- */
-export function findClaimedTerritory(boardState: BoardState) {
-  const whiteClaimedTerritory = getAllEyes(boardState, playerColors.white).filter(
-    (eyesForChainN) => eyesForChainN.length >= 2,
-  );
-  const blackClaimedTerritory = getAllEyes(boardState, playerColors.black).filter(
-    (eyesForChainN) => eyesForChainN.length >= 2,
-  );
-  return [...blackClaimedTerritory, ...whiteClaimedTerritory].flat().flat();
 }
 
 /**

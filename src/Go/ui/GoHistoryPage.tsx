@@ -91,7 +91,9 @@ export const GoHistoryPage = (): React.ReactElement => {
                 </TableBody>
               </Table>
               <Typography>
-                <strong className={classes.keyText}>Bonus: {getBonusText(faction)}</strong>
+                <strong className={classes.keyText}>Bonus:</strong>
+                <br />
+                <strong className={classes.keyText}>{getBonusText(faction)}</strong>
               </Typography>
             </Grid>
           );
