@@ -5,6 +5,7 @@ import { getBonusText, getDifficultyMultiplier, getWinstreakMultiplier } from ".
 import { goScore, opponents, playerColors } from "../boardState/goConstants";
 import { boardStyles } from "../boardState/goStyles";
 import { formatNumber } from "../../ui/formatNumber";
+import { FactionName } from "@enums";
 
 interface IProps {
   finalScore: goScore;
@@ -58,7 +59,15 @@ export const GoScorePowerSummary = ({ finalScore, opponent }: IProps) => {
           </TableRow>
         </TableBody>
       </Table>
-      <Typography className={`${classes.centeredText} ${classes.keyText}`}>
+      {winStreak && winStreak % 2 === 0 && Player.factions.includes(opponent as unknown as FactionName) ? (
+        <Typography className={`${classes.inlineFlexBox} ${classes.keyText}`}>
+          <span>Winstreak Bonus: </span>
+          <span>+1 favor to {opponent}</span>
+        </Typography>
+      ) : (
+        ""
+      )}
+      <Typography className={`${classes.inlineFlexBox} ${classes.keyText}`}>
         <span>New Total Bonus: </span>
         <span>{getBonusText(opponent)}</span>
       </Typography>

@@ -1,7 +1,8 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { getNewBoardState, getStateCopy, makeMove, passTurn, resetWinstreak } from "../Go/boardState/boardState";
+import { getNewBoardState, getStateCopy, makeMove, passTurn } from "../Go/boardState/boardState";
+import { resetWinstreak } from "../Go/boardAnalysis/scoring";
 import {
   BoardState,
   columnIndexes,

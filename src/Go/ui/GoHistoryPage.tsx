@@ -85,11 +85,18 @@ export const GoHistoryPage = (): React.ReactElement => {
                     <TableCell className={classes.cellNone}>{data.nodes}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className={classes.cellNone}>Node power:</TableCell>
-                    <TableCell className={classes.cellNone}>{formatNumber(data.nodePower, 2)}</TableCell>
+                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>Node power:</TableCell>
+                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
+                      {formatNumber(data.nodePower, 2)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={classes.cellNone}>Favor gained:</TableCell>
+                    <TableCell className={classes.cellNone}>{data.favor ?? 0}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
+              <br />
               <Typography>
                 <strong className={classes.keyText}>Bonus:</strong>
                 <br />
