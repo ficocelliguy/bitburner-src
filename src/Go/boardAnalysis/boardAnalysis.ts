@@ -315,7 +315,27 @@ function findNeighboringChainsThatFullyEncircleEmptySpace(
   neighborChainList: PointState[][],
   allChains: PointState[][],
 ) {
+  const boardMax = boardState.board[0].length - 1;
+  const candidateSpread = findFurthestPointsOfChain(candidateChain);
   return neighborChainList.filter((neighborChain, index) => {
+    // If the chain does not go far enough to surround the eye in question, don't bother building an eval board
+    const neighborSpread = findFurthestPointsOfChain(neighborChain);
+
+    const couldWrapNorth =
+      neighborSpread.north > candidateSpread.north ||
+      (candidateSpread.north === boardMax && neighborSpread.north === boardMax);
+    const couldWrapEast =
+      neighborSpread.east > candidateSpread.east ||
+      (candidateSpread.east === boardMax && neighborSpread.east === boardMax);
+    const couldWrapSouth =
+      neighborSpread.south < candidateSpread.south || (candidateSpread.south === 0 && neighborSpread.south === 0);
+    const couldWrapWest =
+      neighborSpread.west < candidateSpread.west || (candidateSpread.west === 0 && neighborSpread.west === 0);
+
+    if (!couldWrapNorth || !couldWrapEast || !couldWrapSouth || !couldWrapWest) {
+      return false;
+    }
+
     const evaluationBoard = getStateCopy(boardState);
     const examplePoint = candidateChain[0];
     const otherChainNeighborPoints = removePointAtIndex(neighborChainList, index).flat();
@@ -328,6 +348,36 @@ function findNeighboringChainsThatFullyEncircleEmptySpace(
 
     return newNeighborChains.length === 1;
   });
+}
+
+/**
+ * Determine the furthest that a chain extends in each of the cardinal directions
+ */
+function findFurthestPointsOfChain(chain: PointState[]) {
+  return chain.reduce(
+    (directions, point) => {
+      if (point.y > directions.north) {
+        directions.north = point.y;
+      }
+      if (point.y < directions.south) {
+        directions.south = point.y;
+      }
+      if (point.x > directions.east) {
+        directions.east = point.y;
+      }
+      if (point.x < directions.west) {
+        directions.west = point.x;
+      }
+
+      return directions;
+    },
+    {
+      north: chain[0].y,
+      east: chain[0].x,
+      south: chain[0].y,
+      west: chain[0].x,
+    },
+  );
 }
 
 /**
