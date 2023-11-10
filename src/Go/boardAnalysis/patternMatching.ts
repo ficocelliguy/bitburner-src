@@ -1,6 +1,7 @@
 // Inspired by https://github.com/pasky/michi/blob/master/michi.py
 import { BoardState, PlayerColor, playerColors, PointState } from "../boardState/goConstants";
 import { sleep } from "./goAI";
+import { findEffectiveLibertiesOfNewMove } from "./boardAnalysis";
 
 export const threeByThreePatterns = [
   // 3x3 piece patterns; X,O are color pieces; x,o are any state except the opposite color piece;
@@ -87,9 +88,11 @@ export async function findAnyMatchedPatterns(
     for (let y = 0; y < boardSize; y++) {
       const neighborhood = getNeighborhood(boardState, x, y);
       const matchedPattern = patterns.find((pattern) => checkMatch(neighborhood, pattern, player));
+
       if (
         matchedPattern &&
-        availableSpaces.find((availablePoint) => availablePoint.x === x && availablePoint.y === y)
+        availableSpaces.find((availablePoint) => availablePoint.x === x && availablePoint.y === y) &&
+        findEffectiveLibertiesOfNewMove(boardState, x, y, player).length > 1
       ) {
         return board[x][y];
       }

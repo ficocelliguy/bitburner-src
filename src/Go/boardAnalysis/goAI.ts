@@ -13,10 +13,8 @@ import {
 import { endGoGame, findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
 import {
   evaluateMoveResult,
-  findAdjacentLibertiesAndAlliesForPoint,
-  findAdjacentLibertiesForPoint,
+  findEffectiveLibertiesOfNewMove,
   findEnemyNeighborChainWithFewestLiberties,
-  findMaxLibertyCountOfAdjacentChains,
   findMinLibertyCountOfAdjacentChains,
   getAllChains,
   getAllEyes,
@@ -343,29 +341,7 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
     .map((liberty) => {
       const move = liberty.libertyPoint;
 
-      const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, move.x, move.y, player);
-      const neighborPoints = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
-        .filter(isNotNull)
-        .filter(isDefined);
-
-      // Get all chains that the new move will connect to
-      const allyNeighbors = neighborPoints.filter((neighbor) => neighbor.player === player);
-      const allyNeighborChainLiberties = allyNeighbors
-        .map((neighbor) => {
-          const chain = friendlyChains.find((chain) => chain[0].chain === neighbor.chain);
-          return chain?.[0]?.liberties ?? null;
-        })
-        .flat()
-        .filter(isNotNull);
-
-      // Get all empty spaces that the new move connects to that aren't already part of friendly liberties
-      const directLiberties = neighborPoints.filter((neighbor) => neighbor.player === playerColors.empty);
-
-      const allLiberties = [...directLiberties, ...allyNeighborChainLiberties];
-      const allLibertiesWithoutDuplicates = allLiberties.filter(
-        (liberty, index) =>
-          allLiberties.findIndex((neighbor) => liberty.x === neighbor.x && liberty.y === neighbor.y) === index,
-      );
+      const newLibertyCount = findEffectiveLibertiesOfNewMove(boardState, move.x, move.y, player).length;
 
       // Get the smallest liberty count of connected chains to represent the old state
       const oldLibertyCount = findMinLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
@@ -373,7 +349,7 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
       return {
         point: move,
         oldLibertyCount: oldLibertyCount,
-        newLibertyCount: allLibertiesWithoutDuplicates.length - 1, // the new move always covers one liberty
+        newLibertyCount: newLibertyCount,
       };
     })
     .filter((move) => move.newLibertyCount > 1 && move.newLibertyCount >= move.oldLibertyCount);
@@ -432,10 +408,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
   const surroundMoves: Move[] = [];
 
   enemyLiberties.forEach((move) => {
-    const liberties = findAdjacentLibertiesForPoint(boardState, move.x, move.y);
-    const directLibertyCount = +!!liberties.north + +!!liberties.east + +!!liberties.south + +!!liberties.west;
-
-    const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, move.x, move.y, player);
+    const newLibertyCount = findEffectiveLibertiesOfNewMove(boardState, move.x, move.y, player).length;
 
     const weakestEnemyChain = findEnemyNeighborChainWithFewestLiberties(
       boardState,
@@ -454,7 +427,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
     ];
 
     // Do not suggest moves that do not capture anything and let your opponent immediately capture
-    if (neighborChainLibertyCount <= 2 && directLibertyCount <= 1 && enemyChainLibertyCount > 2) {
+    if (newLibertyCount <= 2 && enemyChainLibertyCount > 2) {
       return;
     }
 
@@ -469,7 +442,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
 
     // If the move puts the enemy chain in threat of capture, it forces the opponent to respond.
     // Only do this if your piece cannot be captured, or if the enemy group is surrounded and vulnerable to losing its only interior space
-    else if (enemyChainLibertyCount === 2 && (directLibertyCount >= 2 || enemyLibertyGroups.length === 1)) {
+    else if (enemyChainLibertyCount === 2 && (newLibertyCount >= 2 || enemyLibertyGroups.length === 1)) {
       atariMoves.push({
         point: move,
         oldLibertyCount: enemyChainLibertyCount,
@@ -478,7 +451,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
     }
 
     // If the move will not immediately get re-captured, and limit's the opponent's liberties
-    else if (neighborChainLibertyCount > 2 || directLibertyCount >= 2) {
+    else if (newLibertyCount >= 2) {
       surroundMoves.push({
         point: move,
         oldLibertyCount: enemyChainLibertyCount,

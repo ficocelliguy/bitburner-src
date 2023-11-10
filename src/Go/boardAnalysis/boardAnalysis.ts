@@ -124,6 +124,40 @@ const resetChainsById = (boardState: BoardState, chainIds: string[]) => {
 };
 
 /**
+ * For a potential move, determine what the liberty of the point would be if played, by looking at adjacent empty nodes
+ * as well as the remaining liberties of neighboring friendly chains
+ */
+export function findEffectiveLibertiesOfNewMove(boardState: BoardState, x: number, y: number, player: PlayerColor) {
+  const friendlyChains = getAllChains(boardState).filter((chain) => chain[0].player === player);
+  const neighbors = findAdjacentLibertiesAndAlliesForPoint(boardState, x, y, player);
+  const neighborPoints = [neighbors.north, neighbors.east, neighbors.south, neighbors.west]
+    .filter(isNotNull)
+    .filter(isDefined);
+  // Get all chains that the new move will connect to
+  const allyNeighbors = neighborPoints.filter((neighbor) => neighbor.player === player);
+  const allyNeighborChainLiberties = allyNeighbors
+    .map((neighbor) => {
+      const chain = friendlyChains.find((chain) => chain[0].chain === neighbor.chain);
+      return chain?.[0]?.liberties ?? null;
+    })
+    .flat()
+    .filter(isNotNull);
+
+  // Get all empty spaces that the new move connects to that aren't already part of friendly liberties
+  const directLiberties = neighborPoints.filter((neighbor) => neighbor.player === playerColors.empty);
+
+  const allLiberties = [...directLiberties, ...allyNeighborChainLiberties];
+
+  // filter out duplicates, and starting point
+  return allLiberties
+    .filter(
+      (liberty, index) =>
+        allLiberties.findIndex((neighbor) => liberty.x === neighbor.x && liberty.y === neighbor.y) === index,
+    )
+    .filter((liberty) => liberty.x !== x || liberty.y !== y);
+}
+
+/**
  * Find the number of open spaces that are connected to chains adjacent to a given point, and return the maximum
  */
 export function findMaxLibertyCountOfAdjacentChains(
