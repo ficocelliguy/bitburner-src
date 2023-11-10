@@ -1,4 +1,5 @@
 import { getNewBoardState } from "./boardState";
+import { FactionName } from "@enums";
 
 export enum playerColors {
   white = "White",
@@ -18,11 +19,11 @@ export enum validityReason {
 
 export enum opponents {
   none = "No AI",
-  Netburners = "Netburners",
-  SlumSnakes = "Slum Snakes",
-  TheBlackHand = "The Black Hand",
-  Daedalus = "Daedalus",
-  Illuminati = "Illuminati",
+  Netburners = FactionName.Netburners,
+  SlumSnakes = FactionName.SlumSnakes,
+  TheBlackHand = FactionName.TheBlackHand,
+  Daedalus = FactionName.Daedalus,
+  Illuminati = FactionName.Illuminati,
 }
 
 export const opponentDetails = {
@@ -163,6 +164,7 @@ type opponentHistory = {
   nodePower: number;
   winStreak: number;
   highestWinStreak: number;
+  favor: number;
 };
 
 export function getGoPlayerStartingState(): {
@@ -181,6 +183,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
       [opponents.Netburners]: {
         wins: 0,
@@ -189,6 +192,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
       [opponents.SlumSnakes]: {
         wins: 0,
@@ -197,6 +201,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
       [opponents.TheBlackHand]: {
         wins: 0,
@@ -205,6 +210,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
       [opponents.Daedalus]: {
         wins: 0,
@@ -213,6 +219,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
       [opponents.Illuminati]: {
         wins: 0,
@@ -221,6 +228,7 @@ export function getGoPlayerStartingState(): {
         nodePower: 0,
         winStreak: 0,
         highestWinStreak: 0,
+        favor: 0,
       },
     },
     previousGameFinalBoardState: previousGame,

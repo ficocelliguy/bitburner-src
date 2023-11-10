@@ -80,6 +80,7 @@ export async function findAnyMatchedPatterns(
   boardState: BoardState,
   player: PlayerColor,
   availableSpaces: PointState[],
+  smart = true,
 ) {
   const board = boardState.board;
   const boardSize = board[0].length;
@@ -92,7 +93,7 @@ export async function findAnyMatchedPatterns(
       if (
         matchedPattern &&
         availableSpaces.find((availablePoint) => availablePoint.x === x && availablePoint.y === y) &&
-        findEffectiveLibertiesOfNewMove(boardState, x, y, player).length > 1
+        (!smart || findEffectiveLibertiesOfNewMove(boardState, x, y, player).length > 1)
       ) {
         return board[x][y];
       }

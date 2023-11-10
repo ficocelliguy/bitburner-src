@@ -10,7 +10,8 @@ import {
   playTypes,
   PointState,
 } from "../boardState/goConstants";
-import { endGoGame, findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
+import { findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
+import { endGoGame } from "./scoring";
 import {
   evaluateMoveResult,
   findEffectiveLibertiesOfNewMove,
@@ -45,10 +46,11 @@ import { Player } from "@player";
  * @returns a promise that will resolve with a move (or pass) from the designated AI opponent.
  */
 export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents, rngOverride?: number) {
-  const rng = new WHRNG(rngOverride || Player.totalPlaytime).random();
-  const moves = await getMoveOptions(boardState, player, rng);
+  const rng = new WHRNG(rngOverride || Player.totalPlaytime);
+  const smart = isSmart(opponent, rng.random());
+  const moves = await getMoveOptions(boardState, player, rng.random(), smart);
 
-  const priorityMove = getFactionMove(moves, opponent, rng);
+  const priorityMove = getFactionMove(moves, opponent, rng.random());
   if (priorityMove) {
     return {
       type: playTypes.move,
@@ -70,7 +72,7 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
     .filter(isNotNull)
     .filter(isDefined);
 
-  const chosenMove = moveOptions[floor(rng * moveOptions.length)];
+  const chosenMove = moveOptions[floor(rng.random() * moveOptions.length)];
 
   if (chosenMove) {
     console.debug(`Non-priority move chosen: ${chosenMove.x} ${chosenMove.y}`);
@@ -128,6 +130,26 @@ function getFactionMove(moves: MoveOptions, faction: opponents, rng: number): Po
   }
 
   return getIlluminatiPriorityMove(moves);
+}
+
+/**
+ * Determines if certain failsafes and mistake avoidance are enabled for the given move
+ */
+function isSmart(faction: opponents, rng: number) {
+  if (faction === opponents.Netburners) {
+    return false;
+  }
+  if (faction === opponents.SlumSnakes) {
+    return rng < 0.6;
+  }
+  if (faction === opponents.TheBlackHand) {
+    return rng < 0.3;
+  }
+  if (faction === opponents.Daedalus) {
+    return rng < 0.1;
+  }
+
+  return true;
 }
 
 /**
@@ -358,13 +380,18 @@ async function getLibertyGrowthMoves(boardState: BoardState, player: PlayerColor
 /**
  * Find a move that increases the player's liberties by the maximum amount
  */
-async function getGrowthMove(initialState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+async function getGrowthMove(
+  initialState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+  rng: number,
+) {
   const growthMoves = await getLibertyGrowthMoves(initialState, player, availableSpaces);
 
   const maxLibertyCount = Math.max(...growthMoves.map((l) => l.newLibertyCount - l.oldLibertyCount));
 
   const moveCandidates = growthMoves.filter((l) => l.newLibertyCount - l.oldLibertyCount === maxLibertyCount);
-  return moveCandidates[floor(Math.random() * moveCandidates.length)];
+  return moveCandidates[floor(rng * moveCandidates.length)];
 }
 
 /**
@@ -389,7 +416,12 @@ async function getDefendMove(initialState: BoardState, player: PlayerColor, avai
  * Find a move that reduces the opponent's liberties as much as possible,
  *   capturing (or making it easier to capture) their pieces
  */
-async function getSurroundMove(boardState: BoardState, player: PlayerColor, availableSpaces: PointState[]) {
+async function getSurroundMove(
+  boardState: BoardState,
+  player: PlayerColor,
+  availableSpaces: PointState[],
+  smart = true,
+) {
   const opposingPlayer = player === playerColors.black ? playerColors.white : playerColors.black;
   const enemyChains = getAllChains(boardState).filter((chain) => chain[0].player === opposingPlayer);
 
@@ -442,7 +474,7 @@ async function getSurroundMove(boardState: BoardState, player: PlayerColor, avai
 
     // If the move puts the enemy chain in threat of capture, it forces the opponent to respond.
     // Only do this if your piece cannot be captured, or if the enemy group is surrounded and vulnerable to losing its only interior space
-    else if (enemyChainLibertyCount === 2 && (newLibertyCount >= 2 || enemyLibertyGroups.length === 1)) {
+    else if (enemyChainLibertyCount === 2 && (newLibertyCount >= 2 || enemyLibertyGroups.length === 1 || !smart)) {
       atariMoves.push({
         point: move,
         oldLibertyCount: enemyChainLibertyCount,
@@ -537,7 +569,12 @@ function getEyeBlockingMove(boardState: BoardState, player: PlayerColor, availab
 /**
  * Gets a group of reasonable moves based on the current board state, to be passed to the factions' AI to decide on
  */
-async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: number): Promise<MoveOptions> {
+async function getMoveOptions(
+  boardState: BoardState,
+  player: PlayerColor,
+  rng: number,
+  smart = true,
+): Promise<MoveOptions> {
   const availableSpaces = findDisputedTerritory(boardState, player);
   const contestedPoints = getDisputedTerritoryMoves(boardState, player, availableSpaces);
 
@@ -545,19 +582,19 @@ async function getMoveOptions(boardState: BoardState, player: PlayerColor, rng: 
   // needlessly extend the game, unless they actually can change the score
   const endGameAvailable = !contestedPoints.length && boardState.passCount;
 
-  const growthMove = endGameAvailable ? null : await getGrowthMove(boardState, player, availableSpaces);
+  const growthMove = endGameAvailable ? null : await getGrowthMove(boardState, player, availableSpaces, rng);
   await sleep(80);
   const expansionMove = await getExpansionMove(boardState, player, availableSpaces, rng);
   await sleep(80);
   const defendMove = await getDefendMove(boardState, player, availableSpaces);
   await sleep(80);
-  const surroundMove = await getSurroundMove(boardState, player, availableSpaces);
+  const surroundMove = await getSurroundMove(boardState, player, availableSpaces, smart);
   await sleep(80);
   const eyeMove = endGameAvailable ? null : getEyeCreationMove(boardState, player, availableSpaces);
   await sleep(80);
   const eyeBlock = endGameAvailable ? null : getEyeBlockingMove(boardState, player, availableSpaces);
   await sleep(80);
-  const pattern = endGameAvailable ? null : await findAnyMatchedPatterns(boardState, player, availableSpaces);
+  const pattern = endGameAvailable ? null : await findAnyMatchedPatterns(boardState, player, availableSpaces, smart);
   const random = availableSpaces[floor(rng * availableSpaces.length)];
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;

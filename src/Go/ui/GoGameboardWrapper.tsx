@@ -1,20 +1,13 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { Box, Button, Typography } from "@mui/material";
 
 import { BoardState, goScore, opponents, playerColors, playTypes, validityReason } from "../boardState/goConstants";
-import {
-  endGoGame,
-  getNewBoardState,
-  getStateCopy,
-  makeMove,
-  passTurn,
-  resetWinstreak,
-} from "../boardState/boardState";
+import { getNewBoardState, getStateCopy, makeMove, passTurn } from "../boardState/boardState";
 import { getMove } from "../boardAnalysis/goAI";
 import { weiArt } from "../boardState/asciiArt";
-import { getScore } from "../boardAnalysis/scoring";
+import { endGoGame, getScore, resetWinstreak } from "../boardAnalysis/scoring";
 import { useRerender } from "../../ui/React/hooks";
 import { OptionSwitch } from "../../ui/React/OptionSwitch";
 import { boardStyles } from "../boardState/goStyles";
@@ -218,7 +211,8 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     if (boardState.previousPlayer === playerColors.black && waitingOnAI) {
       return "Waiting for opponent";
     }
-    return "Pass Turn";
+    const currentPlayer = boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
+    return `Pass Turn${boardState.ai === opponents.none ? ` (${currentPlayer})` : ""}`;
   };
 
   return (

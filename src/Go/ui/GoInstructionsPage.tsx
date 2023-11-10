@@ -147,8 +147,12 @@ export const GoInstructionsPage = (): React.ReactElement => {
               black's advantage of having the first move.
               <br />
               <br />
-              You will gain some stat multiplier benefit from any territory you control at the end of the game, but
-              winning rewards much higher bonuses.
+              Any territory you control at the end of the game will award you stat multiplier bonuses. Winning the node
+              will increase the amount gained, but is not required.
+              <br />
+              <br />
+              Win streaks against a faction will give you +1 favor to that faction at certain numbers of wins (up to a
+              max of 100 favor), if you are currently a member of that faction.
             </Typography>
           </Grid>
         </Grid>

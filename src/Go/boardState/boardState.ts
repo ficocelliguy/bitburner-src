@@ -16,9 +16,7 @@ import {
   findLibertiesForChain,
   getAllChains,
 } from "../boardAnalysis/boardAnalysis";
-import { Player } from "@player";
-import { getScore } from "../boardAnalysis/scoring";
-import { getDifficultyMultiplier, getWinstreakMultiplier } from "../effects/effect";
+import { endGoGame } from "../boardAnalysis/scoring";
 import { cloneDeep } from "lodash";
 
 /**
@@ -86,51 +84,6 @@ export function passTurn(boardState: BoardState) {
   if (boardState.passCount >= 2) {
     endGoGame(boardState);
   }
-}
-
-/**
- * Handles ending the game. Sets the previous player to null to prevent further moves, calculates score, and updates
- * player node count and power, and game history
- */
-export function endGoGame(boardState: BoardState) {
-  if (boardState.previousPlayer === null) {
-    return;
-  }
-  boardState.previousPlayer = null;
-  const statusToUpdate = Player.go.status[boardState.ai];
-  const score = getScore(boardState);
-
-  if (score[playerColors.black].sum < score[playerColors.white].sum) {
-    resetWinstreak(boardState.ai);
-    statusToUpdate.nodePower += floor(score[playerColors.black].sum * 0.25);
-  } else {
-    statusToUpdate.wins++;
-    statusToUpdate.winStreak++;
-
-    if (statusToUpdate.winStreak > statusToUpdate.highestWinStreak) {
-      statusToUpdate.highestWinStreak = statusToUpdate.winStreak;
-    }
-  }
-
-  statusToUpdate.nodePower +=
-    score[playerColors.black].sum *
-    getDifficultyMultiplier(score[playerColors.white].komi) *
-    getWinstreakMultiplier(statusToUpdate.winStreak);
-
-  statusToUpdate.nodes += score[playerColors.black].sum;
-  Player.go.previousGameFinalBoardState = boardState;
-
-  // Update multipliers with new bonuses, once at the end of the game
-  Player.applyEntropy(Player.entropy);
-}
-
-/**
- * Sets the winstreak to zero for the given opponent, and adds a loss
- */
-export function resetWinstreak(opponent: opponents) {
-  const statusToUpdate = Player.go.status[opponent];
-  statusToUpdate.losses++;
-  statusToUpdate.winStreak = 0;
 }
 
 /**

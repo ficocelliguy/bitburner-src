@@ -3809,24 +3809,9 @@ export interface Go {
    * @remarks
    * RAM cost: 2 GB
    *
-   * see also makeMoveTraditional to use the traditional go notation e.g. A 1 instead of 0 0
-   *
    * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
    */
   makeMove(x: number, y: number): Promise<Play>;
-
-  /**
-   *  Make a move on the IPvGO subnet gameboard, and await the opponent's response.
-   *  x:"A" y:1 represents the bottom-left corner of the board in the UI.
-   *
-   * @remarks
-   * RAM cost: 2 GB
-   *
-   * see also makeMove to use a simplified coordinate notation e.g. 0 0 instead of A 1
-   *
-   * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
-   */
-  makeMoveTraditional(x: string, y: number): Promise<Play>;
 
   /**
    * Pass the player's turn rather than making a move, and await the opponent's response. This ends the game if the opponent
@@ -3838,15 +3823,11 @@ export interface Go {
    * @remarks
    * RAM cost: 0 GB
    *
-   * @param useTraditionalNotation optional: if true, the opponent's move will be in the form A 1 instead of 0 0
    */
-  passTurn(useTraditionalNotation?: boolean): Promise<Play>;
+  passTurn(): Promise<Play>;
 
   /**
    * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
-   *
-   * @remarks
-   * RAM cost: 2 GB
    *
    * For example, a 5x5 board might look like this:
    * ```
@@ -3867,6 +3848,8 @@ export interface Go {
    * string represents a vertical column on the board. In other words, the printed example above can be understood to
    * be rotated 90 degrees clockwise compared to the board UI as shown in the IPvGO subnet tab.
    *
+   * @remarks
+   * RAM cost: 2 GB
    */
   getBoardState(): string[];
 
@@ -3874,15 +3857,15 @@ export interface Go {
    * Gets new IPvGO subnet with the specified size owned by the listed faction, ready for the player to make a move.
    * This will reset your win streak if the current game is not complete and you have already made moves.
    *
-   * @remarks
-   * RAM cost: 0 GB
    *
    * Note that some factions will have a few routers on the subnet at this state.
    *
-   * @param opponent "Netburners" or "Slum Snakes" or "The Black Hand" or "Daedalus" or "Illuminati",
-   * @param boardSize
+   * opponent is "Netburners" or "Slum Snakes" or "The Black Hand" or "Daedalus" or "Illuminati",
    *
    * @returns a simplified version of the board state as an array of strings representing the board columns. See ns.Go.getBoardState() for full details
+   *
+   * @remarks
+   * RAM cost: 0 GB
    */
   resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): string[];
 }
