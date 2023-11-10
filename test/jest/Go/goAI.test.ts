@@ -3,6 +3,11 @@ import { opponents, playerColors } from "../../../src/Go/boardState/goConstants"
 import { getMove } from "../../../src/Go/boardAnalysis/goAI";
 import { setPlayer } from "@player";
 import { PlayerObject } from "../../../src/PersonObjects/Player/PlayerObject";
+import "../../../src/Faction/Factions";
+
+jest.mock("../../../src/Faction/Factions", () => ({
+  Factions: {},
+}));
 
 setPlayer(new PlayerObject());
 

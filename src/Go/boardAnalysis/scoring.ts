@@ -4,7 +4,7 @@ import { getKomi } from "./goAI";
 import { Player } from "@player";
 import { getDifficultyMultiplier, getWinstreakMultiplier } from "../effects/effect";
 import { floor } from "../boardState/boardState";
-//import { Factions } from "../../Faction/Factions";
+import { Factions } from "../../Faction/Factions";
 import { FactionName } from "@enums";
 
 /**
@@ -60,8 +60,7 @@ export function endGoGame(boardState: BoardState) {
 
     const factionName = boardState.ai as unknown as FactionName;
     if (statusToUpdate.winStreak % 2 === 0 && Player.factions.includes(factionName) && statusToUpdate.favor < 100) {
-      // TODO: fix unit tests
-      //Factions[factionName].favor++;
+      Factions?.[factionName]?.favor && Factions[factionName].favor++;
       statusToUpdate.favor++;
     }
   }
