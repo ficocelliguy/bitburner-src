@@ -18,6 +18,8 @@ import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
 // TODO: show last played stone
+// TODO: replace useStyles with this https://medium.com/@souadelmansouri2018/solving-the-makestyles-compatibility-issue-in-react-18-a-comprehensive-guide-235cc5d671c
+// TODO: document return types for go api
 
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation

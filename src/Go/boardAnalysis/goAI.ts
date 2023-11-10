@@ -46,6 +46,7 @@ import { Player } from "@player";
  * @returns a promise that will resolve with a move (or pass) from the designated AI opponent.
  */
 export async function getMove(boardState: BoardState, player: PlayerColor, opponent: opponents, rngOverride?: number) {
+  await sleep(200);
   const rng = new WHRNG(rngOverride || Player.totalPlaytime);
   const smart = isSmart(opponent, rng.random());
   const moves = await getMoveOptions(boardState, player, rng.random(), smart);
