@@ -12,6 +12,7 @@ import { WorkerScript } from "../Netscript/WorkerScript";
 async function getAIMove(ctx: NetscriptContext, boardState: BoardState): Promise<Play> {
   let resolve: (value: Play) => void;
   const aiMoveResult = new Promise<Play>((res) => (resolve = res));
+  await sleep(200);
 
   getMove(boardState, playerColors.white, Player.go.boardState.ai).then(async (result) => {
     if (result.type !== playTypes.move) {
@@ -68,11 +69,11 @@ export function NetscriptGo(): InternalAPI<Go> {
         const y = helpers.number(ctx, "y", _y);
         const boardSize = Player.go.boardState.board.length;
 
-        if (x < 1 || x > boardSize) {
-          throwError(ctx.workerScript, `Invalid row number (${x}), column must be a number 1 through ${boardSize}`);
+        if (x < 0 || x >= boardSize) {
+          throwError(ctx.workerScript, `Invalid column number (x = ${x}), column must be a number 0 through ${boardSize-1}`);
         }
-        if (y < 1 || y > boardSize) {
-          throwError(ctx.workerScript, `Invalid row number (${y}), column must be a number 1 through ${boardSize}`);
+        if (y < 0 || y >= boardSize) {
+          throwError(ctx.workerScript, `Invalid row number (y = ${y}), row must be a number 0 through ${boardSize-1}`);
         }
 
         return await makePlayerMove(ctx, x, y);
