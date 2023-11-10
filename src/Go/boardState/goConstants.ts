@@ -139,7 +139,7 @@ export enum playTypes {
 
 export type Play = {
   type: playTypes;
-  x: number | string;
+  x: number;
   y: number;
 };
 

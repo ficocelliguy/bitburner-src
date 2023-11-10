@@ -1,7 +1,5 @@
 /** All netscript definitions */
 
-import { opponents, Play } from "../Go/boardState/goConstants";
-
 /** @public */
 interface HP {
   current: number;
@@ -3796,6 +3794,36 @@ export interface Gang {
    */
   nextUpdate(): Promise<number>;
 }
+
+/**
+ * @public
+ */
+enum opponents {
+  none = "No AI",
+  Netburners = "Netburners",
+  SlumSnakes = "Slum Snakes",
+  TheBlackHand = "The Black Hand",
+  Daedalus = "Daedalus",
+  Illuminati = "Illuminati",
+}
+
+/**
+ * @public
+ */
+enum playTypes {
+  move = "move",
+  pass = "pass",
+  gameOver = "gameOver",
+}
+
+/**
+ * @public
+ */
+type Play = {
+  type: playTypes;
+  x: number;
+  y: number;
+};
 
 /**
  * IPvGO api

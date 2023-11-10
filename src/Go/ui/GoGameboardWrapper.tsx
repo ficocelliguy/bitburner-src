@@ -28,7 +28,6 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 // FUTURE: New bitnode? API access given? Boosts to effects?
 // FUTURE: Augmentations?
 // FUTURE: Unlock larger boards with bitnodes?
-// FUTURE: Directly award favor?
 // FUTURE: ways to reduce opponent handicap?
 
 interface IProps {
