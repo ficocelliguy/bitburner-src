@@ -1,15 +1,23 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { Player } from "@player";
-import { getNewBoardState, getStateCopy, makeMove, passTurn } from "../Go/boardState/boardState";
+import {
+  getNewBoardState,
+  getStateCopy,
+  makeMove,
+  passTurn,
+  updateCaptures,
+  updateChains,
+} from "../Go/boardState/boardState";
 import { resetWinstreak } from "../Go/boardAnalysis/scoring";
 import { BoardState, opponents, Play, playerColors, playTypes, validityReason } from "../Go/boardState/goConstants";
 import { getMove } from "../Go/boardAnalysis/goAI";
 import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/boardAnalysis/boardAnalysis";
 import { Go } from "@nsdefs";
 import { WorkerScript } from "../Netscript/WorkerScript";
+import { WHRNG } from "../Casino/RNG";
 
-async function getAIMove(ctx: NetscriptContext, boardState: BoardState): Promise<Play> {
+async function getAIMove(ctx: NetscriptContext, boardState: BoardState, success = true): Promise<Play> {
   let resolve: (value: Play) => void;
   const aiMoveResult = new Promise<Play>((res) => (resolve = res));
 
@@ -30,7 +38,7 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState): Promise
     }
 
     await sleep(200);
-    resolve({ type: playTypes.move, x: result.x, y: result.y });
+    resolve({ type: playTypes.move, x: result.x, y: result.y, success });
   });
   return aiMoveResult;
 }
@@ -73,6 +81,39 @@ function validateRowAndColumn(ctx: NetscriptContext, x: number, y: number) {
   }
 }
 
+function resetBoardState() {
+  const oldBoardState = Player.go.boardState;
+  if (oldBoardState.previousPlayer !== null && oldBoardState.history.length) {
+    resetWinstreak(oldBoardState.ai);
+  }
+
+  Player.go.boardState = getNewBoardState(oldBoardState.board[0].length, oldBoardState.ai);
+  return getSimplifiedBoardState(Player.go.boardState.board);
+}
+
+async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void): Promise<Play> {
+  const rng = new WHRNG(Player.totalPlaytime);
+  if (rng.random() < cheatSuccessChance()) {
+    callback();
+    return getAIMove(ctx, Player.go.boardState, true);
+  } else if (rng.random() < 0.1) {
+    resetBoardState();
+    return {
+      type: playTypes.gameOver,
+      x: -1,
+      y: -1,
+      success: false,
+    };
+  } else {
+    passTurn(Player.go.boardState);
+    return getAIMove(ctx, Player.go.boardState, false);
+  }
+}
+
+function cheatSuccessChance() {
+  return Math.min(0.15 * Player.mults.crime_success, 1);
+}
+
 export function NetscriptGo(): InternalAPI<Go> {
   return {
     makeMove:
@@ -91,6 +132,7 @@ export function NetscriptGo(): InternalAPI<Go> {
           type: playTypes.gameOver,
           x: -1,
           y: -1,
+          success: true,
         });
       }
       return getAIMove(ctx, Player.go.boardState);
@@ -99,7 +141,6 @@ export function NetscriptGo(): InternalAPI<Go> {
       return getSimplifiedBoardState(Player.go.boardState.board);
     },
     resetBoardState: (ctx) => (_opponent, _boardSize) => {
-      const oldBoardState = Player.go.boardState;
       const opponentString = helpers.string(ctx, "opponent", _opponent);
       const opponentOptions = [
         opponents.Netburners,
@@ -120,16 +161,11 @@ export function NetscriptGo(): InternalAPI<Go> {
           `Invalid opponent requested (${opponentString}), valid options are ${opponentOptions.join(", ")}`,
         );
       }
-      if (oldBoardState.previousPlayer !== null && oldBoardState.history.length) {
-        resetWinstreak(oldBoardState.ai);
-      }
-
-      Player.go.boardState = getNewBoardState(boardSize, opponent);
-      return getSimplifiedBoardState(Player.go.boardState.board);
+      return resetBoardState();
     },
     cheat: {
       getCheatSuccessChance: () => () => {
-        return 0.15 * Player.mults.crime_success;
+        return cheatSuccessChance();
       },
       removeOpponentRouter:
         (ctx: NetscriptContext) =>
@@ -138,10 +174,18 @@ export function NetscriptGo(): InternalAPI<Go> {
           const y = helpers.number(ctx, "y", _y);
           validateRowAndColumn(ctx, x, y);
 
-          // TODO: do the thing
-          // TODO: Docs
+          const point = Player.go.boardState.board[x][y];
+          if (point.player !== playerColors.white) {
+            throwError(
+              ctx.workerScript,
+              `The point ${x},${y} does not have an opponent's router on it, so you cannot clear this point with removeOpponentRouter().`,
+            );
+          }
 
-          return getAIMove(ctx, Player.go.boardState);
+          return determineCheatSuccess(ctx, () => {
+            point.player = playerColors.empty;
+            Player.go.boardState = updateChains(Player.go.boardState);
+          });
         },
       removeAllyRouter:
         (ctx: NetscriptContext) =>
@@ -149,10 +193,18 @@ export function NetscriptGo(): InternalAPI<Go> {
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);
           validateRowAndColumn(ctx, x, y);
+          const point = Player.go.boardState.board[x][y];
+          if (point.player !== playerColors.black) {
+            throwError(
+              ctx.workerScript,
+              `The point ${x},${y} does not have your router on it, so you cannot clear this point with removeAllyRouter().`,
+            );
+          }
 
-          // TODO: do the thing
-
-          return getAIMove(ctx, Player.go.boardState);
+          return determineCheatSuccess(ctx, () => {
+            point.player = playerColors.empty;
+            Player.go.boardState = updateChains(Player.go.boardState);
+          });
         },
       playTwoMoves:
         (ctx: NetscriptContext) =>
@@ -164,9 +216,20 @@ export function NetscriptGo(): InternalAPI<Go> {
           const y2 = helpers.number(ctx, "y", _y2);
           validateRowAndColumn(ctx, x2, y2);
 
-          // TODO: do the thing
+          const point1 = Player.go.boardState.board[x1][y1];
+          if (point1.player !== playerColors.black) {
+            throwError(ctx.workerScript, `The point ${x1},${y1} is not empty, so you cannot place a router there.`);
+          }
+          const point2 = Player.go.boardState.board[x2][y2];
+          if (point2.player !== playerColors.black) {
+            throwError(ctx.workerScript, `The point ${x2},${y2} is not empty, so you cannot place a router there.`);
+          }
 
-          return getAIMove(ctx, Player.go.boardState);
+          return determineCheatSuccess(ctx, () => {
+            point1.player = playerColors.black;
+            point2.player = playerColors.black;
+            Player.go.boardState = updateCaptures(Player.go.boardState, playerColors.black);
+          });
         },
     },
   };

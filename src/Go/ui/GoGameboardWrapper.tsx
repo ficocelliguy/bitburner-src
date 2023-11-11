@@ -22,6 +22,10 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 // TODO: document go cheat api
 // TODO: Implement and document cheat and risks
 
+// TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
+
+// TODO: log warnings instead of throwing exceptions for in-game problems in the api?
+
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation
 // FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?

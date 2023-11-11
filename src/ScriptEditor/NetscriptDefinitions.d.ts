@@ -3796,36 +3796,6 @@ export interface Gang {
 }
 
 /**
- * @public
- */
-enum opponents {
-  none = "No AI",
-  Netburners = "Netburners",
-  SlumSnakes = "Slum Snakes",
-  TheBlackHand = "The Black Hand",
-  Daedalus = "Daedalus",
-  Illuminati = "Illuminati",
-}
-
-/**
- * @public
- */
-enum playTypes {
-  move = "move",
-  pass = "pass",
-  gameOver = "gameOver",
-}
-
-/**
- * @public
- */
-type Play = {
-  type: playTypes;
-  x: number;
-  y: number;
-};
-
-/**
  * IPvGO api
  * @public
  */
@@ -3839,7 +3809,15 @@ export interface Go {
    *
    * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
    */
-  makeMove(x: number, y: number): Promise<Play>;
+  makeMove(
+    x: number,
+    y: number,
+  ): Promise<{
+    type: "move" | "pass" | "gameOver";
+    x: number;
+    y: number;
+    success: boolean;
+  }>;
 
   /**
    * Pass the player's turn rather than making a move, and await the opponent's response. This ends the game if the opponent
@@ -3852,7 +3830,12 @@ export interface Go {
    * RAM cost: 0 GB
    *
    */
-  passTurn(): Promise<Play>;
+  passTurn(): Promise<{
+    type: "move" | "pass" | "gameOver";
+    x: number;
+    y: number;
+    success: boolean;
+  }>;
 
   /**
    * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
@@ -3895,7 +3878,10 @@ export interface Go {
    * @remarks
    * RAM cost: 0 GB
    */
-  resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): string[];
+  resetBoardState(
+    opponent: "Netburners" | "Slum Snakes" | "The Black Hand" | "Daedalus" | "Illuminati",
+    boardSize: 5 | 7 | 9 | 13,
+  ): string[];
 
   cheat: {
     /**
@@ -3907,17 +3893,43 @@ export interface Go {
      * @remarks
      * RAM cost: 4 GB
      */
-    removeOpponentRouter(x: number, y: number): Promise<Play>;
+    removeOpponentRouter(
+      x: number,
+      y: number,
+    ): Promise<{
+      type: "move" | "pass" | "gameOver";
+      x: number;
+      y: number;
+      success: boolean;
+    }>;
     /**
      * @remarks
      * RAM cost: 4 GB
      */
-    removeAllyRouter(x: number, y: number): Promise<Play>;
+    removeAllyRouter(
+      x: number,
+      y: number,
+    ): Promise<{
+      type: "move" | "pass" | "gameOver";
+      x: number;
+      y: number;
+      success: boolean;
+    }>;
     /**
      * @remarks
      * RAM cost: 4 GB
      */
-    playTwoMoves(x1: number, y1: number, x2: number, x2: number): Promise<Play>;
+    playTwoMoves(
+      x1: number,
+      y1: number,
+      x2: number,
+      x2: number,
+    ): Promise<{
+      type: "move" | "pass" | "gameOver";
+      x: number;
+      y: number;
+      success: boolean;
+    }>;
   };
 }
 

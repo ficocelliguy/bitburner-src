@@ -138,6 +138,7 @@ export enum playTypes {
 }
 
 export type Play = {
+  success: boolean;
   type: playTypes;
   x: number;
   y: number;
