@@ -3896,6 +3896,29 @@ export interface Go {
    * RAM cost: 0 GB
    */
   resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): string[];
+
+  cheat: {
+    /**
+     * @remarks
+     * RAM cost: 1 GB
+     */
+    getCheatSuccessChance(): number;
+    /**
+     * @remarks
+     * RAM cost: 4 GB
+     */
+    removeOpponentRouter(x: number, y: number): Promise<Play>;
+    /**
+     * @remarks
+     * RAM cost: 4 GB
+     */
+    removeAllyRouter(x: number, y: number): Promise<Play>;
+    /**
+     * @remarks
+     * RAM cost: 4 GB
+     */
+    playTwoMoves(x1: number, y1: number, x2: number, x2: number): Promise<Play>;
+  };
 }
 
 /**

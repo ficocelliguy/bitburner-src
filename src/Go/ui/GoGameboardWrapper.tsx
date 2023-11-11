@@ -8,24 +8,23 @@ import { getNewBoardState, getStateCopy, makeMove, passTurn } from "../boardStat
 import { getMove } from "../boardAnalysis/goAI";
 import { weiArt } from "../boardState/asciiArt";
 import { endGoGame, getScore, resetWinstreak } from "../boardAnalysis/scoring";
+import { evaluateIfMoveIsValid, getAllValidMoves } from "../boardAnalysis/boardAnalysis";
 import { useRerender } from "../../ui/React/hooks";
 import { OptionSwitch } from "../../ui/React/OptionSwitch";
 import { boardStyles } from "../boardState/goStyles";
 import { Player } from "@player";
-import { evaluateIfMoveIsValid, getAllValidMoves } from "../boardAnalysis/boardAnalysis";
+import { Settings } from "../../Settings/Settings";
 import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
-// TODO: show last played stone
-// TODO: replace useStyles with this https://medium.com/@souadelmansouri2018/solving-the-makestyles-compatibility-issue-in-react-18-a-comprehensive-guide-235cc5d671c
 // TODO: document return types for go api
+// TODO: document go cheat api
+// TODO: Implement and document cheat and risks
 
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation
 // FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?
-
-// FUTURE: Cheating? scales with crime success chance?
 
 // FUTURE: New bitnode? API access given? Boosts to effects?
 // FUTURE: Augmentations?
@@ -40,7 +39,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
   const rerender = useRerender(400);
 
   const boardState = Player.go.boardState;
-  const [traditional, setTraditional] = useState(false);
+  const traditional = Settings.GoTraditionalStyle;
   const [showPriorMove, setShowPriorMove] = useState(false);
   const [opponent, setOpponent] = useState<opponents>(boardState.ai);
   const [scoreOpen, setScoreOpen] = useState(false);
@@ -188,6 +187,10 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
     if (boardState.history.length) {
       setShowPriorMove(newValue);
     }
+  }
+
+  function setTraditional(newValue: boolean) {
+    Settings.GoTraditionalStyle = newValue;
   }
 
   const endGameAvailable = boardState.previousPlayer === playerColors.white && boardState.passCount;

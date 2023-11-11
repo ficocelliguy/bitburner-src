@@ -246,10 +246,15 @@ const gang = {
 // Go API
 const go = {
   makeMove: 2,
-  makeMoveTraditional: 2,
   passTurn: 0,
   getBoardState: 2,
   resetBoardState: 0,
+  cheat: {
+    getCheatSuccessChance: 1,
+    removeOpponentRouter: 4,
+    removeAllyRouter: 4,
+    playTwoMoves: 4,
+  },
 } as const;
 
 // Bladeburner API

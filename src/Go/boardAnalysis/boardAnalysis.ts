@@ -363,7 +363,7 @@ function findFurthestPointsOfChain(chain: PointState[]) {
         directions.south = point.y;
       }
       if (point.x > directions.east) {
-        directions.east = point.y;
+        directions.east = point.x;
       }
       if (point.x < directions.west) {
         directions.west = point.x;

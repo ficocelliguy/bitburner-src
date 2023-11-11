@@ -59,6 +59,20 @@ function throwError(ws: WorkerScript, errorMessage: string) {
   throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n ${errorMessage}`;
 }
 
+function validateRowAndColumn(ctx: NetscriptContext, x: number, y: number) {
+  const boardSize = Player.go.boardState.board.length;
+
+  if (x < 0 || x >= boardSize) {
+    throwError(
+      ctx.workerScript,
+      `Invalid column number (x = ${x}), column must be a number 0 through ${boardSize - 1}`,
+    );
+  }
+  if (y < 0 || y >= boardSize) {
+    throwError(ctx.workerScript, `Invalid row number (y = ${y}), row must be a number 0 through ${boardSize - 1}`);
+  }
+}
+
 export function NetscriptGo(): InternalAPI<Go> {
   return {
     makeMove:
@@ -66,20 +80,7 @@ export function NetscriptGo(): InternalAPI<Go> {
       async (_x, _y): Promise<Play> => {
         const x = helpers.number(ctx, "x", _x);
         const y = helpers.number(ctx, "y", _y);
-        const boardSize = Player.go.boardState.board.length;
-
-        if (x < 0 || x >= boardSize) {
-          throwError(
-            ctx.workerScript,
-            `Invalid column number (x = ${x}), column must be a number 0 through ${boardSize - 1}`,
-          );
-        }
-        if (y < 0 || y >= boardSize) {
-          throwError(
-            ctx.workerScript,
-            `Invalid row number (y = ${y}), row must be a number 0 through ${boardSize - 1}`,
-          );
-        }
+        validateRowAndColumn(ctx, x, y);
 
         return await makePlayerMove(ctx, x, y);
       },
@@ -125,6 +126,48 @@ export function NetscriptGo(): InternalAPI<Go> {
 
       Player.go.boardState = getNewBoardState(boardSize, opponent);
       return getSimplifiedBoardState(Player.go.boardState.board);
+    },
+    cheat: {
+      getCheatSuccessChance: () => () => {
+        return 0.15 * Player.mults.crime_success;
+      },
+      removeOpponentRouter:
+        (ctx: NetscriptContext) =>
+        async (_x, _y): Promise<Play> => {
+          const x = helpers.number(ctx, "x", _x);
+          const y = helpers.number(ctx, "y", _y);
+          validateRowAndColumn(ctx, x, y);
+
+          // TODO: do the thing
+          // TODO: Docs
+
+          return getAIMove(ctx, Player.go.boardState);
+        },
+      removeAllyRouter:
+        (ctx: NetscriptContext) =>
+        async (_x, _y): Promise<Play> => {
+          const x = helpers.number(ctx, "x", _x);
+          const y = helpers.number(ctx, "y", _y);
+          validateRowAndColumn(ctx, x, y);
+
+          // TODO: do the thing
+
+          return getAIMove(ctx, Player.go.boardState);
+        },
+      playTwoMoves:
+        (ctx: NetscriptContext) =>
+        async (_x1, _y1, _x2, _y2): Promise<Play> => {
+          const x1 = helpers.number(ctx, "x", _x1);
+          const y1 = helpers.number(ctx, "y", _y1);
+          validateRowAndColumn(ctx, x1, y1);
+          const x2 = helpers.number(ctx, "x", _x2);
+          const y2 = helpers.number(ctx, "y", _y2);
+          validateRowAndColumn(ctx, x2, y2);
+
+          // TODO: do the thing
+
+          return getAIMove(ctx, Player.go.boardState);
+        },
     },
   };
 }

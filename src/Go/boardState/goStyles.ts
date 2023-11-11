@@ -6,6 +6,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
   createStyles({
     hover: {},
     valid: {},
+    priorPoint: {},
     point: {
       position: "relative",
       height: "100%",
@@ -13,6 +14,17 @@ export const pointStyle = makeStyles((theme: Theme) =>
 
       "&$hover$valid:hover $innerPoint": {
         outlineColor: theme.colors.white,
+      },
+      "&$hover$priorPoint $innerPoint": {
+        outlineColor: theme.colors.white,
+      },
+      "&$hover$priorPoint $priorStoneTrad$blackPoint": {
+        outlineColor: theme.colors.white,
+        display: "block",
+      },
+      "&$hover$priorPoint $priorStoneTrad$whitePoint": {
+        outlineColor: theme.colors.black,
+        display: "block",
       },
       "&$hover:hover $coordinates": {
         display: "block",
@@ -213,7 +225,7 @@ export const pointStyle = makeStyles((theme: Theme) =>
       borderRadius: "50%",
       width: "50%",
       height: "50%",
-      margin: "25.8%",
+      margin: "25%",
       position: "absolute",
     },
     emptyPoint: {
@@ -304,6 +316,19 @@ export const pointStyle = makeStyles((theme: Theme) =>
       left: "8%",
       zIndex: "10",
       userSelect: "none",
+    },
+    priorStoneTrad: {
+      display: "none",
+      outlineStyle: "solid",
+      outlineWidth: "4px",
+      outlineColor: "transparent",
+      borderRadius: "50%",
+      width: "50%",
+      height: "50%",
+      margin: "25%",
+      background: "none",
+      position: "absolute",
+      zIndex: "10",
     },
   }),
 );

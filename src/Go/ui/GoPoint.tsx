@@ -43,6 +43,10 @@ export function GoPoint(props: {
 
   const sizeClass = getSizeClass(props.state.board[0].length, classes);
 
+  const isNewStone =
+    props.state.history?.[props.state.history?.length - 1]?.[props.x]?.[props.y]?.player === playerColors.empty;
+  const isPriorMove = player === props.state.previousPlayer && isNewStone;
+
   const emptyPointColorClass =
     props.emptyPointOwner === playerColors.white
       ? classes.libertyWhite
@@ -50,12 +54,13 @@ export function GoPoint(props: {
       ? classes.libertyBlack
       : "";
 
+  const mainClassName = `${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
+    props.hover ? classes.hover : ""
+  } ${props.valid ? classes.valid : ""} ${isPriorMove ? classes.priorPoint : ""}
+      ${isInAtari ? classes.fadeLoopAnimation : ""}`;
+
   return (
-    <div
-      className={`${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
-        props.hover ? classes.hover : ""
-      } ${props.valid ? classes.valid : ""} ${isInAtari ? classes.fadeLoopAnimation : ""}`}
-    >
+    <div className={mainClassName}>
       <div className={hasNorthLiberty ? `${classes.northLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasEastLiberty ? `${classes.eastLiberty} ${colorLiberty}` : classes.liberty}></div>
       <div className={hasSouthLiberty ? `${classes.southLiberty} ${colorLiberty}` : classes.liberty}></div>
@@ -66,6 +71,7 @@ export function GoPoint(props: {
         ></div>
       </div>
       <div className={`${pointClass} ${classes.tradStone}`} />
+      {props.traditional ? <div className={`${pointClass} ${classes.priorStoneTrad}`}></div> : ""}
       <div className={classes.coordinates}>
         {columnIndexes[props.x]}
         {props.traditional ? "" : "."}
