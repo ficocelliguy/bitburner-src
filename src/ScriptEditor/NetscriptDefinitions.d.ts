@@ -3813,7 +3813,7 @@ export interface Go {
     x: number,
     y: number,
   ): Promise<{
-    type: "move" | "pass" | "gameOver";
+    type: "invalid" | "move" | "pass" | "gameOver";
     x: number;
     y: number;
     success: boolean;
@@ -3831,7 +3831,7 @@ export interface Go {
    *
    */
   passTurn(): Promise<{
-    type: "move" | "pass" | "gameOver";
+    type: "invalid" | "move" | "pass" | "gameOver";
     x: number;
     y: number;
     success: boolean;
@@ -3897,7 +3897,7 @@ export interface Go {
       x: number,
       y: number,
     ): Promise<{
-      type: "move" | "pass" | "gameOver";
+      type: "invalid" | "move" | "pass" | "gameOver";
       x: number;
       y: number;
       success: boolean;
@@ -3910,7 +3910,7 @@ export interface Go {
       x: number,
       y: number,
     ): Promise<{
-      type: "move" | "pass" | "gameOver";
+      type: "invalid" | "move" | "pass" | "gameOver";
       x: number;
       y: number;
       success: boolean;
@@ -3925,7 +3925,7 @@ export interface Go {
       x2: number,
       x2: number,
     ): Promise<{
-      type: "move" | "pass" | "gameOver";
+      type: "invalid" | "move" | "pass" | "gameOver";
       x: number;
       y: number;
       success: boolean;
