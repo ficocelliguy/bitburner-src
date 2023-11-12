@@ -129,9 +129,10 @@ export type PointState = {
 };
 
 /**
- * "move" or "pass" or "gameOver"
+ * "invalid" or "move" or "pass" or "gameOver"
  */
 export enum playTypes {
+  invalid = "invalid",
   move = "move",
   pass = "pass",
   gameOver = "gameOver",

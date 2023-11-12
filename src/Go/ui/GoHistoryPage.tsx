@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { Table, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 
 import { opponents } from "../boardState/goConstants";
 import { getScore } from "../boardAnalysis/scoring";
@@ -80,28 +80,58 @@ export const GoHistoryPage = (): React.ReactElement => {
                       {data.highestWinStreak}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell className={classes.cellNone}>Captured nodes:</TableCell>
-                    <TableCell className={classes.cellNone}>{data.nodes}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>Node power:</TableCell>
-                    <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
-                      {formatNumber(data.nodePower, 2)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className={classes.cellNone}>Favor gained:</TableCell>
-                    <TableCell className={classes.cellNone}>{data.favor ?? 0}</TableCell>
-                  </TableRow>
+                  <Tooltip
+                    title={
+                      <>
+                        The total number of empty points and routers <br /> you took control of, across all subnets
+                      </>
+                    }
+                  >
+                    <TableRow>
+                      <TableCell className={classes.cellNone}>Captured nodes:</TableCell>
+                      <TableCell className={classes.cellNone}>{data.nodes}</TableCell>
+                    </TableRow>
+                  </Tooltip>
+                  <Tooltip
+                    title={
+                      <>
+                        Node power is what stat bonuses scale from, and is gained on each completed subnet. <br />
+                        It is calculated from the number of nodes you control, multiplied by modifiers for the <br />
+                        opponent difficulty, if you won or lost, and your current winstreak.
+                      </>
+                    }
+                  >
+                    <TableRow>
+                      <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>Node power:</TableCell>
+                      <TableCell className={`${classes.cellNone} ${classes.cellBottomPadding}`}>
+                        {formatNumber(data.nodePower, 2)}
+                      </TableCell>
+                    </TableRow>
+                  </Tooltip>
+                  <Tooltip
+                    title={
+                      <>
+                        Win streaks against a faction will give you +1 favor to that faction <br />
+                        at certain numbers of wins (up to a max of 100 favor), <br />
+                        if you are currently a member of that faction
+                      </>
+                    }
+                  >
+                    <TableRow>
+                      <TableCell className={classes.cellNone}>Favor from winstreaks:</TableCell>
+                      <TableCell className={classes.cellNone}>{data.favor ?? 0}</TableCell>
+                    </TableRow>
+                  </Tooltip>
                 </TableBody>
               </Table>
               <br />
-              <Typography>
-                <strong className={classes.keyText}>Bonus:</strong>
-                <br />
-                <strong className={classes.keyText}>{getBonusText(faction)}</strong>
-              </Typography>
+              <Tooltip title={<>The total stat multiplier gained via your current node power.</>}>
+                <Typography>
+                  <strong className={classes.keyText}>Bonus:</strong>
+                  <br />
+                  <strong className={classes.keyText}>{getBonusText(faction)}</strong>
+                </Typography>
+              </Tooltip>
             </Grid>
           );
         })}

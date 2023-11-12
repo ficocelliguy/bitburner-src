@@ -22,6 +22,8 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 // TODO: document go cheat api
 // TODO: Implement and document cheat and risks
 
+// todo: add docs to Go.ts
+
 // TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
 
 // TODO: log warnings instead of throwing exceptions for in-game problems in the api?

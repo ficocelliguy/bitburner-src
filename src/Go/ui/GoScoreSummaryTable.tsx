@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableRow } from "@mui/material";
+import { Table, TableBody, TableCell, TableRow, Tooltip } from "@mui/material";
 import { boardStyles } from "../boardState/goStyles";
 import { goScore, opponents, playerColors } from "../boardState/goConstants";
 
@@ -39,11 +39,20 @@ export const GoScoreSummaryTable = ({ score, opponent }: IProps) => {
             <TableCell className={classes.cellNone}>{whiteScore.pieces}</TableCell>
             <TableCell className={classes.cellNone}>{blackScore.pieces}</TableCell>
           </TableRow>
-          <TableRow>
-            <TableCell className={classes.cellNone}>Komi:</TableCell>
-            <TableCell className={classes.cellNone}>{whiteScore.komi}</TableCell>
-            <TableCell className={classes.cellNone} />
-          </TableRow>
+          <Tooltip
+            title={
+              <>
+                Komi represents the current faction's home-field advantage on this subnet, <br />
+                to balance the first-move advantage that the player with the black routers has.
+              </>
+            }
+          >
+            <TableRow>
+              <TableCell className={classes.cellNone}>Komi:</TableCell>
+              <TableCell className={classes.cellNone}>{whiteScore.komi}</TableCell>
+              <TableCell className={classes.cellNone} />
+            </TableRow>
+          </Tooltip>
           <TableRow>
             <TableCell className={classes.cellNone}>
               <br />
