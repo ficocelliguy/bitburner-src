@@ -20,8 +20,6 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 
 // TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
 
-// TODO: analysis tools documentation and examples
-
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation
 // FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?

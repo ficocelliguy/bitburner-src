@@ -11,11 +11,18 @@ This can also be used if you pick up the game in a state where the opponent need
 **Signature:**
 
 ```typescript
-passTurn(): Promise<Play>;
+passTurn(): Promise<{
+    type: "invalid" | "move" | "pass" | "gameOver";
+    x: number;
+    y: number;
+    success: boolean;
+  }>;
 ```
 **Returns:**
 
-Promise&lt;[Play](./bitburner.play.md)<!-- -->&gt;
+Promise&lt;{ type: "invalid" \| "move" \| "pass" \| "gameOver"; x: number; y: number; success: boolean; }&gt;
+
+a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
 
 ## Remarks
 

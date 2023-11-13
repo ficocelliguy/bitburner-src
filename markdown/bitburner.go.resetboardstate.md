@@ -13,14 +13,17 @@ opponent is "Netburners" or "Slum Snakes" or "The Black Hand" or "Daedalus" or "
 **Signature:**
 
 ```typescript
-resetBoardState(opponent: opponents, boardSize: 5 | 7 | 9 | 13): string[];
+resetBoardState(
+    opponent: "Netburners" | "Slum Snakes" | "The Black Hand" | "Daedalus" | "Illuminati",
+    boardSize: 5 | 7 | 9 | 13,
+  ): string[];
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  opponent | [opponents](./bitburner.opponents.md) |  |
+|  opponent | "Netburners" \| "Slum Snakes" \| "The Black Hand" \| "Daedalus" \| "Illuminati" |  |
 |  boardSize | 5 \| 7 \| 9 \| 13 |  |
 
 **Returns:**

@@ -16,9 +16,7 @@
 |  [JobField](./bitburner.jobfield.md) |  |
 |  [JobName](./bitburner.jobname.md) |  |
 |  [LocationName](./bitburner.locationname.md) | Names of all locations |
-|  [opponents](./bitburner.opponents.md) |  |
 |  [OrderType](./bitburner.ordertype.md) |  |
-|  [playTypes](./bitburner.playtypes.md) |  |
 |  [PositionType](./bitburner.positiontype.md) |  |
 |  [ToastVariant](./bitburner.toastvariant.md) |  |
 |  [UniversityClassType](./bitburner.universityclasstype.md) |  |
@@ -131,7 +129,6 @@
 |  [CorpUpgradeName](./bitburner.corpupgradename.md) |  |
 |  [FilenameOrPID](./bitburner.filenameorpid.md) |  |
 |  [NSEnums](./bitburner.nsenums.md) |  |
-|  [Play](./bitburner.play.md) |  |
 |  [PortData](./bitburner.portdata.md) |  |
 |  [ReactNode](./bitburner.reactnode.md) | <p>A stand-in for the real React.ReactNode. A [ReactElement](./bitburner.reactelement.md) is rendered dynamically with React. number and string are displayed directly. boolean, null, and undefined are ignored and not rendered. An array of ReactNodes will display all members of that array sequentially.</p><p>Use React.createElement to make the ReactElement type, see [creating an element without jsx](https://react.dev/reference/react/createElement#creating-an-element-without-jsx) from the official React documentation.</p> |
 |  [ScriptArg](./bitburner.scriptarg.md) |  |

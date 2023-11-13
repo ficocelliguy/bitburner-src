@@ -27,7 +27,7 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, success 
   getMove(boardState, playerColors.white, Player.go.boardState.ai).then(async (result) => {
     if (result.type !== playTypes.move) {
       Player.go.boardState = boardState;
-      return result;
+      resolve({ ...result, success });
     }
 
     const aiUpdatedBoard = makeMove(boardState, result.x, result.y, playerColors.white);
@@ -41,7 +41,7 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, success 
     }
 
     await sleep(200);
-    resolve({ type: playTypes.move, x: result.x, y: result.y, success });
+    resolve({ ...result, success });
   });
   return aiMoveResult;
 }

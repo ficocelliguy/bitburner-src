@@ -3843,15 +3843,15 @@ export interface Go {
    * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
    *
    * For example, a 5x5 board might look like this:
-   * ```
-   * [
-   *   "XX.O.",
-   *   "X..OO",
-   *   ".XO..",
-   *   "XXO..",
-   *   ".XOO.",
-   * ]
-   * ```
+```
+   [
+      "XX.O.",
+      "X..OO",
+      ".XO..",
+      "XXO..",
+      ".XOO.",
+   ]
+```
    *
    * Each string represents a vertical column on the board, and each character in the string represents a point.
    *
@@ -3886,18 +3886,18 @@ export interface Go {
   ): string[];
 
   /**
-   * Tools to analyze the Go board.
+   * Tools to analyze the IPvGO subnet.
    */
   analysis: {
     /**
      * Shows if each point on the board is a valid move for the player.
      *
      * The true/false validity of each move can be retrieved via the X and Y coordinates of the move.
-      ```
+```
      const validMoves = ns.go.analysis.getValidMoves();
 
      const moveIsValid = validMoves[x][y];
-     ```
+```
      *
      * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
      * string represents a vertical column on the board. In other words, the printed example above can be understood to
@@ -3909,12 +3909,42 @@ export interface Go {
     getValidMoves(): boolean[][];
 
     /**
-     * // TODO
+     * Returns an ID for each point. All points that share an ID are part of the same network (or "chain"). Empty points
+     * are also given chain IDs to represent continuous empty space.
+     *
+     * The data from getChains() can be used with the data from getBoardState() to see which player (or empty) each chain is
+     *
+     * For example, a 5x5 board might look like this. There is a large chain #1 on the left side, smaller chains
+     * 2 and 3 on the right, and a large chain 0 taking up the center of the board.
+     *
+```
+      [
+        [0,0,0,3,4],
+        [1,0,0,3,3],
+        [1,1,0,0,0],
+        [1,1,0,2,2],
+        [1,1,0,2,5],
+      ]
+```
      */
     getChains(): number[][];
 
     /**
-     * // TODO
+     * Returns a number for each point, representing how many open nodes its network/chain is connected to.
+     * Empty nodes are shown as -1 liberties.
+     *
+     * For example, a 5x5 board might look like this. The chain in the top-left touches 5 total empty nodes, and the one
+     * in the center touches four. The group in the bottom-right only has one liberty; it is in danger of being captured!
+     *
+```
+     [
+        [-1, 5,-1,-1, 2],
+        [ 5, 5,-1,-1,-1],
+        [-1,-1, 4,-1,-1],
+        [ 3,-1,-1, 3, 1],
+        [ 3,-1,-1, 3, 1],
+     ]
+```
      */
     getLiberties(): number[][];
   };
