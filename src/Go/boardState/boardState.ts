@@ -73,7 +73,7 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
  * Pass the current player's turn without making a move.
  * Ends the game if this is the second pass in a row.
  */
-export function passTurn(boardState: BoardState) {
+export function passTurn(boardState: BoardState, allowEndGame = true) {
   if (boardState.previousPlayer === null) {
     return;
   }
@@ -81,7 +81,7 @@ export function passTurn(boardState: BoardState) {
     boardState.previousPlayer === playerColors.black ? playerColors.white : playerColors.black;
   boardState.passCount++;
 
-  if (boardState.passCount >= 2) {
+  if (boardState.passCount >= 2 && allowEndGame) {
     endGoGame(boardState);
   }
 }

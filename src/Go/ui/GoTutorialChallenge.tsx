@@ -9,7 +9,7 @@ import { ToastVariant } from "@enums";
 import { getStateCopy, makeMove } from "../boardState/boardState";
 import { boardStyles } from "../boardState/goStyles";
 
-export function GoTutorialChallenge(props: {
+interface IProps {
   state: BoardState;
   description: string;
   correctMoves: [{ x: number; y: number }];
@@ -19,10 +19,22 @@ export function GoTutorialChallenge(props: {
   incorrectText1?: string;
   incorrectMoves2?: [{ x: number; y: number }];
   incorrectText2?: string;
-}): React.ReactElement {
+}
+
+export function GoTutorialChallenge({
+  state,
+  description,
+  correctMoves,
+  correctText,
+  incorrectText,
+  incorrectMoves1,
+  incorrectText1,
+  incorrectMoves2,
+  incorrectText2,
+}: IProps): React.ReactElement {
   const classes = boardStyles();
-  const [currentState, setCurrentState] = useState(getStateCopy(props.state));
-  const [displayText, setDisplayText] = useState(props.description);
+  const [currentState, setCurrentState] = useState(getStateCopy(state));
+  const [displayText, setDisplayText] = useState(description);
   const [showReset, setShowReset] = useState(false);
 
   const handleClick = (x: number, y: number) => {
@@ -45,21 +57,21 @@ export function GoTutorialChallenge(props: {
     if (updatedBoard) {
       setCurrentState(getStateCopy(updatedBoard));
 
-      if (props.correctMoves.find((move) => move.x === x && move.y === y)) {
-        setDisplayText(props.correctText);
-      } else if (props.incorrectMoves1?.find((move) => move.x === x && move.y === y)) {
-        setDisplayText(props?.incorrectText1 ?? "");
-      } else if (props.incorrectMoves2?.find((move) => move.x === x && move.y === y)) {
-        setDisplayText(props?.incorrectText2 ?? "");
+      if (correctMoves.find((move) => move.x === x && move.y === y)) {
+        setDisplayText(correctText);
+      } else if (incorrectMoves1?.find((move) => move.x === x && move.y === y)) {
+        setDisplayText(incorrectText1 ?? "");
+      } else if (incorrectMoves2?.find((move) => move.x === x && move.y === y)) {
+        setDisplayText(incorrectText2 ?? "");
       } else {
-        setDisplayText(props.incorrectText);
+        setDisplayText(incorrectText);
       }
     }
   };
 
   const reset = () => {
-    setCurrentState(getStateCopy(props.state));
-    setDisplayText(props.description);
+    setCurrentState(getStateCopy(state));
+    setDisplayText(description);
     setShowReset(false);
   };
 

@@ -249,6 +249,11 @@ const go = {
   passTurn: 0,
   getBoardState: 2,
   resetBoardState: 0,
+  analysis: {
+    getValidMoves: 4,
+    getChains: 16,
+    getLiberties: 16,
+  },
   cheat: {
     getCheatSuccessChance: 1,
     removeOpponentRouter: 4,

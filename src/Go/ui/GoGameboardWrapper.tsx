@@ -18,15 +18,9 @@ import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
-// TODO: document return types for go api
-// TODO: document go cheat api
-// TODO: Implement and document cheat and risks
-
-// todo: add docs to Go.ts
-
 // TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
 
-// TODO: log warnings instead of throwing exceptions for in-game problems in the api?
+// TODO: analysis tools documentation and examples
 
 // FUTURE: Confirm balance of rewards
 // FUTURE: Confirm if rewards should be reset on augmentation

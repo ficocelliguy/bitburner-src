@@ -6,7 +6,7 @@ import { findNeighbors } from "../boardState/boardState";
 import { pointStyle } from "../boardState/goStyles";
 import { findAdjacentLibertiesAndAlliesForPoint } from "../boardAnalysis/boardAnalysis";
 
-export function GoPoint(props: {
+interface IProps {
   state: BoardState;
   x: number;
   y: number;
@@ -14,21 +14,22 @@ export function GoPoint(props: {
   hover: boolean;
   valid: boolean;
   emptyPointOwner: playerColors;
-}): React.ReactElement {
+}
+
+export function GoPoint({ state, x, y, traditional, hover, valid, emptyPointOwner }: IProps): React.ReactElement {
   const classes = pointStyle();
 
-  const currentPoint = props.state.board[props.x][props.y];
+  const currentPoint = state.board[x][y];
   const player = currentPoint.player;
 
-  const isInAtari = currentPoint.liberties?.length === 1 && player !== playerColors.empty && !props.traditional;
-  const liberties =
-    player !== playerColors.empty ? findAdjacentLibertiesAndAlliesForPoint(props.state, props.x, props.y) : null;
-  const neighbors = findNeighbors(props.state, props.x, props.y);
+  const isInAtari = currentPoint.liberties?.length === 1 && player !== playerColors.empty && !traditional;
+  const liberties = player !== playerColors.empty ? findAdjacentLibertiesAndAlliesForPoint(state, x, y) : null;
+  const neighbors = findNeighbors(state, x, y);
 
-  const hasNorthLiberty = props.traditional ? neighbors.north : liberties?.north;
-  const hasEastLiberty = props.traditional ? neighbors.east : liberties?.east;
-  const hasSouthLiberty = props.traditional ? neighbors.south : liberties?.south;
-  const hasWestLiberty = props.traditional ? neighbors.west : liberties?.west;
+  const hasNorthLiberty = traditional ? neighbors.north : liberties?.north;
+  const hasEastLiberty = traditional ? neighbors.east : liberties?.east;
+  const hasSouthLiberty = traditional ? neighbors.south : liberties?.south;
+  const hasWestLiberty = traditional ? neighbors.west : liberties?.west;
 
   const pointClass =
     player === playerColors.white
@@ -41,22 +42,21 @@ export function GoPoint(props: {
     classes.liberty
   }`;
 
-  const sizeClass = getSizeClass(props.state.board[0].length, classes);
+  const sizeClass = getSizeClass(state.board[0].length, classes);
 
-  const isNewStone =
-    props.state.history?.[props.state.history?.length - 1]?.[props.x]?.[props.y]?.player === playerColors.empty;
-  const isPriorMove = player === props.state.previousPlayer && isNewStone;
+  const isNewStone = state.history?.[state.history?.length - 1]?.[x]?.[y]?.player === playerColors.empty;
+  const isPriorMove = player === state.previousPlayer && isNewStone;
 
   const emptyPointColorClass =
-    props.emptyPointOwner === playerColors.white
+    emptyPointOwner === playerColors.white
       ? classes.libertyWhite
-      : props.emptyPointOwner === playerColors.black
+      : emptyPointOwner === playerColors.black
       ? classes.libertyBlack
       : "";
 
-  const mainClassName = `${classes.point} ${sizeClass} ${props.traditional ? classes.traditional : ""} ${
-    props.hover ? classes.hover : ""
-  } ${props.valid ? classes.valid : ""} ${isPriorMove ? classes.priorPoint : ""}
+  const mainClassName = `${classes.point} ${sizeClass} ${traditional ? classes.traditional : ""} ${
+    hover ? classes.hover : ""
+  } ${valid ? classes.valid : ""} ${isPriorMove ? classes.priorPoint : ""}
       ${isInAtari ? classes.fadeLoopAnimation : ""}`;
 
   return (
@@ -71,11 +71,11 @@ export function GoPoint(props: {
         ></div>
       </div>
       <div className={`${pointClass} ${classes.tradStone}`} />
-      {props.traditional ? <div className={`${pointClass} ${classes.priorStoneTrad}`}></div> : ""}
+      {traditional ? <div className={`${pointClass} ${classes.priorStoneTrad}`}></div> : ""}
       <div className={classes.coordinates}>
-        {columnIndexes[props.x]}
-        {props.traditional ? "" : "."}
-        {props.y + 1}
+        {columnIndexes[x]}
+        {traditional ? "" : "."}
+        {y + 1}
       </div>
     </div>
   );

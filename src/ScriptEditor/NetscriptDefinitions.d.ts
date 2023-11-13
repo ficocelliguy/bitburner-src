@@ -3807,7 +3807,7 @@ export interface Go {
    * @remarks
    * RAM cost: 2 GB
    *
-   * @returns a promise that contains the opponent's move (or pass) in response, or an indication if the game has ended
+   * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
    */
   makeMove(
     x: number,
@@ -3825,6 +3825,8 @@ export interface Go {
    *
    * This can also be used if you pick up the game in a state where the opponent needs to play next. For example: if BitBurner was
    * closed while waiting for the opponent to make a move, you may need to call passTurn() to get them to play their move on game start.
+   *
+   * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
    *
    * @remarks
    * RAM cost: 0 GB
@@ -3883,15 +3885,67 @@ export interface Go {
     boardSize: 5 | 7 | 9 | 13,
   ): string[];
 
+  /**
+   * Tools to analyze the Go board.
+   */
+  analysis: {
+    /**
+     * Shows if each point on the board is a valid move for the player.
+     *
+     * The true/false validity of each move can be retrieved via the X and Y coordinates of the move.
+      ```
+     const validMoves = ns.go.analysis.getValidMoves();
+
+     const moveIsValid = validMoves[x][y];
+     ```
+     *
+     * Note that the [0][0] point is shown on the bottom-left on the visual board (as is traditional), and each
+     * string represents a vertical column on the board. In other words, the printed example above can be understood to
+     * be rotated 90 degrees clockwise compared to the board UI as shown in the IPvGO subnet tab.
+     *
+     * @remarks
+     * RAM cost: 4 GB
+     */
+    getValidMoves(): boolean[][];
+
+    /**
+     * // TODO
+     */
+    getChains(): number[][];
+
+    /**
+     * // TODO
+     */
+    getLiberties(): number[][];
+  };
+
+  /**
+   * Illicit and dangerous IPvGO tools. Not for the faint of heart.
+   */
   cheat: {
     /**
+     * Returns your chance of successfully playing one of the special moves in the ns.go.cheat API.
+     * Scales with your crime success rate stat.
+     *
+     * Warning: if you fail to play a cheat move, your turn will be skipped. In addition, if you fail, there is a
+     * small (~10%) chance you will instantly be ejected from the subnet.
+     *
      * @remarks
      * RAM cost: 1 GB
      */
     getCheatSuccessChance(): number;
     /**
+     * Attempts to remove an opponent's router, leaving an empty node behind.
+     *
+     * Success chance can be seen via ns.go.getCheatSuccessChance()
+     *
+     * Warning: if you fail to play a cheat move, your turn will be skipped. In addition, if you fail, there is a
+     * small (~10%) chance you will instantly be ejected from the subnet.
+     *
      * @remarks
      * RAM cost: 4 GB
+     *
+     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     removeOpponentRouter(
       x: number,
@@ -3903,8 +3957,17 @@ export interface Go {
       success: boolean;
     }>;
     /**
+     * Attempts to remove one of your own routers, leaving an empty node behind.
+     *
+     * Success chance can be seen via ns.go.getCheatSuccessChance()
+     *
+     * Warning: if you fail to play a cheat move, your turn will be skipped. In addition, if you fail, there is a
+     * small (~10%) chance you will instantly be ejected from the subnet.
+     *
      * @remarks
      * RAM cost: 4 GB
+     *
+     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     removeAllyRouter(
       x: number,
@@ -3916,8 +3979,18 @@ export interface Go {
       success: boolean;
     }>;
     /**
+     * Attempts to place two routers at once on empty nodes. Note that this ignores other move restrictions, so you can
+     * suicide your own routers if they have no access to empty ports and do not capture any enemy routers.
+     *
+     * Success chance can be seen via ns.go.getCheatSuccessChance()
+     *
+     * Warning: if you fail to play a cheat move, your turn will be skipped. In addition, if you fail, there is a
+     * small (~10%) chance you will instantly be ejected from the subnet.
+     *
      * @remarks
      * RAM cost: 4 GB
+     *
+     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     playTwoMoves(
       x1: number,

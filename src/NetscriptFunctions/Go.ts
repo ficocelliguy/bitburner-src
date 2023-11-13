@@ -9,7 +9,7 @@ import {
   updateCaptures,
   updateChains,
 } from "../Go/boardState/boardState";
-import { resetWinstreak } from "../Go/boardAnalysis/scoring";
+import { getScore, resetWinstreak } from "../Go/boardAnalysis/scoring";
 import { BoardState, opponents, Play, playerColors, playTypes, validityReason } from "../Go/boardState/goConstants";
 import { getMove } from "../Go/boardAnalysis/goAI";
 import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/boardAnalysis/boardAnalysis";
@@ -17,6 +17,9 @@ import { Go } from "@nsdefs";
 import { WorkerScript } from "../Netscript/WorkerScript";
 import { WHRNG } from "../Casino/RNG";
 
+/**
+ * Retrieves a move from the current faction in response to the player's move
+ */
 async function getAIMove(ctx: NetscriptContext, boardState: BoardState, success = true): Promise<Play> {
   let resolve: (value: Play) => void;
   const aiMoveResult = new Promise<Play>((res) => (resolve = res));
@@ -43,18 +46,23 @@ async function getAIMove(ctx: NetscriptContext, boardState: BoardState, success 
   return aiMoveResult;
 }
 
+/**
+ * Validates and applies the player's router placement
+ */
 async function makePlayerMove(ctx: NetscriptContext, x: number, y: number) {
   const validity = evaluateIfMoveIsValid(Player.go.boardState, x, y, playerColors.black);
 
   if (validity !== validityReason.valid) {
     await sleep(500);
-    throw helpers.makeRuntimeErrorMsg(ctx, `Invalid move: '${x}, ${y}': ${validity}`);
+    helpers.log(ctx, () => `ERROR: Invalid move: '${x}, ${y}': ${validity}`);
+    return null;
   }
 
   const result = makeMove(Player.go.boardState, x, y, playerColors.black);
   if (!result) {
     await sleep(500);
-    throw helpers.makeRuntimeErrorMsg(ctx, `Invalid move`);
+    helpers.log(ctx, () => `ERROR: Invalid move`);
+    return null;
   }
 
   helpers.log(ctx, () => `Go move played: ${x}, ${y}`);
@@ -63,10 +71,28 @@ async function makePlayerMove(ctx: NetscriptContext, x: number, y: number) {
   return getAIMove(ctx, playerUpdatedBoard);
 }
 
+function logEndGame(ctx: NetscriptContext) {
+  const boardState = Player.go.boardState;
+  const score = getScore(boardState);
+  helpers.log(
+    ctx,
+    () =>
+      `Subnet complete! Final score: ${boardState.ai}: ${score[playerColors.white].sum},  Player: ${
+        score[playerColors.black].sum
+      }`,
+  );
+}
+
+/**
+ * Throw a runtime error that halts the player's script
+ */
 function throwError(ws: WorkerScript, errorMessage: string) {
   throw `RUNTIME ERROR\n${ws.name}@${ws.hostname} (PID - ${ws.pid})\n\n ${errorMessage}`;
 }
 
+/**
+ * Ensures the given coordinates are valid for the current board size
+ */
 function validateRowAndColumn(ctx: NetscriptContext, x: number, y: number) {
   const boardSize = Player.go.boardState.board.length;
 
@@ -81,6 +107,9 @@ function validateRowAndColumn(ctx: NetscriptContext, x: number, y: number) {
   }
 }
 
+/**
+ * Clears the board, resets winstreak if applicable
+ */
 function resetBoardState() {
   const oldBoardState = Player.go.boardState;
   if (oldBoardState.previousPlayer !== null && oldBoardState.history.length) {
@@ -91,6 +120,18 @@ function resetBoardState() {
   return getSimplifiedBoardState(Player.go.boardState.board);
 }
 
+const invalidMoveResponse: Play = {
+  success: false,
+  type: playTypes.invalid,
+  x: -1,
+  y: -1,
+};
+
+/**
+ * Determines if the attempted cheat move is successful. If so, applies the cheat via the callback, and gets the opponent's response.
+ *
+ * If it fails, determines if the player's turn is skipped, or if the player is ejected from the subnet.
+ */
 async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void): Promise<Play> {
   const rng = new WHRNG(Player.totalPlaytime);
   if (rng.random() < cheatSuccessChance()) {
@@ -98,6 +139,7 @@ async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void
     return getAIMove(ctx, Player.go.boardState, true);
   } else if (rng.random() < 0.1) {
     resetBoardState();
+    helpers.log(ctx, () => `Cheat failed! You have been ejected from the subnet.`);
     return {
       type: playTypes.gameOver,
       x: -1,
@@ -105,15 +147,22 @@ async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void
       success: false,
     };
   } else {
-    passTurn(Player.go.boardState);
+    helpers.log(ctx, () => `Cheat failed. Your turn has been skipped.`);
+    passTurn(Player.go.boardState, false);
     return getAIMove(ctx, Player.go.boardState, false);
   }
 }
 
+/**
+ * Cheating success rate scales with player's crime success rate.
+ */
 function cheatSuccessChance() {
-  return Math.min(0.15 * Player.mults.crime_success, 1);
+  return Math.min(0.2 * Player.mults.crime_success, 1);
 }
 
+/**
+ * Go API implementation
+ */
 export function NetscriptGo(): InternalAPI<Go> {
   return {
     makeMove:
@@ -123,11 +172,12 @@ export function NetscriptGo(): InternalAPI<Go> {
         const y = helpers.number(ctx, "y", _y);
         validateRowAndColumn(ctx, x, y);
 
-        return await makePlayerMove(ctx, x, y);
+        return (await makePlayerMove(ctx, x, y)) ?? invalidMoveResponse;
       },
     passTurn: (ctx: NetscriptContext) => async (): Promise<Play> => {
       passTurn(Player.go.boardState);
       if (Player.go.boardState.previousPlayer === null) {
+        logEndGame(ctx);
         return Promise.resolve({
           type: playTypes.gameOver,
           x: -1,
@@ -163,6 +213,40 @@ export function NetscriptGo(): InternalAPI<Go> {
       }
       return resetBoardState();
     },
+    analysis: {
+      getValidMoves: () => () => {
+        const boardState = Player.go.boardState;
+        // Map the board matrix into true/false values
+        return boardState.board.map((column, x) =>
+          column.reduce((validityArray: boolean[], point, y) => {
+            const isValid = evaluateIfMoveIsValid(boardState, x, y, playerColors.black) === validityReason.valid;
+            validityArray.push(isValid);
+            return validityArray;
+          }, []),
+        );
+      },
+      getChains: () => () => {
+        const chains: string[] = [];
+        // Turn the internal chain IDs into nice consecutive numbers for display to the player
+        return Player.go.boardState.board.map((column) =>
+          column.reduce((chainIdArray: number[], point) => {
+            if (!chains.includes(point.chain)) {
+              chains.push(point.chain);
+            }
+            chainIdArray.push(chains.indexOf(point.chain));
+            return chainIdArray;
+          }, []),
+        );
+      },
+      getLiberties: () => () => {
+        return Player.go.boardState.board.map((column) =>
+          column.reduce((libertyArray: number[], point) => {
+            libertyArray.push(point.liberties?.length ?? -1);
+            return libertyArray;
+          }, []),
+        );
+      },
+    },
     cheat: {
       getCheatSuccessChance: () => () => {
         return cheatSuccessChance();
@@ -176,10 +260,12 @@ export function NetscriptGo(): InternalAPI<Go> {
 
           const point = Player.go.boardState.board[x][y];
           if (point.player !== playerColors.white) {
-            throwError(
-              ctx.workerScript,
-              `The point ${x},${y} does not have an opponent's router on it, so you cannot clear this point with removeOpponentRouter().`,
+            helpers.log(
+              ctx,
+              () =>
+                `The point ${x},${y} does not have an opponent's router on it, so you cannot clear this point with removeOpponentRouter().`,
             );
+            return invalidMoveResponse;
           }
 
           return determineCheatSuccess(ctx, () => {
@@ -195,10 +281,12 @@ export function NetscriptGo(): InternalAPI<Go> {
           validateRowAndColumn(ctx, x, y);
           const point = Player.go.boardState.board[x][y];
           if (point.player !== playerColors.black) {
-            throwError(
-              ctx.workerScript,
-              `The point ${x},${y} does not have your router on it, so you cannot clear this point with removeAllyRouter().`,
+            helpers.log(
+              ctx,
+              () =>
+                `The point ${x},${y} does not have your router on it, so you cannot clear this point with removeAllyRouter().`,
             );
+            return invalidMoveResponse;
           }
 
           return determineCheatSuccess(ctx, () => {
@@ -218,11 +306,13 @@ export function NetscriptGo(): InternalAPI<Go> {
 
           const point1 = Player.go.boardState.board[x1][y1];
           if (point1.player !== playerColors.black) {
-            throwError(ctx.workerScript, `The point ${x1},${y1} is not empty, so you cannot place a router there.`);
+            helpers.log(ctx, () => `The point ${x1},${y1} is not empty, so you cannot place a router there.`);
+            return invalidMoveResponse;
           }
           const point2 = Player.go.boardState.board[x2][y2];
           if (point2.player !== playerColors.black) {
-            throwError(ctx.workerScript, `The point ${x2},${y2} is not empty, so you cannot place a router there.`);
+            helpers.log(ctx, () => `The point ${x2},${y2} is not empty, so you cannot place a router there.`);
+            return invalidMoveResponse;
           }
 
           return determineCheatSuccess(ctx, () => {
