@@ -253,6 +253,7 @@ const go = {
     getValidMoves: 4,
     getChains: 16,
     getLiberties: 16,
+    getControlledEmptyNodes: 16,
   },
   cheat: {
     getCheatSuccessChance: 1,

@@ -3926,6 +3926,10 @@ export interface Go {
         [1,1,0,2,5],
       ]
 ```
+     * @remarks
+     * RAM cost: 16 GB
+     * (This is intentionally expensive; you can derive this info from just getBoardState() )
+     *
      */
     getChains(): number[][];
 
@@ -3945,8 +3949,35 @@ export interface Go {
         [ 3,-1,-1, 3, 1],
      ]
 ```
+     *
+     * @remarks
+     * RAM cost: 16 GB
+     * (This is intentionally expensive; you can derive this info from just getBoardState() )
      */
     getLiberties(): number[][];
+
+    /**
+     * Returns 'X', 'O', or '?' for each empty point to indicate which player controls that empty point.
+     * If no single player fully encircles the empty space, it is shown as contested with '?'
+     *
+     * Filled points of any color are indicated with '.'
+     *
+     * In this example, white encircles some space in the top-left, black encircles some in the top-right, and between their routers is contested space in the center:
+```
+  [
+     "OO..?",
+     "OO.?.",
+     "O.?.X",
+     ".?.XX",
+     "?..XX",
+  ]
+```
+     *
+     * @remarks
+     * RAM cost: 16 GB
+     * (This is intentionally expensive; you can derive this info from just getBoardState() )
+     */
+    getControlledEmptyNodes(): string[];
   };
 
   /**

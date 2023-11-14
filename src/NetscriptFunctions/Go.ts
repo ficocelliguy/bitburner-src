@@ -12,7 +12,7 @@ import {
 import { getScore, resetWinstreak } from "../Go/boardAnalysis/scoring";
 import { BoardState, opponents, Play, playerColors, playTypes, validityReason } from "../Go/boardState/goConstants";
 import { getMove } from "../Go/boardAnalysis/goAI";
-import { evaluateIfMoveIsValid, getSimplifiedBoardState } from "../Go/boardAnalysis/boardAnalysis";
+import { evaluateIfMoveIsValid, getControlledSpace, getSimplifiedBoardState } from "../Go/boardAnalysis/boardAnalysis";
 import { Go } from "@nsdefs";
 import { WorkerScript } from "../Netscript/WorkerScript";
 import { WHRNG } from "../Casino/RNG";
@@ -244,6 +244,24 @@ export function NetscriptGo(): InternalAPI<Go> {
             libertyArray.push(point.liberties?.length ?? -1);
             return libertyArray;
           }, []),
+        );
+      },
+      getControlledEmptyNodes: () => () => {
+        const boardState = Player.go.boardState;
+        const controlled = getControlledSpace(boardState);
+        return controlled.map((column, x: number) =>
+          column.reduce((ownedPoints: string, owner: playerColors, y: number) => {
+            if (owner === playerColors.white) {
+              return ownedPoints + "O";
+            }
+            if (owner === playerColors.black) {
+              return ownedPoints + "X";
+            }
+            if (boardState.board[x][y].player === playerColors.empty) {
+              return "?";
+            }
+            return ".";
+          }, ""),
         );
       },
     },

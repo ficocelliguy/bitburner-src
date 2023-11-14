@@ -112,6 +112,27 @@ export function evaluateMoveResult(initialBoardState: BoardState, x: number, y: 
   return updateCaptures(boardState, player, false);
 }
 
+export function getControlledSpace(boardState: BoardState) {
+  const chains = getAllChains(boardState);
+  const length = boardState.board[0].length;
+  const whiteControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.white, length * 2)
+    .map((eye) => eye.chain)
+    .flat();
+  const blackControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.black, length * 2)
+    .map((eye) => eye.chain)
+    .flat();
+
+  const ownedPointGrid = Array.from({ length }, () => Array.from({ length }, () => playerColors.empty));
+  whiteControlledEmptyNodes.forEach((node) => {
+    ownedPointGrid[node.x][node.y] = playerColors.white;
+  });
+  blackControlledEmptyNodes.forEach((node) => {
+    ownedPointGrid[node.x][node.y] = playerColors.black;
+  });
+
+  return ownedPointGrid;
+}
+
 /**
   Clear the chain and liberty data of all points in the given chains
  */

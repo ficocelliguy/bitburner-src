@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import { getSizeClass, GoPoint } from "./GoPoint";
 import { useRerender } from "../../ui/React/hooks";
 import { boardStyles } from "../boardState/goStyles";
-import { getAllChains, getAllPotentialEyes, getAllValidMoves } from "../boardAnalysis/boardAnalysis";
+import { getAllValidMoves, getControlledSpace } from "../boardAnalysis/boardAnalysis";
 import { BoardState, opponents, playerColors } from "../boardState/goConstants";
 
 interface IProps {
@@ -27,26 +27,7 @@ export function GoGameboard({ boardState, traditional, clickHandler, hover }: IP
     [boardState, hover, currentPlayer],
   );
 
-  const ownedEmptyNodes = useMemo(() => {
-    const chains = getAllChains(boardState);
-    const length = boardState.board[0].length;
-    const whiteControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.white, length * 2)
-      .map((eye) => eye.chain)
-      .flat();
-    const blackControlledEmptyNodes = getAllPotentialEyes(boardState, chains, playerColors.black, length * 2)
-      .map((eye) => eye.chain)
-      .flat();
-
-    const ownedPointGrid = Array.from({ length }, () => Array.from({ length }, () => playerColors.empty));
-    whiteControlledEmptyNodes.forEach((node) => {
-      ownedPointGrid[node.x][node.y] = playerColors.white;
-    });
-    blackControlledEmptyNodes.forEach((node) => {
-      ownedPointGrid[node.x][node.y] = playerColors.black;
-    });
-
-    return ownedPointGrid;
-  }, [boardState]);
+  const ownedEmptyNodes = useMemo(() => getControlledSpace(boardState), [boardState]);
 
   function pointIsValid(x: number, y: number) {
     return !!availablePoints.find((point) => point.x === x && point.y === y);

@@ -144,9 +144,9 @@ Example 5x5 board state, with a number of networks for each player:
    ".XOO.", ]
 ```
 
-The board state can be used to look at all the nodes touching a given point, by looking at an adjacent pair of coordinates. For example, this returns a list of all the nodes connected to the current point:
+The board state can be used to look at all the nodes touching a given point, by looking at an adjacent pair of coordinates.
 
-For example, the point to the 'north' of the current point `x,y` can be retrieved with `board[x + 1]?.[y]`. If it is a friendly router it will have value `"X"`. (It will be undefined if `x,y` is on the north edge of the subnet)
+For example, the point to the 'north' of the current point `x, y` can be retrieved with `board[x + 1]?.[y]`. If it is a friendly router it will have value `"X"`. (It will be undefined if `x,y` is on the north edge of the subnet)
 
 That info can be used to make decisions about where to place routers.
 
