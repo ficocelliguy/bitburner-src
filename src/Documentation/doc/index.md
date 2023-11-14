@@ -21,6 +21,7 @@
 - [stockmarket](basic/stockmarket.md)
 - [world](basic/world.md)
 - [codingcontracts](basic/codingcontracts.md)
+- [IPvGO](basic/go_algorithms.md)
 
 ## Advanced Mechanics
 

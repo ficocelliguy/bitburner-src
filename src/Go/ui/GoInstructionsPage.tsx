@@ -4,6 +4,8 @@ import { Grid, Link, Typography } from "@mui/material";
 import { getBoardFromSimplifiedBoardState } from "../boardAnalysis/boardAnalysis";
 import { opponents, playerColors } from "../boardState/goConstants";
 import { GoTutorialChallenge } from "./GoTutorialChallenge";
+import { Router } from "../../ui/GameRoot";
+import { Page } from "../../ui/Router";
 
 const captureChallenge = (
   <GoTutorialChallenge
@@ -196,7 +198,11 @@ export const GoInstructionsPage = (): React.ReactElement => {
             <br />
             <br />
             <Typography>
-              * You can place routers and look at the board state via the "ns.go" api.
+              * You can place routers and look at the board state via the "ns.go" api. For more details, go to the IPvGO
+              page in the{" "}
+              <Link style={{ cursor: "pointer" }} onClick={() => Router.toPage(Page.Documentation)}>
+                Bitburner Documentation
+              </Link>
               <br />
               <br />
               * If a network surrounds a single empty node, the opponent can eventually capture it by filling in that
