@@ -3,6 +3,7 @@ import { getGoPlayerStartingState, opponentDetails, opponents } from "../boardSt
 import { floor } from "../boardState/boardState";
 import { Player } from "@player";
 import { defaultMultipliers, mergeMultipliers, Multipliers } from "../../PersonObjects/Multipliers";
+import { PlayerObject } from "../../PersonObjects/Player/PlayerObject";
 
 /**
  * Calculates the effect size of the given player boost, based on the node power (points based on number of subnet
@@ -69,6 +70,20 @@ function calculateMults(): Multipliers {
     }
   });
   return mults;
+}
+
+export function resetGoNodePower(player: PlayerObject) {
+  [
+    opponents.Netburners,
+    opponents.SlumSnakes,
+    opponents.TheBlackHand,
+    opponents.Daedalus,
+    opponents.Illuminati,
+  ].forEach((opponent) => {
+    player.go.status[opponent].nodePower = 0;
+    player.go.status[opponent].nodes = 0;
+    player.go.status[opponent].winStreak = 0;
+  });
 }
 
 function formatPercent(n: number) {

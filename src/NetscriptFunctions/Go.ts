@@ -148,7 +148,7 @@ async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void
     };
   } else {
     helpers.log(ctx, () => `Cheat failed. Your turn has been skipped.`);
-    passTurn(Player.go.boardState, false);
+    passTurn(Player.go.boardState, playerColors.black, false);
     return getAIMove(ctx, Player.go.boardState, false);
   }
 }
@@ -175,7 +175,7 @@ export function NetscriptGo(): InternalAPI<Go> {
         return (await makePlayerMove(ctx, x, y)) ?? invalidMoveResponse;
       },
     passTurn: (ctx: NetscriptContext) => async (): Promise<Play> => {
-      passTurn(Player.go.boardState);
+      passTurn(Player.go.boardState, playerColors.black);
       if (Player.go.boardState.previousPlayer === null) {
         logEndGame(ctx);
         return Promise.resolve({

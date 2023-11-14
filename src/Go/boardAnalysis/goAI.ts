@@ -84,7 +84,7 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
     };
   } else {
     console.debug("No valid moves found");
-    return handleNoMoveFound(boardState);
+    return handleNoMoveFound(boardState, player);
   }
 }
 
@@ -94,9 +94,10 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
  * Ends the game if the player passed on the previous turn before the AI passes,
  *   or if the player will be forced to pass their next turn after the AI passes.
  */
-function handleNoMoveFound(boardState: BoardState) {
-  passTurn(boardState);
-  const remainingTerritory = getAllValidMoves(boardState, playerColors.black).length;
+function handleNoMoveFound(boardState: BoardState, player: playerColors) {
+  passTurn(boardState, player);
+  const opposingPlayer = player === playerColors.white ? playerColors.black : playerColors.white;
+  const remainingTerritory = getAllValidMoves(boardState, opposingPlayer).length;
   if (remainingTerritory > 0 && boardState.passCount < 2) {
     return {
       type: playTypes.pass,

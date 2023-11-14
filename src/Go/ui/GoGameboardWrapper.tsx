@@ -21,13 +21,30 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 // TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
 
 // FUTURE: Confirm balance of rewards
-// FUTURE: Confirm if rewards should be reset on augmentation
-// FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it?
+// FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it
+// FUTURE: Limit cheat API to source file holders
 
-// FUTURE: New bitnode? API access given? Boosts to effects?
-// FUTURE: Augmentations?
-// FUTURE: Unlock larger boards with bitnodes?
-// FUTURE: ways to reduce opponent handicap?
+/**
+ Bitnode ideas:
+ - increased stat multipliers from node power
+ - increased favor cap (100 -> 125?)
+ - increased board sizes? (test 19x19 board)
+ - Access to cheat API?
+ - Easier cheating?
+
+ 14.1
+ - 20% increased node power?
+ - Favor cap + 10 ?
+
+ 14.2
+ - 30% increased node power?
+ - Access to go.cheat API
+
+ 14.3
+ - 25% increased cheat success chance
+ - Favor cap +15
+
+ */
 
 interface IProps {
   showInstructions: () => void;
@@ -94,7 +111,7 @@ export function GoGameboardWrapper({ showInstructions }: IProps): React.ReactEle
 
   function passPlayerTurn() {
     if (boardState.previousPlayer === playerColors.white) {
-      passTurn(boardState);
+      passTurn(boardState, playerColors.black);
       updateBoard(boardState);
     }
     if (boardState.previousPlayer === null) {

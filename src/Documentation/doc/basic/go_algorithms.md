@@ -1,8 +1,8 @@
-// TODO: This document
-
 # Programming a basic IPvGO script
 
-IPvGO (accessible from DefComm in New Tokyo, or the CIA in Sector-12) is a strategic territory control minigame. Form networks of routers on a grid to control open space and gain stat rewards or favor, but make sure the opposing faction does not surround and destroy your network! For basic instructions on how to play, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is focused on building scripts to automate subnet takeover, which will make more sense once you have played a few subnets.
+IPvGO (accessible from DefComm in New Tokyo, or the CIA in Sector-12) is a strategic territory control minigame. Form networks of routers on a grid to control open space and gain stat rewards or favor, but make sure the opposing faction does not surround and destroy your network! 
+
+For basic instructions on how to play, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is focused on building scripts to automate subnet takeover, which will make more sense once you have played a few subnets.
 
 ### Overview
 
@@ -10,7 +10,7 @@ The rules of Go, at their heart, are very simple. Because of this, they can be u
 
 This script can be iteratively improved upon, gradually giving it more tools and types of move to look for, and becoming more consistent at staking out territory on the current subnet.
 
-This document starts out with a lot of detail and example code to get you started, but will transition to more high-level algorithm design and pseudocode as it progresses.
+This document starts out with a lot of detail and example code to get you started, but will transition to more high-level algorithm design and pseudocode as it progresses. If you get stuck implementing some of these ideas, feel free to discuss in the [official Discord server](https://discord.gg/TFc3hKD)
 
 ## Script outline: Starting with the basics
 
@@ -53,7 +53,8 @@ const getRandomMove = (board, validMoves) => {
     for (let y = 0; y < size; y++) {
       // Make sure the point is a valid move
       const isValidMove = validMoves[x][y] === true;
-      // Leave some spaces to make it harder to capture our pieces
+      // Leave some spaces to make it harder to capture our pieces.
+      // We don't want to run out of empty node connections!
       const isNotReservedSpace = x % 2 === 1 || y % 2 === 1;
 
       if (isValidMove && isNotReservedSpace) {
@@ -155,8 +156,8 @@ In order to expand the area that is controlled by the player's networks, connect
 ```
 Detect expansion moves:
    For each point on the board:
-      * If the point is valid, and
-      * If the point is not a reserved open space [see getRandomMove()], and
+      * If the emtpy point is a valid move, and
+      * If the point is not an open space reserved to protect the network [see getRandomMove()], and
       * If a point to the north, south, east, or west is a friendly router
 
       Then, the move will expand an existing network
@@ -188,18 +189,91 @@ function killDuplicates(ns) {
 }
 ```
 
-## Capturing the opponent's networks
+## Move option: Capturing the opponent's networks
 
-## Defending your networks from capture
+If the opposing faction's network is down to its last open port, placing a router in that empty node will capture and destroy that entire network.
 
-## Smothering the opponent's networks
+To find out what networks are in danger of capture, `ns.go.analysis.getLiberties()` shows how many empty nodes / open ports each network has. As with `getBoardState()` and `getValidMoves()` , the number of liberties (open ports) for a given point's network can be retrieved via its coordinates `[x][y]` on the grid returned by `getLiberties()`
 
-## Expanding your networks' connections to empty nodes
+```
+Detect moves to capture the opponent's routers:
+   For each point on the board:
+      * If the emtpy point is a valid move, and
+      * If a point to the north, south, east, or west is a router with exactly 1 liberty [via its coordinates in getLiberties()], and
+      * That point is controlled by the opponent [it is a "O" via getBoardState()]
 
-## Encircling space to control empty nodes
+      Then, playing that move will capture the opponent's network.
+```
 
-## Other moves
+## Move option: Defending your networks from capture
 
-- jumps and knights' moves
-- pattern matching for cuts and hane
-- surround and then invade opponent territory
+`getLiberties()` can also be used to detect your own networks that are in danger of being captured, and look for moves to try and save it.
+
+```
+Detect moves to defend a threatened network:
+   For each point on the board:
+      * If the emtpy point is a valid move, and
+      * If a point to the north, south, east, or west is a router with exactly 1 liberty [via its coordinates in getLiberties()], and
+      * That point is controlled by the player [it is a "X" via getBoardState()]
+
+      Then, that network is in danger of being captured.
+
+
+   To detect if that network can be saved:
+
+   * Ensure the new move will not immediately allow the opponent to capture:
+      * That empty point ALSO has two or more empty points adjacent to it [a "." via getBoardState()], OR
+      * That empty point has a friendly network adjacent to it, and that network has 3 or more liberties [via getLiberties()]
+
+      Then, playing that move will prevent your network from being captured (at least for a turn or two)
+```
+
+## Move option: Smothering the opponent's networks
+
+In some cases, an opponent's network cannot YET be captured, but by placing routers all around it, the network can be captured on a future move. (Or at least you force the opponent to waste moves defending their network.)
+
+There are many ways to approach this, but the simplest is to look for any opposing network with the fewest liberties remaining (ideally 2), and find a safe point to place a router that touches it.
+
+To make sure the move will not immediately get re-captured, make sure the point you play on has two adjacent empty nodes, or is touching a friendly network with three+ liberties. (This is the same as the check in the move to defend a friendly chain.)
+
+## Move option: Expanding your networks' connections to empty nodes
+
+The more empty nodes a network touches, the stronger it is, and the more territory it influences. Thus, placing routers that touch a friendly network and also to as many open nodes as possible is often a strong move.
+
+This is similar to the logic for defending your networks from immediate capture. Look for a friendly network with the fewest open ports, and find an empty node adjacent to it that touches multiple other empty nodes.
+
+## Move option: Encircling space to control empty nodes
+
+## Choosing a good move option
+
+Having multiple plausible moves to select from is helpful, but choosing the right option is important to making a strong Go script. In some cases, if a move type is available, it is almost always worth playing (such as defending your network from immediate capture, or capturing a vulnerable enemy network)
+
+Each of the IPvGO factions has a few moves they will almost always choose (The Black hand will always capture if possible, for example). Coming up with a simple prioritized list is a good start to compete with these scripts. Experiment to see what works best!
+
+This idea can be improved, however, by including information such as the size of the network that is being threatened or that is vulnerable to capture. It is probably worth giving up one router in exchange for capturing a large enemy network, for example. Adding two new open ports to a large network is helpful, but limiting an opponent's network to one open port might be better.
+
+## Other types of move options
+
+**Preparing to invade the opponent**
+
+Empty areas that are completely surrounded and controlled by a single player can be seen via `ns.go.analysis.getControlledEmptyNodes()`. However, just because the area is currently controlled by the opponent does not mean it cannot be attacked! Start by surrounding an opponent's network from the outside, then it can be captured by attacking the space it surrounds and controls. (Note that this only works on networks that have a single interior empty space: if they have multiple inner empty points, the suicide rule prevents you from filling any of them)
+
+**Wrapping empty space**
+
+The starting script uses some very simple logic to leave open empty nodes inside its networks (simply excluding points with `x % 2 === 0 && y % 2 === 0`). However, it is very strong to look for ways to actively surround empty space.
+
+Look for moves that connect a network to the edge of a board that touch an empty node, or look for moves that connect two networks and touch an empty node. Or, look for a move that touches a friendly network and splits apart a chain of empty nodes.
+
+**Jumps and Knights' moves**
+
+The factions currently only look at moves directly connected to friendly or enemy networks in most cases. however, especially on the larger board, playing a router a few spaces away from an existing line/network allows the player to influence more territory, compared to slower moves that connect one adjacent node at a time. Consider skipping a node or two, or playing diagonally, or combining them to make L shaped jumps (like a knight's move in chess)
+
+**Pattern Matching**
+
+There are a lot of strong shapes in Go, that are worth attempting to re-create. The factions look for ways to slip diagonally between the players' networks and cut them apart. They also look for ways to wrap around isolated opposing routers. Consider making a small library of strong shapes, then looking to match them on the board (or their rotations or mirrors). The exact shapes will require some research into Go, but there is a lot of good documentation online about this idea.
+
+**Creating "Eyes"**
+
+If a single network fully encloses two different disconnected empty nodes, it can never be taken. (If it only had one inner airspace, the opponent could eventually surround and then fill it to capture the network. If there is two, however, the suicide rule prevents them from filling either inner empty space.) Detecting moves that make figure-8 type shapes, or split an encircled empty node chain into two smaller ones, are very strong.
+
+In addition, if the opponent has only a single such move, playing there first to block it is often extremely disruptive, and can even lead to their network being captured.
