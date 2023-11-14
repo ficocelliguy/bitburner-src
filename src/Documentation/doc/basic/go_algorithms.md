@@ -10,6 +10,8 @@ The rules of Go, at their heart, are very simple. Because of this, they can be u
 
 This script can be iteratively improved upon, gradually giving it more tools and types of move to look for, and becoming more consistent at staking out territory on the current subnet.
 
+This document starts out with a lot of detail and example code to get you started, but will transition to more high-level algorithm design and pseudocode as it progresses.
+
 ## Script outline: Starting with the basics
 
 ### Testing Validity
@@ -134,50 +136,43 @@ Just playing random moves is not very effective, though. The next step is to use
 
 Example 5x5 board state, with a number of networks for each player:
 
-```js
-["XX.O.", "X..OO", ".XO..", "XXO..", ".XOO."];
+```angularjs
+[  "XX.O.",
+   "X..OO",
+   ".XO..",
+   "XXO..",
+   ".XOO.", ]
 ```
 
 The board state can be used to look at all the nodes touching a given point, by looking at an adjacent pair of coordinates. For example, this returns a list of all the nodes connected to the current point:
 
-```js
-/**
- * Find all adjacent points in the four connected directions
- */
-const getNeighbors = (board, x, y) => {
-  const north = board[x + 1]?.[y];
-  const east = board[x][y + 1];
-  const south = board[x - 1]?.[y];
-  const west = board[x]?.[y - 1];
-
-  return [north, east, south, west];
-};
-```
+For example, the point to the 'north' of the current point `x,y` can be retrieved with `board[x + 1]?.[y]`. If it is a friendly router it will have value `"X"`. (It will be undefined if `x,y` is on the north edge of the subnet)
 
 That info can be used to make decisions about where to place routers.
 
 In order to expand the area that is controlled by the player's networks, connecting to friendly routers (when possible) is a strong move. This can be done with a very similar implementation to `getRandomMove()`, with the additional check of looking for a neighboring friendly router. For each point on the board:
 
-```js
-// make sure the move is valid
-const isValidMove = validMoves[x][y];
-// Leave some open spaces to make it harder to capture our pieces
-const isNotReservedSpace = x % 2 || y % 2;
+```
+Detect expansion moves:
+   For each point on the board:
+      * If the point is valid, and
+      * If the point is not a reserved open space [see getRandomMove()], and
+      * If a point to the north, south, east, or west is a friendly router
 
-// Make sure we are connected to a friendly piece
-const neighbors = getNeighbors(board, x, y);
-const hasFriendlyNeighbor = neighbors.includes("X");
-
-if (isValidMove && isNotReservedSpace && hasFriendlyNeighbor) {
-  // add to valid moves list
-}
+      Then, the move will expand an existing network
 ```
 
 When possible, an expansion move like this should be used over a random move. When neither can be found, pass turn.
 
-After implementing this, the script will consistently get points on the subnet against most opponents (at least on the larger boards), and will sometimes even get lucky and win against the easiest factions. However, there is a lot we can still do to improve the script.
+After implementing this, the script will consistently get points on the subnet against most opponents (at least on the larger boards), and will sometimes even get lucky and win against the easiest factions.
 
-## Killing duplicate scripts
+### Next Steps
+
+There is a lot we can still do to improve the script. For one, it currently only plays one game, and must be restarted each time! Also, it does not re-set the subnet upon game completion yet.
+
+In addition, the script only knows about a few types of moves, and does not yet know how to capture or defend networks.
+
+### Killing duplicate scripts
 
 Because there is only one subnet active at any time, you do not want multiple copies of your scripts running and competing with each other.
 
