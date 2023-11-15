@@ -1,6 +1,6 @@
 # Programming a basic IPvGO script
 
-IPvGO is a strategic territory control minigame accessible from DefComm in New Tokyo, or the CIA in Sector-12. Form networks of routers on a grid to control open space and gain stat multipliers and favor, but make sure the opposing faction does not surround and destroy your network! 
+IPvGO is a strategic territory control minigame accessible from DefComm in New Tokyo, or the CIA in Sector-12. Form networks of routers on a grid to control open space and gain stat multipliers and favor, but make sure the opposing faction does not surround and destroy your network!
 
 For basic instructions, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is specifically focused on building scripts to automate subnet takeover, which will be more applicable you have played a few subnets.
 
