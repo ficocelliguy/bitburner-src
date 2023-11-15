@@ -557,7 +557,7 @@ export function CharacterStats(): React.ReactElement {
                 {
                   mult: "IPvGO Node Power bonus",
                   value:
-                    Player.bitNodeN === 14 || Player.sourceFileLvl(14)
+                    Player.sourceFileLvl(14)
                       ? 1.25 * currentNodeMults.GoPower
                       : currentNodeMults.GoPower,
                 },
