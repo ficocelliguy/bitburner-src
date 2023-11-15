@@ -15,7 +15,7 @@ import file12 from "!!raw-loader!./doc/basic/codingcontracts.md";
 import file13 from "!!raw-loader!./doc/basic/companies.md";
 import file14 from "!!raw-loader!./doc/basic/crimes.md";
 import file15 from "!!raw-loader!./doc/basic/factions.md";
-import file16 from "!!raw-loader!./doc/basic/go_algorithms.md";
+import file16 from "!!raw-loader!./doc/programming/go_algorithms.md";
 import file17 from "!!raw-loader!./doc/basic/hacking.md";
 import file18 from "!!raw-loader!./doc/basic/hacknet_nodes.md";
 import file19 from "!!raw-loader!./doc/basic/infiltration.md";

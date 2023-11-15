@@ -5,6 +5,7 @@ IPvGO is a strategic territory control minigame accessible from DefComm in New T
 For basic instructions, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is specifically focused on building scripts to automate subnet takeover, which will be more applicable you have played a few subnets.
 
 &nbsp;
+
 #### Overview
 
 The rules of Go, at their heart, are very simple. Because of this, they can be used to make a very simple script to automatically collect node power from IPvGO subnets.
@@ -14,9 +15,11 @@ This script can be iteratively improved upon, gradually giving it more tools and
 This document starts out with a lot of detail and example code to get you started, but will transition to more high-level algorithm design and pseudocode as it progresses. If you get stuck implementing some of these ideas, feel free to discuss in the [official Discord server](https://discord.gg/TFc3hKD)
 
 &nbsp;
-###  Script outline: Starting with the basics
+
+### Script outline: Starting with the basics
 
 &nbsp;
+
 #### Testing Validity
 
 The `ns.go` API provides a number of useful tools to understand the current subnet state.
@@ -34,6 +37,7 @@ if (validMoves[x][y] === true) {
 ```
 
 &nbsp;
+
 #### Choosing a random move
 
 The simplest move type, and the fallback if no other move can be found, is to pick a random valid move.
@@ -74,6 +78,7 @@ const getRandomMove = (board, validMoves) => {
 ```
 
 &nbsp;
+
 #### Playing moves
 
 Now that a simple move type is available, it can be used to play on the current subnet!
@@ -94,6 +99,7 @@ Both `makeMove()` and `passTurn()` , when awaited, return an object that tells y
   y: number; // Opponent move's y coord (if applicable)
 }
 ```
+
 &nbsp;
 
 When used together with the `getRandomMove()` implemented above, the framework of the script is ready. An example `main()` that implements this is below. Search for a new subnet using the UI, then launch the script you have been working on, and watch it play!
@@ -136,6 +142,7 @@ export async function main(ns) {
 ```
 
 &nbsp;
+
 ### Adding network expansion moves
 
 Just playing random moves is not very effective, though. The next step is to use the board state to try and take over territory.
@@ -175,6 +182,7 @@ When possible, an expansion move like this should be used over a random move. Wh
 After implementing this, the script will consistently get points on the subnet against most opponents (at least on the larger boards), and will sometimes even get lucky and win against the easiest factions.
 
 &nbsp;
+
 #### Next Steps
 
 There is a lot we can still do to improve the script. For one, it currently only plays one game, and must be restarted each time! Also, it does not re-set the subnet upon game completion yet.
@@ -182,6 +190,7 @@ There is a lot we can still do to improve the script. For one, it currently only
 In addition, the script only knows about a few types of moves, and does not yet know how to capture or defend networks.
 
 &nbsp;
+
 #### Killing duplicate scripts
 
 Because there is only one subnet active at any time, you do not want multiple copies of your scripts running and competing with each other.
@@ -199,6 +208,7 @@ function killDuplicates(ns) {
 ```
 
 &nbsp;
+
 ### Move option: Capturing the opponent's networks
 
 If the opposing faction's network is down to its last open port, placing a router in that empty node will capture and destroy that entire network.
@@ -216,6 +226,7 @@ Detect moves to capture the opponent's routers:
 ```
 
 &nbsp;
+
 ### Move option: Defending your networks from capture
 
 `getLiberties()` can also be used to detect your own networks that are in danger of being captured, and look for moves to try and save it.
@@ -240,6 +251,7 @@ Detect moves to defend a threatened network:
 ```
 
 &nbsp;
+
 ### Move option: Smothering the opponent's networks
 
 In some cases, an opponent's network cannot YET be captured, but by placing routers all around it, the network can be captured on a future move. (Or at least you force the opponent to spend moves defending their network.)
@@ -249,6 +261,7 @@ There are many ways to approach this, but the simplest is to look for any opposi
 To make sure the move will not immediately get re-captured, make sure the point you play on has two adjacent empty nodes, or is touching a friendly network with three+ liberties. (This is the same as the check in the move to defend a friendly chain.)
 
 &nbsp;
+
 ### Move option: Expanding your networks' connections to empty nodes
 
 The more empty nodes a network touches, the stronger it is, and the more territory it influences. Thus, placing routers that touch a friendly network and also to as many open nodes as possible is often a strong move.
@@ -256,9 +269,11 @@ The more empty nodes a network touches, the stronger it is, and the more territo
 This is similar to the logic for defending your networks from immediate capture. Look for a friendly network with the fewest open ports, and find an empty node adjacent to it that touches multiple other empty nodes.
 
 &nbsp;
+
 ### Move option: Encircling space to control empty nodes
 
 &nbsp;
+
 ### Choosing a good move option
 
 Having multiple plausible moves to select from is helpful, but choosing the right option is important to making a strong Go script. In some cases, if a move type is available, it is almost always worth playing (such as defending your network from immediate capture, or capturing a vulnerable enemy network)
@@ -268,6 +283,7 @@ Each of the IPvGO factions has a few moves they will almost always choose (The B
 This idea can be improved, however, by including information such as the size of the network that is being threatened or that is vulnerable to capture. It is probably worth giving up one router in exchange for capturing a large enemy network, for example. Adding two new open ports to a large network is helpful, but limiting an opponent's network to one open port might be better.
 
 &nbsp;
+
 ### Other types of move options
 
 **Preparing to invade the opponent**
