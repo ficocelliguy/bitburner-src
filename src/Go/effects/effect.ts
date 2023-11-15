@@ -11,7 +11,28 @@ import { PlayerObject } from "../../PersonObjects/Player/PlayerObject";
  */
 export function CalculateEffect(nodes: number, faction: opponents): number {
   const power = getEffectPowerForFaction(faction);
-  return 1 + (Math.log(nodes + 1) / 140) * Math.pow((nodes + 1) / 3, 0.3) * power * currentNodeMults.GoPower;
+  const sourceFileBonus = Player.bitNodeN === 14 || Player.sourceFileLvl(14) ? 1.25 : 1;
+  return (
+    1 +
+    (Math.log(nodes + 1) / 140) * Math.pow((nodes + 1) / 3, 0.3) * power * currentNodeMults.GoPower * sourceFileBonus
+  );
+}
+
+export function getMaxFavor() {
+  const isCurrentBitNode = Player.bitNodeN === 14;
+  const sourceFileLevel = Player.sourceFileLvl(14) + (isCurrentBitNode ? 1 : 0);
+
+  if (sourceFileLevel === 1) {
+    return 90;
+  }
+  if (sourceFileLevel === 2) {
+    return 100;
+  }
+  if (sourceFileLevel >= 3) {
+    return 120;
+  }
+
+  return 80;
 }
 
 /**

@@ -36,6 +36,9 @@ export class BitNodeMultipliers {
   /** Influences how much money the player earns when completing working their job. */
   CompanyWorkMoney = 1;
 
+  /** Influences how much rep the player gains when performing work for a company. */
+  CompanyWorkRepGain = 1;
+
   /** Influences the valuation of corporations created by the player. */
   CorporationValuation = 1;
 
@@ -44,6 +47,9 @@ export class BitNodeMultipliers {
 
   /** Influences the base money gained when the player commits a crime. */
   CrimeMoney = 1;
+
+  /** influences the success chance of committing crimes */
+  CrimeSuccessRate = 1;
 
   /** Influences how many Augmentations you need in order to get invited to the Daedalus faction */
   DaedalusAugsRequirement = 30;

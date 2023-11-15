@@ -157,7 +157,7 @@ async function determineCheatSuccess(ctx: NetscriptContext, callback: () => void
  * Cheating success rate scales with player's crime success rate.
  */
 function cheatSuccessChance() {
-  return Math.min(0.2 * Player.mults.crime_success, 1);
+  return Math.min(0.2 * Player.mults.crime_success, 0.8);
 }
 
 /**
@@ -175,6 +175,11 @@ export function NetscriptGo(): InternalAPI<Go> {
         return (await makePlayerMove(ctx, x, y)) ?? invalidMoveResponse;
       },
     passTurn: (ctx: NetscriptContext) => async (): Promise<Play> => {
+      if (Player.go.boardState.previousPlayer === playerColors.black) {
+        helpers.log(ctx, () => `It is not your turn; you cannot pass.`);
+        return Promise.resolve(invalidMoveResponse);
+      }
+
       passTurn(Player.go.boardState, playerColors.black);
       if (Player.go.boardState.previousPlayer === null) {
         logEndGame(ctx);

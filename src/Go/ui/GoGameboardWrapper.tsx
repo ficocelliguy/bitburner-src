@@ -18,8 +18,6 @@ import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 
-// TODO: .md document on go script design, with link or instructions on how to find from IPvGO instructions page
-
 // FUTURE: Confirm balance of rewards
 // FUTURE: Show the IPvGO Subnet nav link on the left side only after player discovers it
 // FUTURE: Limit cheat API to source file holders
@@ -27,22 +25,22 @@ import { GoSubnetSearch } from "./GoSubnetSearch";
 /**
  Bitnode ideas:
  - increased stat multipliers from node power
- - increased favor cap (100 -> 125?)
+ - increased favor cap (80 -> 120?)
  - increased board sizes? (test 19x19 board)
  - Access to cheat API?
  - Easier cheating?
 
  14.1
- - 20% increased node power?
- - Favor cap + 10 ?
+ - 25% increased node power
+ - Favor cap + 10
 
  14.2
- - 30% increased node power?
  - Access to go.cheat API
+ - Favor cap + 20
 
  14.3
  - 25% increased cheat success chance
- - Favor cap +15
+ - Favor cap +40
 
  */
 

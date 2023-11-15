@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableRow, Typography, Tooltip } from "@mui/material";
 import { Player } from "@player";
-import { getBonusText, getDifficultyMultiplier, getWinstreakMultiplier } from "../effects/effect";
+import { getBonusText, getDifficultyMultiplier, getMaxFavor, getWinstreakMultiplier } from "../effects/effect";
 import { goScore, opponents, playerColors } from "../boardState/goConstants";
 import { boardStyles } from "../boardState/goStyles";
 import { formatNumber } from "../../ui/formatNumber";
@@ -84,7 +84,7 @@ export const GoScorePowerSummary = ({ finalScore, opponent }: IProps) => {
           title={
             <>
               Win streaks against a faction will give you +1 favor to that faction <br /> at certain numbers of wins (up
-              to a max of 100 favor), <br />
+              to a max of {getMaxFavor()} favor), <br />
               if you are currently a member of that faction
             </>
           }

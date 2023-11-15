@@ -3986,7 +3986,7 @@ export interface Go {
   cheat: {
     /**
      * Returns your chance of successfully playing one of the special moves in the ns.go.cheat API.
-     * Scales with your crime success rate stat.
+     * Scales with your crime success rate stat. Caps at 80%.
      *
      * Warning: if you fail to play a cheat move, your turn will be skipped. In addition, if you fail, there is a
      * small (~10%) chance you will instantly be ejected from the subnet.

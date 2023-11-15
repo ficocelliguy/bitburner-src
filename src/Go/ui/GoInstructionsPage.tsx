@@ -6,6 +6,7 @@ import { opponents, playerColors } from "../boardState/goConstants";
 import { GoTutorialChallenge } from "./GoTutorialChallenge";
 import { Router } from "../../ui/GameRoot";
 import { Page } from "../../ui/Router";
+import { getMaxFavor } from "../effects/effect";
 
 const captureChallenge = (
   <GoTutorialChallenge
@@ -154,7 +155,7 @@ export const GoInstructionsPage = (): React.ReactElement => {
               <br />
               <br />
               Win streaks against a faction will give you +1 favor to that faction at certain numbers of wins (up to a
-              max of 100 favor), if you are currently a member of that faction.
+              max of {getMaxFavor()} favor), if you are currently a member of that faction.
             </Typography>
           </Grid>
         </Grid>
