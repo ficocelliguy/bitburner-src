@@ -597,7 +597,11 @@ async function getMoveOptions(
   const eyeBlock = endGameAvailable ? null : getEyeBlockingMove(boardState, player, availableSpaces);
   await sleep(80);
   const pattern = endGameAvailable ? null : await findAnyMatchedPatterns(boardState, player, availableSpaces, smart);
-  const random = availableSpaces[floor(rng * availableSpaces.length)];
+
+  // Only offer a random move if there are some good potential options.
+  // (Random move should not be picked if the AI would otherwise pass turn.)
+  const someMovesFound = [growthMove, expansionMove, surroundMove, eyeMove, pattern].filter(isNotNull).length
+  const random = someMovesFound ? availableSpaces[floor(rng * availableSpaces.length)] : null;
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;
   const defendCaptureMove =
