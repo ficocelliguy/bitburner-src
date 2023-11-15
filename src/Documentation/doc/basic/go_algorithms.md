@@ -1,8 +1,8 @@
 # Programming a basic IPvGO script
 
-IPvGO (accessible from DefComm in New Tokyo, or the CIA in Sector-12) is a strategic territory control minigame. Form networks of routers on a grid to control open space and gain stat rewards or favor, but make sure the opposing faction does not surround and destroy your network! 
+IPvGO is a strategic territory control minigame accessible from DefComm in New Tokyo, or the CIA in Sector-12. Form networks of routers on a grid to control open space and gain stat multipliers and favor, but make sure the opposing faction does not surround and destroy your network! 
 
-For basic instructions on how to play, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is focused on building scripts to automate subnet takeover, which will make more sense once you have played a few subnets.
+For basic instructions, go to DefComm or CIA to access the current subnet, and look through the "How to Play" section. This document is specifically focused on building scripts to automate subnet takeover, which will be more applicable you have played a few subnets.
 
 ### Overview
 
@@ -230,7 +230,7 @@ Detect moves to defend a threatened network:
 
 ## Move option: Smothering the opponent's networks
 
-In some cases, an opponent's network cannot YET be captured, but by placing routers all around it, the network can be captured on a future move. (Or at least you force the opponent to waste moves defending their network.)
+In some cases, an opponent's network cannot YET be captured, but by placing routers all around it, the network can be captured on a future move. (Or at least you force the opponent to spend moves defending their network.)
 
 There are many ways to approach this, but the simplest is to look for any opposing network with the fewest liberties remaining (ideally 2), and find a safe point to place a router that touches it.
 
