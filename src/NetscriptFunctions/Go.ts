@@ -120,6 +120,19 @@ function resetBoardState() {
   return getSimplifiedBoardState(Player.go.boardState.board);
 }
 
+/** Validate singularity access by throwing an error if the player does not have access. */
+function checkCheatApiAccess(ctx: NetscriptContext): void {
+  const hasSourceFile = Player.sourceFileLvl(14) > 1;
+  const isBitnodeFourteenTwo = Player.sourceFileLvl(14) === 1 && Player.bitNodeN === 14;
+  if (!hasSourceFile && !isBitnodeFourteenTwo) {
+    throw throwError(
+      ctx.workerScript,
+      `The go.cheat API requires Source-File 14.2 to run, a power up you obtain later in the game.
+      It will be very obvious when and how you can obtain it.`,
+    );
+  }
+}
+
 const invalidMoveResponse: Play = {
   success: false,
   type: playTypes.invalid,
@@ -271,12 +284,14 @@ export function NetscriptGo(): InternalAPI<Go> {
       },
     },
     cheat: {
-      getCheatSuccessChance: () => () => {
+      getCheatSuccessChance: (ctx: NetscriptContext) => () => {
+        checkCheatApiAccess(ctx);
         return cheatSuccessChance();
       },
       removeOpponentRouter:
         (ctx: NetscriptContext) =>
         async (_x, _y): Promise<Play> => {
+          checkCheatApiAccess(ctx);
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);
           validateRowAndColumn(ctx, x, y);
@@ -299,6 +314,7 @@ export function NetscriptGo(): InternalAPI<Go> {
       removeAllyRouter:
         (ctx: NetscriptContext) =>
         async (_x, _y): Promise<Play> => {
+          checkCheatApiAccess(ctx);
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);
           validateRowAndColumn(ctx, x, y);
@@ -320,6 +336,7 @@ export function NetscriptGo(): InternalAPI<Go> {
       playTwoMoves:
         (ctx: NetscriptContext) =>
         async (_x1, _y1, _x2, _y2): Promise<Play> => {
+          checkCheatApiAccess(ctx);
           const x1 = helpers.number(ctx, "x", _x1);
           const y1 = helpers.number(ctx, "y", _y1);
           validateRowAndColumn(ctx, x1, y1);

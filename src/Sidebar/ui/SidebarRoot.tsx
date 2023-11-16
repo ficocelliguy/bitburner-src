@@ -56,6 +56,7 @@ import { InvitationsSeen } from "../../Faction/ui/FactionsRoot";
 import { hash } from "../../hash/hash";
 import { Locations } from "../../Locations/Locations";
 import { useRerender } from "../../ui/React/hooks";
+import { playerHasDiscoveredGo } from "../../Go/effects/effect";
 
 const RotatedDoubleArrowIcon = React.forwardRef(function RotatedDoubleArrowIcon(
   props: { color: "primary" | "secondary" | "error" },
@@ -159,6 +160,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
   const canStockMarket = Player.hasWseAccount;
   const canBladeburner = !!Player.bladeburner;
   const canStaneksGift = Player.augmentations.some((aug) => aug.name === AugmentationName.StaneksGift1);
+  const canIPvGO = playerHasDiscoveredGo();
 
   const clickPage = useCallback(
     (page: Page) => {
@@ -351,7 +353,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
             canBladeburner && { key_: Page.Bladeburner, icon: FormatBoldIcon },
             canCorporation && { key_: Page.Corporation, icon: BusinessIcon },
             canGang && { key_: Page.Gang, icon: SportsMmaIcon },
-            { key_: Page.Go, icon: BorderInnerSharp },
+            canIPvGO && { key_: Page.Go, icon: BorderInnerSharp },
           ]}
         />
         <Divider />

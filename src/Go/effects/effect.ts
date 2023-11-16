@@ -106,6 +106,23 @@ export function resetGoNodePower(player: PlayerObject) {
   });
 }
 
+export function playerHasDiscoveredGo() {
+  const playedGame = Player.go.boardState.history.length || Player.go.previousGameFinalBoardState?.history?.length;
+  const hasRecords = [
+    opponents.Netburners,
+    opponents.SlumSnakes,
+    opponents.TheBlackHand,
+    opponents.Daedalus,
+    opponents.Illuminati,
+  ].find((opponent) => Player.go.status[opponent].wins + Player.go.status[opponent].losses);
+  const isInBn14 = Player.bitNodeN === 14;
+
+  // TODO: remove this once testing is completed
+  const isInTesting = true;
+
+  return !!(playedGame || hasRecords || isInBn14 || isInTesting);
+}
+
 function formatPercent(n: number) {
   return floor((n - 1) * 10000) / 100;
 }

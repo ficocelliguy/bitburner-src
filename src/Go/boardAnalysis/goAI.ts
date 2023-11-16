@@ -600,7 +600,7 @@ async function getMoveOptions(
 
   // Only offer a random move if there are some good potential options.
   // (Random move should not be picked if the AI would otherwise pass turn.)
-  const someMovesFound = [growthMove, expansionMove, surroundMove, eyeMove, pattern].filter(isNotNull).length
+  const someMovesFound = [growthMove, expansionMove, surroundMove, eyeMove, pattern].filter(isNotNull).length;
   const random = someMovesFound ? availableSpaces[floor(rng * availableSpaces.length)] : null;
 
   const captureMove = surroundMove && surroundMove?.newLibertyCount === 0 ? surroundMove : null;

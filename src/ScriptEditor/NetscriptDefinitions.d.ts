@@ -3981,7 +3981,7 @@ export interface Go {
   };
 
   /**
-   * Illicit and dangerous IPvGO tools. Not for the faint of heart.
+   * Illicit and dangerous IPvGO tools. Not for the faint of heart. Requires Bitnode 14.2 to use.
    */
   cheat: {
     /**
@@ -3993,6 +3993,7 @@ export interface Go {
      *
      * @remarks
      * RAM cost: 1 GB
+     * Requires Bitnode 14.2 to use
      */
     getCheatSuccessChance(): number;
     /**
@@ -4005,6 +4006,7 @@ export interface Go {
      *
      * @remarks
      * RAM cost: 4 GB
+     * Requires Bitnode 14.2 to use
      *
      * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
@@ -4027,6 +4029,7 @@ export interface Go {
      *
      * @remarks
      * RAM cost: 4 GB
+     * Requires Bitnode 14.2 to use
      *
      * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
@@ -4050,6 +4053,7 @@ export interface Go {
      *
      * @remarks
      * RAM cost: 4 GB
+     * Requires Bitnode 14.2 to use
      *
      * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
