@@ -35,7 +35,13 @@ import {
  *
  * @returns a validity explanation for if the move is legal or not
  */
-export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: number, player: PlayerColor) {
+export function evaluateIfMoveIsValid(
+  boardState: BoardState,
+  x: number,
+  y: number,
+  player: PlayerColor,
+  shortcut = true,
+) {
   const point = boardState.board?.[x]?.[y];
 
   if (boardState.previousPlayer === null) {
@@ -51,35 +57,37 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
   // Detect if the current player has ever previously played this move. Used to detect potential repeated board states
   const moveHasBeenPlayedBefore = !!boardState.history.find((board) => board[x][y].player === player);
 
-  // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is legal
-  const liberties = findAdjacentLibertiesForPoint(boardState, x, y);
-  const hasLiberty = liberties.north || liberties.east || liberties.south || liberties.west;
-  if (!moveHasBeenPlayedBefore && hasLiberty) {
-    return validityReason.valid;
-  }
+  if (shortcut) {
+    // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is legal
+    const liberties = findAdjacentLibertiesForPoint(boardState, x, y);
+    const hasLiberty = liberties.north || liberties.east || liberties.south || liberties.west;
+    if (!moveHasBeenPlayedBefore && hasLiberty) {
+      return validityReason.valid;
+    }
 
-  // If a connected friendly chain has more than one liberty, the move is not suicide. If the move is not repeated, it is legal
-  const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, x, y, player);
-  if (!moveHasBeenPlayedBefore && neighborChainLibertyCount > 1) {
-    return validityReason.valid;
-  }
+    // If a connected friendly chain has more than one liberty, the move is not suicide. If the move is not repeated, it is legal
+    const neighborChainLibertyCount = findMaxLibertyCountOfAdjacentChains(boardState, x, y, player);
+    if (!moveHasBeenPlayedBefore && neighborChainLibertyCount > 1) {
+      return validityReason.valid;
+    }
 
-  // If there is any neighboring enemy chain with only one liberty, and the move is not repeated, it is valid,
-  // because it would capture the enemy chain and free up some liberties for itself
-  const potentialCaptureChainLibertyCount = findMinLibertyCountOfAdjacentChains(
-    boardState,
-    x,
-    y,
-    player === playerColors.black ? playerColors.white : playerColors.black,
-  );
-  if (!moveHasBeenPlayedBefore && potentialCaptureChainLibertyCount < 2) {
-    return validityReason.valid;
-  }
+    // If there is any neighboring enemy chain with only one liberty, and the move is not repeated, it is valid,
+    // because it would capture the enemy chain and free up some liberties for itself
+    const potentialCaptureChainLibertyCount = findMinLibertyCountOfAdjacentChains(
+      boardState,
+      x,
+      y,
+      player === playerColors.black ? playerColors.white : playerColors.black,
+    );
+    if (!moveHasBeenPlayedBefore && potentialCaptureChainLibertyCount < 2) {
+      return validityReason.valid;
+    }
 
-  // If there is no direct liberties for the move, no captures, and no neighboring friendly chains with multiple liberties,
-  // the move is not valid because it would suicide the piece
-  if (!hasLiberty && potentialCaptureChainLibertyCount >= 2 && neighborChainLibertyCount <= 1) {
-    return validityReason.noSuicide;
+    // If there is no direct liberties for the move, no captures, and no neighboring friendly chains with multiple liberties,
+    // the move is not valid because it would suicide the piece
+    if (!hasLiberty && potentialCaptureChainLibertyCount >= 2 && neighborChainLibertyCount <= 1) {
+      return validityReason.noSuicide;
+    }
   }
 
   // If the move has been played before and is not obviously illegal, we have to actually play it out to determine
@@ -438,7 +446,6 @@ export function getPlayerNeighbors(boardState: BoardState, chain: PointState[]) 
 export function getAllNeighbors(boardState: BoardState, chain: PointState[]) {
   const allNeighbors = chain.reduce((chainNeighbors: Set<PointState>, point: PointState) => {
     getArrayFromNeighbor(findNeighbors(boardState, point.x, point.y))
-      .filter(isDefined)
       .filter((neighborPoint) => !isPointInChain(neighborPoint, chain))
       .forEach((neighborPoint) => chainNeighbors.add(neighborPoint));
     return chainNeighbors;

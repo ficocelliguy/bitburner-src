@@ -13,6 +13,7 @@ import {
 import { findNeighbors, floor, isDefined, isNotNull, passTurn } from "../boardState/boardState";
 import { endGoGame } from "./scoring";
 import {
+  evaluateIfMoveIsValid,
   evaluateMoveResult,
   findEffectiveLibertiesOfNewMove,
   findEnemyNeighborChainWithFewestLiberties,
@@ -71,7 +72,8 @@ export async function getMove(boardState: BoardState, player: PlayerColor, oppon
     moves.eyeBlock?.point,
   ]
     .filter(isNotNull)
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter((point) => evaluateIfMoveIsValid(boardState, point.x, point.y, player, false));
 
   const chosenMove = moveOptions[floor(rng.random() * moveOptions.length)];
 

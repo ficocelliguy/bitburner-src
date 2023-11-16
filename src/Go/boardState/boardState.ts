@@ -48,9 +48,9 @@ export function getNewBoardState(boardSize: number, ai?: opponents, boardToCopy?
 /**
  * Make a new move on the given board, and update the board state accordingly
  */
-export function makeMove(boardState: BoardState, x: number, y: number, player: PlayerColor, evaluateCaptures = true) {
+export function makeMove(boardState: BoardState, x: number, y: number, player: PlayerColor) {
   // Do not update on invalid moves
-  const validity = evaluateIfMoveIsValid(boardState, x, y, player);
+  const validity = evaluateIfMoveIsValid(boardState, x, y, player, false);
   if (validity !== validityReason.valid) {
     console.warn(`Invalid move attempted! ${x} ${y} ${player} : ${validity}`);
     return false;
@@ -62,11 +62,7 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: P
   boardState.previousPlayer = player;
   boardState.passCount = 0;
 
-  if (evaluateCaptures) {
-    return updateCaptures(boardState, player);
-  }
-
-  return boardState;
+  return updateCaptures(boardState, player);
 }
 
 /**
@@ -112,7 +108,7 @@ export function applyHandicap(boardState: BoardState, handicap: number) {
  * chain information and liberties.
  */
 export function updateChains(boardState: BoardState, resetChains = true) {
-  resetChains && (boardState.board = clearChains(boardState).board);
+  resetChains && clearChains(boardState);
 
   for (let x = 0; x < boardState.board.length; x++) {
     for (let y = 0; y < boardState.board[x].length; y++) {

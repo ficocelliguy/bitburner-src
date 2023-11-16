@@ -9,7 +9,7 @@ import { Grid } from "@mui/material";
 import { GoGameboard } from "./GoGameboard";
 import { boardStyles } from "../boardState/goStyles";
 import { useRerender } from "../../ui/React/hooks";
-import { getBonusText } from "../effects/effect";
+import { getBonusText, getMaxFavor } from "../effects/effect";
 import { formatNumber } from "../../ui/formatNumber";
 import { GoScoreSummaryTable } from "./GoScoreSummaryTable";
 import { getNewBoardState } from "../boardState/boardState";
@@ -119,7 +119,9 @@ export const GoHistoryPage = (): React.ReactElement => {
                   >
                     <TableRow>
                       <TableCell className={classes.cellNone}>Favor from winstreaks:</TableCell>
-                      <TableCell className={classes.cellNone}>{data.favor ?? 0}</TableCell>
+                      <TableCell className={classes.cellNone}>
+                        {data.favor ?? 0} {data.favor === getMaxFavor() ? "(max)" : ""}
+                      </TableCell>
                     </TableRow>
                   </Tooltip>
                 </TableBody>

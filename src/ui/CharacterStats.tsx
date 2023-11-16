@@ -552,20 +552,22 @@ export function CharacterStats(): React.ReactElement {
                 noMargin
               />
             )}
-            <MultiplierTable
-              rows={[
-                {
-                  mult: "IPvGO Node Power bonus",
-                  value: Player.sourceFileLvl(14) ? 1.25 * currentNodeMults.GoPower : currentNodeMults.GoPower,
-                },
-                {
-                  mult: "IPvGO Max Favor",
-                  value: getMaxFavor(),
-                  isNumber: true,
-                },
-              ]}
-              color={Settings.theme.combat}
-            />
+            {(Player.sourceFileLvl(14) || Player.bitNodeN === 14) && (
+              <MultiplierTable
+                rows={[
+                  {
+                    mult: "IPvGO Node Power bonus",
+                    value: Player.sourceFileLvl(14) ? 1.25 * currentNodeMults.GoPower : currentNodeMults.GoPower,
+                  },
+                  {
+                    mult: "IPvGO Max Favor",
+                    value: getMaxFavor(),
+                    isNumber: true,
+                  },
+                ]}
+                color={Settings.theme.combat}
+              />
+            )}
           </Box>
         </Box>
       </Paper>
