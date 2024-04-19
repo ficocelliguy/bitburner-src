@@ -34,12 +34,13 @@ interface GoGameboardWrapperProps {
  */
 
 export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps): React.ReactElement {
+  const boardState = Go.currentGame;
   const rerender = useRerender();
   useEffect(() => {
+    setOpponent(boardState.ai);
     return GoEvents.subscribe(rerender);
-  }, [rerender]);
+  }, [boardState.ai, rerender]);
 
-  const boardState = Go.currentGame;
   // Destructure boardState to allow useMemo to trigger correctly
   const traditional = Settings.GoTraditionalStyle;
   const [showPriorMove, setShowPriorMove] = useState(false);
