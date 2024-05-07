@@ -18,6 +18,6 @@ analysis: {
 
     getControlledEmptyNodes(): string[];
 
-    getStats(): Partial<Record<GoOpponent, OpponentStats>>;
+    getStats(): Partial<Record<GoOpponent, SimpleOpponentStats>>;
   };
 ```
