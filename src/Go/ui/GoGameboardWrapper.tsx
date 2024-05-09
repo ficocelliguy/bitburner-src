@@ -54,7 +54,12 @@ export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps
 
   // Only run this once on first component mount, to handle scenarios where the game was saved or closed while waiting on the AI to make a move
   useEffect(() => {
-    if (boardState.previousPlayer === GoColor.black && !waitingOnAI && boardState.ai !== GoOpponent.none) {
+    if (
+      boardState.previousPlayer === GoColor.black &&
+      !waitingOnAI &&
+      boardState.ai !== GoOpponent.none &&
+      !Go.nextTurn
+    ) {
       takeAiTurn(Go.currentGame);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,6 +171,7 @@ export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps
 
   function setTraditional(newValue: boolean) {
     Settings.GoTraditionalStyle = newValue;
+    rerender();
   }
 
   const endGameAvailable = boardState.previousPlayer === GoColor.white && boardState.passCount;
