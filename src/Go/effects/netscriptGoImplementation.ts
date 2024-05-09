@@ -368,7 +368,8 @@ export function resetBoardState(
  * Retrieve and clean up stats for each opponent played against
  */
 export function getStats() {
-  return getRecordKeys(Go.stats).reduce((statDetails, opponent) => {
+  const statDetails: Partial<Record<GoOpponent, SimpleOpponentStats>> = {};
+  for (const opponent of getRecordKeys(Go.stats)) {
     const details = getOpponentStats(opponent);
     const nodePower = getOpponentStats(opponent).nodePower;
     const effectPercent = (CalculateEffect(nodePower, opponent) - 1) * 100;
@@ -382,9 +383,9 @@ export function getStats() {
       bonusPercent: effectPercent,
       bonusDescription: effectDescription,
     };
+  }
 
-    return statDetails;
-  }, {} as Partial<Record<GoOpponent, SimpleOpponentStats>>);
+  return statDetails;
 }
 
 /** Validate singularity access by throwing an error if the player does not have access. */
