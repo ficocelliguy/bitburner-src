@@ -178,28 +178,12 @@ export async function getAIMove(boardState: BoardState): Promise<Play> {
 
     await sleep(400);
     const aiUpdatedBoard = makeMove(boardState, result.x, result.y, GoColor.white);
-
-    if (!aiUpdatedBoard) {
-      // If the previous move was made by the AI, log it, even if it didn't come from this thread.
-      // This can happen if multiple scripts are run, or if the user opens or interacts with the gameboard UI while a script is running
-      const priorMove = getPreviousMove();
-      if (Go.currentGame.previousPlayer === GoColor.white && priorMove) {
-        return resolve({
-          type: GoPlayType.move,
-          x: priorMove[0],
-          y: priorMove[1],
-        });
-      }
-
-      // If the previous move wasn't made by the AI, handle the AI trying an invalid move. This shouldn't ever happen.
-      boardState.previousPlayer = GoColor.white;
-      console.error(`Invalid AI move attempted: ${result.x}, ${result.y}. This should not happen.`);
-      GoEvents.emit();
-      return resolve(result);
-    }
-
     await sleep(300);
     GoEvents.emit();
+
+    if (!aiUpdatedBoard && Go.currentGame.previousPlayer === GoColor.white) {
+      return resolve(getPreviousMoveDetails());
+    }
     resolve(result);
   });
   return Go.nextTurn;
@@ -330,6 +314,26 @@ export function getPreviousMove(): [number, number] | null {
   }
 
   return null;
+}
+
+/**
+ * Gets the last move, if it was made by the specified color and is present
+ */
+export function getPreviousMoveDetails() {
+  const priorMove = getPreviousMove();
+  if (priorMove) {
+    return {
+      type: GoPlayType.move,
+      x: priorMove[0],
+      y: priorMove[1],
+    };
+  }
+
+  return {
+    type: !priorMove && Go.currentGame?.passCount ? GoPlayType.pass : GoPlayType.gameOver,
+    x: null,
+    y: null,
+  };
 }
 
 /**

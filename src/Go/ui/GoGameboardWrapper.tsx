@@ -18,7 +18,7 @@ import { GoScoreModal } from "./GoScoreModal";
 import { GoGameboard } from "./GoGameboard";
 import { GoSubnetSearch } from "./GoSubnetSearch";
 import { CorruptableText } from "../../ui/React/CorruptableText";
-import { getAIMove } from "../effects/netscriptGoImplementation";
+import { getAIMove, getPreviousMoveDetails } from "../effects/netscriptGoImplementation";
 
 interface GoGameboardWrapperProps {
   showInstructions: () => void;
@@ -123,7 +123,11 @@ export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps
 
   async function takeAiTurn(boardState: BoardState) {
     setWaitingOnAI(true);
-    const move = await getAIMove(boardState);
+
+    // Ensure that any player-script-triggered AI moves finish
+    await Go.nextTurn;
+    const move =
+      Go.currentGame.previousPlayer === GoColor.black ? await getAIMove(boardState) : getPreviousMoveDetails();
 
     if (move.type === GoPlayType.pass) {
       SnackbarEvents.emit(`The opponent passes their turn; It is now your turn to move.`, ToastVariant.WARNING, 4000);
