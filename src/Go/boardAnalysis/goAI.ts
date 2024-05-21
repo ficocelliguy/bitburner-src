@@ -1,7 +1,7 @@
 import type { Board, BoardState, EyeMove, Move, MoveOptions, Play, PointState } from "../Types";
 
 import { Player } from "@player";
-import { AugmentationName, GoOpponent, GoColor, GoPlayType } from "@enums";
+import { AugmentationName, GoColor, GoOpponent, GoPlayType } from "@enums";
 import { opponentDetails } from "../Constants";
 import { findNeighbors, isNotNullish, makeMove, passTurn } from "../boardState/boardState";
 import {
@@ -15,6 +15,7 @@ import {
   getAllEyesByChainId,
   getAllNeighboringChains,
   getAllValidMoves,
+  getPreviousMoveDetails,
 } from "./boardAnalysis";
 import { findDisputedTerritory } from "./controlledTerritory";
 import { findAnyMatchedPatterns } from "./patternMatching";
@@ -22,13 +23,21 @@ import { WHRNG } from "../../Casino/RNG";
 import { Go, GoEvents } from "../Go";
 
 let currentAITurn: Promise<Play> | null = null;
+let currentTurnResolver: ((value: Play | PromiseLike<Play>) => void) | null = null;
 
 /**
  * Retrieves a move from the current faction in response to the player's move
  */
 export function makeAIMove(boardState: BoardState): Promise<Play> {
   // If AI is already taking their turn, return the existing turn.
-  if (currentAITurn) return currentAITurn;
+  if (currentAITurn) {
+    return Go.nextTurn;
+  }
+  if (boardState.ai === GoOpponent.none) {
+    GoEvents.emit();
+    return (currentAITurn = Go.nextTurn = new Promise((resolve) => (currentTurnResolver = resolve)));
+  }
+
   currentAITurn = Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)
     .then(async (play): Promise<Play> => {
       if (boardState !== Go.currentGame) return play; //Stale game
@@ -61,6 +70,18 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
     });
 
   return Go.nextTurn;
+}
+
+/**
+ * Resolves the current turn.
+ * This is used for players manually playing against their script on the no-ai board.
+ */
+export function resolveCurrentTurn() {
+  if (currentTurnResolver) {
+    currentTurnResolver(Promise.resolve(getPreviousMoveDetails()));
+    currentTurnResolver = null;
+    currentAITurn = null;
+  }
 }
 
 /*
