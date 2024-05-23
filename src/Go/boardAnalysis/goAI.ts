@@ -22,7 +22,7 @@ import { findAnyMatchedPatterns } from "./patternMatching";
 import { WHRNG } from "../../Casino/RNG";
 import { Go, GoEvents } from "../Go";
 
-let isAiThinking: boolean = true;
+let isAiThinking: boolean = false;
 let currentTurnResolver: ((value: Play) => void) | null = null;
 
 /**
