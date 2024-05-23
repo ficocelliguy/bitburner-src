@@ -1,4 +1,4 @@
-import { Board, BoardState, Neighbor, Play, PointState, SimpleBoard } from "../Types";
+import type { Board, BoardState, Neighbor, Play, PointState, SimpleBoard } from "../Types";
 
 import { GoValidity, GoOpponent, GoColor, GoPlayType } from "@enums";
 import { Go } from "../Go";

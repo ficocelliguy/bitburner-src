@@ -22,23 +22,25 @@ import { findAnyMatchedPatterns } from "./patternMatching";
 import { WHRNG } from "../../Casino/RNG";
 import { Go, GoEvents } from "../Go";
 
-let currentAITurn: Promise<Play> | null = null;
-let currentTurnResolver: ((value: Play | PromiseLike<Play>) => void) | null = null;
+let isAiThinking: boolean = true;
+let currentTurnResolver: ((value: Play) => void) | null = null;
 
 /**
  * Retrieves a move from the current faction in response to the player's move
  */
 export function makeAIMove(boardState: BoardState): Promise<Play> {
   // If AI is already taking their turn, return the existing turn.
-  if (currentAITurn) {
+  if (isAiThinking) {
     return Go.nextTurn;
   }
   if (boardState.ai === GoOpponent.none) {
     GoEvents.emit();
-    return (currentAITurn = Go.nextTurn = new Promise((resolve) => (currentTurnResolver = resolve)));
+    isAiThinking = true;
+    return (Go.nextTurn = new Promise((resolve) => (currentTurnResolver = resolve)));
   }
 
-  currentAITurn = Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)
+  isAiThinking = true;
+  Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)
     .then(async (play): Promise<Play> => {
       if (boardState !== Go.currentGame) return play; //Stale game
 
@@ -65,7 +67,7 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
       return play;
     })
     .finally(() => {
-      currentAITurn = null;
+      isAiThinking = false;
       GoEvents.emit();
     });
 
@@ -78,9 +80,9 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
  */
 export function resolveCurrentTurn() {
   if (currentTurnResolver) {
-    currentTurnResolver(Promise.resolve(getPreviousMoveDetails()));
+    currentTurnResolver(getPreviousMoveDetails());
     currentTurnResolver = null;
-    currentAITurn = null;
+    isAiThinking = false;
   }
 }
 
