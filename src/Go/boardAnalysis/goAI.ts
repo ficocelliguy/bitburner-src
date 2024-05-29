@@ -23,7 +23,7 @@ import { WHRNG } from "../../Casino/RNG";
 import { Go, GoEvents } from "../Go";
 
 let isAiThinking: boolean = false;
-let currentTurnResolver: ((value: Play) => void) | null = null;
+let currentTurnResolver: (() => void) | null = null;
 
 /**
  * Retrieves a move from the current faction in response to the player's move
@@ -33,15 +33,17 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
   if (isAiThinking) {
     return Go.nextTurn;
   }
+  isAiThinking = true;
+
+  // If the AI is disabled, simply make a promise to be resolved once the player makes a move as white
   if (boardState.ai === GoOpponent.none) {
     GoEvents.emit();
-    isAiThinking = true;
-    return (Go.nextTurn = new Promise((resolve) => (currentTurnResolver = resolve)));
+    // Update currentTurnResolver to call Go.nextTurn's resolve function with the last played move's details
+    Go.nextTurn = new Promise((resolve) => (currentTurnResolver = () => resolve(getPreviousMoveDetails())));
   }
-
-  isAiThinking = true;
-  Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)
-    .then(async (play): Promise<Play> => {
+  // If an AI is in use, find the faction's move in response, and resolve the Go.nextTurn promise once it is found and played.
+  else {
+    Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai).then(async (play): Promise<Play> => {
       if (boardState !== Go.currentGame) return play; //Stale game
 
       // Handle AI passing
@@ -65,11 +67,15 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
       }
 
       return play;
-    })
-    .finally(() => {
-      isAiThinking = false;
-      GoEvents.emit();
     });
+  }
+
+  // Once the AI moves (or the player playing as white with No AI moves),
+  // clear the isAiThinking semaphore and update the board UI.
+  Go.nextTurn.finally(() => {
+    isAiThinking = false;
+    GoEvents.emit();
+  });
 
   return Go.nextTurn;
 }
@@ -79,11 +85,9 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
  * This is used for players manually playing against their script on the no-ai board.
  */
 export function resolveCurrentTurn() {
-  if (currentTurnResolver) {
-    currentTurnResolver(getPreviousMoveDetails());
-    currentTurnResolver = null;
-    isAiThinking = false;
-  }
+  // Call the resolve function on Go.nextTurn, if it exists
+  currentTurnResolver?.();
+  currentTurnResolver = null;
 }
 
 /*
