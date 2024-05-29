@@ -548,7 +548,8 @@ export function findAdjacentLibertiesAndAlliesForPoint(
 }
 
 /**
- * Retrieves a simplified version of the board state. "X" represents black pieces, "O" white, and "." empty points.
+ * Retrieves a simplified version of the board state.
+ * "X" represents black pieces, "O" white, "." empty points, and "#" offline nodes.
  *
  * For example, a 5x5 board might look like this:
  * ```
