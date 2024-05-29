@@ -9,7 +9,7 @@ import {
   findLibertiesForChain,
   getAllChains,
   boardFromSimpleBoard,
-  simpleBoardFromBoard,
+  boardStringFromBoard,
 } from "../boardAnalysis/boardAnalysis";
 import { endGoGame } from "../boardAnalysis/scoring";
 import { addObstacles, resetCoordinates, rotate90Degrees } from "./offlineNodes";
@@ -93,7 +93,7 @@ export function makeMove(boardState: BoardState, x: number, y: number, player: G
   if (!point) return false;
 
   // Add move to board history
-  boardState.previousBoards.unshift(simpleBoardFromBoard(boardState.board));
+  boardState.previousBoards.unshift(boardStringFromBoard(boardState.board));
 
   point.color = player;
   boardState.previousPlayer = player;
