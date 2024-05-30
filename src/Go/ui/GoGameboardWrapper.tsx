@@ -85,7 +85,9 @@ export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps
     const didUpdateBoard = makeMove(boardState, x, y, currentPlayer);
     if (didUpdateBoard) {
       rerender();
-      Go.currentGame.ai !== GoOpponent.none && (await takeAiTurn(boardState));
+      if (Go.currentGame.ai !== GoOpponent.none) {
+        await takeAiTurn(boardState);
+      }
     }
   }
 
@@ -104,7 +106,9 @@ export function GoGameboardWrapper({ showInstructions }: GoGameboardWrapperProps
     }
 
     setTimeout(async () => {
-      Go.currentGame.ai !== GoOpponent.none && (await takeAiTurn(boardState));
+      if (Go.currentGame.ai !== GoOpponent.none) {
+        await takeAiTurn(boardState);
+      }
     }, 100);
   }
 
