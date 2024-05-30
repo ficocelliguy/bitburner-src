@@ -44,7 +44,7 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
   }
 
   // Detect if the move might be an immediate repeat (only one board of history is saved to check)
-  const possibleRepeat = boardState.previousBoards.find((board) => getColorOnSimpleBoard(board, x, y) === player);
+  const possibleRepeat = boardState.previousBoards.find((board) => getColorOnBoardString(board, x, y) === player);
 
   if (shortcut) {
     // If the current point has some adjacent open spaces, it is not suicide. If the move is not repeated, it is legal
@@ -87,7 +87,7 @@ export function evaluateIfMoveIsValid(boardState: BoardState, x: number, y: numb
   }
   if (possibleRepeat && boardState.previousBoards.length) {
     const simpleEvalBoard = boardStringFromBoard(evaluationBoard);
-    if (boardState.previousBoards.find((board) => simpleEvalBoard === board)) {
+    if (boardState.previousBoards.includes(simpleEvalBoard)) {
       return GoValidity.boardRepeated;
     }
   }
@@ -553,7 +553,13 @@ export function findAdjacentLibertiesAndAlliesForPoint(
  *
  * For example, a 5x5 board might look like this:
  * ```
- *   "XX.O.X..OO.XO..XXO...XOO."
+ * [
+ *   "XX.O.",
+ *   "X..OO",
+ *   ".XO..",
+ *   "XXO..",
+ *   ".XOO.",
+ * ]
  * ```
  *
  * Each string represents a vertical column on the board, and each character in the string represents a point.
@@ -586,6 +592,11 @@ export function simpleBoardFromBoard(board: Board): SimpleBoard {
 /**
  * Returns a string representation of the given board.
  * The string representation is the same as simpleBoardFromBoard() but concatenated into a single string
+ *
+ * For example, a 5x5 board might look like this:
+ * ```
+ *   "XX.O.X..OO.XO..XXO...XOO."
+ * ```
  */
 export function boardStringFromBoard(board: Board): string {
   return simpleBoardFromBoard(board).join("");
@@ -594,6 +605,11 @@ export function boardStringFromBoard(board: Board): string {
 /**
  * Returns a full board object from a string representation of the board.
  * The string representation is the same as simpleBoardFromBoard() but concatenated into a single string
+ *
+ * For example, a 5x5 board might look like this:
+ * ```
+ *   "XX.O.X..OO.XO..XXO...XOO."
+ * ```
  */
 export function boardFromBoardString(boardString: string): Board {
   // Turn the SimpleBoard string into a string array, allowing access of each point via indexes e.g. [0][1]
@@ -643,7 +659,7 @@ export function areSimpleBoardsIdentical(simpleBoard1: SimpleBoard, simpleBoard2
   return simpleBoard1.every((column, x) => column === simpleBoard2[x]);
 }
 
-export function getColorOnSimpleBoard(boardString: string, x: number, y: number): GoColor | null {
+export function getColorOnBoardString(boardString: string, x: number, y: number): GoColor | null {
   const boardSize = Math.round(Math.sqrt(boardString.length));
   const char = boardString[x * boardSize + y];
   if (char === "X") return GoColor.black;
@@ -663,7 +679,7 @@ export function getPreviousMove(): [number, number] | null {
     const row = Go.currentGame.board[+rowIndexString] ?? [];
     for (const pointIndexString in row) {
       const point = row[+pointIndexString];
-      const priorColor = point && priorBoard && getColorOnSimpleBoard(priorBoard, point.x, point.y);
+      const priorColor = point && priorBoard && getColorOnBoardString(priorBoard, point.x, point.y);
       const currentColor = point?.color;
       const isPreviousPlayer = currentColor === Go.currentGame.previousPlayer;
       const isChanged = priorColor !== currentColor;
