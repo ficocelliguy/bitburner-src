@@ -72,7 +72,7 @@ export function makeAIMove(boardState: BoardState): Promise<Play> {
 
   // Once the AI moves (or the player playing as white with No AI moves),
   // clear the isAiThinking semaphore and update the board UI.
-  Go.nextTurn.finally(() => {
+  Go.nextTurn = Go.nextTurn.finally(() => {
     isAiThinking = false;
     GoEvents.emit();
   });
