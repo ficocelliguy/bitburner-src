@@ -38,7 +38,7 @@ export async function makeAIMove(boardState: BoardState): Promise<Play> {
         passTurn(boardState, GoColor.white);
         // if passTurn called endGoGame, or the player has no valid moves left, the move should be shown as a game over
         if (boardState.previousPlayer === null || !getAllValidMoves(boardState, GoColor.black).length) {
-          return { type: GoPlayType.gameOver, x: null, y: null };
+          return Promise.resolve({ type: GoPlayType.gameOver, x: null, y: null });
         }
         return play;
       }
