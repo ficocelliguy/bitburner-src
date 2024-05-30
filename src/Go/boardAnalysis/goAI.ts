@@ -26,7 +26,7 @@ let currentAITurn: Promise<Play> | null = null;
 /**
  * Retrieves a move from the current faction in response to the player's move
  */
-export function makeAIMove(boardState: BoardState): Promise<Play> {
+export async function makeAIMove(boardState: BoardState): Promise<Play> {
   // If AI is already taking their turn, return the existing turn.
   if (currentAITurn) return currentAITurn;
   currentAITurn = Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)

@@ -11,7 +11,7 @@ import {
   getPreviousMove,
   simpleBoardFromBoard,
 } from "../boardAnalysis/boardAnalysis";
-import { getOpponentStats, getScore, resetWinstreak } from "../boardAnalysis/scoring";
+import { endGoGame, getOpponentStats, getScore, resetWinstreak } from "../boardAnalysis/scoring";
 import { WHRNG } from "../../Casino/RNG";
 import { getRecordKeys } from "../../Types/Record";
 import { CalculateEffect, getEffectTypeForFaction } from "./effect";
@@ -337,28 +337,25 @@ export async function determineCheatSuccess(
 ): Promise<Play> {
   const state = Go.currentGame;
   const rng = new WHRNG(Player.totalPlaytime);
+  state.cheatCount++;
+  state.passCount = 0;
+
   // If cheat is successful, run callback
   if ((successRngOverride ?? rng.random()) <= cheatSuccessChance(state.cheatCount)) {
     callback();
-    state.cheatCount++;
     GoEvents.emit();
     return makeAIMove(state);
   }
   // If there have been prior cheat attempts, and the cheat fails, there is a 10% chance of instantly losing
   else if (state.cheatCount && (ejectRngOverride ?? rng.random()) < 0.1) {
     logger(`Cheat failed! You have been ejected from the subnet.`);
-    resetBoardState(logger, logger, state.ai, state.board[0].length);
-    return {
-      type: GoPlayType.gameOver,
-      x: null,
-      y: null,
-    };
+    endGoGame(state);
+    return Go.nextTurn;
   }
   // If the cheat fails, your turn is skipped
   else {
     logger(`Cheat failed. Your turn has been skipped.`);
     passTurn(state, GoColor.black, false);
-    state.cheatCount++;
     return makeAIMove(state);
   }
 }
@@ -389,7 +386,7 @@ export function cheatSuccessChance(cheatCount: number) {
 /**
  * Attempts to remove an existing router from the board. Can fail. If failed, can immediately end the game
  */
-export function cheatRemoveRouter(
+export async function cheatRemoveRouter(
   logger: (s: string) => void,
   x: number,
   y: number,
@@ -413,7 +410,7 @@ export function cheatRemoveRouter(
 /**
  * Attempts play two moves at once. Can fail. If failed, can immediately end the game
  */
-export function cheatPlayTwoMoves(
+export async function cheatPlayTwoMoves(
   logger: (s: string) => void,
   x1: number,
   y1: number,
@@ -440,7 +437,7 @@ export function cheatPlayTwoMoves(
   );
 }
 
-export function cheatRepairOfflineNode(
+export async function cheatRepairOfflineNode(
   logger: (s: string) => void,
   x: number,
   y: number,
@@ -466,7 +463,7 @@ export function cheatRepairOfflineNode(
   );
 }
 
-export function cheatDestroyNode(
+export async function cheatDestroyNode(
   logger: (s: string) => void,
   x: number,
   y: number,
