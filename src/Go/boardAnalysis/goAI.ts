@@ -26,7 +26,7 @@ let currentAITurn: Promise<Play> | null = null;
 /**
  * Retrieves a move from the current faction in response to the player's move
  */
-export async function makeAIMove(boardState: BoardState): Promise<Play> {
+export function makeAIMove(boardState: BoardState): Promise<Play> {
   // If AI is already taking their turn, return the existing turn.
   if (currentAITurn) return currentAITurn;
   currentAITurn = Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai)
@@ -38,7 +38,7 @@ export async function makeAIMove(boardState: BoardState): Promise<Play> {
         passTurn(boardState, GoColor.white);
         // if passTurn called endGoGame, or the player has no valid moves left, the move should be shown as a game over
         if (boardState.previousPlayer === null || !getAllValidMoves(boardState, GoColor.black).length) {
-          return Promise.resolve({ type: GoPlayType.gameOver, x: null, y: null });
+          return { type: GoPlayType.gameOver, x: null, y: null };
         }
         return play;
       }

@@ -41,7 +41,7 @@ export function NetscriptGo(): InternalAPI<NSGo> {
   return {
     makeMove:
       (ctx: NetscriptContext) =>
-      async (_x, _y): Promise<Play> => {
+      (_x, _y): Promise<Play> => {
         const x = helpers.number(ctx, "x", _x);
         const y = helpers.number(ctx, "y", _y);
         validateMove(error(ctx), x, y, "makeMove");
@@ -97,7 +97,7 @@ export function NetscriptGo(): InternalAPI<NSGo> {
       },
       removeRouter:
         (ctx: NetscriptContext) =>
-        async (_x, _y): Promise<Play> => {
+        (_x, _y): Promise<Play> => {
           checkCheatApiAccess(error(ctx));
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);
@@ -112,7 +112,7 @@ export function NetscriptGo(): InternalAPI<NSGo> {
         },
       playTwoMoves:
         (ctx: NetscriptContext) =>
-        async (_x1, _y1, _x2, _y2): Promise<Play> => {
+        (_x1, _y1, _x2, _y2): Promise<Play> => {
           checkCheatApiAccess(error(ctx));
           const x1 = helpers.number(ctx, "x", _x1);
           const y1 = helpers.number(ctx, "y", _y1);
@@ -131,7 +131,7 @@ export function NetscriptGo(): InternalAPI<NSGo> {
         },
       repairOfflineNode:
         (ctx: NetscriptContext) =>
-        async (_x, _y): Promise<Play> => {
+        (_x, _y): Promise<Play> => {
           checkCheatApiAccess(error(ctx));
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);
@@ -147,7 +147,7 @@ export function NetscriptGo(): InternalAPI<NSGo> {
         },
       destroyNode:
         (ctx: NetscriptContext) =>
-        async (_x, _y): Promise<Play> => {
+        (_x, _y): Promise<Play> => {
           checkCheatApiAccess(error(ctx));
           const x = helpers.number(ctx, "x", _x);
           const y = helpers.number(ctx, "y", _y);

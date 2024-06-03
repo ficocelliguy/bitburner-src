@@ -337,14 +337,12 @@ export async function determineCheatSuccess(
 ): Promise<Play> {
   const state = Go.currentGame;
   const rng = new WHRNG(Player.totalPlaytime);
-  state.cheatCount++;
   state.passCount = 0;
 
   // If cheat is successful, run callback
   if ((successRngOverride ?? rng.random()) <= cheatSuccessChance(state.cheatCount)) {
     callback();
     GoEvents.emit();
-    return makeAIMove(state);
   }
   // If there have been prior cheat attempts, and the cheat fails, there is a 10% chance of instantly losing
   else if (state.cheatCount && (ejectRngOverride ?? rng.random()) < 0.1) {
@@ -356,8 +354,10 @@ export async function determineCheatSuccess(
   else {
     logger(`Cheat failed. Your turn has been skipped.`);
     passTurn(state, GoColor.black, false);
-    return makeAIMove(state);
   }
+
+  state.cheatCount++;
+  return makeAIMove(state);
 }
 
 /**
@@ -386,13 +386,13 @@ export function cheatSuccessChance(cheatCount: number) {
 /**
  * Attempts to remove an existing router from the board. Can fail. If failed, can immediately end the game
  */
-export async function cheatRemoveRouter(
+export function cheatRemoveRouter(
   logger: (s: string) => void,
   x: number,
   y: number,
   successRngOverride?: number,
   ejectRngOverride?: number,
-) {
+): Promise<Play> {
   const point = Go.currentGame.board[x][y]!;
   return determineCheatSuccess(
     logger,
@@ -410,7 +410,7 @@ export async function cheatRemoveRouter(
 /**
  * Attempts play two moves at once. Can fail. If failed, can immediately end the game
  */
-export async function cheatPlayTwoMoves(
+export function cheatPlayTwoMoves(
   logger: (s: string) => void,
   x1: number,
   y1: number,
@@ -418,7 +418,7 @@ export async function cheatPlayTwoMoves(
   y2: number,
   successRngOverride?: number,
   ejectRngOverride?: number,
-) {
+): Promise<Play> {
   const point1 = Go.currentGame.board[x1][y1]!;
   const point2 = Go.currentGame.board[x2][y2]!;
 
@@ -437,13 +437,13 @@ export async function cheatPlayTwoMoves(
   );
 }
 
-export async function cheatRepairOfflineNode(
+export function cheatRepairOfflineNode(
   logger: (s: string) => void,
   x: number,
   y: number,
   successRngOverride?: number,
   ejectRngOverride?: number,
-) {
+): Promise<Play> {
   return determineCheatSuccess(
     logger,
     () => {
@@ -463,13 +463,13 @@ export async function cheatRepairOfflineNode(
   );
 }
 
-export async function cheatDestroyNode(
+export function cheatDestroyNode(
   logger: (s: string) => void,
   x: number,
   y: number,
   successRngOverride?: number,
   ejectRngOverride?: number,
-) {
+): Promise<Play> {
   return determineCheatSuccess(
     logger,
     () => {
