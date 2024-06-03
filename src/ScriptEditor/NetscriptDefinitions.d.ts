@@ -47,7 +47,7 @@ interface Player extends Person {
   jobs: Partial<Record<CompanyName, JobName>>;
   factions: string[];
   totalPlaytime: number;
-  location: string;
+  location: LocationName;
   karma: number;
 }
 
@@ -1449,7 +1449,7 @@ export interface TIX {
    * The object's properties are each an array of {@link StockOrderObject}
    * The object has the following structure:
    *
-   * ```ts
+   * ```js
    * {
    *  string1: [ // Array of orders for this stock
    *      {
@@ -1474,7 +1474,7 @@ export interface TIX {
    * Note that the order book will only contain information for stocks that you actually have orders in.
    *
    * @example
-   * ```ts
+   * ```js
    * "If you do not have orders in Nova Medical (NVMD), then the returned object will not have a “NVMD” property."
    * {
    *  ECP: [
@@ -1611,7 +1611,7 @@ export interface StudyTask {
   type: "CLASS";
   cyclesWorked: number;
   classType: string;
-  location: string;
+  location: LocationName | `${LocationName}`;
 }
 /**
  * Company Work
@@ -1797,9 +1797,9 @@ export interface Singularity {
    *
    * @example
    * ```js
-   * const programName = "BruteSSH.exe"
+   * const programName = "BruteSSH.exe";
    * const success = ns.singularity.purchaseProgram(programName);
-   * if (!success) ns.tprint("ERROR: Failed to purchase ${programName}")
+   * if (!success) ns.tprint(`ERROR: Failed to purchase ${programName}`);
    * ```
    * @param programName - Name of program to purchase.
    * @returns True if the specified program is purchased, and false otherwise.
@@ -2053,7 +2053,8 @@ export interface Singularity {
    *
    * @example
    * ```js
-   * ns.singularity.getFactionInviteRequirements("The Syndicate")
+   * ns.singularity.getFactionInviteRequirements("The Syndicate");
+   *
    * [
    *   { "type": "someCondition", "conditions": [
    *       { "type": "city", "city": "Aevum" },
@@ -2070,7 +2071,10 @@ export interface Singularity {
    *   },
    *   { "type": "money", "money": 10000000 },
    *   { "type": "skills", "skills": { "hacking": 200 } },
-   *   { "type": "skills", "skills": { "strength": 200, "defense": 200, "dexterity": 200, "agility": 200 } },
+   *   { "type": "skills", "skills": { "strength": 200 } },
+   *   { "type": "skills", "skills": { "defense": 200 } },
+   *   { "type": "skills", "skills": { "dexterity": 200 } },
+   *   { "type": "skills", "skills": { "agility": 200 } },
    *   { "type": "karma", "karma": -90 }
    * ]
    * ```
@@ -2136,7 +2140,7 @@ export interface Singularity {
    * const workType = "hacking";
    *
    * let success = ns.singularity.workForFaction(factionName, workType);
-   * if (!success) ns.tprint(`ERROR: Failed to start work for ${factionName} with work type ${workType}.`)
+   * if (!success) ns.tprint(`ERROR: Failed to start work for ${factionName} with work type ${workType}.`);
    * ```
    * @param faction - Name of faction to work for.
    * @param workType - Type of work to perform for the faction.
@@ -2230,7 +2234,7 @@ export interface Singularity {
    * ```js
    * const programName = "BruteSSH.exe";
    * const success = ns.singularity.createProgram(programName);
-   * if (!success) ns.tprint("ERROR: Failed to start working on ${programName}")
+   * if (!success) ns.tprint(`ERROR: Failed to start working on ${programName}`);
    * ```
    * @param program - Name of program to create.
    * @param focus - Acquire player focus on this program creation. Optional. Defaults to true.
@@ -2460,7 +2464,7 @@ export interface Singularity {
    * @param locationName - Name of the location.
    * @returns True if the player was moved there, false otherwise.
    */
-  goToLocation(locationName: string): boolean;
+  goToLocation(locationName: LocationName | `${LocationName}`): boolean;
 
   /**
    * Get the current server.
@@ -2537,7 +2541,7 @@ export interface Singularity {
    * @example
    * ```js
    * const programs = ns.singularity.getDarkwebPrograms();
-   * ns.tprint(`Available programs are: ${programs.split(", ")}`);
+   * ns.tprint(`Available programs are: ${programs}`);
    * ```
    * @returns - a list of programs available for purchase on the dark web, or [] if Tor has not
    * been purchased
@@ -3516,8 +3520,10 @@ export interface CodingContract {
    * ```js
    * const reward = ns.codingcontract.attempt(yourSolution, filename, hostname);
    * if (reward) {
-   *   ns.tprint(`Contract solved successfully! Reward: ${reward}`)
-   * } else ns.tprint("Failed to solve contract.")
+   *   ns.tprint(`Contract solved successfully! Reward: ${reward}`);
+   * } else {
+   *   ns.tprint("Failed to solve contract.");
+   * }
    * ```
    *
    * @param answer - Attempted solution for the contract.
@@ -3969,7 +3975,7 @@ export interface Go {
    * @remarks
    * RAM cost: 4 GB
    *
-   * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+   * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
    */
   makeMove(
     x: number,
@@ -3987,7 +3993,7 @@ export interface Go {
    * This can also be used if you pick up the game in a state where the opponent needs to play next. For example: if BitBurner was
    * closed while waiting for the opponent to make a move, you may need to call passTurn() to get them to play their move on game start.
    *
-   * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+   * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
    *
    * @remarks
    * RAM cost: 0 GB
@@ -4073,7 +4079,7 @@ export interface Go {
    *
    * Note that some factions will have a few routers on the subnet at this state.
    *
-   * opponent is "Netburners" or "Slum Snakes" or "The Black Hand" or "Tetrads" or "Daedalus" or "Illuminati" or "????????????",
+   * opponent is "Netburners" or "Slum Snakes" or "The Black Hand" or "Tetrads" or "Daedalus" or "Illuminati" or "????????????" or "No AI",
    *
    * @returns a simplified version of the board state as an array of strings representing the board columns. See ns.Go.getBoardState() for full details
    *
@@ -4205,7 +4211,7 @@ export interface Go {
   cheat: {
     /**
      * Returns your chance of successfully playing one of the special moves in the ns.go.cheat API.
-     * Scales with your crime success rate stat. Caps at 80%.
+     * Scales with your crime success rate stat.
      *
      * Warning: if you fail to play a cheat move, your turn will be skipped. After your first cheat attempt, if you fail, there is a
      * small (~10%) chance you will instantly be ejected from the subnet.
@@ -4227,7 +4233,7 @@ export interface Go {
      * RAM cost: 8 GB
      * Requires Bitnode 14.2 to use
      *
-     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+     * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     removeRouter(
       x: number,
@@ -4250,7 +4256,7 @@ export interface Go {
      * RAM cost: 8 GB
      * Requires Bitnode 14.2 to use
      *
-     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+     * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     playTwoMoves(
       x1: number,
@@ -4275,7 +4281,7 @@ export interface Go {
      * RAM cost: 8 GB
      * Requires Bitnode 14.2 to use
      *
-     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+     * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     repairOfflineNode(
       x: number,
@@ -4299,7 +4305,7 @@ export interface Go {
      * RAM cost: 8 GB
      * Requires Bitnode 14.2 to use
      *
-     * @returns a promise that contains if your move was valid and successful, the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
+     * @returns a promise that contains the opponent move's x and y coordinates (or pass) in response, or an indication if the game has ended
      */
     destroyNode(
       x: number,
@@ -4398,13 +4404,13 @@ export interface Sleeve {
    * Return a boolean indicating whether or not this action was set successfully (false if an invalid action is specified).
    *
    * @example
-   * ```ts
+   * ```js
    * // Assigns the first sleeve to Homicide.
    * ns.sleeve.setToCommitCrime(0, "Homicide");
    *
    * // Assigns the second sleeve to Grand Theft Auto, using enum
    * const crimes = ns.enums.CrimeType;
-   * ns.sleeve.setToCommitCrime(1, crimes.grandTheftAuto)
+   * ns.sleeve.setToCommitCrime(1, crimes.grandTheftAuto);
    * ```
    *
    * @param sleeveNumber - Index of the sleeve to start committing crime. Sleeves are numbered starting from 0.
@@ -4657,12 +4663,12 @@ interface WorkFormulas {
   /** @returns The WorkStats gained when completing one instance of the specified crime. */
   crimeGains(person: Person, crimeType: CrimeType | `${CrimeType}`): WorkStats;
   /** @returns The WorkStats applied every game cycle (200ms) by taking the specified gym class. */
-  gymGains(person: Person, gymType: GymType | `${GymType}`, locationName: string): WorkStats;
+  gymGains(person: Person, gymType: GymType | `${GymType}`, locationName: LocationName | `${LocationName}`): WorkStats;
   /** @returns The WorkStats applied every game cycle (200ms) by taking the specified university class. */
   universityGains(
     person: Person,
     classType: UniversityClassType | `${UniversityClassType}`,
-    locationName: string,
+    locationName: LocationName | `${LocationName}`,
   ): WorkStats;
   /** @returns The WorkStats applied every game cycle (200ms) by performing the specified faction work. */
   factionGains(person: Person, workType: FactionWorkType | `${FactionWorkType}`, favor: number): WorkStats;
@@ -5179,7 +5185,7 @@ interface Infiltration {
    *
    * @returns Infiltration data for given location.
    */
-  getInfiltration(location: string): InfiltrationLocation;
+  getInfiltration(location: LocationName | `${LocationName}`): InfiltrationLocation;
 }
 
 /**
@@ -5211,7 +5217,7 @@ interface UserInterface {
    * RAM cost: 0 GB
    * @example
    * Usage example (NS2)
-   * ```ts
+   * ```js
    * const theme = ns.ui.getTheme();
    * theme.primary = '#ff5500';
    * ns.ui.setTheme(theme);
@@ -5241,7 +5247,7 @@ interface UserInterface {
    * RAM cost: 0 GB
    * @example
    * Usage example (NS2)
-   * ```ts
+   * ```js
    * const styles = ns.ui.getStyles();
    * styles.fontFamily = 'Comic Sans Ms';
    * ns.ui.setStyles(styles);
@@ -5466,7 +5472,7 @@ export interface NS {
    * @example
    * ```js
    * let currentMoney = ns.getServerMoneyAvailable("n00dles");
-   * currentMoney *= await ns.grow("foodnstuff");
+   * currentMoney *= await ns.grow("n00dles");
    * ```
    * @param host - Hostname of the target server to grow.
    * @param opts - Optional parameters for configuring function behavior.
@@ -5523,12 +5529,12 @@ export interface NS {
    *
    *
    * @example
-   * ```ts
+   * ```js
    * // Calculate threadcount of a single hack that would take $100k from n00dles
    * const hackThreads = ns.hackAnalyzeThreads("n00dles", 1e5);
    *
    * // Launching a script requires an integer thread count. The below would take less than the targeted $100k.
-   * ns.run("noodleHack.js", Math.floor(hackThreads))
+   * ns.run("noodleHack.js", Math.floor(hackThreads));
    *
    * ```
    * @param host - Hostname of the target server to analyze.
@@ -5652,7 +5658,7 @@ export interface NS {
    * @example
    * ```js
    * // This will count from 1 to 10 in your terminal, with one number every 5 seconds
-   * for (var i = 1; i <= 10; i++) {
+   * for (let i = 1; i <= 10; ++i) {
    *   ns.tprint(i);
    *   await ns.sleep(5000);
    * }
@@ -5750,7 +5756,7 @@ export interface NS {
    * ns.printf("My age in binary is %b.", age);
    * ns.printf("My age in scientific notation is %e.", age);
    * ns.printf("In %d seconds, I'll be %s.", 6, "Byte");
-   * ns.printf("Am I a nibble? %t", (4 == age));
+   * ns.printf("Am I a nibble? %t", (4 === age));
    * ns.tail();
    * ```
    *
@@ -5878,7 +5884,7 @@ export interface NS {
    * This is configurable in the game's options as `Recently killed scripts size`.
    *
    * @example
-   * ```ts
+   * ```js
    * let recentScripts = ns.getRecentScripts();
    * let mostRecent = recentScripts.shift();
    * if (mostRecent)
@@ -6143,7 +6149,7 @@ export interface NS {
    * ns.run("foo.js", {threads: 5});
    *
    * //This next example will run ‘foo.js’ single-threaded, and will pass the string ‘foodnstuff’ into the script as an argument:
-   * ns.run("foo.js", 1, 'foodnstuff');
+   * ns.run("foo.js", 1, "foodnstuff");
    * ```
    * @param script - Filename of script to run.
    * @param threadOrOptions - Either an integer number of threads for new script, or a {@link RunOptions} object. Threads defaults to 1.
@@ -6209,7 +6215,7 @@ export interface NS {
    * @example
    * ```js
    * //The following example will execute the script ‘foo.js’ with 10 threads, in 500 milliseconds and the arguments ‘foodnstuff’ and 90:
-   * ns.spawn('foo.js', {threads: 10, spawnDelay: 500}, 'foodnstuff', 90);
+   * ns.spawn("foo.js", {threads: 10, spawnDelay: 500}, "foodnstuff", 90);
    * ```
    * @param script - Filename of script to execute.
    * @param threadOrOptions - Either an integer number of threads for new script, or a {@link SpawnOptions} object. Threads defaults to 1 and spawnDelay defaults to 10,000 ms.
@@ -6338,7 +6344,7 @@ export interface NS {
    * @example
    * ```js
    * const ps = ns.ps("home");
-   * for (let script of ps) {
+   * for (const script of ps) {
    *   ns.tprint(`${script.filename} ${script.threads}`);
    *   ns.tprint(script.args);
    * }
@@ -6680,7 +6686,7 @@ export interface NS {
    * // Attempt to purchase 5 servers with 64GB of ram each
    * const ram = 64;
    * const prefix = "pserv-";
-   * for (i = 0; i < 5; ++i) {
+   * for (let i = 0; i < 5; ++i) {
    *    ns.purchaseServer(prefix + i, ram);
    * }
    * ```
@@ -7392,7 +7398,7 @@ export interface NS {
    * const resetInfo = ns.getResetInfo();
    * const lastAugReset = resetInfo.lastAugReset;
    * ns.tprint(`The last augmentation reset was: ${new Date(lastAugReset)}`);
-   * ns.tprint(`It has been ${Date.now() - lastAugReset}ms since the last augmentation reset.`);
+   * ns.tprint(`It has been ${Date.now() - lastAugReset} ms since the last augmentation reset.`);
    * ```
    * */
   getResetInfo(): ResetInfo;
@@ -7433,19 +7439,19 @@ export interface NS {
    *   ns.tprint(data);
    * }
    *
-   * // [home ~/]> run example.js
+   * // [home /]> run example.js
    * // {"_":[],"delay":0,"server":"foodnstuff","exclude":[],"help":false,"v":false}
-   * // [home ~/]> run example.js --delay 3000
+   * // [home /]> run example.js --delay 3000
    * // {"_":[],"delay":3000,"server":"foodnstuff","exclude":[],"help":false,"v":false}
-   * // [home ~/]> run example.js --delay 3000 --server harakiri-sushi
+   * // [home /]> run example.js --delay 3000 --server harakiri-sushi
    * // {"_":[],"delay":3000,"server":"harakiri-sushi","exclude":[],"help":false,"v":false}
-   * // [home ~/]> run example.js --delay 3000 --server harakiri-sushi hello world
+   * // [home /]> run example.js --delay 3000 --server harakiri-sushi hello world
    * // {"_":["hello","world"],"delay":3000,"server":"harakiri-sushi","exclude":[],"help":false,"v":false}
-   * // [home ~/]> run example.js --delay 3000 --server harakiri-sushi hello world --exclude a --exclude b
+   * // [home /]> run example.js --delay 3000 --server harakiri-sushi hello world --exclude a --exclude b
    * // {"_":["hello","world"],"delay":3000,"server":"harakiri-sushi","exclude":["a","b"],"help":false,"v":false}
-   * // [home ~/]> run example.js --help
+   * // [home /]> run example.js --help
    * // {"_":[],"delay":0,"server":"foodnstuff","exclude":[],"help":true,"v":false}
-   * // [home ~/]> run example.js -v
+   * // [home /]> run example.js -v
    * // {"_":[],"delay":0,"server":"foodnstuff","exclude":[],"help":false,"v":true}
    * ```
    */

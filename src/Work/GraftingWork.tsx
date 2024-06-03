@@ -21,10 +21,12 @@ interface GraftingWorkParams {
 export class GraftingWork extends Work {
   augmentation: AugmentationName;
   unitCompleted: number;
+  unitRate: number;
 
   constructor(params?: GraftingWorkParams) {
     super(WorkType.GRAFTING, params?.singularity ?? true);
     this.unitCompleted = 0;
+    this.unitRate = 0;
     this.augmentation = params?.augmentation ?? AugmentationName.Targeting1;
     const gAugs = GraftableAugmentations();
     if (params) Player.loseMoney(gAugs[this.augmentation].cost, "augmentations");
@@ -37,8 +39,8 @@ export class GraftingWork extends Work {
   process(cycles: number): boolean {
     const focusBonus = Player.focusPenalty();
     this.cyclesWorked += cycles;
-    this.unitCompleted += CONSTANTS.MilliPerCycle * cycles * graftingIntBonus() * focusBonus;
-
+    this.unitRate = CONSTANTS.MilliPerCycle * cycles * graftingIntBonus() * focusBonus;
+    this.unitCompleted += this.unitRate;
     return this.unitCompleted >= this.unitNeeded();
   }
 
@@ -56,7 +58,7 @@ export class GraftingWork extends Work {
         dialogBoxCreate(
           <>
             You've finished grafting {augName}.<br />
-            The augmentation has been applied to your body{" "}
+            The augmentation has been applied to your body
             {Player.hasAugmentation(AugmentationName.CongruityImplant, true) ? "." : ", but you feel a bit off."}
           </>,
         );
