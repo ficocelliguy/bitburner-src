@@ -91,7 +91,9 @@ export function GoPoint({ state, x, y, traditional, hover, valid, emptyPointOwne
 
 export function getSizeClass(
   size: number,
-  classes: ClassNameMap<"fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen">,
+  classes: ClassNameMap<
+    "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen" | string
+  >,
 ) {
   switch (size) {
     case 5:

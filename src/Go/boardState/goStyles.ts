@@ -1,5 +1,6 @@
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
+import { keyframes } from "tss-react";
 
 type sizes = "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen";
 type points =
@@ -13,6 +14,15 @@ type points =
   | "priorStoneTrad";
 type structure = "coordinates" | "liberty" | "northLiberty" | "eastLiberty" | "westLiberty" | "southLiberty";
 type highlight = "hover" | "valid" | "priorPoint";
+
+const fadeLoop = keyframes`
+    0% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
+`;
 
 export const pointStyle = makeStyles<void, sizes | points | structure | highlight>({ uniqId: "pointStyle" })(
   (theme: Theme, _, classes) => ({
@@ -318,15 +328,7 @@ export const pointStyle = makeStyles<void, sizes | points | structure | highligh
       outlineColor: theme.colors.white,
     },
     fadeLoopAnimation: {
-      animation: `$fadeLoop 800ms ${theme.transitions.easing.easeInOut} infinite alternate`,
-    },
-    "@keyframes fadeLoop": {
-      "0%": {
-        opacity: 0.4,
-      },
-      "100%": {
-        opacity: 1,
-      },
+      animation: `${fadeLoop} 800ms ${theme.transitions.easing.easeInOut} infinite alternate`,
     },
     liberty: {
       position: "absolute",
@@ -482,15 +484,7 @@ export const boardStyles = makeStyles<void, sizes | "background">({ uniqId: "boa
       borderColor: theme.colors.success,
       padding: "0 12px",
       width: "200px",
-      animation: `$fadeLoop 600ms ${theme.transitions.easing.easeInOut} infinite alternate`,
-    },
-    "@keyframes fadeLoop": {
-      "0%": {
-        opacity: 0.6,
-      },
-      "100%": {
-        opacity: 1,
-      },
+      animation: `${fadeLoop} 600ms ${theme.transitions.easing.easeInOut} infinite alternate`,
     },
     scoreBox: {
       display: "inline-flex",
