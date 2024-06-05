@@ -18,7 +18,7 @@ interface IProps {
   cancel: () => void;
   showInstructions: () => void;
 }
-const boardSizeOptions = boardSizes.filter(size => size !== 19);
+const boardSizeOptions = boardSizes.filter((size) => size !== 19);
 
 export const GoSubnetSearch = ({ open, search, cancel, showInstructions }: IProps): React.ReactElement => {
   const classes = boardStyles();
