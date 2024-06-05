@@ -2,8 +2,8 @@ import { Theme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
 import { keyframes } from "tss-react";
 
-type sizes = "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen";
-type points =
+export type sizes = "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen";
+export type points =
   | "blackPoint"
   | "whitePoint"
   | "innerPoint"
@@ -12,8 +12,8 @@ type points =
   | "broken"
   | "tradStone"
   | "priorStoneTrad";
-type structure = "coordinates" | "liberty" | "northLiberty" | "eastLiberty" | "westLiberty" | "southLiberty";
-type highlight = "hover" | "valid" | "priorPoint";
+export type structure = "coordinates" | "liberty" | "northLiberty" | "eastLiberty" | "westLiberty" | "southLiberty";
+export type highlight = "hover" | "valid" | "priorPoint";
 
 const fadeLoop = keyframes`
     0% {

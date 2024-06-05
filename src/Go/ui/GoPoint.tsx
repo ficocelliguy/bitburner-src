@@ -1,12 +1,11 @@
 import type { BoardState } from "../Types";
 
 import React from "react";
-import { ClassNameMap } from "@mui/styles";
 
 import { GoColor } from "@enums";
 import { columnIndexes } from "../Constants";
 import { findNeighbors } from "../boardState/boardState";
-import { pointStyle } from "../boardState/goStyles";
+import { highlight, points, pointStyle, sizes, structure } from "../boardState/goStyles";
 import { findAdjacentLibertiesAndAlliesForPoint, getColorOnBoardString } from "../boardAnalysis/boardAnalysis";
 
 interface GoPointProps {
@@ -89,12 +88,7 @@ export function GoPoint({ state, x, y, traditional, hover, valid, emptyPointOwne
   );
 }
 
-export function getSizeClass(
-  size: number,
-  classes: ClassNameMap<
-    "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen" | string
-  >,
-) {
+export function getSizeClass(size: number, classes: Record<sizes | points | structure | highlight, string>) {
   switch (size) {
     case 5:
       return classes.fiveByFive;
