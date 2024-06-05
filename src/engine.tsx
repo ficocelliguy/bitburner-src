@@ -331,7 +331,7 @@ const Engine: {
       // Bladeburner offline progress
       if (Player.bladeburner) Player.bladeburner.storeCycles(numCyclesOffline);
 
-      Go.storeCycles(numCyclesOffline);
+      Go.storeCycles(numCyclesOffline / 3);
 
       staneksGift.process(numCyclesOffline);
 
