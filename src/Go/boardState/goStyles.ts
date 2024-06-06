@@ -2,8 +2,8 @@ import { Theme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
 import { keyframes } from "tss-react";
 
-export type sizes = "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen";
-export type points =
+type Size = "fiveByFive" | "sevenBySeven" | "nineByNine" | "thirteenByThirteen" | "nineteenByNineteen";
+type Point =
   | "blackPoint"
   | "whitePoint"
   | "innerPoint"
@@ -12,8 +12,8 @@ export type points =
   | "broken"
   | "tradStone"
   | "priorStoneTrad";
-export type structure = "coordinates" | "liberty" | "northLiberty" | "eastLiberty" | "westLiberty" | "southLiberty";
-export type highlight = "hover" | "valid" | "priorPoint";
+type Structure = "coordinates" | "liberty" | "northLiberty" | "eastLiberty" | "westLiberty" | "southLiberty";
+type Highlight = "hover" | "valid" | "priorPoint";
 
 const fadeLoop = keyframes`
     0% {
@@ -24,7 +24,7 @@ const fadeLoop = keyframes`
     }
 `;
 
-export const pointStyle = makeStyles<void, sizes | points | structure | highlight>({ uniqId: "pointStyle" })(
+export const pointStyle = makeStyles<void, Size | Point | Structure | Highlight>({ uniqId: "pointStyle" })(
   (theme: Theme, _, classes) => ({
     hover: {},
     valid: {},
@@ -396,7 +396,7 @@ export const pointStyle = makeStyles<void, sizes | points | structure | highligh
   }),
 );
 
-export const boardStyles = makeStyles<void, sizes | "background">({ uniqId: "boardStyles" })(
+export const boardStyles = makeStyles<void, Size | "background">({ uniqId: "boardStyles" })(
   (theme: Theme, _, classes) => ({
     tab: {
       paddingTop: 0,
