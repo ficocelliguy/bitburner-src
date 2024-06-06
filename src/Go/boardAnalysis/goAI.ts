@@ -822,7 +822,7 @@ export function sleep(ms: number): Promise<void> {
  */
 function waitCycle(useOfflineCycles = true): Promise<void> {
   if (useOfflineCycles && Go.storedCycles > 0) {
-    Go.storedCycles -= 1;
+    Go.storedCycles -= 2;
     return sleep(40);
   }
   return sleep(200);
