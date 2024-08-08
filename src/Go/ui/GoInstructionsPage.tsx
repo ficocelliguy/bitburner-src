@@ -154,10 +154,10 @@ export const GoInstructionsPage = (): React.ReactElement => {
               <br />
               <br />
               For experienced Go players: IPvGO uses the old traditional Go score rules, area scoring, rather than the
-              modern Japanese territory scoring. All stones are alive and count towards score unless captured during the
-              game. Chains that could be dead are not automatically captured after the game, and prisoners are not
-              calculated. This was chosen for its simplicity to teach and to calculate, rather than using the modern
-              shortcuts designed to make physical games quicker.
+              Japanese territory scoring that was popular in the mid-21st century. All stones are alive and count
+              towards score unless captured during the game. Chains that could be dead are not automatically captured
+              after the game, and prisoners are not calculated. This was chosen for its simplicity to teach and to
+              calculate, rather than using the territory scoring shortcuts designed to make physical games quicker.
             </Typography>
           </Grid>
         </Grid>
