@@ -37,12 +37,11 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
 
   // If the AI is disabled, simply make a promise to be resolved once the player makes a move as white
   if (boardState.ai === GoOpponent.none) {
-    GoEvents.emit();
-    // Update currentTurnResolver to call Go.nextTurn's resolve function with the last played move's details
-    Go.nextTurn = new Promise((resolve) => (currentTurnResolver = () => resolve(getPreviousMoveDetails())));
+    resetAI();
   }
   // If an AI is in use, find the faction's move in response, and resolve the Go.nextTurn promise once it is found and played.
   else {
+    const currentMoveCount = Go.currentGame.previousBoards.length;
     Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai, useOfflineCycles).then(
       async (play): Promise<Play> => {
         if (boardState !== Go.currentGame) return play; //Stale game
@@ -54,6 +53,11 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
           if (boardState.previousPlayer === null || !getAllValidMoves(boardState, GoColor.black).length) {
             return { type: GoPlayType.gameOver, x: null, y: null };
           }
+          return play;
+        }
+
+        if (currentMoveCount !== Go.currentGame.previousBoards.length) {
+          console.error("AI move attempted, but the board state has changed.");
           return play;
         }
 
@@ -80,6 +84,13 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
   });
 
   return Go.nextTurn;
+}
+
+export function resetAI(thinking = true) {
+  isAiThinking = thinking;
+  GoEvents.emit();
+  // Update currentTurnResolver to call Go.nextTurn's resolve function with the last played move's details
+  Go.nextTurn = new Promise((resolve) => (currentTurnResolver = () => resolve(getPreviousMoveDetails())));
 }
 
 /**

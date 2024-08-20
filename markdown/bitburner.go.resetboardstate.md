@@ -4,7 +4,7 @@
 
 ## Go.resetBoardState() method
 
-Gets new IPvGO subnet with the specified size owned by the listed faction, ready for the player to make a move. This will reset your win streak if the current game is not complete and you have already made moves. Resetting the board can only be done on your turn. (await ns.go.opponentNextTurn() before resetting)
+Gets new IPvGO subnet with the specified size owned by the listed faction, ready for the player to make a move. This will reset your win streak if the current game is not complete and you have already made moves.
 
 Note that some factions will have a few routers already on the subnet after a reset.
 

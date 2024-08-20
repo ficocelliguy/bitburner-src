@@ -29,7 +29,6 @@ import {
 } from "../Go/effects/netscriptGoImplementation";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { errorMessage } from "../Netscript/ErrorMessages";
-import { GoColor, GoValidity } from "@enums";
 
 const logger = (ctx: NetscriptContext) => (message: string) => helpers.log(ctx, () => message);
 const error = (ctx: NetscriptContext) => (message: string) => {
@@ -75,12 +74,6 @@ export function NetscriptGo(): InternalAPI<NSGo> {
     resetBoardState: (ctx) => (_opponent, _boardSize) => {
       const opponent = getEnumHelper("GoOpponent").nsGetMember(ctx, _opponent);
       const boardSize = helpers.number(ctx, "boardSize", _boardSize);
-
-      if (Go.currentGame.previousPlayer === GoColor.black) {
-        error(ctx)(
-          `${GoValidity.notYourTurn}. You need to "await ns.go.opponentNextTurn()" before resetting the board`,
-        );
-      }
 
       return resetBoardState(logger(ctx), error(ctx), opponent, boardSize);
     },
