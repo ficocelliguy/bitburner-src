@@ -65,7 +65,7 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
         await waitCycle(useOfflineCycles);
 
         if (currentMoveCount !== Go.currentGame.previousBoards.length || boardState !== Go.currentGame) {
-          console.error("AI move attempted, but the board state has changed.");
+          console.warn("AI move attempted, but the board state has changed.");
           encounteredError = true;
           return play;
         }
