@@ -34,6 +34,7 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
     return Go.nextTurn;
   }
   isAiThinking = true;
+  let encounteredError = false;
 
   // If the AI is disabled, simply make a promise to be resolved once the player makes a move as white
   if (boardState.ai === GoOpponent.none) {
@@ -44,7 +45,11 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
     const currentMoveCount = Go.currentGame.previousBoards.length;
     Go.nextTurn = getMove(boardState, GoColor.white, Go.currentGame.ai, useOfflineCycles).then(
       async (play): Promise<Play> => {
-        if (boardState !== Go.currentGame) return play; //Stale game
+        if (boardState !== Go.currentGame) {
+          //Stale game
+          encounteredError = true;
+          return play;
+        }
 
         // Handle AI passing
         if (play.type === GoPlayType.pass) {
@@ -56,13 +61,15 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
           return play;
         }
 
-        if (currentMoveCount !== Go.currentGame.previousBoards.length) {
+        // Handle AI making a move
+        await waitCycle(useOfflineCycles);
+
+        if (currentMoveCount !== Go.currentGame.previousBoards.length || boardState !== Go.currentGame) {
           console.error("AI move attempted, but the board state has changed.");
+          encounteredError = true;
           return play;
         }
 
-        // Handle AI making a move
-        await waitCycle(useOfflineCycles);
         const aiUpdatedBoard = makeMove(boardState, play.x, play.y, GoColor.white);
 
         // Handle the AI breaking. This shouldn't ever happen.
@@ -79,7 +86,9 @@ export function makeAIMove(boardState: BoardState, useOfflineCycles = true): Pro
   // Once the AI moves (or the player playing as white with No AI moves),
   // clear the isAiThinking semaphore and update the board UI.
   Go.nextTurn = Go.nextTurn.finally(() => {
-    isAiThinking = false;
+    if (!encounteredError) {
+      isAiThinking = false;
+    }
     GoEvents.emit();
   });
 
