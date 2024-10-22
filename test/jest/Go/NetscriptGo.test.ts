@@ -164,6 +164,22 @@ describe("Netscript Go API unit tests", () => {
         [false, true, false, true, false],
       ]);
     });
+
+    it("should return all valid and invalid moves on the board, if a board is provided", () => {
+      const currentBoard = [".....", ".....", ".....", ".....", "....."];
+      Go.currentGame = boardStateFromSimpleBoard(currentBoard, GoOpponent.Daedalus, GoColor.white);
+
+      const board = ["XXO.#", "XO.O.", ".OOOO", "XXXXX", "X.X.X"];
+      const result = getValidMoves(board);
+
+      expect(result).toEqual([
+        [false, false, false, false, false],
+        [false, false, false, false, false],
+        [false, false, false, false, false],
+        [false, false, false, false, false],
+        [false, false, false, false, false],
+      ]);
+    });
   });
 
   describe("getChains() unit tests", () => {
@@ -202,6 +218,16 @@ describe("Netscript Go API unit tests", () => {
       Go.currentGame = boardStateFromSimpleBoard(board, GoOpponent.Daedalus, GoColor.white);
 
       const result = getControlledEmptyNodes();
+
+      expect(result).toEqual(["...O#", "..O.O", "?....", ".....", ".X.X."]);
+    });
+
+    it("should show the details for the given board, if provided", () => {
+      const currentBoard = [".....", ".....", ".....", ".....", "....."];
+      Go.currentGame = boardStateFromSimpleBoard(currentBoard, GoOpponent.Daedalus, GoColor.white);
+
+      const board = ["XXO.#", "XO.O.", ".OOOO", "XXXXX", "X.X.X"];
+      const result = getControlledEmptyNodes(board);
 
       expect(result).toEqual(["...O#", "..O.O", "?....", ".....", ".X.X."]);
     });

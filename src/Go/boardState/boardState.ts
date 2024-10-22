@@ -1,15 +1,15 @@
-import type { Board, BoardState, Move, Neighbor, PointState } from "../Types";
+import { Board, BoardState, Move, Neighbor, PointState, SimpleBoard } from "../Types";
 
-import { GoOpponent, GoColor, GoValidity } from "@enums";
+import { GoColor, GoOpponent, GoValidity } from "@enums";
 import { bitverseBoardShape } from "../Constants";
 import { getExpansionMoveArray } from "../boardAnalysis/goAI";
 import {
+  boardFromSimpleBoard,
+  boardStringFromBoard,
   evaluateIfMoveIsValid,
   findAllCapturedChains,
   findLibertiesForChain,
   getAllChains,
-  boardFromSimpleBoard,
-  boardStringFromBoard,
 } from "../boardAnalysis/boardAnalysis";
 import { endGoGame } from "../boardAnalysis/scoring";
 import { addObstacles, resetCoordinates, rotate90Degrees } from "./offlineNodes";
@@ -57,6 +57,13 @@ export function getNewBoardState(
     applyHandicap(newBoardState.board, handicap);
   }
   return newBoardState;
+}
+
+export function getNewBoardStateFromSimpleBoard(
+  simpleBoard: SimpleBoard,
+  ai: GoOpponent = GoOpponent.Netburners,
+): BoardState {
+  return getNewBoardState(simpleBoard.length, ai, false, boardFromSimpleBoard(simpleBoard));
 }
 
 /**

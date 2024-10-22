@@ -4,7 +4,7 @@
 
 ## GoAnalysis.getValidMoves() method
 
-Shows if each point on the board is a valid move for the player.
+Shows if each point on the board is a valid move for the player. Takes an optional boardState argument; by default uses the current board state.
 
 The true/false validity of each move can be retrieved via the X and Y coordinates of the move. `const validMoves = ns.go.analysis.getValidMoves();`
 
@@ -15,8 +15,15 @@ Note that the \[0\]\[0\] point is shown on the bottom-left on the visual board (
 **Signature:**
 
 ```typescript
-getValidMoves(): boolean[][];
+getValidMoves(boardState?: string[]): boolean[][];
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  boardState | string\[\] | _(Optional)_ |
+
 **Returns:**
 
 boolean\[\]\[\]

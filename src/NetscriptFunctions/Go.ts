@@ -24,6 +24,7 @@ import {
   handlePassTurn,
   makePlayerMove,
   resetBoardState,
+  validateBoardState,
   validateMove,
   validateTurn,
 } from "../Go/effects/netscriptGoImplementation";
@@ -78,17 +79,21 @@ export function NetscriptGo(): InternalAPI<NSGo> {
       return resetBoardState(logger(ctx), error(ctx), opponent, boardSize);
     },
     analysis: {
-      getValidMoves: () => () => {
-        return getValidMoves();
+      getValidMoves: (ctx) => (_boardState) => {
+        const boardState = validateBoardState(error(ctx), _boardState);
+        return getValidMoves(boardState);
       },
-      getChains: () => () => {
-        return getChains();
+      getChains: (ctx) => (_boardState) => {
+        const boardState = validateBoardState(error(ctx), _boardState);
+        return getChains(boardState);
       },
-      getLiberties: () => () => {
-        return getLiberties();
+      getLiberties: (ctx) => (_boardState) => {
+        const boardState = validateBoardState(error(ctx), _boardState);
+        return getLiberties(boardState);
       },
-      getControlledEmptyNodes: () => () => {
-        return getControlledEmptyNodes();
+      getControlledEmptyNodes: (ctx) => (_boardState) => {
+        const boardState = validateBoardState(error(ctx), _boardState);
+        return getControlledEmptyNodes(boardState);
       },
       getStats: () => () => {
         return getStats();

@@ -635,7 +635,7 @@ export function simpleBoardFromBoardString(boardString: string): SimpleBoard {
 
 /** Creates a board object from a simple board. The resulting board has no analytics (liberties/chains) */
 export function boardFromSimpleBoard(simpleBoard: SimpleBoard): Board {
-  return simpleBoard.map((column, x) =>
+  const board = simpleBoard.map((column, x) =>
     column.split("").map((char, y) => {
       if (char === "#") return null;
       if (char === "X") return blankPointState(GoColor.black, x, y);
@@ -643,6 +643,8 @@ export function boardFromSimpleBoard(simpleBoard: SimpleBoard): Board {
       return blankPointState(GoColor.empty, x, y);
     }),
   );
+  updateChains(board);
+  return board;
 }
 
 export function boardStateFromSimpleBoard(

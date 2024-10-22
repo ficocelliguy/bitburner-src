@@ -6,6 +6,8 @@
 
 Returns 'X', 'O', or '?' for each empty point to indicate which player controls that empty point. If no single player fully encircles the empty space, it is shown as contested with '?'. "\#" are dead nodes that are not part of the subnet.
 
+Takes an optional boardState argument; by default uses the current board state.
+
 Filled points of any color are indicated with '.'
 
 In this example, white encircles some space in the top-left, black encircles some in the top-right, and between their routers is contested space in the center: <pre lang="javascript"> \[ "OO..?", "OO.?.", "O.?.X", ".?.XX", "?..X\#", \] </pre>
@@ -13,8 +15,15 @@ In this example, white encircles some space in the top-left, black encircles som
 **Signature:**
 
 ```typescript
-getControlledEmptyNodes(): string[];
+getControlledEmptyNodes(boardState?: string[]): string[];
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  boardState | string\[\] | _(Optional)_ |
+
 **Returns:**
 
 string\[\]
