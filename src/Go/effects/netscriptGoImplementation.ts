@@ -1,16 +1,9 @@
-import { Play, SimpleBoard, SimpleOpponentStats } from "../Types";
+import { Board, BoardState, Play, SimpleBoard, SimpleOpponentStats } from "../Types";
 
 import { Player } from "@player";
 import { AugmentationName, GoColor, GoOpponent, GoPlayType, GoValidity } from "@enums";
 import { Go, GoEvents } from "../Go";
-import {
-  getNewBoardState,
-  getNewBoardStateFromSimpleBoard,
-  makeMove,
-  passTurn,
-  updateCaptures,
-  updateChains,
-} from "../boardState/boardState";
+import { getNewBoardState, makeMove, passTurn, updateCaptures, updateChains } from "../boardState/boardState";
 import { makeAIMove, resetAI } from "../boardAnalysis/goAI";
 import {
   boardFromSimpleBoard,
@@ -158,8 +151,8 @@ export async function getOpponentNextMove(logOpponentMove = true, logger: (s: st
 /**
  * Returns a grid of booleans indicating if the coordinates at that location are a valid move for the player (black pieces)
  */
-export function getValidMoves(_boardState?: SimpleBoard) {
-  const boardState = _boardState ? getNewBoardStateFromSimpleBoard(_boardState) : Go.currentGame;
+export function getValidMoves(_boardState?: BoardState) {
+  const boardState = _boardState || Go.currentGame;
   // Map the board matrix into true/false values
   return boardState.board.map((column, x) =>
     column.reduce((validityArray: boolean[], point, y) => {
@@ -173,8 +166,8 @@ export function getValidMoves(_boardState?: SimpleBoard) {
 /**
  * Returns a grid with an ID for each contiguous chain of same-state nodes (excluding dead/offline nodes)
  */
-export function getChains(_boardState?: SimpleBoard) {
-  const board = _boardState ? boardFromSimpleBoard(_boardState) : Go.currentGame.board;
+export function getChains(_board?: Board) {
+  const board = _board || Go.currentGame.board;
   const chains: string[] = [];
   // Turn the internal chain IDs into nice consecutive numbers for display to the player
   return board.map((column) =>
@@ -195,8 +188,8 @@ export function getChains(_boardState?: SimpleBoard) {
 /**
  * Returns a grid of numbers representing the number of open-node connections each player-owned chain has.
  */
-export function getLiberties(_boardState?: SimpleBoard) {
-  const board = _boardState ? boardFromSimpleBoard(_boardState) : Go.currentGame.board;
+export function getLiberties(_board?: Board) {
+  const board = _board || Go.currentGame.board;
   return board.map((column) =>
     column.reduce((libertyArray: number[], point) => {
       libertyArray.push(point?.liberties?.length || -1);
@@ -208,8 +201,8 @@ export function getLiberties(_boardState?: SimpleBoard) {
 /**
  * Returns a grid indicating which player, if any, controls the empty nodes by fully encircling it with their routers
  */
-export function getControlledEmptyNodes(_boardState?: SimpleBoard) {
-  const board = _boardState ? boardFromSimpleBoard(_boardState) : Go.currentGame.board;
+export function getControlledEmptyNodes(_board?: Board) {
+  const board = _board || Go.currentGame.board;
   const controlled = getControlledSpace(board);
   return controlled.map((column, x: number) =>
     column.reduce((ownedPoints: string, owner: GoColor, y: number) => {
@@ -332,7 +325,7 @@ export function getStats() {
   return statDetails;
 }
 
-export const boardValidity = {
+const boardValidity = {
   valid: "",
   badShape: "Invalid boardState: Board must be a square",
   badType: "Invalid boardState: Board must be an array of strings",
@@ -340,10 +333,10 @@ export const boardValidity = {
   badCharacters:
     'Invalid board state: unknown characters found. "X" represents black pieces, "O" white, "." empty points, and "#" offline nodes.',
   failedToCreateBoard: "Invalid board state: Failed to create board",
-};
+} as const;
 
 /** Validate the given boardState */
-export function validateBoardState(error: (s: string) => void, _boardState: unknown): string[] | undefined {
+export function validateBoardState(error: (s: string) => void, _boardState: unknown): SimpleBoard | undefined {
   if (!_boardState) {
     return undefined;
   }

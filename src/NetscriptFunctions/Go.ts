@@ -4,7 +4,7 @@ import type { Play } from "../Go/Types";
 
 import { Go } from "../Go/Go";
 import { helpers } from "../Netscript/NetscriptHelpers";
-import { simpleBoardFromBoard } from "../Go/boardAnalysis/boardAnalysis";
+import { simpleBoardFromBoard, updatedBoardFromSimpleBoard } from "../Go/boardAnalysis/boardAnalysis";
 import {
   cheatDestroyNode,
   cheatPlayTwoMoves,
@@ -30,6 +30,7 @@ import {
 } from "../Go/effects/netscriptGoImplementation";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { errorMessage } from "../Netscript/ErrorMessages";
+import { getNewBoardStateFromSimpleBoard } from "../Go/boardState/boardState";
 
 const logger = (ctx: NetscriptContext) => (message: string) => helpers.log(ctx, () => message);
 const error = (ctx: NetscriptContext) => (message: string) => {
@@ -79,21 +80,26 @@ export function NetscriptGo(): InternalAPI<NSGo> {
       return resetBoardState(logger(ctx), error(ctx), opponent, boardSize);
     },
     analysis: {
-      getValidMoves: (ctx) => (_boardState) => {
+      getValidMoves: (ctx) => (_boardState, _priorBoardState) => {
         const boardState = validateBoardState(error(ctx), _boardState);
-        return getValidMoves(boardState);
+        const priorBoardState = validateBoardState(error(ctx), _priorBoardState);
+        const State = boardState ? getNewBoardStateFromSimpleBoard(boardState, priorBoardState) : undefined;
+        return getValidMoves(State);
       },
       getChains: (ctx) => (_boardState) => {
         const boardState = validateBoardState(error(ctx), _boardState);
-        return getChains(boardState);
+        const board = boardState ? updatedBoardFromSimpleBoard(boardState) : undefined;
+        return getChains(board);
       },
       getLiberties: (ctx) => (_boardState) => {
         const boardState = validateBoardState(error(ctx), _boardState);
-        return getLiberties(boardState);
+        const board = boardState ? updatedBoardFromSimpleBoard(boardState) : undefined;
+        return getLiberties(board);
       },
       getControlledEmptyNodes: (ctx) => (_boardState) => {
         const boardState = validateBoardState(error(ctx), _boardState);
-        return getControlledEmptyNodes(boardState);
+        const board = boardState ? updatedBoardFromSimpleBoard(boardState) : undefined;
+        return getControlledEmptyNodes(board);
       },
       getStats: () => () => {
         return getStats();

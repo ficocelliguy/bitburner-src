@@ -4251,7 +4251,8 @@ type SimpleOpponentStats = {
 export interface GoAnalysis {
   /**
    * Shows if each point on the board is a valid move for the player.
-   * Takes an optional boardState argument; by default uses the current board state.
+   * By default, analyzes the current board state.
+   * Takes an optional boardState (and an optional prior-move boardState, if desired) to analyze a custom board.
    *
    * The true/false validity of each move can be retrieved via the X and Y coordinates of the move.
    *      `const validMoves = ns.go.analysis.getValidMoves();`
@@ -4262,12 +4263,14 @@ export interface GoAnalysis {
    * string represents a vertical column on the board. In other words, the printed example above can be understood to
    * be rotated 90 degrees clockwise compared to the board UI as shown in the IPvGO subnet tab.
    *
+   * Also note that, when given a custom board state, only one prior move can be analyzed. This means that the superko rules
+   *  (no duplicate board states in the full game history) is not supported; you will have to implement your own analysis for that.
    *
    * @remarks
    * RAM cost: 8 GB
    * (This is intentionally expensive; you can derive this info from just getBoardState() )
    */
-  getValidMoves(boardState?: string[]): boolean[][];
+  getValidMoves(boardState?: string[], priorBoardState?: string[]): boolean[][];
 
   /**
    * Returns an ID for each point. All points that share an ID are part of the same network (or "chain"). Empty points
@@ -4321,7 +4324,7 @@ export interface GoAnalysis {
   getLiberties(boardState?: string[]): number[][];
 
   /**
-   * Returns 'X', 'O', or '?' for each empty point to indicate which player controls that empty point.
+   * Returns 'X' for black, 'O' for white, or '?' for each empty point to indicate which player controls that empty point.
    * If no single player fully encircles the empty space, it is shown as contested with '?'.
    * "#" are dead nodes that are not part of the subnet.
    *
