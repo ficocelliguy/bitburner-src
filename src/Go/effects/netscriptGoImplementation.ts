@@ -3,10 +3,16 @@ import { Board, BoardState, Play, SimpleBoard, SimpleOpponentStats } from "../Ty
 import { Player } from "@player";
 import { AugmentationName, GoColor, GoOpponent, GoPlayType, GoValidity } from "@enums";
 import { Go, GoEvents } from "../Go";
-import { getNewBoardState, makeMove, passTurn, updateCaptures, updateChains } from "../boardState/boardState";
+import {
+  getNewBoardState,
+  getNewBoardStateFromSimpleBoard,
+  makeMove,
+  passTurn,
+  updateCaptures,
+  updateChains,
+} from "../boardState/boardState";
 import { makeAIMove, resetAI } from "../boardAnalysis/goAI";
 import {
-  boardFromSimpleBoard,
   evaluateIfMoveIsValid,
   getControlledSpace,
   getPreviousMove,
@@ -335,8 +341,32 @@ const boardValidity = {
   failedToCreateBoard: "Invalid board state: Failed to create board",
 } as const;
 
-/** Validate the given boardState */
-export function validateBoardState(error: (s: string) => void, _boardState: unknown): SimpleBoard | undefined {
+/**
+ * Validate the given SimpleBoard and prior board state (if present) and turn it into a full BoardState with updated analytics
+ */
+export function validateBoardState(
+  error: (s: string) => void,
+  _boardState?: unknown,
+  _priorBoardState?: unknown,
+): BoardState | undefined {
+  const simpleBoard = getSimpleBoardFromUnknown(error, _boardState);
+  const priorSimpleBoard = getSimpleBoardFromUnknown(error, _priorBoardState);
+
+  if (!_boardState || !simpleBoard) {
+    return undefined;
+  }
+
+  try {
+    return getNewBoardStateFromSimpleBoard(simpleBoard, priorSimpleBoard);
+  } catch (e) {
+    error(boardValidity.failedToCreateBoard);
+  }
+}
+
+/**
+ * Check that the given boardState is a valid SimpleBoard, and return it if it is.
+ */
+function getSimpleBoardFromUnknown(error: (arg0: string) => void, _boardState: unknown): SimpleBoard | undefined {
   if (!_boardState) {
     return undefined;
   }
@@ -358,14 +388,7 @@ export function validateBoardState(error: (s: string) => void, _boardState: unkn
   if (boardState.find((row) => row.match(/[^XO#.]/))) {
     error(boardValidity.badCharacters);
   }
-  try {
-    const board = boardFromSimpleBoard(boardState);
-    updateCaptures(board, GoColor.black);
-  } catch (e) {
-    error(boardValidity.failedToCreateBoard);
-  }
-
-  return boardState;
+  return boardState as SimpleBoard;
 }
 
 /** Validate singularity access by throwing an error if the player does not have access. */
