@@ -3,6 +3,7 @@ import { transformSync, type ParserConfig } from "@swc/wasm-web";
 import * as acorn from "acorn";
 import { resolveScriptFilePath, validScriptExtensions, type ScriptFilePath } from "../Paths/ScriptFilePath";
 import type { Script } from "../Script/Script";
+import { compilePython } from "./python/parsePython";
 
 export type AcornASTProgram = acorn.Program;
 export type BabelASTProgram = object;
@@ -17,16 +18,18 @@ export enum FileType {
   TSX,
   NS1,
   CSS,
+  PY
 }
 
 export interface FileTypeFeature {
   isReact: boolean;
   isTypeScript: boolean;
+  isPython: boolean;
 }
 
 export class ModuleResolutionError extends Error {}
 
-const supportedFileTypes = [FileType.JSX, FileType.TS, FileType.TSX] as const;
+const supportedFileTypes = [FileType.JSX, FileType.TS, FileType.TSX, FileType.PY] as const;
 
 export function getFileType(filename: string): FileType {
   const extension = filename.substring(filename.lastIndexOf(".") + 1);
@@ -47,6 +50,8 @@ export function getFileType(filename: string): FileType {
       return FileType.NS1;
     case "css":
       return FileType.CSS;
+    case "py":
+      return FileType.PY;
     default:
       throw new Error(`Invalid extension: ${extension}. Filename: ${filename}.`);
   }
@@ -56,12 +61,16 @@ export function getFileTypeFeature(fileType: FileType): FileTypeFeature {
   const result: FileTypeFeature = {
     isReact: false,
     isTypeScript: false,
+    isPython: false,
   };
   if (fileType === FileType.JSX || fileType === FileType.TSX) {
     result.isReact = true;
   }
   if (fileType === FileType.TS || fileType === FileType.TSX) {
     result.isTypeScript = true;
+  }
+  if (fileType === FileType.PY) {
+    result.isPython = true;
   }
   return result;
 }
@@ -70,11 +79,15 @@ export function parseAST(scriptName: string, hostname: string, code: string, fil
   const fileTypeFeature = getFileTypeFeature(fileType);
   let ast: AST;
   try {
+    if (fileType === FileType.PY) {
+      const transpiledCode = compilePython(code);
+      ast = acorn.parse(transpiledCode, { sourceType: "module", ecmaVersion: "latest" });
+    }
     /**
      * acorn is much faster than babel-parser, especially when parsing many big JS files, so we use it to parse the AST of
      * JS code. babel-parser is only useful when we have to parse JSX and TypeScript.
      */
-    if (fileType === FileType.JS) {
+    else if (fileType === FileType.JS) {
       ast = acorn.parse(code, { sourceType: "module", ecmaVersion: "latest" });
     } else {
       const plugins: ("jsx" | "typescript")[] = [];

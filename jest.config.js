@@ -4,7 +4,7 @@ module.exports = {
   transform: {
     "^.+\\.(js|jsx|ts|tsx|cjs|mjs)$": "<rootDir>/test/jest/config/babelTransform.js",
   },
-  transformIgnorePatterns: ["node_modules/(?!react-markdown)/"],
+  transformIgnorePatterns: ["node_modules/(?!react-markdown)/", "rapydscript\\.js$"],
   testPathIgnorePatterns: [".cypress", "node_modules", "dist"],
   testEnvironment: "./FixJSDOMEnvironment.ts",
   setupFiles: ["./jest.polyfills.js"],

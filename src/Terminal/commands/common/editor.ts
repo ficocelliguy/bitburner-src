@@ -25,6 +25,10 @@ function getScriptTemplate(path: string): string {
     return `export async function main(ns: NS) {
 
 }`;
+  } else if (fileTypeFeature.isPython) {
+    return `async def main(ns):
+    ns.print("Hello, world!")
+`;
   } else {
     return `/** @param {NS} ns */
 export async function main(ns) {
