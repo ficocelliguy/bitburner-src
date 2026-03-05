@@ -62,7 +62,7 @@ function makeModel(hostname: string, filename: string, code: string): editor.ITe
       language = "css";
       break;
     case FileType.PY:
-      language = "python";
+      language = "rapydscript";
       break;
     default:
       throwIfReachable(fileType);

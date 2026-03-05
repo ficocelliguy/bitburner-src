@@ -1,6 +1,6 @@
 import "./rapydscript.js";
 
-export function compilePython(code: string): string {
+export function compileRapydscript(code: string): string {
   // rapydscript.js sets globalThis.RapydScript as a side effect (not CJS exports)
   // @ts-expect-error
   // eslint-disable-next-line

@@ -3,7 +3,7 @@ import { transformSync, type ParserConfig } from "@swc/wasm-web";
 import * as acorn from "acorn";
 import { resolveScriptFilePath, validScriptExtensions, type ScriptFilePath } from "../Paths/ScriptFilePath";
 import type { Script } from "../Script/Script";
-import { compilePython } from "./python/parsePython";
+import { compileRapydscript } from "./python/compileRapydscript";
 
 export type AcornASTProgram = acorn.Program;
 export type BabelASTProgram = object;
@@ -80,7 +80,7 @@ export function parseAST(scriptName: string, hostname: string, code: string, fil
   let ast: AST;
   try {
     if (fileType === FileType.PY) {
-      const transpiledCode = compilePython(code);
+      const transpiledCode = compileRapydscript(code);
       ast = acorn.parse(transpiledCode, { sourceType: "module", ecmaVersion: "latest" });
     }
     /**

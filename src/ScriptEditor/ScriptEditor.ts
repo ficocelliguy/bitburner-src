@@ -9,6 +9,9 @@ import * as enums from "../Enums";
 import { ns } from "../NetscriptFunctions";
 import { isLegacyScript } from "../Paths/ScriptFilePath";
 import { exceptionAlert } from "../utils/helpers/exceptionAlert";
+import "../utils/python/rapydscript.js";
+import { registerRapydScript } from "../utils/python/language-service.js";
+import netscriptDefinitions from "./NetscriptDefinitions.d.ts?raw";
 
 /** Event emitter used for tracking when changes have been made to a content file. */
 export const fileEditEvents = new EventEmitter<[hostname: string, filename: ContentFilePath]>();
@@ -37,6 +40,14 @@ export class ScriptEditor {
       }
     }
     populate();
+    // Register RapydScript language service for .py files
+    (function () {
+      const extraBuiltins = Object.fromEntries(apiKeys.map((k) => [k, true]));
+      const rapydService = registerRapydScript(monaco, { extraBuiltins });
+      // Feed the NS API declaration file into the DTS registry so that hover
+      // info and dot-completions work for `ns.*` and other declared globals.
+      rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, ""));
+    })();
     // Add api keys to tokenization
     (async function () {
       // We have to improve the default js language otherwise theme sucks
