@@ -9,7 +9,6 @@ import * as enums from "../Enums";
 import { ns } from "../NetscriptFunctions";
 import { isLegacyScript } from "../Paths/ScriptFilePath";
 import { exceptionAlert } from "../utils/helpers/exceptionAlert";
-import "../utils/python/rapydscript.js";
 import { registerRapydScript } from "../utils/python/language-service.js";
 import netscriptDefinitions from "./NetscriptDefinitions.d.ts?raw";
 

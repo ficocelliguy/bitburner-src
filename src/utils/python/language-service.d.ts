@@ -9,6 +9,12 @@ export interface RapydScriptService {
   dispose(): void;
 }
 
+export declare function web_repl(): {
+  compile(code: string, opts?: Record<string, unknown>): string;
+  is_input_complete(source: string): boolean;
+  in_block_mode: boolean;
+};
+
 export declare function registerRapydScript(
   monaco: typeof import("monaco-editor"),
   options: {
