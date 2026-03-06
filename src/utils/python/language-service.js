@@ -510,6 +510,7 @@ class SymbolInfo {
         this.doc            = opts.doc   || null;
         this.params         = opts.params || null;
         this.inferred_class = opts.inferred_class || null;  // 'ClassName' when x = ClassName(...)
+        this.dts_call_path  = opts.dts_call_path  || null;  // 'ns.getServer' when x = ns.getServer(...)
         this.type           = null;              // Phase 6: TypeInfo
     }
 }
@@ -1275,6 +1276,22 @@ function extract_doc(node) {
 }
 
 /**
+ * Recursively build a dot-path string from a chain of AST_Dot / AST_SymbolRef nodes.
+ * Returns null if the node is not a plain dot-chain (e.g. bracket subscript access).
+ * Examples:
+ *   AST_SymbolRef{name:'ns'}                        → 'ns'
+ *   AST_Dot{expr: AST_SymbolRef{name:'ns'}, prop: 'getServer'}  → 'ns.getServer'
+ */
+function dot_path_from_node(node, RS) {
+    if (node instanceof RS.AST_SymbolRef) return node.name;
+    if (node instanceof RS.AST_Dot) {
+        const left = dot_path_from_node(node.expression, RS);
+        return left ? left + '.' + node.property : null;
+    }
+    return null;
+}
+
+/**
  * Collect parameter descriptors from an AST_Lambda node.
  * Handles regular args, *args (starargs), and **kwargs.
  */
@@ -1351,6 +1368,7 @@ class ScopeBuilder {
             doc:            opts.doc            || null,
             params:         opts.params         || null,
             inferred_class: opts.inferred_class || null,
+            dts_call_path:  opts.dts_call_path  || null,
         });
         scope.addSymbol(sym);
         return sym;
@@ -1495,9 +1513,15 @@ class ScopeBuilder {
                 if (scope) {
                     // Detect the RHS type regardless of whether the symbol exists.
                     let inferred_class = null;
+                    let dts_call_path  = null;
                     if (node.right instanceof RS.AST_BaseCall &&
                         node.right.expression instanceof RS.AST_SymbolRef) {
                         inferred_class = node.right.expression.name;
+                    } else if (node.right instanceof RS.AST_BaseCall &&
+                               node.right.expression instanceof RS.AST_Dot) {
+                        // x = obj.method(...) — capture the full dot-path for DTS type resolution.
+                        const call_path = dot_path_from_node(node.right.expression, RS);
+                        if (call_path) dts_call_path = call_path;
                     } else if (node.right instanceof RS.AST_Array) {
                         inferred_class = 'list';
                     } else if (node.right instanceof RS.AST_Object) {
@@ -1514,10 +1538,13 @@ class ScopeBuilder {
                             kind:           'variable',
                             defined_at:     pos_from_token(node.left.start),
                             inferred_class,
+                            dts_call_path,
                         });
                     } else if (inferred_class && !existing.inferred_class) {
                         // Update the hoisted-but-untyped symbol with the inferred type.
                         existing.inferred_class = inferred_class;
+                    } else if (dts_call_path && !existing.dts_call_path) {
+                        existing.dts_call_path = dts_call_path;
                     }
                 }
             }
@@ -1923,7 +1950,7 @@ class CompletionEngine {
             let ti = this._dts.getGlobal(parts[0]);
             // Follow first var → type reference (e.g. var ns: NS → NS interface)
             if (ti && !ti.members && ti.return_type) {
-                ti = this._dts.getGlobal(ti.return_type);
+                ti = this._dts.getGlobal(resolve_first_type(ti.return_type));
             }
             // Walk remaining path segments through member types
             for (let i = 1; i < parts.length && ti; i++) {
@@ -1932,7 +1959,7 @@ class CompletionEngine {
                 if (member.members) {
                     ti = member;
                 } else if (member.return_type) {
-                    ti = this._dts.getGlobal(member.return_type);
+                    ti = this._dts.getGlobal(resolve_first_type(member.return_type));
                 } else {
                     ti = null;
                 }
@@ -2008,13 +2035,39 @@ class CompletionEngine {
             }
         }
 
+        // 1.75. DTS return-type resolution — variables assigned from DTS method calls.
+        //       e.g. `server = ns.getServer(...)` → resolve return type of ns.getServer from DTS.
+        if (!scope_matched && this._dts && obj_sym && obj_sym.dts_call_path) {
+            const call_path = obj_sym.dts_call_path;
+            const last_dot  = call_path.lastIndexOf('.');
+            if (last_dot > 0) {
+                const object_path = call_path.slice(0, last_dot);
+                const method_name = call_path.slice(last_dot + 1);
+                const member_ti   = this._dts.getMemberInfo(object_path, method_name);
+                if (member_ti && member_ti.return_type) {
+                    const return_ti = this._dts.getGlobal(resolve_first_type(member_ti.return_type));
+                    if (return_ti && return_ti.members) {
+                        scope_matched = true;
+                        for (const [name, member] of return_ti.members) {
+                            if (!ctx.prefix || name.startsWith(ctx.prefix)) {
+                                if (!seen.has(name)) {
+                                    seen.add(name);
+                                    items.push(_dts_member_to_item(member, range, monacoKind));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // 2. DTS registry fallback — namespaces / interfaces / classes from .d.ts.
         //    Skipped when ScopeMap already matched a class (ScopeMap wins).
         if (!scope_matched && this._dts) {
             let ti = this._dts.getGlobal(ctx.objectName);
             // Follow type reference: `var console: Console` → look up `Console`
             if (ti && !ti.members && ti.return_type) {
-                ti = this._dts.getGlobal(ti.return_type);
+                ti = this._dts.getGlobal(resolve_first_type(ti.return_type));
             }
             if (ti && ti.members) {
                 for (const [name, member] of ti.members) {
@@ -2623,6 +2676,27 @@ function parse_dts(text) {
 }
 
 // ---------------------------------------------------------------------------
+// Type-string helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract the first concrete type name from a TypeScript type string.
+ * Handles union types (A | B), generic types (A<B>), and simple names.
+ * Returns null if no plain identifier can be extracted.
+ *
+ * Examples:
+ *   'Server'                                       → 'Server'
+ *   'Server | (DarkServer & { isOnline: boolean })' → 'Server'
+ *   'Promise<number>'                              → 'Promise'
+ */
+function resolve_first_type(type_str) {
+    if (!type_str) return null;
+    const first = type_str.split('|')[0].trim();
+    const base  = first.replace(/<.*$/, '').trim();
+    return /^\w+$/.test(base) ? base : null;
+}
+
+// ---------------------------------------------------------------------------
 // DtsRegistry
 // ---------------------------------------------------------------------------
 
@@ -2700,7 +2774,7 @@ class DtsRegistry {
         let ti = this._globals.get(parts[0]);
         // Dereference var → type (e.g. var ns: NS → NS interface)
         if (ti && !ti.members && ti.return_type) {
-            ti = this._globals.get(ti.return_type);
+            ti = this._globals.get(resolve_first_type(ti.return_type));
         }
         // Walk remaining path segments
         for (let i = 1; i < parts.length && ti; i++) {
@@ -2709,7 +2783,7 @@ class DtsRegistry {
             if (member.members) {
                 ti = member;
             } else if (member.return_type) {
-                ti = this._globals.get(member.return_type);
+                ti = this._globals.get(resolve_first_type(member.return_type));
             } else {
                 ti = null;
             }
