@@ -42,7 +42,7 @@ export class ScriptEditor {
     // Register RapydScript language service for .py files
     (function () {
       const extraBuiltins = Object.fromEntries(apiKeys.map((k) => [k, true]));
-      const rapydService = registerRapydScript(monaco, { extraBuiltins });
+      const rapydService = registerRapydScript(monaco, { extraBuiltins, pythonize_strings: true });
       // Feed the NS API declaration file into the DTS registry so that hover
       // info and dot-completions work for `ns.*` and other declared globals.
       rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, "") + "\ndeclare var ns: NS;\n");

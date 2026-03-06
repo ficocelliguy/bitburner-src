@@ -20,6 +20,7 @@ export declare function registerRapydScript(
   options: {
     compiler?: object;
     extraBuiltins?: Record<string, unknown>;
+    pythonize_strings? : boolean;
     virtualFiles?: Record<string, string>;
     dtsFiles?: Array<{ name: string; content: string }>;
     parseDelay?: number;
