@@ -20,3 +20,10 @@ export function compileRapydscript(code: string): string {
   const compiler = web_repl();
   return compiler.compile(code, { export_main: true, pythonize_strings: true });
 }
+
+export function compileRapydscriptWithSourceMap(code: string): { scriptCode: string; sourceMap: string } {
+  injectBaselibOnce();
+  const compiler = web_repl();
+  const result = compiler.compile_mapped(code, { export_main: true, pythonize_strings: true });
+  return { scriptCode: result.code, sourceMap: result.sourceMap };
+}

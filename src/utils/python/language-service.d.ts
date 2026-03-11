@@ -11,6 +11,7 @@ export interface RapydScriptService {
 
 export declare function web_repl(): {
   compile(code: string, opts?: Record<string, unknown>): string;
+  compile_mapped(code: string, opts?: Record<string, unknown>): { code: string; sourceMap: string };
   is_input_complete(source: string): boolean;
   in_block_mode: boolean;
 };

@@ -11,7 +11,7 @@ import { LoadedModule, type ScriptURL, type ScriptModule } from "./Script/Loaded
 import type { Script } from "./Script/Script";
 import type { ScriptFilePath } from "./Paths/ScriptFilePath";
 import { FileType, getFileType, getModuleScript, transformScript } from "./utils/ScriptTransformer";
-import { compileRapydscript } from "./utils/python/compileRapydscript";
+import { compileRapydscriptWithSourceMap } from "./utils/python/compileRapydscript";
 
 // Makes a blob that contains the code of a given script.
 function makeScriptBlob(code: string): Blob {
@@ -102,9 +102,12 @@ function generateLoadedModule(script: Script, scripts: Map<ScriptFilePath, Scrip
     case FileType.TSX:
       ({ scriptCode, sourceMap } = transformScript(script.code, fileType));
       break;
-    case FileType.PY:
-      scriptCode = compileRapydscript(script.code);
+    case FileType.PY: {
+      const pyResult = compileRapydscriptWithSourceMap(script.code);
+      scriptCode = pyResult.scriptCode;
+      sourceMap = pyResult.sourceMap;
       break;
+    }
     default:
       throw new Error(`Invalid file type: ${fileType}. Filename: ${script.filename}, server: ${script.server}.`);
   }
