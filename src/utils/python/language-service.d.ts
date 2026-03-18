@@ -4027,7 +4027,18 @@ function registerRapydScript(monaco, options) {
 
 // ── Compiler utility exports ─────────────────────────────────────────
 
+export interface WebReplInstance {
+  in_block_mode: boolean;
+  compile(code: string, opts?: Record<string, unknown>): string;
+  compile_mapped(code: string, opts?: Record<string, unknown>): { code: string; sourceMap: string };
+  runjs(code: string): unknown;
+  replace_print(writeLine: (...args: unknown[]) => void): void;
+  is_input_complete(source: string): boolean;
+  init_completions(completelib: unknown): void;
+  find_completions(line: string): unknown;
+}
+
 /** Returns a web_repl compiler instance (same as RapydScript.web_repl()). */
-function web_repl() { return _RS_COMPILER.web_repl(); }
+function web_repl(): WebReplInstance { return _RS_COMPILER.web_repl(); }
 
 export { registerRapydScript, web_repl };

@@ -15,15 +15,22 @@ function injectBaselibOnce(): void {
   document.head.removeChild(script);
 }
 
-export function compileRapydscript(code: string): string {
+export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
   injectBaselibOnce();
   const compiler = web_repl();
-  return compiler.compile(code, { export_main: true, pythonize_strings: true });
+  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true };
+  if (virtualFiles) opts.virtual_files = virtualFiles;
+  return compiler.compile(code, opts);
 }
 
-export function compileRapydscriptWithSourceMap(code: string): { scriptCode: string; sourceMap: string } {
+export function compileRapydscriptWithSourceMap(
+  code: string,
+  virtualFiles?: Record<string, string>,
+): { scriptCode: string; sourceMap: string } {
   injectBaselibOnce();
   const compiler = web_repl();
-  const result = compiler.compile_mapped(code, { export_main: true, pythonize_strings: true });
+  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true };
+  if (virtualFiles) opts.virtual_files = virtualFiles;
+  const result = compiler.compile_mapped(code, opts);
   return { scriptCode: result.code, sourceMap: result.sourceMap };
 }

@@ -75,12 +75,21 @@ export function getFileTypeFeature(fileType: FileType): FileTypeFeature {
   return result;
 }
 
-export function parseAST(scriptName: string, hostname: string, code: string, fileType: FileType): AST {
+export function parseAST(
+  scriptName: string,
+  hostname: string,
+  code: string,
+  fileType: FileType,
+  otherScripts?: Map<ScriptFilePath, Script>,
+): AST {
   const fileTypeFeature = getFileTypeFeature(fileType);
   let ast: AST;
   try {
     if (fileType === FileType.PY) {
-      const transpiledCode = compileRapydscript(code);
+      const virtualFiles = otherScripts
+        ? buildPythonVirtualFiles(otherScripts, scriptName)
+        : undefined;
+      const transpiledCode = compileRapydscript(code, virtualFiles);
       ast = acorn.parse(transpiledCode, { sourceType: "module", ecmaVersion: "latest" });
     }
     /**
@@ -207,4 +216,32 @@ export function transformScript(
     scriptCode: result.code,
     sourceMap: result.map,
   };
+}
+
+/** Build a map of virtual files for the RapydScript compiler from other .py scripts on the server.
+ * Keys are module-name.pyj (e.g. utils.pyj, subdir/utils.pyj) matching how RapydScript resolves imports. */
+export function buildPythonVirtualFiles(
+  scripts: Map<ScriptFilePath, Script>,
+  excludeFilename?: string,
+): Record<string, string> {
+  const virtualFiles: Record<string, string> = {};
+  for (const [path, script] of scripts) {
+    if (path === excludeFilename) continue;
+    if (!path.endsWith(".py")) continue;
+    // Convert "/utils.py" → "utils", "/subdir/utils.py" → "subdir/utils"
+    // Strip leading slash (ScriptFilePath is absolute) and .py extension.
+    // The readfile_wrapper in language-service.js strips .pyj before the map lookup,
+    // so the key must be the bare module name with no extension.
+    const key = (path.startsWith("/") ? path.slice(1) : path).slice(0, -3);
+    virtualFiles[key] = script.code;
+    // For scripts in subdirectories, add empty package stubs for each parent segment.
+    // e.g. "subdir/utils" → also add "subdir" so `from subdir.utils import x` works
+    // (RapydScript imports parent packages first, like Python's package semantics).
+    const parts = key.split("/");
+    for (let i = 1; i < parts.length; i++) {
+      const pkgKey = parts.slice(0, i).join("/");
+      if (!(pkgKey in virtualFiles)) virtualFiles[pkgKey] = "";
+    }
+  }
+  return virtualFiles;
 }

@@ -10,7 +10,7 @@ import { fromObject } from "convert-source-map";
 import { LoadedModule, type ScriptURL, type ScriptModule } from "./Script/LoadedModule";
 import type { Script } from "./Script/Script";
 import type { ScriptFilePath } from "./Paths/ScriptFilePath";
-import { FileType, getFileType, getModuleScript, transformScript } from "./utils/ScriptTransformer";
+import { FileType, getFileType, getModuleScript, transformScript, buildPythonVirtualFiles } from "./utils/ScriptTransformer";
 import { compileRapydscriptWithSourceMap } from "./utils/python/compileRapydscript";
 
 // Makes a blob that contains the code of a given script.
@@ -103,7 +103,8 @@ function generateLoadedModule(script: Script, scripts: Map<ScriptFilePath, Scrip
       ({ scriptCode, sourceMap } = transformScript(script.code, fileType));
       break;
     case FileType.PY: {
-      const pyResult = compileRapydscriptWithSourceMap(script.code);
+      const virtualFiles = buildPythonVirtualFiles(scripts, script.filename);
+      const pyResult = compileRapydscriptWithSourceMap(script.code, virtualFiles);
       scriptCode = pyResult.scriptCode;
       sourceMap = pyResult.sourceMap;
       break;
