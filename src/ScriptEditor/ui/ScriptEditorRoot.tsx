@@ -26,6 +26,7 @@ import { PromptEvent } from "../../ui/React/PromptManager";
 import { useRerender } from "../../ui/React/hooks";
 
 import { isUnsavedFile, getServerCode, makeModel } from "./utils";
+import { scriptEditor } from "../ScriptEditor";
 import { OpenScript } from "./OpenScript";
 import { Tabs } from "./Tabs";
 import { Toolbar } from "./Toolbar";
@@ -349,6 +350,46 @@ function Root(props: IProps): React.ReactElement {
     debouncedCodeParsing(newCode);
   };
 
+  // Preload all scripts from a server into Monaco models so the type checker can
+  // resolve imports without requiring those files to be explicitly opened.
+  function preloadServerScripts(hostname: string): void {
+    const server = GetServer(hostname);
+    if (!server) return;
+
+    // Build a content map for all scripts, preferring unsaved open content.
+    const pyVirtualFiles: Record<string, string> = {};
+    const scriptEntries: Array<[string, string]> = [];
+    for (const [path, script] of server.scripts) {
+      let code = script.code;
+      for (const openScript of openScripts) {
+        if (openScript.hostname === hostname && openScript.path === path) {
+          code = openScript.code;
+          break;
+        }
+      }
+      scriptEntries.push([path, code]);
+
+      // Collect .py files for synchronous pre-registration in the RapydScript
+      // language service. The module name mirrors what ModelState derives from
+      // the URI basename (e.g. "scripts/utils.py" → "utils").
+      if (path.endsWith(".py")) {
+        const moduleName = path.split("/").pop()!.replace(/\.pyj?x?$/, "");
+        pyVirtualFiles[moduleName] = code;
+      }
+    }
+
+    // Pre-populate _virtualFiles BEFORE creating any Monaco models. ModelState
+    // schedules _run() via setTimeout(0), so it fires after this synchronous
+    // block — but check() reads _virtualFiles at call time. By registering all
+    // modules now, every diagnostic pass sees the full module set regardless of
+    // which file's _run() fires first.
+    scriptEditor.setVirtualPythonFiles(pyVirtualFiles);
+
+    for (const [path, code] of scriptEntries) {
+      makeModel(hostname, path, code);
+    }
+  }
+
   // When the editor is mounted
   function onMount(editor: IStandaloneCodeEditor): void {
     // Required when switching between site navigation (e.g. from Script Editor -> Terminal and back)
@@ -357,6 +398,12 @@ function Root(props: IProps): React.ReactElement {
 
     // Open current script. This happens when the player switch tabs and open the editor tab.
     if (props.files.size === 0 && currentScript !== null) {
+      // Preload all server scripts BEFORE recreating the current model so that the
+      // RapydScript language service registers other modules into _virtualFiles first.
+      // All models schedule their initial _run() via setTimeout(0); by creating
+      // other files' models first, their _run() calls are queued before the current
+      // file's _run(), so cross-file imports resolve on the very first analysis pass.
+      preloadServerScripts(currentScript.hostname);
       currentScript.regenerateModel();
       editorRef.current.setModel(currentScript.model);
       editorRef.current.setPosition(currentScript.lastPosition);
@@ -365,6 +412,9 @@ function Root(props: IProps): React.ReactElement {
       editorRef.current.focus();
       return;
     }
+
+    // Preload all server scripts before opening the requested files (same reason as above).
+    preloadServerScripts(props.hostname);
 
     // This happens when the player opens scripts by using nano/vim.
     for (const [filename, code] of props.files) {

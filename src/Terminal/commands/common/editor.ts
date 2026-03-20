@@ -27,7 +27,7 @@ function getScriptTemplate(path: string): string {
 }`;
   } else if (fileTypeFeature.isPython) {
     return `async def main(ns):
-    ns.print("Hello, world!")
+  ns.print("Hello, world!")
 `;
   } else {
     return `/** @param {NS} ns */

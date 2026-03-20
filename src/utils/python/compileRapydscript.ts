@@ -1,5 +1,7 @@
 import { web_repl } from "./language-service.js";
 
+export const PYTHON_FLAGS = "dict_literals,overload_getitem,bound_methods,hash_literals,overload_operators,truthiness";
+
 let baselibInjected = false;
 
 function injectBaselibOnce(): void {
@@ -18,7 +20,7 @@ function injectBaselibOnce(): void {
 export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
   injectBaselibOnce();
   const compiler = web_repl();
-  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true };
+  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true, python_flags: PYTHON_FLAGS };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   return compiler.compile(code, opts);
 }
@@ -29,7 +31,7 @@ export function compileRapydscriptWithSourceMap(
 ): { scriptCode: string; sourceMap: string } {
   injectBaselibOnce();
   const compiler = web_repl();
-  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true };
+  const opts: Record<string, unknown> = { export_main: true, pythonize_strings: true, python_flags: PYTHON_FLAGS };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   const result = compiler.compile_mapped(code, opts);
   return { scriptCode: result.code, sourceMap: result.sourceMap };

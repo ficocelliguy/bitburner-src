@@ -9,7 +9,8 @@ import * as enums from "../Enums";
 import { ns } from "../NetscriptFunctions";
 import { isLegacyScript } from "../Paths/ScriptFilePath";
 import { exceptionAlert } from "../utils/helpers/exceptionAlert";
-import { registerRapydScript } from "../utils/python/language-service.js";
+import { RapydScriptLanguageService, registerRapydScript } from "../utils/python/language-service.js";
+import { PYTHON_FLAGS } from "../utils/python/compileRapydscript";
 import netscriptDefinitions from "./NetscriptDefinitions.d.ts?raw";
 
 /** Event emitter used for tracking when changes have been made to a content file. */
@@ -22,6 +23,14 @@ export class ScriptEditor {
 
   // Currently, this object is only used for initialization.
   isInitialized = false;
+  private rapydService: RapydScriptLanguageService | null = null;
+
+  /** Pre-register Python module sources in the RapydScript language service so
+   *  import validation resolves them before any Monaco model fires its first _run(). */
+  setVirtualPythonFiles(files: Record<string, string>): void {
+    this.rapydService?.setVirtualFiles(files);
+  }
+
   initialize() {
     if (this.isInitialized) return;
     this.isInitialized = true;
@@ -40,17 +49,17 @@ export class ScriptEditor {
     }
     populate();
     // Register RapydScript language service for .py files
-    (function () {
+    {
       const extraBuiltins = Object.fromEntries(apiKeys.map((k) => [k, true]));
-      const rapydService = registerRapydScript(monaco, {
+      this.rapydService = registerRapydScript(monaco, {
         extraBuiltins,
         pythonize_strings: true,
-        pythonFlags: "dict_literals,overload_getitem,bound_methods,hash_literals,overload_operators",
+        pythonFlags: PYTHON_FLAGS,
       });
       // Feed the NS API declaration file into the DTS registry so that hover
       // info and dot-completions work for `ns.*` and other declared globals.
-      rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, "") + "\ndeclare var ns: NS;\n");
-    })();
+      this.rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, "") + "\ndeclare var ns: NS;\n");
+    }
     // Add api keys to tokenization
     (async function () {
       // We have to improve the default js language otherwise theme sucks

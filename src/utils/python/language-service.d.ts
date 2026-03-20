@@ -3719,7 +3719,7 @@ class ModelState {
 // RapydScriptLanguageService
 // ---------------------------------------------------------------------------
 
-class RapydScriptLanguageService {
+export class RapydScriptLanguageService {
   constructor(monaco, options) {
     this._monaco       = monaco;
     this._parseDelay   = options.parseDelay !== undefined ? options.parseDelay : 300;
