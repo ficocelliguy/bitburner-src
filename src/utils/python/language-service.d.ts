@@ -18,7 +18,7 @@ export interface RapydScriptOptions {
   stdlibFiles?: Record<string, string>;
   dtsFiles?: Array<{ name: string; content: string }>;
   parseDelay?: number;
-  extraBuiltins?: Record<string, true>;
+  extraBuiltins?: Record<string, boolean>;
   pythonFlags?: string;
   pythonize_strings?: boolean;
   loadDts?: (name: string) => string | Promise<string>;
