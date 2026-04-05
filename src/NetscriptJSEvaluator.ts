@@ -10,7 +10,13 @@ import { fromObject } from "convert-source-map";
 import { LoadedModule, type ScriptURL, type ScriptModule } from "./Script/LoadedModule";
 import type { Script } from "./Script/Script";
 import type { ScriptFilePath } from "./Paths/ScriptFilePath";
-import { FileType, getFileType, getModuleScript, transformScript, buildPythonVirtualFiles } from "./utils/ScriptTransformer";
+import {
+  FileType,
+  getFileType,
+  getModuleScript,
+  transformScript,
+  buildPythonVirtualFiles,
+} from "./utils/ScriptTransformer";
 import { compileRapydscriptWithSourceMap } from "./utils/python/compileRapydscript";
 
 // Makes a blob that contains the code of a given script.

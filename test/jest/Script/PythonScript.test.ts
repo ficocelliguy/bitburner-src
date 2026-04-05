@@ -161,9 +161,7 @@ def funcB():
     return funcA()`;
 
     // Include both a and b so the compiler can follow the full cycle.
-    expect(() => compileRapydscript(aCode, { a: aCode, b: bCode })).toThrow(
-      /recursive import|circular/i,
-    );
+    expect(() => compileRapydscript(aCode, { a: aCode, b: bCode })).toThrow(/recursive import|circular/i);
   });
 
   // When using calculateRamUsage the main script is excluded from virtual files.

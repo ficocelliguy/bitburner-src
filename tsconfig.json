@@ -4,7 +4,8 @@
     "paths": {
       "@player": ["src/Player"],
       "@enums": ["src/Enums"],
-      "@nsdefs": ["src/ScriptEditor/NetscriptDefinitions"]
+      "@nsdefs": ["src/ScriptEditor/NetscriptDefinitions"],
+      "rapydscript-ns/language-service": ["node_modules/rapydscript-ns/language-service/language-service.d.ts"]
     },
     "esModuleInterop": true,
     "isolatedModules": true,

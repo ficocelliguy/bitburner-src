@@ -331,7 +331,13 @@ function Root(props: IProps): React.ReactElement {
     }
     let ast;
     try {
-      ast = parseAST(currentScript.path, currentScript.hostname, newCode, getFileType(currentScript.path), server.scripts);
+      ast = parseAST(
+        currentScript.path,
+        currentScript.hostname,
+        newCode,
+        getFileType(currentScript.path),
+        server.scripts,
+      );
       makeModelsForImports(ast, server);
     } catch (error) {
       showRAMError({
@@ -369,12 +375,15 @@ function Root(props: IProps): React.ReactElement {
       }
       scriptEntries.push([path, code]);
 
-      // Collect .py files for synchronous pre-registration in the RapydScript
-      // language service. The module name mirrors what ModelState derives from
-      // the URI basename (e.g. "scripts/utils.py" → "utils").
+      // Collect .py files for synchronous pre-registration in the RapydScript language service.
       if (path.endsWith(".py")) {
-        const moduleName = path.split("/").pop()!.replace(/\.pyj?x?$/, "");
-        pyVirtualFiles[moduleName] = code;
+        const moduleName = path
+          ?.split("/")
+          ?.pop()
+          ?.replace(/\.pyj?x?$/, "");
+        if (moduleName) {
+          pyVirtualFiles[moduleName] = code;
+        }
       }
     }
 

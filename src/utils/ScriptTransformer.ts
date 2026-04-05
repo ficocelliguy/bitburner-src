@@ -18,7 +18,7 @@ export enum FileType {
   TSX,
   NS1,
   CSS,
-  PY
+  PY,
 }
 
 export interface FileTypeFeature {
@@ -86,17 +86,14 @@ export function parseAST(
   let ast: AST;
   try {
     if (fileType === FileType.PY) {
-      const virtualFiles = otherScripts
-        ? buildPythonVirtualFiles(otherScripts, scriptName)
-        : undefined;
+      const virtualFiles = otherScripts ? buildPythonVirtualFiles(otherScripts, scriptName) : undefined;
       const transpiledCode = compileRapydscript(code, virtualFiles);
       ast = acorn.parse(transpiledCode, { sourceType: "module", ecmaVersion: "latest" });
-    }
-    /**
-     * acorn is much faster than babel-parser, especially when parsing many big JS files, so we use it to parse the AST of
-     * JS code. babel-parser is only useful when we have to parse JSX and TypeScript.
-     */
-    else if (fileType === FileType.JS) {
+    } else if (fileType === FileType.JS) {
+      /**
+       * acorn is much faster than babel-parser, especially when parsing many big JS files, so we use it to parse the AST of
+       * JS code. babel-parser is only useful when we have to parse JSX and TypeScript.
+       */
       ast = acorn.parse(code, { sourceType: "module", ecmaVersion: "latest" });
     } else {
       const plugins: ("jsx" | "typescript")[] = [];
