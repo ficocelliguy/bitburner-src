@@ -34,7 +34,7 @@ import { NoOpenScripts } from "./NoOpenScripts";
 import { ScriptEditorContextProvider, useScriptEditorContext } from "./ScriptEditorContext";
 import { useVimEditor } from "./useVimEditor";
 import { useCallback } from "react";
-import { type AST, getFileType, getModuleScript, parseAST } from "../../utils/ScriptTransformer";
+import { type AST, FileType, getFileType, getModuleScript, parseAST } from "../../utils/ScriptTransformer";
 import { RamCalculationErrorCode } from "../../Script/RamCalculationErrorCodes";
 import { hasScriptExtension, isLegacyScript, type ScriptFilePath } from "../../Paths/ScriptFilePath";
 import { exceptionAlert } from "../../utils/helpers/exceptionAlert";
@@ -346,7 +346,11 @@ function Root(props: IProps): React.ReactElement {
       });
       return;
     }
-    infLoop(ast, newCode);
+    // Skip infinite loop detection for Python files: the AST is from compiled JS (which includes
+    // stdlib code with legitimate while(true) loops), and the line numbers would be wrong.
+    if (getFileType(currentScript.path) !== FileType.PY) {
+      infLoop(ast, newCode);
+    }
     updateRAM(ast, currentScript.path, server);
     finishUpdatingRAM();
   }, 300);

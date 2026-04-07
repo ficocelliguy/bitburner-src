@@ -18,7 +18,7 @@ function injectBaselibOnce(): void {
 export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
   injectBaselibOnce();
   const compiler = web_repl();
-  const opts: Record<string, unknown> = { export_main: true };
+  const opts: Record<string, unknown> = { export_main: true, tree_shake: true };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   return compiler.compile(code, opts);
 }
@@ -29,7 +29,7 @@ export function compileRapydscriptWithSourceMap(
 ): { scriptCode: string; sourceMap: string } {
   injectBaselibOnce();
   const compiler = web_repl();
-  const opts: Record<string, unknown> = { export_main: true };
+  const opts: Record<string, unknown> = { export_main: true, tree_shake: true };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   const result = compiler.compile_mapped(code, opts);
   return { scriptCode: result.code, sourceMap: result.sourceMap };
