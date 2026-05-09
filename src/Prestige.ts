@@ -58,14 +58,11 @@ export function prestigeAugmentation(): void {
 
   initBitNodeMultipliers();
 
-  // Maintain invites to factions with the 'keepOnInstall' flag, and rumors about others
+  // Maintain invites to factions with the 'keepOnInstall' flag
   const maintainInvites = new Set<FactionName>();
-  const maintainRumors = new Set<FactionName>();
   for (const facName of [...Player.factions, ...Player.factionInvitations]) {
     if (Factions[facName].getInfo().keep) {
       maintainInvites.add(facName);
-    } else {
-      maintainRumors.add(facName);
     }
   }
 
@@ -193,9 +190,8 @@ export function prestigeAugmentation(): void {
     }
   }
 
-  // Hear rumors after all invites/bans
-  for (const factionName of maintainRumors) Player.receiveRumor(factionName);
-
+  // clear recent scripts
+  recentScripts.splice(0);
   resetPidCounter();
   ProgramsSeen.clear();
   InvitationsSeen.clear();
@@ -242,6 +238,10 @@ export function prestigeSourceFile(isFlume: boolean): void {
 
   // Re-create foreign servers
   initForeignServers(Player.getHomeComputer());
+
+  if (canAccessBitNodeFeature(15)) {
+    getDarkscapeNavigator();
+  }
 
   if (Player.activeSourceFileLvl(9) >= 2) {
     homeComp.setMaxRam(128);
@@ -316,7 +316,7 @@ export function prestigeSourceFile(isFlume: boolean): void {
   }
 
   // BitNode 12: The Recursion
-  if (Player.bitNodeN === 12 && Player.activeSourceFileLvl(12) > 100) {
+  if (Player.bitNodeN === 12 && Player.sourceFileLvl(12) > 100) {
     delayedDialog("Saynt_Garmo is watching you");
   }
 

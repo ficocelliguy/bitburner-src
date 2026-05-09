@@ -61,7 +61,11 @@ import { DarknetServer } from "../../../src/Server/DarknetServer";
 import { isDirectoryPath } from "../../../src/Paths/Directory";
 import { isFilePath } from "../../../src/Paths/FilePath";
 import { LAB_CACHE_NAME } from "../../../src/DarkNet/effects/labyrinth";
-import { generateCacheFilename } from "../../../src/DarkNet/effects/cacheFiles";
+import { generateCacheFilename, getStockReward } from "../../../src/DarkNet/effects/cacheFiles";
+import { getAllDarknetServers } from "../../../src/DarkNet/utils/darknetNetworkUtils";
+import { prestigeAugmentation } from "../../../src/Prestige";
+import { initStockMarket, StockMarket } from "../../../src/StockMarket/StockMarket";
+import { StockSymbol } from "@enums";
 
 beforeAll(() => {
   initGameEnvironment();
@@ -691,6 +695,11 @@ describe("Password Tests", () => {
   });
 });
 
+const serverSnapshot = () =>
+  getAllDarknetServers()
+    .map((s) => ({ hostname: s.hostname, depth: s.depth, leftOffset: s.leftOffset }))
+    .sort((a, b) => (a.hostname < b.hostname ? -1 : a.hostname === b.hostname ? 0 : 1));
+
 describe("mutateDarknet and webstorm", () => {
   test("mutateDarknet", () => {
     const spiedExceptionAlert = jest.spyOn(exceptionAlertModule, "exceptionAlert");
@@ -710,6 +719,61 @@ describe("mutateDarknet and webstorm", () => {
     }
     expect(spiedExceptionAlert).not.toHaveBeenCalled();
     expect(spiedConsoleError).not.toHaveBeenCalled();
+  });
+  test("mutation during webstorm", async () => {
+    const realRandom = Math.random;
+    try {
+      jest.useFakeTimers();
+      const promise = launchWebstorm();
+      expect(DarknetState.mutationLock).toBeTruthy();
+
+      await jest.advanceTimersByTimeAsync(10000);
+      expect(DarknetState.mutationLock).toBeTruthy();
+
+      const initialServers = serverSnapshot();
+      // Low rolls cause stuff to happen, we want deterministic testing.
+      // Jest spies keep state, make our own mock so it doesn't eat memory in
+      // case something goes wrong.
+      let count = 0;
+      Math.random = () => count++ * (Number.EPSILON * 1024);
+      mutateDarknet();
+      expect(serverSnapshot()).toEqual(initialServers);
+
+      await jest.runAllTimersAsync();
+      await promise; // Should immediately finish
+      expect(DarknetState.mutationLock).toBeNull();
+
+      mutateDarknet();
+      expect(serverSnapshot()).not.toEqual(initialServers);
+    } finally {
+      jest.useRealTimers();
+      Math.random = realRandom;
+    }
+  });
+  test("prestige during webstorm", async () => {
+    try {
+      jest.useFakeTimers();
+      const promise = launchWebstorm();
+      await jest.advanceTimersByTimeAsync(0); // Finish any promises
+      expect(DarknetState.mutationLock).toBeTruthy();
+
+      const beforePrestige = serverSnapshot();
+      prestigeAugmentation();
+
+      expect(DarknetState.mutationLock).toBeNull();
+      const initialServers = serverSnapshot();
+      // Validate that prestige changed the network
+      expect(initialServers).not.toEqual(beforePrestige);
+
+      await jest.runAllTimersAsync();
+      await promise; // Should immediately finish
+
+      expect(DarknetState.mutationLock).toBeNull();
+      // Webstorm should not have changed anything
+      expect(serverSnapshot()).toEqual(initialServers);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
 
@@ -751,7 +815,7 @@ describe("Darknet server name generator", () => {
 describe("Cache filename generator", () => {
   test("Random prefix", () => {
     for (let i = 0; i < 10000; ++i) {
-      const cacheFilename = generateCacheFilename();
+      const cacheFilename = generateCacheFilename(false);
       if (!cacheFilename) {
         throw new Error("Invalid cache filename");
       }
@@ -759,7 +823,7 @@ describe("Cache filename generator", () => {
     }
   });
   test("Cache file in labyrinth server", () => {
-    const cacheFilename = generateCacheFilename(LAB_CACHE_NAME);
+    const cacheFilename = generateCacheFilename(false, LAB_CACHE_NAME);
     if (!cacheFilename) {
       throw new Error("Invalid cache filename");
     }
@@ -775,5 +839,50 @@ describe("Clue filename generator", () => {
         getClueFileName(notebookFileNames);
       }).not.toThrow();
     }
+  });
+});
+
+describe("Stock cache reward", () => {
+  test("stock reward does not exceed maxShares and falls back to money reward", () => {
+    initStockMarket();
+
+    const remaining = 3;
+    // Fill every stock to near capacity so no matter which one is randomly picked, it triggers clamping
+    for (const stockName of Object.keys(StockSymbol)) {
+      const stock = StockMarket[stockName];
+      stock.playerShares = stock.maxShares - remaining;
+      stock.playerShortShares = 0;
+    }
+
+    // Use high difficulty to ensure the unclamped share count would exceed remaining
+    const difficulty = 100;
+    const result = getStockReward(difficulty);
+
+    // Should have awarded at most `remaining` shares
+    expect(result).toContain(`${remaining} shares`);
+
+    // Verify the chosen stock was clamped to exactly maxShares
+    for (const stockName of Object.keys(StockSymbol)) {
+      const stock = StockMarket[stockName];
+      expect(stock.playerShares).toBeLessThanOrEqual(stock.maxShares);
+    }
+  });
+
+  test("stock reward falls back to money when stock is fully owned", () => {
+    initStockMarket();
+
+    // Fill every stock to max capacity
+    for (const stockName of Object.keys(StockSymbol)) {
+      const stock = StockMarket[stockName];
+      stock.playerShares = stock.maxShares;
+      stock.playerShortShares = 0;
+    }
+
+    const moneyBefore = Player.money;
+    const result = getStockReward(5);
+
+    // Should have fallen back to a money reward
+    expect(result).toContain("discovered a cache with");
+    expect(Player.money).toBeGreaterThan(moneyBefore);
   });
 });

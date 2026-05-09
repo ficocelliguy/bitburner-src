@@ -77,7 +77,7 @@ export const RamCostConstants = {
   InfiltrationCalculateRewards: 2.5,
   InfiltrationGetInfiltrations: 15,
 
-  CycleTiming: 1,
+  CycleTiming: 0,
 } as const;
 
 function SF4Cost(cost: number): () => number {
@@ -246,7 +246,6 @@ const dnet = {
   getStasisLinkedServers: 0,
   getServer: 2,
   getServerAuthDetails: RamCostConstants.GetServer,
-  packetCapture: 6,
   induceServerMigration: 4,
   unleashStormSeed: 0.1,
   isDarknetServer: RamCostConstants.GetServer,
@@ -272,11 +271,11 @@ const format = {
 // Gang API
 const gang = {
   createGang: RamCostConstants.GangApiBase / 4,
-  inGang: RamCostConstants.GangApiBase / 4,
+  inGang: 0,
   getMemberNames: RamCostConstants.GangApiBase / 4,
   renameMember: 0,
   getGangInformation: RamCostConstants.GangApiBase / 2,
-  getOtherGangInformation: RamCostConstants.GangApiBase / 2,
+  getAllGangInformation: RamCostConstants.GangApiBase / 2,
   getMemberInformation: RamCostConstants.GangApiBase / 2,
   canRecruitMember: RamCostConstants.GangApiBase / 4,
   getRecruitsAvailable: RamCostConstants.GangApiBase / 4,
@@ -334,7 +333,7 @@ const go = {
 
 // Bladeburner API
 const bladeburner = {
-  inBladeburner: RamCostConstants.BladeburnerApiBase / 4,
+  inBladeburner: 0,
   getContractNames: 0,
   getOperationNames: 0,
   getBlackOpNames: 0,
@@ -349,6 +348,8 @@ const bladeburner = {
   getActionCurrentTime: RamCostConstants.BladeburnerApiBase,
   getActionEstimatedSuccessChance: RamCostConstants.BladeburnerApiBase,
   getActionRepGain: RamCostConstants.BladeburnerApiBase,
+  getActionRankGain: RamCostConstants.BladeburnerApiBase,
+  getActionRankLoss: RamCostConstants.BladeburnerApiBase,
   getActionCountRemaining: RamCostConstants.BladeburnerApiBase,
   getActionMaxLevel: RamCostConstants.BladeburnerApiBase,
   getActionCurrentLevel: RamCostConstants.BladeburnerApiBase,
@@ -442,6 +443,7 @@ const ui = {
   closeTail: 0,
   setTailTitle: 0,
   setTailFontSize: 0,
+  setTailMinimized: 0,
   getTheme: 0,
   setTheme: 0,
   resetTheme: 0,
@@ -459,7 +461,7 @@ const grafting = {
   getAugmentationGraftTime: 3.75,
   getGraftableAugmentations: 5,
   graftAugmentation: 7.5,
-  waitForOngoingGrafting: 1,
+  waitForOngoingGrafting: 0,
 } as const;
 
 const corporation = {
@@ -690,6 +692,7 @@ export const RamCosts: RamCostTree<NSFull> = {
       hackTime: 0,
       growTime: 0,
       weakenTime: 0,
+      weakenEffect: 0,
     },
     hacknetNodes: {
       moneyGainRate: 0,

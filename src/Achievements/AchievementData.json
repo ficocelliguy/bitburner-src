@@ -384,7 +384,7 @@
     "SLEEVE_8": {
       "ID": "SLEEVE_8",
       "Name": "You and what army?",
-      "Description": "Purchase all duplicate sleeves from The Covenant."
+      "Description": "Acquire all 8 sleeves."
     },
     "INDECISIVE": {
       "ID": "INDECISIVE",
@@ -454,7 +454,7 @@
     "CHALLENGE_BN9": {
       "ID": "CHALLENGE_BN9",
       "Name": "BN9: Challenge",
-      "Description": "Destroy BN9 without using hacknet servers."
+      "Description": "Destroy BN9 without using hacknet servers or hacknet nodes."
     },
     "CHALLENGE_BN10": {
       "ID": "CHALLENGE_BN10",

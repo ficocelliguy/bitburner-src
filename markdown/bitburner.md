@@ -123,7 +123,7 @@ Default value:
 
 - All boolean options: false
 
-If you specify intelligenceOverride, it must be a non-negative integer.
+If you specify intelligenceOverride, it must be a positive integer.
 
 
 </td></tr>
@@ -655,7 +655,7 @@ Tools to analyze the IPvGO subnet.
 
 </td><td>
 
-Illicit and dangerous IPvGO tools. Not for the faint of heart. Requires BitNode 14.2 to use.
+Illicit and dangerous IPvGO tools. Not for the faint of heart. Requires Source-File 14.2 to use.
 
 
 </td></tr>
@@ -1114,6 +1114,17 @@ Player must have killed at least this many people.
 </td></tr>
 <tr><td>
 
+[PlayerBaseTask](./bitburner.playerbasetask.md)
+
+
+</td><td>
+
+Base interface of all player tasks.
+
+
+</td></tr>
+<tr><td>
+
 [ProcessInfo](./bitburner.processinfo.md)
 
 
@@ -1275,7 +1286,97 @@ Sleeve API
 </td></tr>
 <tr><td>
 
+[SleeveBladeburnerTask](./bitburner.sleevebladeburnertask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveClassTask](./bitburner.sleeveclasstask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveCompanyTask](./bitburner.sleevecompanytask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveCrimeTask](./bitburner.sleevecrimetask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveFactionTask](./bitburner.sleevefactiontask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveInfiltrateTask](./bitburner.sleeveinfiltratetask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
 [SleevePerson](./bitburner.sleeveperson.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveRecoveryTask](./bitburner.sleeverecoverytask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveSupportTask](./bitburner.sleevesupporttask.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[SleeveSynchroTask](./bitburner.sleevesynchrotask.md)
 
 
 </td><td>
@@ -2200,96 +2301,6 @@ Use React.createElement to make the ReactElement type, see [creating an element 
 <tr><td>
 
 [SimpleOpponentStats](./bitburner.simpleopponentstats.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveBladeburnerTask](./bitburner.sleevebladeburnertask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveClassTask](./bitburner.sleeveclasstask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveCompanyTask](./bitburner.sleevecompanytask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveCrimeTask](./bitburner.sleevecrimetask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveFactionTask](./bitburner.sleevefactiontask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveInfiltrateTask](./bitburner.sleeveinfiltratetask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveRecoveryTask](./bitburner.sleeverecoverytask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveSupportTask](./bitburner.sleevesupporttask.md)
-
-
-</td><td>
-
-
-
-</td></tr>
-<tr><td>
-
-[SleeveSynchroTask](./bitburner.sleevesynchrotask.md)
 
 
 </td><td>

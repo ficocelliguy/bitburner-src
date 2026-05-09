@@ -1,7 +1,6 @@
 import { Player } from "@player";
 import type { DarknetServerData, Person as IPerson } from "@nsdefs";
 import { AugmentationName, CompletedProgramName, LiteratureName } from "@enums";
-import { generateContract } from "../../CodingContract/ContractGenerator";
 import {
   commonPasswordDictionary,
   notebookFileNames,
@@ -20,7 +19,7 @@ import { populateDarknet } from "../controllers/NetworkGenerator";
 import { getDarknetServer } from "../utils/darknetServerUtils";
 import {
   getAllMovableDarknetServers,
-  getBackdooredDarkwebServers,
+  getBackdooredDarknetServers,
   getNearbyNonEmptyPasswordServer,
   getStasisLinkServers,
 } from "../utils/darknetNetworkUtils";
@@ -41,14 +40,9 @@ export const handleSuccessfulAuth = (server: DarknetServer, threads: number, pid
   server.hasAdminRights = true;
   addClue(server);
 
-  const cctChance = Math.min(0.12, 0.02 * (server.difficulty - 1));
-  if (Math.random() < cctChance) {
-    generateContract({ server: server.hostname });
-  }
-
   const chance = 0.1 * 1.05 ** server?.difficulty;
   if (Math.random() < chance && !isLabyrinthServer(server.hostname)) {
-    addCacheToServer(server);
+    addCacheToServer(server, false);
   }
 };
 
@@ -85,17 +79,9 @@ export const calculateAuthenticationTime = (
   const underleveledFactor = applyUnderleveledFactor ? 1.5 + (chaRequired + 50) / (person.skills.charisma + 50) : 1;
   const hasBootsFactor = Player.hasAugmentation(AugmentationName.TheBoots) ? 0.8 : 1;
   const hasSf15_2Factor = Player.activeSourceFileLvl(15) > 2 ? 0.8 : 1;
-  const bonusTimeFactor = hasDarknetBonusTime() ? 0.75 : 1;
 
   const time =
-    baseTime *
-    skillFactor *
-    backdoorFactor *
-    underleveledFactor *
-    hasBootsFactor *
-    hasSf15_2Factor *
-    bonusTimeFactor *
-    threadsFactor;
+    baseTime * skillFactor * backdoorFactor * underleveledFactor * hasBootsFactor * hasSf15_2Factor * threadsFactor;
 
   // We need to call GetServer and check if it's a dnet server later because this function can be called by formulas
   // APIs (darknetServerData.hostname may be an invalid hostname).
@@ -110,7 +96,7 @@ export const calculateAuthenticationTime = (
 };
 
 export const getBackdoorAuthTimeDebuff = () => {
-  const backdooredServerCount = getBackdooredDarkwebServers().length;
+  const backdooredServerCount = getBackdooredDarknetServers().length;
   const serverCount = getAllMovableDarknetServers().filter((s) => s.hasAdminRights).length;
   const safeBackdoors = Math.max(serverCount / (NET_WIDTH * 3), 2);
   const backdoorSurplus = Math.max(0, backdooredServerCount - safeBackdoors);
@@ -132,7 +118,7 @@ export const getMultiplierFromCharisma = (scalar = 1) => {
 
 export const calculatePasswordAttemptChaGain = (server: DarknetServerData, threads: number = 1, success = false) => {
   const baseXpGain = 3;
-  const difficultyBase = 0.8;
+  const difficultyBase = 1.1;
   const xpGain = baseXpGain + difficultyBase ** server.difficulty;
   const alreadyHackedMult = server.hasAdminRights ? 0.2 : 1;
   const successMult = success && !server.hasAdminRights ? 10 : 1;
@@ -264,7 +250,7 @@ export const setStasisLink = (ctx: NetscriptContext, server: DarknetServer, shou
 
 export const chargeServerMigration = (server: DarknetServer, threads = 1) => {
   const chargeIncrease = ((Player.skills.charisma + 500) / (server.difficulty * 200 + 1000)) * 0.01 * threads;
-  const xpGained = Player.mults.charisma_exp * 50 * ((200 + Player.skills.charisma) / 200) * threads;
+  const xpGained = Player.mults.charisma_exp * 5 * threads * server.difficulty;
   Player.gainCharismaExp(xpGained);
   const currentCharge = DarknetState.migrationInductionServers.get(server.hostname) ?? 0;
   const newCharge = Math.min(currentCharge + chargeIncrease, 1);
@@ -290,6 +276,11 @@ export const getDarkscapeNavigator = () => {
     Player.getHomeComputer().pushProgram(CompletedProgramName.darkscape);
   }
   populateDarknet();
+};
+
+export const cctCooldownReached = () => {
+  const timeSinceLastCCT = new Date().getTime() - DarknetState.lastCctRewardTime.getTime();
+  return timeSinceLastCCT > 10 * 60 * 1000;
 };
 
 export const hasFullDarknetAccess = (): boolean => Player.bitNodeN === 15 || Player.activeSourceFileLvl(15) > 0;

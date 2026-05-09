@@ -44,6 +44,7 @@ import { check } from "./commands/check";
 import { connect } from "./commands/connect";
 import { cp } from "./commands/cp";
 import { download } from "./commands/download";
+import { upload } from "./commands/upload";
 import { expr } from "./commands/expr";
 import { free } from "./commands/free";
 import { grep } from "./commands/grep";
@@ -78,6 +79,7 @@ import { commitHash } from "../utils/helpers/commitHash";
 import { apr1 } from "./commands/apr1";
 import { changelog } from "./commands/changelog";
 import { clear } from "./commands/clear";
+import { mkdir } from "./commands/mkdir";
 import { currentNodeMults } from "../BitNode/BitNodeMultipliers";
 import { Engine } from "../engine";
 import { Directory, resolveDirectory, root } from "../Paths/Directory";
@@ -104,6 +106,7 @@ export const TerminalCommands: Record<string, (args: (string | number | boolean)
   connect: connect,
   cp: cp,
   download: download,
+  upload: upload,
   expr: expr,
   free: free,
   grep: grep,
@@ -134,7 +137,11 @@ export const TerminalCommands: Record<string, (args: (string | number | boolean)
   vim: vim,
   weaken: weaken,
   wget: wget,
+  mkdir: mkdir,
 };
+
+// "mkdir" is a "hidden" command; i.e., it is not shown in help text or autocomplete.
+export const supportedCommands = Object.keys(TerminalCommands).filter((command) => command !== "mkdir");
 
 export class Terminal {
   // Flags to determine whether the player is currently running a hack or an analyze
@@ -149,6 +156,8 @@ export class Terminal {
 
   // True if a Coding Contract prompt is opened
   contractOpen = false;
+  // True if a prompt is opened via the ns.prompt() API
+  nsPromptApiOpen = false;
 
   // Path of current directory
   currDir = "" as Directory;
@@ -551,7 +560,11 @@ export class Terminal {
     switch (promptResult.result) {
       case CodingContractResult.Success:
         if (contract.reward !== null) {
-          const reward = Player.gainCodingContractReward(contract.reward, contract.getDifficulty());
+          const reward = Player.gainCodingContractReward(
+            contract.reward,
+            contract.getDifficulty(),
+            contract.rewardScaling,
+          );
           this.print(`Contract SUCCESS - ${reward}`);
         }
         server.removeContract(contract);
@@ -871,8 +884,7 @@ export class Terminal {
 }
 
 function findSimilarCommands(command: string): string[] {
-  const commands = Object.keys(TerminalCommands);
-  const offByOneLetter = commands.filter((c) => {
+  const offByOneLetter = supportedCommands.filter((c) => {
     if (c.length !== command.length) return false;
     let diff = 0;
     for (let i = 0; i < c.length; i++) {
@@ -880,6 +892,6 @@ function findSimilarCommands(command: string): string[] {
     }
     return diff === 1;
   });
-  const subset = commands.filter((c) => c.includes(command)).sort((a, b) => a.length - b.length);
+  const subset = supportedCommands.filter((c) => c.includes(command)).sort((a, b) => a.length - b.length);
   return Array.from(new Set([...offByOneLetter, ...subset])).slice(0, 3);
 }

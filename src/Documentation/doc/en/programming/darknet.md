@@ -25,7 +25,6 @@ In some cases, the only way to get to deeper parts of the net is to hitch a ride
 - `await ns.dnet.authenticate(hostname, password)` lets you guess and check passwords for servers directly connected to your script's server. If you guess right, you get admin access and can use `exec` and `scp` to move scripts onto that server.
 - Some servers require interactive feedback to guess their password. Use `await ns.dnet.heartbleed(hostname)` to check that server's logs and get clues after you attempt a password.
 - `ns.dnet.connectToSession(hostName, password)` lets you use a password you already know to log in to a darknet server at a distance. This is required to scp files there.
-- `await ns.dnet.packetCapture(hostName)` allows you to sometimes find passwords amongst the (mostly) noise coming out of a server.
 - Some servers will have part of their max ram blocked off. Use `ns.dnet.influence.memoryReallocation()` to free it.
 - Some servers have valuable .cache files you can open with `ns.dnet.openCache(fileName)`
 - Darknet servers allow you to run `ns.dnet.phishingAttack()` to get money or .cache files based off of your charisma and crime success stat.
@@ -144,12 +143,6 @@ Sometimes you will find valuable data in .cache files on servers you unlock. The
 
 Once you have access to a darknet server, you can begin to use it for your own purposes. One option is to run `dnet.phishingAttack()` to raise your charisma levels and to try and con money out of the less tech-savvy middle managers out there. Occasionally you will even lift .cache data files from the attempt!
 
-### Password stealing with dnet.packetCapture
-
-If you get stuck on a puzzle, you can try to brute-force it. Most servers will tell you their password length and format, allowing you to try each of the possibilities. It's not likely to be fast, but it's an option.
-
-If you don't want to wait on that, you can social-engineer your way around it. Not everyone uses secure internet connections, and a lot of interesting things can be pulled from their network traffic... including passwords. `dnet.packetCapture` will let you spend some time scraping data from outgoing packets from that server. Most of what you overhear will be useless, but the password will eventually show up inside some of that noise, sooner or later. (It may take a long time to stumble upon the password on higher-difficulty servers, though!)
-
 ### Freeing up more ram with dnet.memoryReallocation
 
 Darknet servers belong to somebody already, and they are often already doing stuff on them. When you first authenticate on some of these servers, a chunk of the ram will be "in use" by the owner's (clearly wasteful) purposes, and needs to be... liberated. You can fully free up that ram for yourself using repeated calls to `dnet.memoryReallocation`. You will usually find valuable .cache files left behind after all the ram is cleared.
@@ -247,7 +240,7 @@ export const serverSolver = async (ns, hostname) => {
 
 /** Authenticates on 'ZeroLogon' type servers, which always have an empty password.
  *  @param {NS} ns
- * @param {string} hostname - the name of the server to attempt to authorize on
+ *  @param {string} hostname - the name of the server to attempt to authorize on
  */
 const authenticateWithNoPassword = async (ns, hostname) => {
   const result = await ns.dnet.authenticate(hostname, "");
@@ -255,9 +248,10 @@ const authenticateWithNoPassword = async (ns, hostname) => {
   return result.success;
 };
 
-// This lets you tab-complete putting "--tail" on the run command so you can see the script logs as it runs, if you want
-// If you add support to the script to take other arguments, you can add them here as well for convenience
-export function autocomplete(data: AutocompleteData) {
+/** This lets you tab-complete putting "--tail" on the run command so you can see the script logs as it runs, if you want
+ *  If you add support to the script to take other arguments, you can add them here as well for convenience
+ *  @param {AutocompleteData} data */
+export function autocomplete(data) {
   return ["--tail"];
 }
 ```

@@ -1,6 +1,6 @@
 import { Player } from "@player";
 import { calculateServerGrowth, calculateGrowMoney } from "../Server/formulas/grow";
-import { numCycleForGrowthCorrected } from "../Server/ServerHelpers";
+import { getWeakenEffect, numCycleForGrowthCorrected } from "../Server/ServerHelpers";
 import {
   calculateMoneyGainRate,
   calculateLevelUpgradeCost,
@@ -235,6 +235,14 @@ export function NetscriptFormulas(): InternalAPI<IFormulas> {
         checkFormulasAccess(ctx);
         return calculateWeakenTime(server, person) * 1000;
       },
+      weakenEffect:
+        (ctx) =>
+        (_threads, _cores = 1) => {
+          const threads = helpers.number(ctx, "threads", _threads);
+          const cores = helpers.number(ctx, "cores", _cores);
+          checkFormulasAccess(ctx);
+          return getWeakenEffect(threads, cores);
+        },
     },
     hacknetNodes: {
       moneyGainRate:
@@ -274,12 +282,14 @@ export function NetscriptFormulas(): InternalAPI<IFormulas> {
           checkFormulasAccess(ctx);
           return calculateCoreUpgradeCost(startingCore, extraCores, costMult);
         },
-      hacknetNodeCost: (ctx) => (_n, _mult) => {
-        const n = helpers.number(ctx, "n", _n);
-        const mult = helpers.number(ctx, "mult", _mult);
-        checkFormulasAccess(ctx);
-        return calculateNodeCost(n, mult);
-      },
+      hacknetNodeCost:
+        (ctx) =>
+        (_n, _mult = 1) => {
+          const n = helpers.number(ctx, "n", _n);
+          const mult = helpers.number(ctx, "mult", _mult);
+          checkFormulasAccess(ctx);
+          return calculateNodeCost(n, mult);
+        },
       constants: (ctx) => () => {
         checkFormulasAccess(ctx);
         return Object.assign({}, HacknetNodeConstants);

@@ -30,8 +30,11 @@ const path = require("path");
 const { realpathSync } = require("fs");
 const { fileURLToPath, format } = require("url");
 
-log.transports.file.level = store.get("file-log-level", "info");
-log.transports.console.level = store.get("console-log-level", "debug");
+utils.initializeLogLevelConfig();
+
+// Apply config of log levels.
+log.transports.file.level = store.get("file-log-level");
+log.transports.console.level = store.get("console-log-level");
 
 log.info(`Started app: ${JSON.stringify(process.argv)}`);
 
@@ -255,7 +258,6 @@ app.on("ready", async () => {
     await window.loadFile("export.html");
     window.show();
     setStopProcessHandler(window);
-    await utils.exportSave(window);
   } else {
     window = await startWindow(process.argv.includes("--no-scripts"));
     if (global.steamworksError) {

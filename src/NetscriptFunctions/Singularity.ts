@@ -45,7 +45,7 @@ import { ScriptFilePath, resolveScriptFilePath } from "../Paths/ScriptFilePath";
 import { getRecordEntries } from "../Types/Record";
 import { JobTracks } from "../Company/data/JobTracks";
 import { ServerConstants } from "../Server/data/Constants";
-import { blackOpsArray } from "../Bladeburner/data/BlackOperations";
+import { numberOfBlackOperations } from "../Bladeburner/data/BlackOperations";
 import { calculateEffectiveRequiredReputation } from "../Company/utils";
 import { addRepToFavor } from "../Faction/formulas/favor";
 import { validBitNodes } from "../BitNode/Constants";
@@ -283,7 +283,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
           Player.startFocusing();
           Router.toPage(Page.Work);
         } else if (wasFocusing) {
-          Player.stopFocusing();
           Router.toPage(Page.Terminal);
         }
         helpers.log(ctx, () => `Started ${classType} at ${universityName}`);
@@ -365,7 +364,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
           Player.startFocusing();
           Router.toPage(Page.Work);
         } else if (wasFocusing) {
-          Player.stopFocusing();
           Router.toPage(Page.Terminal);
         }
         helpers.log(ctx, () => `Started training ${classType} at ${gymName}`);
@@ -570,7 +568,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
         Router.toPage(Page.Work);
         return true;
       } else if (Player.focus && !focus) {
-        Player.stopFocusing();
         Router.toPage(Page.Terminal);
         return true;
       }
@@ -709,7 +706,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
           Player.startFocusing();
           Router.toPage(Page.Work);
         } else if (wasFocused) {
-          Player.stopFocusing();
           Router.toPage(Page.Terminal);
         }
         helpers.log(ctx, () => `Began working at '${companyName}' with position '${jobName}'`);
@@ -779,6 +775,11 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
       helpers.checkSingularityAccess(ctx);
       const facName = getEnumHelper("FactionName").nsGetMember(ctx, _facName);
 
+      if (Player.factions.includes(facName)) {
+        helpers.log(ctx, () => `You are already a member of faction '${facName}'`);
+        return false;
+      }
+
       if (!Player.factionInvitations.includes(facName)) {
         helpers.log(ctx, () => `You have not been invited by faction '${facName}'`);
         return false;
@@ -829,7 +830,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
               Player.startFocusing();
               Router.toPage(Page.Work);
             } else if (wasFocusing) {
-              Player.stopFocusing();
               Router.toPage(Page.Terminal);
             }
             helpers.log(ctx, () => `Started carrying out hacking contracts for '${faction.name}'`);
@@ -850,7 +850,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
               Player.startFocusing();
               Router.toPage(Page.Work);
             } else if (wasFocusing) {
-              Player.stopFocusing();
               Router.toPage(Page.Terminal);
             }
             helpers.log(ctx, () => `Started carrying out field missions for '${faction.name}'`);
@@ -871,7 +870,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
               Player.startFocusing();
               Router.toPage(Page.Work);
             } else if (wasFocusing) {
-              Player.stopFocusing();
               Router.toPage(Page.Terminal);
             }
             helpers.log(ctx, () => `Started carrying out security work for '${faction.name}'`);
@@ -1004,7 +1002,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
           Player.startFocusing();
           Router.toPage(Page.Work);
         } else if (wasFocusing) {
-          Player.stopFocusing();
           Router.toPage(Page.Terminal);
         }
         helpers.log(ctx, () => `Began creating program: '${programName}'`);
@@ -1054,7 +1051,6 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
         Player.startFocusing();
         Router.toPage(Page.Work);
       } else if (wasFocusing) {
-        Player.stopFocusing();
         Router.toPage(Page.Terminal);
       }
       return crimeTime;
@@ -1176,7 +1172,7 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
         if (!Player.bladeburner) {
           return false;
         }
-        return Player.bladeburner.numBlackOpsComplete >= blackOpsArray.length;
+        return Player.bladeburner.numBlackOpsComplete >= numberOfBlackOperations;
       };
 
       if (!hackingRequirements() && !bladeburnerRequirements()) {
