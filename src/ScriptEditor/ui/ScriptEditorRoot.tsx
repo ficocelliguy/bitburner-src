@@ -342,8 +342,7 @@ function Root(props: IProps): React.ReactElement {
       });
       return;
     }
-    // Skip infinite loop detection for Python files: the AST is from compiled JS (which includes
-    // stdlib code with legitimate while(true) loops), and the line numbers would be wrong.
+    // Skip infinite loop detection for Python files: it's language service handles it already
     if (getFileType(currentScript.path) !== FileType.PY) {
       infLoop(ast, newCode);
     }
