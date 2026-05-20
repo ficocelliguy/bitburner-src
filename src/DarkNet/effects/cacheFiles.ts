@@ -13,6 +13,7 @@ import { resolveCacheFilePath } from "../../Paths/CacheFilePath";
 import type { CacheResult } from "@nsdefs";
 import { addClue, cctCooldownReached } from "./effects";
 import { getBitNodeMultipliers } from "../../BitNode/BitNode";
+import { pluralize } from "../../utils/I18nUtils";
 
 export const generateCacheFilename = (isPhishingCache: boolean, prefix?: string) => {
   const filenamePrefix = prefix ?? cachePrefixes[Math.floor(Math.random() * cachePrefixes.length)];
@@ -24,6 +25,9 @@ export const addCacheToServer = (server: DarknetServer, isPhishingCache: boolean
   const cacheFilename = generateCacheFilename(isPhishingCache, prefix);
   if (!cacheFilename) {
     return { success: false, message: `Cannot generate path. prefix: ${prefix}` };
+  }
+  if (server.caches.includes(cacheFilename)) {
+    return { success: false, message: `Duplicate cache file: ${cacheFilename}` };
   }
   server.caches.push(cacheFilename);
   return { success: true, cacheFilename };
@@ -85,7 +89,7 @@ export const getCCTReward = (difficulty: number, server: DarknetServer): string 
 };
 
 export const getMoneyReward = (difficulty: number): string => {
-  const sf15_3Factor = Player.activeSourceFileLvl(15) > 3 ? 1.5 : 1;
+  const sf15_3Factor = Player.activeSourceFileLvl(15) >= 3 ? 1.5 : 1;
   const reward =
     1.2 ** difficulty *
     1e7 *
@@ -114,14 +118,11 @@ export const getStockReward = (difficulty: number): string => {
 };
 
 export const getDataFileReward = (difficulty: number, server: DarknetServer): string => {
-  const currentDataFiles = server.textFiles.size;
-  addClue(server);
-  addClue(server);
-  const dataFilesGained = server.textFiles.size - currentDataFiles;
-  if (dataFilesGained === 0) {
+  const dataFiles = [...addClue(server), ...addClue(server)];
+  if (dataFiles.length === 0) {
     return getMoneyReward(difficulty);
   }
-  return `You have discovered a data file cache!`;
+  return `You have discovered ${pluralize(dataFiles.length, "data file cache")}: ${dataFiles.join(", ")}.`;
 };
 
 export const getProgramAndStockMarketRelatedRewards = (difficulty: number): string => {
