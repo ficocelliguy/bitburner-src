@@ -40,7 +40,7 @@ export const handleSuccessfulAuth = (server: DarknetServer, threads: number, pid
   addClue(server);
 
   const chance = 0.1 * 1.05 ** server?.difficulty;
-  if (Math.random() < chance && !isLabyrinthServer(server.hostname)) {
+  if (Math.random() < chance && !isLabyrinthServer(server.hostname) && server.maxRam) {
     addCacheToServer(server, false);
   }
 };
@@ -111,8 +111,11 @@ export const getMultiplierFromCharisma = (scalar = 1) => {
 };
 
 export const calculatePasswordAttemptChaGain = (server: DarknetServerData, threads: number = 1, success = false) => {
-  const baseXpGain = 3;
-  const difficultyBase = 1.1;
+  if (!server.maxRam) {
+    return 0;
+  }
+  const baseXpGain = 2.5;
+  const difficultyBase = 1.07;
   const xpGain = baseXpGain + difficultyBase ** server.difficulty;
   const alreadyHackedMult = server.hasAdminRights ? 0.2 : 1;
   const successMult = success && !server.hasAdminRights ? 10 : 1;
@@ -120,8 +123,10 @@ export const calculatePasswordAttemptChaGain = (server: DarknetServerData, threa
   return xpGain * alreadyHackedMult * successMult * bonusTimeMult * threads * Player.mults.charisma_exp;
 };
 
-// TODO: balance password clue spawn rate
 export const addClue = (server: DarknetServer): string[] => {
+  if (!server.maxRam) {
+    return [];
+  }
   const files = [];
   // Basic mechanics hints
   if ((Math.random() < 0.7 && server.difficulty <= 3) || Math.random() < 0.1) {

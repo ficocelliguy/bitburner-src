@@ -237,6 +237,7 @@ const cloud = {
 const dnet = {
   authenticate: 0.4,
   connectToSession: 0.05,
+  freezeServer: 2,
   heartbleed: 0.6,
   openCache: 2,
   probe: RamCostConstants.Scan,
@@ -265,6 +266,7 @@ const format = {
   ram: 0,
   percent: 0,
   time: 0,
+  money: 0,
 } as const;
 
 // Gang API
@@ -451,7 +453,12 @@ const ui = {
   resetStyles: 0,
   getGameInfo: 0,
   clearTerminal: 0,
+  openCodeEditor: 0,
   windowSize: 0,
+  alias: 0,
+  unalias: 0,
+  getAllAliases: 0,
+  renderPage: 0,
 } as const;
 
 // Grafting API
@@ -629,6 +636,8 @@ export const RamCosts: RamCostTree<NSFull> = {
   writePort: 0,
   nextPortWrite: 0,
   readPort: 0,
+  isFullPort: 0,
+  isEmptyPort: 0,
   getPortHandle: 0,
   rm: RamCostConstants.Scp,
   scriptRunning: RamCostConstants.ArbScript,

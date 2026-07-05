@@ -32,6 +32,7 @@ import {
   OrderType,
   BladeburnerActionType,
   SpecialBladeburnerActionTypeForSleeve,
+  GangTaskNameEnum,
 } from "@enums";
 import { PromptEvent } from "./ui/React/PromptManager";
 import { GetServer } from "./Server/AllServers";
@@ -138,6 +139,7 @@ export const enums: NSEnums = {
   FragmentType: FragmentTypeEnum,
   DarknetResponseCode: ResponseCodeEnum,
   ProgramName: CompletedProgramName,
+  GangTaskName: GangTaskNameEnum,
 };
 for (const val of Object.values(enums)) Object.freeze(val);
 Object.freeze(enums);
@@ -428,47 +430,40 @@ export const ns: InternalAPI<NSFull> = {
         throw helpers.errorMessage(ctx, "Takes at least 1 argument.");
       }
       const str = helpers.argsToString(args);
-      if (str.startsWith("ERROR") || str.startsWith("FAIL")) {
-        Terminal.error(`${ctx.workerScript.name}: ${str}`);
-        return;
+      const color = helpers.getTextColor(str);
+      switch (color) {
+        case "error":
+        case "success":
+        case "warn":
+        case "info": {
+          Terminal[color](`${ctx.workerScript.name}: ${str}`);
+          break;
+        }
+        case "primary": {
+          Terminal.print(`${ctx.workerScript.name}: ${str}`);
+          break;
+        }
       }
-      if (str.startsWith("SUCCESS")) {
-        Terminal.success(`${ctx.workerScript.name}: ${str}`);
-        return;
-      }
-      if (str.startsWith("WARN")) {
-        Terminal.warn(`${ctx.workerScript.name}: ${str}`);
-        return;
-      }
-      if (str.startsWith("INFO")) {
-        Terminal.info(`${ctx.workerScript.name}: ${str}`);
-        return;
-      }
-      Terminal.print(`${ctx.workerScript.name}: ${str}`);
     },
   tprintf:
     (ctx) =>
     (_format, ...args) => {
       const format = helpers.string(ctx, "format", _format);
       const str = vsprintf(format, args);
-
-      if (str.startsWith("ERROR") || str.startsWith("FAIL")) {
-        Terminal.error(`${str}`);
-        return;
+      const color = helpers.getTextColor(str);
+      switch (color) {
+        case "error":
+        case "success":
+        case "warn":
+        case "info": {
+          Terminal[color](`${str}`);
+          break;
+        }
+        case "primary": {
+          Terminal.print(`${str}`);
+          break;
+        }
       }
-      if (str.startsWith("SUCCESS")) {
-        Terminal.success(`${str}`);
-        return;
-      }
-      if (str.startsWith("WARN")) {
-        Terminal.warn(`${str}`);
-        return;
-      }
-      if (str.startsWith("INFO")) {
-        Terminal.info(`${str}`);
-        return;
-      }
-      Terminal.print(`${str}`);
     },
   clearLog: (ctx) => () => {
     ctx.workerScript.scriptRef.clearLog();
@@ -675,18 +670,15 @@ export const ns: InternalAPI<NSFull> = {
       }
 
       helpers.log(ctx, () => "About to exit...");
-      const killed = killWorkerScript(ctx.workerScript);
+      killWorkerScript(ctx.workerScript);
 
       if (runOpts.spawnDelay === 0) {
         helpers.log(ctx, () => `Executing '${path}' immediately`);
         spawnCb();
       }
-
-      if (killed) {
-        // This prevents error messages about statements after the spawn()
-        // trying to be executed when the script is dead.
-        throw new ScriptDeath(ctx.workerScript);
-      }
+      // This prevents error messages about statements after the spawn()
+      // trying to be executed when the script is dead.
+      throw new ScriptDeath(ctx.workerScript);
     },
   self: (ctx) => () => {
     const runningScript = helpers.getRunningScript(ctx, ctx.workerScript.pid);
@@ -1154,6 +1146,14 @@ export const ns: InternalAPI<NSFull> = {
     const portHandle = helpers.portHandle(ctx, _portNumber);
     return portHandle.peek();
   },
+  isFullPort: (ctx) => (_portNumber) => {
+    const portHandle = helpers.portHandle(ctx, _portNumber);
+    return portHandle.full();
+  },
+  isEmptyPort: (ctx) => (_portNumber) => {
+    const portHandle = helpers.portHandle(ctx, _portNumber);
+    return portHandle.empty();
+  },
   clear: (ctx) => (_file) => {
     const path = helpers.filePath(ctx, "file", _file);
     if (!hasScriptExtension(path) && !hasTextExtension(path)) {
@@ -1441,7 +1441,7 @@ export const ns: InternalAPI<NSFull> = {
   atExit: (ctx) => (callback, _id) => {
     const id = _id ? helpers.string(ctx, "id", _id) : "default";
     assertFunctionWithNSContext(ctx, "callback", callback);
-    ctx.workerScript.atExit.set(id, callback);
+    (ctx.workerScript.atExit ??= new Map()).set(id, callback);
   },
   mv: (ctx) => (_host, _source, _destination) => {
     const [server, host] = helpers.getServer(ctx, _host);
@@ -1532,7 +1532,7 @@ setRemovedFunctions(ns, {
   getServerRam: { version: "2.2.0", replacement: "getServerMaxRam and getServerUsedRam" },
   nFormat: {
     version: "3.0.0",
-    replacement: "ns.formatNumber, ns.formatRam, ns.formatPercent, or JS built-in objects/functions",
+    replacement: "ns.format.number(), ns.format.ram(), ns.format.percent(), or JS built-in objects/functions",
   },
   getTimeSinceLastAug: {
     version: "3.0.0",
@@ -1613,7 +1613,7 @@ setRemovedFunctions(ns, {
 });
 
 export function NetscriptFunctions(ws: WorkerScript): NSFull {
-  return NSProxy(ws, ns, [], { args: ws.args.slice(), pid: ws.pid, enums });
+  return NSProxy(ws, ns, [], { args: ws.scriptRef.args.slice(), pid: ws.pid, enums });
 }
 
 const possibleLogs = Object.fromEntries(getFunctionNames(ns, "").map((a) => [a, true]));
