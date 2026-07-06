@@ -9,14 +9,6 @@ import { exceptionAlert } from "../utils/helpers/exceptionAlert";
 import { RapydScriptLanguageService, registerRapydScript } from "rapydscript-ns/language-service";
 import netscriptDefinitions from "./NetscriptDefinitions.d.ts?raw";
 
-// clearVirtualFiles is implemented in language-service.js but not yet declared in its .d.ts.
-// TODO-FICO: remove this when no longer needed
-declare module "rapydscript-ns/language-service" {
-  interface RapydScriptLanguageService {
-    clearVirtualFiles(): void;
-  }
-}
-
 // Strip the leading `<hostname>/` segment (Bitburner keys tab URIs as `${hostname}/${filename}`)
 // and the RapydScript extension, so URI-derived keys match the runtime buildPythonVirtualFiles scheme.
 function moduleNameFromBitburnerUri(uri: { path?: string; fsPath?: string } | null | undefined): string | null {
