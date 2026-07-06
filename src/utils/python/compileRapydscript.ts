@@ -13,12 +13,21 @@ function injectBaselibOnce(): void {
   baselibInjected = "ρσ_bool" in window;
 }
 
+let cachedEditorRepl: ReturnType<typeof web_repl> | null = null;
+
 export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
   injectBaselibOnce();
-  const compiler = web_repl();
   const opts: Record<string, unknown> = { export_main: true, tree_shake: true };
   if (virtualFiles) opts.virtual_files = virtualFiles;
-  return compiler.compile(code, opts);
+  let result: string;
+  try {
+    cachedEditorRepl ??= web_repl();
+    result = cachedEditorRepl.compile(code, opts);
+  } catch (e) {
+    cachedEditorRepl = null;
+    throw e;
+  }
+  return result;
 }
 
 export function compileRapydscriptWithSourceMap(
