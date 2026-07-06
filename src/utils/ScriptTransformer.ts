@@ -216,12 +216,6 @@ export function transformScript(
 }
 
 // Build a map of virtual files for the RapydScript compiler from other .py scripts on the server.
-// `codeOverrides` (keyed by ScriptFilePath) lets callers substitute unsaved editor buffers for
-// on-disk code without cloning Script objects.
-// `basePath` anchors sibling-import resolution: scripts sharing its directory are also exposed
-// under the directory-stripped name, mirroring Python putting a script's own directory on sys.path
-// (so `/py/batcher.py` can `from utils import x` to reach `/py/utils.py`). Falls back to
-// `excludeFilename` when omitted, which covers the compile-time RAM-check and runtime call sites.
 export function buildPythonVirtualFiles(
   scripts: Map<ScriptFilePath, Script>,
   excludeFilename?: string,
@@ -238,8 +232,8 @@ export function buildPythonVirtualFiles(
     if (i !== -1) baseDir = p.slice(0, i + 1);
   }
 
-  // Emit an entry plus empty package stubs for each parent segment. RapydScript imports parent
-  // packages first, matching Python's package semantics — e.g. `subdir/utils` needs a `subdir` stub.
+  // Emit an entry plus empty package stubs for each parent segment. (RapydScript imports parent
+  // packages first, matching Python's package semantics)
   function put(key: string, code: string) {
     virtualFiles[key] = code;
     const parts = key.split("/");
@@ -259,8 +253,6 @@ export function buildPythonVirtualFiles(
     put(key, code);
     if (baseDir && key.startsWith(baseDir)) siblingAliases.push([key.slice(baseDir.length), code]);
   }
-  // Sibling aliases are applied last so they take precedence over same-name modules at the root,
-  // matching Python's sys.path ordering (script's directory before other search paths).
   for (const [key, code] of siblingAliases) put(key, code);
 
   return virtualFiles;

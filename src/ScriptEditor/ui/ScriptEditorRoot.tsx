@@ -363,9 +363,7 @@ function Root(props: IProps): React.ReactElement {
   };
 
   // Register all .py scripts on a server as virtual files in the RapydScript language service so
-  // imports resolve without the imported files needing to be opened. When an active script path is
-  // given, its directory anchors sibling-import resolution so `/py/foo.py` can `from bar import x`
-  // to reach `/py/bar.py` in the editor's language service (mirroring the runtime compile).
+  // imports resolve without the imported files needing to be opened.
   function preloadServerScripts(hostname: string, activePath?: string): void {
     const server = GetServer(hostname);
     if (!server) return;
@@ -376,9 +374,7 @@ function Root(props: IProps): React.ReactElement {
       if (!openScript.path.endsWith(".py")) continue;
       codeOverrides.set(openScript.path as ScriptFilePath, openScript.code);
     }
-    scriptEditor.setVirtualPythonFiles(
-      buildPythonVirtualFiles(server.scripts, undefined, codeOverrides, activePath),
-    );
+    scriptEditor.setVirtualPythonFiles(buildPythonVirtualFiles(server.scripts, undefined, codeOverrides, activePath));
   }
 
   // When the editor is mounted
@@ -473,8 +469,6 @@ function Root(props: IProps): React.ReactElement {
     currentScript = openScripts[index];
 
     if (editorRef.current !== null && openScripts[index] !== null) {
-      // Refresh the RapydScript virtual-file pool for the newly-active script's host.
-      // Handles cross-server tab switches and picks up deletions/renames since the last preload.
       preloadServerScripts(currentScript.hostname, currentScript.path);
       if (!currentScript.model || currentScript.model.isDisposed()) {
         currentScript.regenerateModel();
@@ -521,7 +515,7 @@ function Root(props: IProps): React.ReactElement {
       const indexOffset = openScripts.length === index ? -1 : 0;
       currentScript = openScripts[index + indexOffset];
       if (editorRef.current !== null) {
-        // The new current script may live on a different host — refresh virtual files.
+        // Refresh imports when switching active scripts
         preloadServerScripts(currentScript.hostname, currentScript.path);
         if (!currentScript.model || currentScript.model.isDisposed()) {
           currentScript.regenerateModel();
