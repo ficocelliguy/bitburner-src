@@ -14,8 +14,7 @@ export class ScriptEditor {
   isInitialized = false;
   private rapydService: RapydScriptLanguageService | null = null;
 
-  /** Pre-register Python module sources in the RapydScript language service so
-   *  import validation resolves them before any Monaco model fires its first _run(). */
+  // Pre-register Python module sources in the RapydScript language service for import validation and type hints
   setVirtualPythonFiles(files: Record<string, string>): void {
     this.rapydService?.setVirtualFiles(files);
   }
@@ -42,8 +41,7 @@ export class ScriptEditor {
       this.rapydService = registerRapydScript(monaco, {
         extraBuiltins: apiKeys,
       });
-      // Feed the NS API declaration file into the DTS registry so that hover
-      // info and dot-completions work for `ns.*` and other declared globals.
+      // Feed the NS API declaration into the rapydscript language service for NS type hints
       this.rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, "") + "\ndeclare var ns: NS;\n");
     }
     // Add api keys to tokenization

@@ -215,8 +215,7 @@ export function transformScript(
   };
 }
 
-/** Build a map of virtual files for the RapydScript compiler from other .py scripts on the server.
- * Keys are module-name.pyj (e.g. utils.pyj, subdir/utils.pyj) matching how RapydScript resolves imports. */
+// Build a map of virtual files for the RapydScript compiler from other .py scripts on the server.
 export function buildPythonVirtualFiles(
   scripts: Map<ScriptFilePath, Script>,
   excludeFilename?: string,
@@ -227,8 +226,6 @@ export function buildPythonVirtualFiles(
     if (!path.endsWith(".py")) continue;
     // Convert "/utils.py" → "utils", "/subdir/utils.py" → "subdir/utils"
     // Strip leading slash (ScriptFilePath is absolute) and .py extension.
-    // The readfile_wrapper in language-service.js strips .pyj before the map lookup,
-    // so the key must be the bare module name with no extension.
     const key = (path.startsWith("/") ? path.slice(1) : path).slice(0, -3);
     virtualFiles[key] = script.code;
     // For scripts in subdirectories, add empty package stubs for each parent segment.

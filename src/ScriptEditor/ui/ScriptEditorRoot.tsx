@@ -355,7 +355,7 @@ function Root(props: IProps): React.ReactElement {
     debouncedCodeParsing(newCode);
   };
 
-  // Preload all scripts from a server into Monaco models so the type checker can
+  // Preload all .py scripts from a server into Monaco models so the type checker can
   // resolve imports without requiring those files to be explicitly opened.
   function preloadServerScripts(hostname: string): void {
     const server = GetServer(hostname);
@@ -386,9 +386,7 @@ function Root(props: IProps): React.ReactElement {
       }
     }
 
-    // Pre-populate _virtualFiles BEFORE creating any Monaco models. ModelState
-    // schedules _run() via setTimeout(0), so it fires after this synchronous
-    // block — but check() reads _virtualFiles at call time. By registering all
+    // Pre-populate _virtualFiles BEFORE creating any Monaco models. By registering all
     // modules now, every diagnostic pass sees the full module set regardless of
     // which file's _run() fires first.
     scriptEditor.setVirtualPythonFiles(pyVirtualFiles);
@@ -406,11 +404,8 @@ function Root(props: IProps): React.ReactElement {
 
     // Open current script. This happens when the player switch tabs and open the editor tab.
     if (props.files.size === 0 && currentScript !== null) {
-      // Preload all server scripts BEFORE recreating the current model so that the
-      // RapydScript language service registers other modules into _virtualFiles first.
-      // All models schedule their initial _run() via setTimeout(0); by creating
-      // other files' models first, their _run() calls are queued before the current
-      // file's _run(), so cross-file imports resolve on the very first analysis pass.
+      // Preload all server scripts before recreating the current model so that the
+      // RapydScript language service can resolve imports from other scripts on the same server.
       preloadServerScripts(currentScript.hostname);
       currentScript.regenerateModel();
       editorRef.current.setModel(currentScript.model);
@@ -420,8 +415,6 @@ function Root(props: IProps): React.ReactElement {
       editorRef.current.focus();
       return;
     }
-
-    // Preload all server scripts before opening the requested files (same reason as above).
     preloadServerScripts(props.hostname);
 
     // This happens when the player opens scripts by using nano/vim.

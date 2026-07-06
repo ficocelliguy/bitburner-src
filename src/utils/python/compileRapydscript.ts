@@ -5,9 +5,7 @@ let baselibInjected = false;
 function injectBaselibOnce(): void {
   if (baselibInjected) return;
   baselibInjected = true;
-  // Compile an empty program with keep_baselib:true to get just the baselib declarations.
-  // Injecting via <script> puts var-declared names on window (globalThis), making them
-  // visible to compiled player script ES modules without including them per-script.
+  // Run the compiler, and cache the baselib's global scope, so it doesn't have to be recompiled for every new script update
   const baselibCode = web_repl().compile("", { keep_baselib: true });
   const script = document.createElement("script");
   script.textContent = baselibCode;
