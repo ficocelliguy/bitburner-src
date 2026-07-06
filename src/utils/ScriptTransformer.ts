@@ -80,7 +80,7 @@ export function parseAST(
   hostname: string,
   code: string,
   fileType: FileType,
-  otherScripts?: Map<ScriptFilePath, Script>,
+  otherScripts: Map<ScriptFilePath, Script>,
 ): AST {
   const fileTypeFeature = getFileTypeFeature(fileType);
   let ast: AST;

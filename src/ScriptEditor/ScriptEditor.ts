@@ -16,12 +16,15 @@ export class ScriptEditor {
 
   // Pre-register Python module sources in the RapydScript language service for import validation and type hints
   setVirtualPythonFiles(files: Record<string, string>): void {
+    if (!this.rapydService) {
+      console.error("ScriptEditor.rapydService was not properly initialized.");
+      return;
+    }
     this.rapydService?.setVirtualFiles(files);
   }
 
   initialize() {
     if (this.isInitialized) return;
-    this.isInitialized = true;
     // populate API keys for adding tokenization
     const apiKeys: string[] = [];
     const api = { args: [], pid: 1, enums, ...ns };
@@ -145,6 +148,7 @@ export class ScriptEditor {
     // Load themes
     loadThemes(monaco.editor.defineTheme);
     monaco.editor.defineTheme("customTheme", makeTheme(Settings.EditorTheme));
+    this.isInitialized = true;
   }
 }
 

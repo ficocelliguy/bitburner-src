@@ -355,16 +355,21 @@ function Root(props: IProps): React.ReactElement {
     debouncedCodeParsing(newCode);
   };
 
-  // Preload all .py scripts from a server into Monaco models so the type checker can
-  // resolve imports without requiring those files to be explicitly opened.
+  // Register all .py scripts on a server as virtual files in the RapydScript language service so
+  // imports resolve without the imported files needing to be opened.
   function preloadServerScripts(hostname: string): void {
     const server = GetServer(hostname);
     if (!server) return;
 
-    // Build a content map for all scripts, preferring unsaved open content.
     const pyVirtualFiles: Record<string, string> = {};
-    const scriptEntries: Array<[string, string]> = [];
     for (const [path, script] of server.scripts) {
+      if (!path.endsWith(".py")) continue;
+      const moduleName = path
+        .split("/")
+        .pop()
+        ?.replace(/\.pyj?x?$/, "");
+      if (!moduleName) continue;
+      // Prefer unsaved open buffer over the on-disk code.
       let code = script.code;
       for (const openScript of openScripts) {
         if (openScript.hostname === hostname && openScript.path === path) {
@@ -372,28 +377,9 @@ function Root(props: IProps): React.ReactElement {
           break;
         }
       }
-      scriptEntries.push([path, code]);
-
-      // Collect .py files for synchronous pre-registration in the RapydScript language service.
-      if (path.endsWith(".py")) {
-        const moduleName = path
-          ?.split("/")
-          ?.pop()
-          ?.replace(/\.pyj?x?$/, "");
-        if (moduleName) {
-          pyVirtualFiles[moduleName] = code;
-        }
-      }
+      pyVirtualFiles[moduleName] = code;
     }
-
-    // Pre-populate _virtualFiles BEFORE creating any Monaco models. By registering all
-    // modules now, every diagnostic pass sees the full module set regardless of
-    // which file's _run() fires first.
     scriptEditor.setVirtualPythonFiles(pyVirtualFiles);
-
-    for (const [path, code] of scriptEntries) {
-      makeModel(hostname, path, code);
-    }
   }
 
   // When the editor is mounted

@@ -4,13 +4,13 @@ let baselibInjected = false;
 
 function injectBaselibOnce(): void {
   if (baselibInjected) return;
-  baselibInjected = true;
   // Run the compiler, and cache the baselib's global scope, so it doesn't have to be recompiled for every new script update
   const baselibCode = web_repl().compile("", { keep_baselib: true });
   const script = document.createElement("script");
   script.textContent = baselibCode;
   document.head.appendChild(script);
   document.head.removeChild(script);
+  baselibInjected = "ρσ_bool" in window;
 }
 
 export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
