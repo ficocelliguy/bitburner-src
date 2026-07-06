@@ -79,6 +79,7 @@ import { ErrorModal } from "../ErrorHandling/ErrorModal";
 import { DWRoot } from "../DarkNet/DWRoot";
 import { DocumentationPopUp } from "../Documentation/ui/DocumentationPopUp";
 import { CustomPage } from "./CustomPage";
+import { CyberDeckRoot } from "../CyberDeck/CyberDeckRoot";
 
 const htmlLocation = location;
 
@@ -151,6 +152,10 @@ export let Router: IRouter = {
 function determineStartPage(): PageWithContext {
   if (RecoveryMode) {
     return { page: Page.Recovery };
+  }
+  // TODO-fico
+  if ((new URLSearchParams(window.location.search)).has("dev")) {
+    return { page: Page.CyberDeck };
   }
   /**
    * If the save data contains the server list, but WD data is invalid, isBitNodeFinished() will throw an error, and the
@@ -477,6 +482,10 @@ export function GameRoot(): React.ReactElement {
     }
     case Page.DarkNet: {
       mainPage = <DWRoot />;
+      break;
+    }
+    case Page.CyberDeck: {
+      mainPage = <CyberDeckRoot />;
       break;
     }
     case Page.Achievements: {

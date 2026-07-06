@@ -39,6 +39,7 @@ import PublicIcon from "@mui/icons-material/Public"; // World
 import LiveHelpIcon from "@mui/icons-material/LiveHelp"; // Help
 import BorderInnerSharpIcon from "@mui/icons-material/BorderInnerSharp"; // IPvGO
 import ShareIcon from "@mui/icons-material/Share"; // DarkWeb
+import MemoryIcon from "@mui/icons-material/Memory"; // DarkWeb
 import BiotechIcon from "@mui/icons-material/Biotech"; // Grafting
 
 import { Router } from "../../ui/GameRoot";
@@ -179,6 +180,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
   const canStaneksGift = Player.augmentations.some((aug) => aug.name === AugmentationName.StaneksGift1);
   const canIPvGO = playerHasDiscoveredGo();
   const canDarkNet = hasDarknetAccess();
+  const canCyberDeck = true; // TODO-fico
 
   const clickPage = useCallback(
     (page: Page) => {
@@ -244,6 +246,8 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
           return canIPvGO;
         case SimplePage.DarkNet:
           return canDarkNet;
+        case SimplePage.CyberDeck:
+          return canCyberDeck;
         case ScriptEditorAction.Save:
         case ScriptEditorAction.GoToTerminal:
         case ScriptEditorAction.Run:
@@ -416,6 +420,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
             canGang && { key_: Page.Gang, icon: SportsMmaIcon },
             canIPvGO && { key_: Page.Go, icon: BorderInnerSharpIcon },
             canDarkNet && { key_: Page.DarkNet, icon: ShareIcon },
+            canCyberDeck && { key_: Page.CyberDeck, icon: MemoryIcon },
           ]}
         />
         <Typography component="div" id="sidebar-extra-hook-2"></Typography>

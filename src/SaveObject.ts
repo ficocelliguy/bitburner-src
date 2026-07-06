@@ -544,7 +544,8 @@ export async function loadGame(saveData: SaveData): Promise<boolean> {
       await evaluateVersionCompatibility(ver);
       if (CONSTANTS.isDevBranch) {
         // Beta branch, always show changes
-        createBetaUpdateText();
+        // TODO-fico
+        //createBetaUpdateText();
       } else if (ver !== CONSTANTS.VersionNumber) {
         createNewUpdateText();
       }

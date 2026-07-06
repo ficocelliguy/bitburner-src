@@ -18,6 +18,7 @@ export enum SimplePage {
   City = "City",
   Corporation = "Corporation",
   CreateProgram = "Create Program",
+  CyberDeck = "CyberDeck",
   DarkNet = "Dark Net",
   DevMenu = "Dev",
   Factions = "Factions",
