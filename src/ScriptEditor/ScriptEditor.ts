@@ -9,6 +9,28 @@ import { exceptionAlert } from "../utils/helpers/exceptionAlert";
 import { RapydScriptLanguageService, registerRapydScript } from "rapydscript-ns/language-service";
 import netscriptDefinitions from "./NetscriptDefinitions.d.ts?raw";
 
+// clearVirtualFiles is implemented in language-service.js but not yet declared in its .d.ts.
+// TODO-FICO: remove this when no longer needed
+declare module "rapydscript-ns/language-service" {
+  interface RapydScriptLanguageService {
+    clearVirtualFiles(): void;
+  }
+}
+
+// Strip the leading `<hostname>/` segment (Bitburner keys tab URIs as `${hostname}/${filename}`)
+// and the RapydScript extension, so URI-derived keys match the runtime buildPythonVirtualFiles scheme.
+function moduleNameFromBitburnerUri(uri: { path?: string; fsPath?: string } | null | undefined): string | null {
+  if (!uri) return null;
+  let p = (uri.path ?? uri.fsPath ?? "").replace(/\\/g, "/");
+  if (!p) return null;
+  p = p.replace(/^\/+/, "");
+  const firstSlash = p.indexOf("/");
+  if (firstSlash === -1) return null;
+  p = p.slice(firstSlash + 1).replace(/^\/+/, "");
+  p = p.replace(/\.(?:pyj?x?)$/, "");
+  return p || null;
+}
+
 export class ScriptEditor {
   // Currently, this object is only used for initialization.
   isInitialized = false;
@@ -20,7 +42,8 @@ export class ScriptEditor {
       console.error("ScriptEditor.rapydService was not properly initialized.");
       return;
     }
-    this.rapydService?.setVirtualFiles(files);
+    this.rapydService.clearVirtualFiles();
+    this.rapydService.setVirtualFiles(files);
   }
 
   initialize() {
@@ -43,6 +66,7 @@ export class ScriptEditor {
     {
       this.rapydService = registerRapydScript(monaco, {
         extraBuiltins: apiKeys,
+        moduleNameFromUri: moduleNameFromBitburnerUri,
       });
       // Feed the NS API declaration into the rapydscript language service for NS type hints
       this.rapydService.addDts("netscript", netscriptDefinitions.replace(/^export /gm, "") + "\ndeclare var ns: NS;\n");

@@ -17,7 +17,7 @@ let cachedEditorRepl: ReturnType<typeof web_repl> | null = null;
 
 export function compileRapydscript(code: string, virtualFiles?: Record<string, string>): string {
   injectBaselibOnce();
-  const opts: Record<string, unknown> = { export_main: true, tree_shake: true };
+  const opts: Record<string, unknown> = { export_all: true, tree_shake: true };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   let result: string;
   try {
@@ -36,7 +36,7 @@ export function compileRapydscriptWithSourceMap(
 ): { scriptCode: string; sourceMap: string } {
   injectBaselibOnce();
   const compiler = web_repl();
-  const opts: Record<string, unknown> = { export_main: true, tree_shake: true };
+  const opts: Record<string, unknown> = { export_all: true, tree_shake: true };
   if (virtualFiles) opts.virtual_files = virtualFiles;
   const result = compiler.compile_mapped(code, opts);
   return { scriptCode: result.code, sourceMap: result.sourceMap };

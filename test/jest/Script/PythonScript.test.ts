@@ -137,6 +137,45 @@ async def main(ns):
     const result = calculateRamUsage(mainCode, makeScriptPath("main.py"), server, scripts);
     expect(result.errorMessage).toBeUndefined();
   });
+
+  // Python treats the running script's directory as the first entry on sys.path, so siblings
+  // import each other by bare name. We recreate that in the virtual-file map.
+  it("handles sibling imports inside a subdirectory (from utils import ... in /py/batcher.py)", () => {
+    const utilCode = `def getAllServers(ns):
+    return ["home"]`;
+    const utilScript = new Script(makeScriptPath("py/utils.py"), utilCode, server);
+
+    const mainCode = `from utils import getAllServers
+
+async def main(ns):
+    ns.print(getAllServers(ns))`;
+
+    const scripts = makeScriptsMap(utilScript);
+    const result = calculateRamUsage(mainCode, makeScriptPath("py/batcher.py"), server, scripts);
+    expect(result.errorMessage).toBeUndefined();
+    expect(result.cost).toBeCloseTo(baseCost);
+  });
+
+  // When the same bare name exists both as a sibling and at the root, the sibling wins
+  // (matches Python's sys.path[0]-first ordering).
+  it("prefers sibling over root when both share a bare name", () => {
+    const siblingCode = `def which():
+    return "sibling"`;
+    const rootCode = `def which():
+    return "root"`;
+    const scripts = makeScriptsMap(
+      new Script(makeScriptPath("py/utils.py"), siblingCode, server),
+      new Script(makeScriptPath("utils.py"), rootCode, server),
+    );
+
+    const mainCode = `from utils import which
+
+async def main(ns):
+    ns.print(which())`;
+
+    const result = calculateRamUsage(mainCode, makeScriptPath("py/batcher.py"), server, scripts);
+    expect(result.errorMessage).toBeUndefined();
+  });
 });
 
 // ─── Circular Imports ─────────────────────────────────────────────────────────

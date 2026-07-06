@@ -33,7 +33,14 @@ import { NoOpenScripts } from "./NoOpenScripts";
 import { ScriptEditorContextProvider, useScriptEditorContext } from "./ScriptEditorContext";
 import { useVimEditor } from "./useVimEditor";
 import { useCallback } from "react";
-import { type AST, FileType, getFileType, getModuleScript, parseAST } from "../../utils/ScriptTransformer";
+import {
+  type AST,
+  buildPythonVirtualFiles,
+  FileType,
+  getFileType,
+  getModuleScript,
+  parseAST,
+} from "../../utils/ScriptTransformer";
 import { RamCalculationErrorCode } from "../../Script/RamCalculationErrorCodes";
 import { hasScriptExtension, isLegacyScript, type ScriptFilePath } from "../../Paths/ScriptFilePath";
 import type { BaseServer } from "../../Server/BaseServer";
@@ -356,30 +363,22 @@ function Root(props: IProps): React.ReactElement {
   };
 
   // Register all .py scripts on a server as virtual files in the RapydScript language service so
-  // imports resolve without the imported files needing to be opened.
-  function preloadServerScripts(hostname: string): void {
+  // imports resolve without the imported files needing to be opened. When an active script path is
+  // given, its directory anchors sibling-import resolution so `/py/foo.py` can `from bar import x`
+  // to reach `/py/bar.py` in the editor's language service (mirroring the runtime compile).
+  function preloadServerScripts(hostname: string, activePath?: string): void {
     const server = GetServer(hostname);
     if (!server) return;
 
-    const pyVirtualFiles: Record<string, string> = {};
-    for (const [path, script] of server.scripts) {
-      if (!path.endsWith(".py")) continue;
-      const moduleName = path
-        .split("/")
-        .pop()
-        ?.replace(/\.pyj?x?$/, "");
-      if (!moduleName) continue;
-      // Prefer unsaved open buffer over the on-disk code.
-      let code = script.code;
-      for (const openScript of openScripts) {
-        if (openScript.hostname === hostname && openScript.path === path) {
-          code = openScript.code;
-          break;
-        }
-      }
-      pyVirtualFiles[moduleName] = code;
+    const codeOverrides = new Map<ScriptFilePath, string>();
+    for (const openScript of openScripts) {
+      if (openScript.hostname !== hostname) continue;
+      if (!openScript.path.endsWith(".py")) continue;
+      codeOverrides.set(openScript.path as ScriptFilePath, openScript.code);
     }
-    scriptEditor.setVirtualPythonFiles(pyVirtualFiles);
+    scriptEditor.setVirtualPythonFiles(
+      buildPythonVirtualFiles(server.scripts, undefined, codeOverrides, activePath),
+    );
   }
 
   // When the editor is mounted
@@ -392,7 +391,7 @@ function Root(props: IProps): React.ReactElement {
     if (props.files.size === 0 && currentScript !== null) {
       // Preload all server scripts before recreating the current model so that the
       // RapydScript language service can resolve imports from other scripts on the same server.
-      preloadServerScripts(currentScript.hostname);
+      preloadServerScripts(currentScript.hostname, currentScript.path);
       currentScript.regenerateModel();
       editorRef.current.setModel(currentScript.model);
       editorRef.current.setPosition(currentScript.lastPosition);
@@ -401,7 +400,7 @@ function Root(props: IProps): React.ReactElement {
       editorRef.current.focus();
       return;
     }
-    preloadServerScripts(props.hostname);
+    preloadServerScripts(props.hostname, props.files.keys().next().value);
 
     // This happens when the player opens scripts by using nano/vim.
     for (const [filename, code] of props.files) {
@@ -474,6 +473,9 @@ function Root(props: IProps): React.ReactElement {
     currentScript = openScripts[index];
 
     if (editorRef.current !== null && openScripts[index] !== null) {
+      // Refresh the RapydScript virtual-file pool for the newly-active script's host.
+      // Handles cross-server tab switches and picks up deletions/renames since the last preload.
+      preloadServerScripts(currentScript.hostname, currentScript.path);
       if (!currentScript.model || currentScript.model.isDisposed()) {
         currentScript.regenerateModel();
       }
@@ -519,6 +521,8 @@ function Root(props: IProps): React.ReactElement {
       const indexOffset = openScripts.length === index ? -1 : 0;
       currentScript = openScripts[index + indexOffset];
       if (editorRef.current !== null) {
+        // The new current script may live on a different host — refresh virtual files.
+        preloadServerScripts(currentScript.hostname, currentScript.path);
         if (!currentScript.model || currentScript.model.isDisposed()) {
           currentScript.regenerateModel();
         }

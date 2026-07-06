@@ -216,26 +216,52 @@ export function transformScript(
 }
 
 // Build a map of virtual files for the RapydScript compiler from other .py scripts on the server.
+// `codeOverrides` (keyed by ScriptFilePath) lets callers substitute unsaved editor buffers for
+// on-disk code without cloning Script objects.
+// `basePath` anchors sibling-import resolution: scripts sharing its directory are also exposed
+// under the directory-stripped name, mirroring Python putting a script's own directory on sys.path
+// (so `/py/batcher.py` can `from utils import x` to reach `/py/utils.py`). Falls back to
+// `excludeFilename` when omitted, which covers the compile-time RAM-check and runtime call sites.
 export function buildPythonVirtualFiles(
   scripts: Map<ScriptFilePath, Script>,
   excludeFilename?: string,
+  codeOverrides?: Map<ScriptFilePath, string>,
+  basePath?: string,
 ): Record<string, string> {
   const virtualFiles: Record<string, string> = {};
-  for (const [path, script] of scripts) {
-    if (path === excludeFilename) continue;
-    if (!path.endsWith(".py")) continue;
-    // Convert "/utils.py" → "utils", "/subdir/utils.py" → "subdir/utils"
-    // Strip leading slash (ScriptFilePath is absolute) and .py extension.
-    const key = (path.startsWith("/") ? path.slice(1) : path).slice(0, -3);
-    virtualFiles[key] = script.code;
-    // For scripts in subdirectories, add empty package stubs for each parent segment.
-    // e.g. "subdir/utils" → also add "subdir" so `from subdir.utils import x` works
-    // (RapydScript imports parent packages first, like Python's package semantics).
+
+  const anchor = basePath ?? excludeFilename;
+  let baseDir = "";
+  if (anchor) {
+    const p = anchor.startsWith("/") ? anchor.slice(1) : anchor;
+    const i = p.lastIndexOf("/");
+    if (i !== -1) baseDir = p.slice(0, i + 1);
+  }
+
+  // Emit an entry plus empty package stubs for each parent segment. RapydScript imports parent
+  // packages first, matching Python's package semantics — e.g. `subdir/utils` needs a `subdir` stub.
+  function put(key: string, code: string) {
+    virtualFiles[key] = code;
     const parts = key.split("/");
     for (let i = 1; i < parts.length; i++) {
       const pkgKey = parts.slice(0, i).join("/");
       if (!(pkgKey in virtualFiles)) virtualFiles[pkgKey] = "";
     }
   }
+
+  const siblingAliases: Array<[string, string]> = [];
+  for (const [path, script] of scripts) {
+    if (path === excludeFilename) continue;
+    if (!path.endsWith(".py")) continue;
+    // Convert "/utils.py" → "utils", "/subdir/utils.py" → "subdir/utils"
+    const key = (path.startsWith("/") ? path.slice(1) : path).slice(0, -3);
+    const code = codeOverrides?.get(path) ?? script.code;
+    put(key, code);
+    if (baseDir && key.startsWith(baseDir)) siblingAliases.push([key.slice(baseDir.length), code]);
+  }
+  // Sibling aliases are applied last so they take precedence over same-name modules at the root,
+  // matching Python's sys.path ordering (script's directory before other search paths).
+  for (const [key, code] of siblingAliases) put(key, code);
+
   return virtualFiles;
 }
