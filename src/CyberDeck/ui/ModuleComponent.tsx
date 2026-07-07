@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { DroppableProvided, DroppableStateSnapshot, Draggable } from "react-beautiful-dnd";
 import { DeckModule } from "../models/CyberDeckState";
+import { Settings } from "../../Settings/Settings";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -17,9 +18,9 @@ export function ModuleComponent({ module, index, allowShift }: DeckModuleProps) 
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={{ ...provided.draggableProps.style, border: "1px solid yellow"}}
+          style={{ ...provided.draggableProps.style, border: "1px solid yellow", margin: "3px"}}
         >
-          <Typography sx={{ userSelect: "none" }}>Drag Me {module.id}!</Typography>
+          <Typography sx={{ userSelect: "none", background: Settings.theme.backgroundprimary }}>Drag Me {module.id}!</Typography>
         </div>
       )}
     </Draggable>
