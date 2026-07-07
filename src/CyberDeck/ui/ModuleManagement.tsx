@@ -1,12 +1,32 @@
 import React from "react";
 import { Container, Typography, Box } from "@mui/material";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
+import { useRerender } from "../../ui/React/hooks";
+import { CyberDeckState } from "../models/CyberDeckState";
+import { ModuleComponent } from "./ModuleComponent";
+import { handleModuleMoved } from "../models/ModuleMovement";
+
+export const MODULE_STORAGE = "moduleStorage";
+export const INSTALLED_MODULES = "installedModules";
 
 export function ModuleManagement(): React.ReactElement {
+  const render = useRerender();
+  function onDragStart(result: DragStart) {
+    console.log(result);
+  }
+
   function onDragEnd(result: DropResult) {
-    console.log(result)
-    //TODO: handle reordering
+    handleModuleMoved(result);
+    render();
+  }
+
+  function onDragUpdate(result: DragUpdate) {
+    console.log(result);
+  }
+
+  function maxModulesInstalled() {
+    return CyberDeckState.installedModules.filter(m => m).length >= CyberDeckState.baseRackSize;
   }
 
   return (
@@ -15,13 +35,13 @@ export function ModuleManagement(): React.ReactElement {
 
       <Container disableGutters maxWidth={false} sx={{ mt: 20 }}>
         <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="activeModules" direction="vertical">
+          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+            <Droppable droppableId={INSTALLED_MODULES} direction="vertical" isDropDisabled={maxModulesInstalled()}>
               {(provided, snapshot) => (
                 <Box
                   display="flex"
                   flexGrow="1"
-                  flexDirection="row"
+                  flexDirection="column"
                   alignItems="center"
                   whiteSpace="nowrap"
                   ref={provided.innerRef}
@@ -42,41 +62,20 @@ export function ModuleManagement(): React.ReactElement {
                     }
                   }}
                 >
-                  <Draggable draggableId="module1" index={0}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style, border: "1px solid yellow" }}
-                      >
-                        <Typography sx={{ userSelect: "none" }}>Drag Me!</Typography>
-                      </div>
-                    )}
-                  </Draggable>
-                  <Draggable draggableId="module2" index={1}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style, border: "1px solid yellow" }}
-                      >
-                        <Typography sx={{ userSelect: "none" }}>Drag Me 2!</Typography>
-                      </div>
-                    )}
-                  </Draggable>
+                  {CyberDeckState.installedModules.map((module, index) =>
+                    module ? <ModuleComponent key={module.id} module={module} index={index} allowShift={false} /> : "",
+                  )}
 
                   {provided.placeholder}
                 </Box>
               )}
             </Droppable>
-            <Droppable droppableId="moduleStorage" direction="vertical">
+            <Droppable droppableId={MODULE_STORAGE} direction="vertical">
               {(provided, snapshot) => (
                 <Box
                   display="flex"
                   flexGrow="1"
-                  flexDirection="row"
+                  flexDirection="column"
                   alignItems="center"
                   whiteSpace="nowrap"
                   ref={provided.innerRef}
@@ -97,31 +96,9 @@ export function ModuleManagement(): React.ReactElement {
                     }
                   }}
                 >
-                  <Draggable draggableId="module3" index={0}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style, border: "1px solid yellow" }}
-                      >
-                        <Typography sx={{ userSelect: "none" }}>Drag Me 3!</Typography>
-                      </div>
-                    )}
-                  </Draggable>
-                  <Draggable draggableId="module4" index={1}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style, border: "1px solid yellow" }}
-                      >
-                        <Typography sx={{ userSelect: "none" }}>Drag Me 4!</Typography>
-                      </div>
-                    )}
-                  </Draggable>
-
+                  {CyberDeckState.storedModules.map((module, index) =>
+                    module ? <ModuleComponent key={module.id} module={module} index={index} /> : "",
+                  )}
                   {provided.placeholder}
                 </Box>
               )}
