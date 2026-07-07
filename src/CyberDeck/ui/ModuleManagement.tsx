@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import { Container, Typography, Box } from "@mui/material";
-import { DragDropContext, Droppable, Draggable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
 import { CyberDeckState } from "../models/CyberDeckState";
@@ -12,12 +12,15 @@ export const INSTALLED_MODULES = "installedModules";
 
 export function ModuleManagement(): React.ReactElement {
   const render = useRerender();
+  const [draggingInstalledModule, setDraggingInstalledModule] = useState(false)
+
   function onDragStart(result: DragStart) {
-    console.log(result);
+    setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
   }
 
   function onDragEnd(result: DropResult) {
     handleModuleMoved(result);
+    setDraggingInstalledModule(false);
     render();
   }
 
@@ -36,7 +39,11 @@ export function ModuleManagement(): React.ReactElement {
       <Container disableGutters maxWidth={false} sx={{ mt: 20 }}>
         <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
-            <Droppable droppableId={INSTALLED_MODULES} direction="vertical" isDropDisabled={maxModulesInstalled()}>
+            <Droppable
+              droppableId={INSTALLED_MODULES}
+              direction="vertical"
+              isDropDisabled={maxModulesInstalled() && !draggingInstalledModule}
+            >
               {(provided, snapshot) => (
                 <Box
                   display="flex"
