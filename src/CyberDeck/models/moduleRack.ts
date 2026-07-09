@@ -1,4 +1,4 @@
-import { CyberDeckState, SocketList } from "./CyberDeckState";
+import { CyberDeckState, Socket, SocketList } from "./CyberDeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { shuffle } from "lodash";
 
@@ -29,8 +29,9 @@ export function isSocketList(value: unknown): value is SocketList {
   );
 }
 
-export function getSocketId(moduleId: string, socketIndex: number) {
-  return `socket-${moduleId}-${socketIndex}`;
+export function getSocketId(socket: Socket | null) {
+  if (!socket) return "";
+  return `socket-${socket.moduleId}-${socket.socketIndex}`;
 }
 
 export function getSocketLocation(id: string) {

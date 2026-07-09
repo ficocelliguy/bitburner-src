@@ -3,11 +3,10 @@ import { Container, Typography, Box } from "@mui/material";
 import { DragDropContext, Droppable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberDeckState, Socket } from "../models/CyberDeckState";
 import { ModuleComponent } from "./ModuleComponent";
-import { handleModuleMoved } from "../models/ModuleMovement";
+import { createConnection, handleModuleMoved } from "../models/ModuleMutation";
 import { DrawWiresOnCanvas } from "./WireCanvas";
-import { getSocketId } from "../models/moduleRack";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -16,7 +15,7 @@ export function ModuleManagement(): React.ReactElement {
   const render = useRerender();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
-  const [draggingWire, setDraggingWire] = useState("");
+  const [draggingWire, setDraggingWire] = useState<Socket | null>(null);
 
   function onDragStart(result: DragStart) {
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
@@ -25,30 +24,38 @@ export function ModuleManagement(): React.ReactElement {
   function onDragEnd(result: DropResult) {
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
-    render();
+    rerenderForABit();
   }
 
   function onDragUpdate(result: DragUpdate) {
     console.log(result);
+    DrawWiresOnCanvas(canvas.current);
   }
 
-  function draggingWireStarted(moduleId: string, socketId: number) {
-    setDraggingWire(getSocketId(moduleId, socketId));
-    console.log("draggingWireStarted", moduleId, socketId);
+  function draggingWireStarted(moduleId: string, socketIndex: number) {
+    setDraggingWire({ moduleId, socketIndex });
+    console.log("draggingWireStarted", moduleId, socketIndex);
+  }
+
+  function draggingWireEnded(moduleId: string) {
+    if (!draggingWire) return;
+    setDraggingWire(null);
+    createConnection(draggingWire, { moduleId, socketIndex: draggingWire.socketIndex });
+    DrawWiresOnCanvas(canvas.current);
   }
 
   function onMouseLeave() {
-    setDraggingWire("");
+    setDraggingWire(null);
+    DrawWiresOnCanvas(canvas.current);
   }
 
   function onMouseUp() {
-    setDraggingWire("");
+    setDraggingWire(null);
+    DrawWiresOnCanvas(canvas.current);
   }
 
   function onMouseMove(e: React.MouseEvent) {
-    if (!draggingWire) {
-      return;
-    }
+    if (!draggingWire && !draggingInstalledModule) return;
     DrawWiresOnCanvas(canvas.current, draggingWire, {x: e.clientX, y: e.clientY});
   }
 
@@ -56,16 +63,26 @@ export function ModuleManagement(): React.ReactElement {
     return CyberDeckState.installedModules.filter(m => m).length >= CyberDeckState.baseRackSize;
   }
 
+  function rerenderForABit() {
+    const interval = setInterval(() => {
+      //render();
+      //DrawWiresOnCanvas(canvas.current);
+    }, 90);
+    setTimeout(() => clearInterval(interval), 500)
+  }
+
   return (
     <Container
       disableGutters
       maxWidth={false}
-      sx={{ mx: 0,}}
+      sx={{ mx: 0 }}
       onMouseLeave={onMouseLeave}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
     >
-      <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>Module Edit Page</Typography>
+      <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
+        Module Edit Page
+      </Typography>
       <div
         id="testPointer"
         style={{
@@ -124,6 +141,7 @@ export function ModuleManagement(): React.ReactElement {
                       module={module}
                       index={index}
                       draggingWireStarted={draggingWireStarted}
+                      draggingWireEnded={draggingWireEnded}
                       allowShift={!draggingWire}
                     />
                   ))}
@@ -163,6 +181,7 @@ export function ModuleManagement(): React.ReactElement {
                       module={module}
                       index={index}
                       draggingWireStarted={draggingWireStarted}
+                      draggingWireEnded={draggingWireEnded}
                       allowShift={!draggingWire}
                     />
                   ))}

@@ -9,14 +9,19 @@ export type DeckModuleProps = {
   module: DeckModule;
   index: number;
   draggingWireStarted: (moduleId: string, socketId: number) => void;
+  draggingWireEnded: (moduleId: string) => void;
   allowShift?: boolean;
 };
 
-export function ModuleComponent({ module, index, allowShift, draggingWireStarted }: DeckModuleProps) {
-  function socketClicked(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
+export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded }: DeckModuleProps) {
+  function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
     e.preventDefault();
     draggingWireStarted(module.id, socketIndex);
+  }
+
+  function socketDragEnd() {
+    draggingWireEnded(module.id);
   }
 
   return (
@@ -33,6 +38,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
             background: Settings.theme.backgroundprimary,
             display: "inline-flex",
           }}
+          onMouseUp={() => socketDragEnd()}
         >
           <div>
             <Typography sx={{ userSelect: "none", width: "140px", marginTop: "5px" }}>Drag Me {module.id}!</Typography>
@@ -42,8 +48,8 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
               <div key={index} style={{ width: "24px", height: "24px", margin: "5px" }}>
                 {isSocket ? (
                   <button
-                    id={getSocketId(module.id, index)}
-                    onMouseDown={(e) => socketClicked(e, index)}
+                    id={getSocketId({ moduleId: module.id, socketIndex: index })}
+                    onMouseDown={(e) => socketDragStart(e, index)}
                     style={{
                       height: "24px",
                       width: "24px",

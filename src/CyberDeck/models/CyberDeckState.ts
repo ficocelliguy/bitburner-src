@@ -6,6 +6,7 @@ export const CyberDeckState = {
   baseRackSize: 6,
   installedModules: [] as DeckModule[],
   storedModules: [] as DeckModule[],
+  connections: [] as Connection[],
   components: {
     ROM: 0,
     neurodes: 0,
@@ -20,6 +21,12 @@ export type DeckModule = {
   stats?: null;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+
+export type Connection = [Socket, Socket];
+export type Socket = {
+  moduleId: string;
+  socketIndex: number;
+};
 
 const t = Settings.theme;
 
