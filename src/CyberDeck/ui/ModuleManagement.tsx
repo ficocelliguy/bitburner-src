@@ -6,7 +6,7 @@ import { useRerender } from "../../ui/React/hooks";
 import { CyberDeckState, Socket } from "../models/CyberDeckState";
 import { ModuleComponent } from "./ModuleComponent";
 import { createConnection, handleModuleMoved } from "../models/ModuleMutation";
-import { DrawWiresOnCanvas } from "./WireCanvas";
+import { DrawWiresOnCanvas } from "./wireCanvasDrawing";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -24,7 +24,8 @@ export function ModuleManagement(): React.ReactElement {
   function onDragEnd(result: DropResult) {
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
-    rerenderForABit();
+    render();
+    DrawWiresOnCanvas(canvas.current);
   }
 
   function onDragUpdate(result: DragUpdate) {
@@ -61,14 +62,6 @@ export function ModuleManagement(): React.ReactElement {
 
   function maxModulesInstalled() {
     return CyberDeckState.installedModules.filter(m => m).length >= CyberDeckState.baseRackSize;
-  }
-
-  function rerenderForABit() {
-    const interval = setInterval(() => {
-      //render();
-      //DrawWiresOnCanvas(canvas.current);
-    }, 90);
-    setTimeout(() => clearInterval(interval), 500)
   }
 
   return (
