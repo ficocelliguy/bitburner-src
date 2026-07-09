@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import {  Draggable } from "react-beautiful-dnd";
 import { DeckModule, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
+import { getSocketId } from "../models/moduleRack";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -41,6 +42,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
               <div key={index} style={{ width: "24px", height: "24px", margin: "5px" }}>
                 {isSocket ? (
                   <button
+                    id={getSocketId(module.id, index)}
                     onMouseDown={(e) => socketClicked(e, index)}
                     style={{
                       height: "24px",

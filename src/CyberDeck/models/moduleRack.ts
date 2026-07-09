@@ -29,6 +29,22 @@ export function isSocketList(value: unknown): value is SocketList {
   );
 }
 
+export function getSocketId(moduleId: string, socketIndex: number) {
+  return `socket-${moduleId}-${socketIndex}`;
+}
+
+export function getSocketLocation(id: string) {
+  const rect = document.getElementById(id)?.getBoundingClientRect()
+  if (!rect) {
+    return {x: 0, y: 0}
+  }
+  return {
+    x: rect.left + rect.width/2,
+    y: rect.top + rect.height/2
+  }
+}
+
+
 export function createInitialModules() {
   for (let i = 0; i < 4; i++) {
     CyberDeckState.installedModules.push({
