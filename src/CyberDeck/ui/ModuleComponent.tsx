@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import {  Draggable } from "react-beautiful-dnd";
-import { DeckModule, socketColors } from "../models/CyberDeckState";
+import { CyberDeckState, DeckModule, Socket, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
 import { getSocketId } from "../models/moduleRack";
 
@@ -10,14 +10,24 @@ export type DeckModuleProps = {
   index: number;
   draggingWireStarted: (moduleId: string, socketId: number) => void;
   draggingWireEnded: (moduleId: string) => void;
+  currentDragSource?: Socket | null;
   allowShift?: boolean;
 };
 
-export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded }: DeckModuleProps) {
+export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded, currentDragSource }: DeckModuleProps) {
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
     e.preventDefault();
     draggingWireStarted(module.id, socketIndex);
+  }
+
+  function isConnected(index: number): boolean {
+    if (currentDragSource?.moduleId === module.id && currentDragSource?.socketIndex === index) {
+      return true;
+    }
+    return CyberDeckState.connections.some(([source, destination]) => {
+      return (source.moduleId === module.id && source.socketIndex === index) || (destination.moduleId === module.id && destination.socketIndex === index);
+    });
   }
 
   function socketDragEnd() {
@@ -56,7 +66,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
                       borderRadius: "50%",
                       border: `6px solid ${socketColors[index]}`,
                       cursor: "crosshair",
-                      background: Settings.theme.backgroundprimary,
+                      background: isConnected(index) ? socketColors[index] : Settings.theme.backgroundprimary,
                     }}
                   ></button>
                 ) : (

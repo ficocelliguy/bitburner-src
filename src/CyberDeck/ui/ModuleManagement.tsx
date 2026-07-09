@@ -142,6 +142,7 @@ export function ModuleManagement(): React.ReactElement {
                       index={index}
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}
+                      currentDragSource={draggingWire}
                       allowShift={!draggingWire}
                     />
                   ))}
