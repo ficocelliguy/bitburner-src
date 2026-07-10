@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { Typography } from "@mui/material";
 import {  Draggable } from "react-beautiful-dnd";
-import { CyberDeckEvents, CyberDeckState, socketColors } from "../models/CyberDeckState";
+import { CyberDeckEvents, CyberDeckState, getChargedModuleIDs, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
 import { getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, Socket } from "../Types";
@@ -57,7 +57,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
           {...provided.dragHandleProps}
           style={{
             ...provided.draggableProps.style,
-            border: "1px solid yellow",
+            border: `1px solid ${getChargedModuleIDs().includes(module.id) ? "yellow" : "grey"}`,
             margin: "3px",
             background: Settings.theme.backgroundprimary,
             display: "inline-flex",

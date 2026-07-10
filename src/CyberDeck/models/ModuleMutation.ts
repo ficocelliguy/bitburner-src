@@ -1,6 +1,6 @@
 
 import { DropResult } from "react-beautiful-dnd";
-import { MODULE_STORAGE } from "../ui/ModuleManagement";
+import { MODULE_STORAGE } from "../ui/ModuleRackAndInventory";
 import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -16,8 +16,15 @@ export function handleModuleMoved(result: DropResult) {
   const destinationIsStorage = result.destination.droppableId === MODULE_STORAGE;
 
   const sourceLocation = sourceIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
+  const moduleToMove = sourceLocation[result.source.index]
 
-  moveModule(sourceLocation[result.source.index], sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
+  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
+
+  // Undo the move if it causes invalid wiring
+  if (CyberDeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
+    moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.destination.index, result.source.index);
+    SnackbarEvents.emit(`Wires cannot overlap.`, ToastVariant.ERROR, 2000);
+  }
 }
 
 function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
@@ -44,53 +51,50 @@ export function ejectOverloadedModules() {
 export function createConnection(source: Socket, destination: Socket) {
   // TODO-fico: validation
   // TODO: what happens when you go over a socket but not connect to it?
-  const sourceModule = CyberDeckState.installedModules.find(m => m.id == source.moduleId);
+  // TODO-fico: prevent overlap of unconnected socket. Or maybe hide it?
+
+  const sourceModule = CyberDeckState.installedModules.find((m) => m.id == source.moduleId);
   const destinationModule = CyberDeckState.installedModules.find((m) => m.id == destination.moduleId);
   if (sourceModule == destinationModule) return;
   if (!destinationModule?.sockets[destination.socketIndex]) {
     SnackbarEvents.emit(`Target module does not have a socket of that color.`, ToastVariant.ERROR, 2000);
     return;
   }
-  if(source.socketIndex !== destination.socketIndex || !sourceModule?.sockets[source.socketIndex]) {
+  if (source.socketIndex !== destination.socketIndex || !sourceModule?.sockets[source.socketIndex]) {
     SnackbarEvents.emit(`Socket colors do not match.`, ToastVariant.ERROR, 2000);
     return;
   }
   disconnectSocket(source);
   disconnectSocket(destination);
 
-  const sourceModuleSlot = CyberDeckState.installedModules.findIndex(m => m.id == source.moduleId);
-  const destinationModuleSlot = CyberDeckState.installedModules.findIndex(m => m.id == destination.moduleId);
-  const overlapSocket = CyberDeckState.connections
-    .find(([s,d]) => {
-      const sModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === s.moduleId && m.id !== source.moduleId && m.id !== destination.moduleId);
-      const dModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === d.moduleId && m.id !== source.moduleId && m.id !== destination.moduleId);
-      const sModuleIsIntersecting =
-        (sModuleIndex < sourceModuleSlot && sModuleIndex > destinationModuleSlot) ||
-        (sModuleIndex > sourceModuleSlot && sModuleIndex < destinationModuleSlot);
-      const dModuleIsIntersecting =
-        (dModuleIndex < sourceModuleSlot && dModuleIndex > destinationModuleSlot) ||
-        (dModuleIndex > sourceModuleSlot && dModuleIndex < destinationModuleSlot);
-      const sourceModuleIsIntersecting =
-        (sourceModuleSlot < sModuleIndex && sourceModuleSlot > dModuleIndex) ||
-        (sourceModuleSlot > sModuleIndex && sourceModuleSlot < dModuleIndex);
-      const destinationModuleIsIntersecting =
-        (destinationModuleSlot < sModuleIndex && destinationModuleSlot > dModuleIndex) ||
-        (destinationModuleSlot > sModuleIndex && destinationModuleSlot < dModuleIndex);
-      return (
-        sModuleIsIntersecting || dModuleIsIntersecting || sourceModuleIsIntersecting || destinationModuleIsIntersecting
-      );
-    });
+  const overlapSocket = wireOverlapsSocket(source) || wireOverlapsSocket(destination);
 
   if (overlapSocket) {
     SnackbarEvents.emit(`Wires cannot overlap.`, ToastVariant.ERROR, 2000);
     return;
   }
-    // TODO-fico: prevent overlap of unconnected socket. Or maybe hide it?
-
-    // TODO-fico: remove overlaps after a move. Or prevent it?
 
   console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
+}
+
+export function wireOverlapsSocket(socket: Socket) {
+  const socketModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id == socket.moduleId);
+  return CyberDeckState.connections.find(([s, d]) => {
+    if (s.moduleId === socket.moduleId || d.moduleId === socket.moduleId) return false;
+    const sModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === s.moduleId);
+    const dModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === d.moduleId);
+    return (
+      s.socketIndex == socket.socketIndex &&
+      sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
+    );
+  });
+}
+
+function socketIsConnected(socket: Socket) {
+  return CyberDeckState.connections.find(([s,d]) =>
+    (s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex) ||
+    (d.moduleId === socket.moduleId && d.socketIndex === socket.socketIndex));
 }
 
 export function disconnectSocket(source: Socket | undefined) {

@@ -11,17 +11,18 @@ import {
   ejectOverloadedModules,
   handleModuleMoved,
 } from "../models/ModuleMutation";
-import { DrawWiresOnCanvas } from "./WireCanvasDrawing";
+import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
 
-export function ModuleManagement(): React.ReactElement {
+export function ModuleRackAndInventory(): React.ReactElement {
   const render = useRerender();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
+  const [draggingStoredModule, setDraggingStoredModule] = useState(false);
   const [draggingWire, setDraggingWire] = useState<Socket | null>(null);
 
   const updateDisplay = useCallback(() => {
@@ -37,11 +38,13 @@ export function ModuleManagement(): React.ReactElement {
 
   function onDragStart(result: DragStart) {
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
+    setDraggingStoredModule(result.source.droppableId === MODULE_STORAGE);
   }
 
   function onDragEnd(result: DropResult) {
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
+    setDraggingStoredModule(false);
     // Continue animating for a short time as dragged components settle
     const interval = setInterval(() => {
       updateDisplay();
@@ -79,11 +82,11 @@ export function ModuleManagement(): React.ReactElement {
   }
 
   function onMouseMove(e: React.MouseEvent) {
-    if (!draggingWire && !draggingInstalledModule) return;
-    DrawWiresOnCanvas(canvas.current, draggingWire, {x: e.clientX, y: e.clientY});
+    if (draggingWire || draggingInstalledModule || draggingStoredModule) {
+      DrawWiresOnCanvas(canvas.current, draggingWire, { x: e.clientX, y: e.clientY });
+    }
   }
 
-  // TODO-fico: rerender on module changes
   function isMaxModulesInstalled() {
     return CyberDeckState.installedModules.length >= getCurrentRackSize();
   }
