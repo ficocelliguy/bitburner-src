@@ -45,7 +45,7 @@ export function ModuleManagement(): React.ReactElement {
     // Continue animating for a short time as dragged components settle
     const interval = setInterval(() => {
       updateDisplay();
-    }, 100);
+    }, 60);
     setTimeout(() => clearInterval(interval), 400);
   }
 

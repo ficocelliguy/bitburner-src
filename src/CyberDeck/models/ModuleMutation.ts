@@ -58,13 +58,43 @@ export function createConnection(source: Socket, destination: Socket) {
   disconnectSocket(source);
   disconnectSocket(destination);
 
-  // TODO-fico: prevent overlap
+  const sourceModuleSlot = CyberDeckState.installedModules.findIndex(m => m.id == source.moduleId);
+  const destinationModuleSlot = CyberDeckState.installedModules.findIndex(m => m.id == destination.moduleId);
+  const overlapSocket = CyberDeckState.connections
+    .find(([s,d]) => {
+      const sModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === s.moduleId && m.id !== source.moduleId && m.id !== destination.moduleId);
+      const dModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === d.moduleId && m.id !== source.moduleId && m.id !== destination.moduleId);
+      const sModuleIsIntersecting =
+        (sModuleIndex < sourceModuleSlot && sModuleIndex > destinationModuleSlot) ||
+        (sModuleIndex > sourceModuleSlot && sModuleIndex < destinationModuleSlot);
+      const dModuleIsIntersecting =
+        (dModuleIndex < sourceModuleSlot && dModuleIndex > destinationModuleSlot) ||
+        (dModuleIndex > sourceModuleSlot && dModuleIndex < destinationModuleSlot);
+      const sourceModuleIsIntersecting =
+        (sourceModuleSlot < sModuleIndex && sourceModuleSlot > dModuleIndex) ||
+        (sourceModuleSlot > sModuleIndex && sourceModuleSlot < dModuleIndex);
+      const destinationModuleIsIntersecting =
+        (destinationModuleSlot < sModuleIndex && destinationModuleSlot > dModuleIndex) ||
+        (destinationModuleSlot > sModuleIndex && destinationModuleSlot < dModuleIndex);
+      return (
+        sModuleIsIntersecting || dModuleIsIntersecting || sourceModuleIsIntersecting || destinationModuleIsIntersecting
+      );
+    });
+
+  if (overlapSocket) {
+    SnackbarEvents.emit(`Wires cannot overlap.`, ToastVariant.ERROR, 2000);
+    return;
+  }
+    // TODO-fico: prevent overlap of unconnected socket. Or maybe hide it?
+
+    // TODO-fico: remove overlaps after a move. Or prevent it?
 
   console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
 }
 
-export function disconnectSocket(source: Socket) {
+export function disconnectSocket(source: Socket | undefined) {
+  if (!source) return;
   const sourceConnection = CyberDeckState.connections.findIndex(
     ([s, d]) =>
       (s.socketIndex === source.socketIndex && s.moduleId === source.moduleId) ||
