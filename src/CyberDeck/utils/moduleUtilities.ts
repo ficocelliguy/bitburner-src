@@ -1,16 +1,25 @@
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberDeckState, getChargedModuleIDs } from "../models/CyberDeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { shuffle } from "lodash";
-import { ModuleType, Socket, SocketList } from "../Types";
+import { Socket, SocketList } from "../Types";
 import { createModule } from "../models/CreateModule";
 
 
 export function getCurrentRackSize() {
-  const rackExtensions = 0; // TODO-fico
-  return CyberDeckState.baseRackSize + rackExtensions;
+  const chargedModules = getChargedModuleIDs();
+  const rackExtensionCount = CyberDeckState.installedModules
+    .filter((module) => chargedModules.includes(module.id))
+    .reduce((sum, module) => sum + module.extraRackSlots, 0);
+  return CyberDeckState.baseRackSize + rackExtensionCount;
 }
 
-export function getRandomSockets(socketCount: number): SocketList {
+export function getRandomSockets(baseCap: number, bonus: number, disadvantage = false): SocketList {
+  const socketCount1 = Math.random() * baseCap + bonus;
+  const socketCount2 = Math.random() * baseCap + bonus;
+  return getFixedCountSocketArray(disadvantage ? Math.min(socketCount1, socketCount2) : socketCount1);
+}
+
+function getFixedCountSocketArray(socketCount: number): SocketList {
   const array: SocketList = [false, false, false, false, false, false, false, false];
   const count = clampInteger(socketCount, 1, array.length);
   for (let i = 0; i < count; i++) {

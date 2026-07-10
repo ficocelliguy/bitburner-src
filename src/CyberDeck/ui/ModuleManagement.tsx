@@ -1,13 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { DragDropContext, Droppable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberDeckEvents, CyberDeckState } from "../models/CyberDeckState";
 import { ModuleComponent } from "./ModuleComponent";
-import { createConnection, disconnect, handleModuleMoved } from "../models/ModuleMutation";
+import {
+  createConnection,
+  disconnectSocket,
+  ejectOverloadedModules,
+  handleModuleMoved,
+} from "../models/ModuleMutation";
 import { DrawWiresOnCanvas } from "./WireCanvasDrawing";
 import { Socket } from "../Types";
+import { getCurrentRackSize } from "../utils/moduleUtilities";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -18,6 +24,17 @@ export function ModuleManagement(): React.ReactElement {
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
   const [draggingWire, setDraggingWire] = useState<Socket | null>(null);
 
+  const updateDisplay = useCallback(() => {
+    render();
+    DrawWiresOnCanvas(canvas.current);
+  }, [render]);
+
+  useEffect(() => {
+    const clearSubscription = CyberDeckEvents.subscribe(() => updateDisplay());
+    updateDisplay();
+    return () => clearSubscription();
+  }, [updateDisplay]);
+
   function onDragStart(result: DragStart) {
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
   }
@@ -25,17 +42,20 @@ export function ModuleManagement(): React.ReactElement {
   function onDragEnd(result: DropResult) {
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
-    render();
-    DrawWiresOnCanvas(canvas.current);
+    // Continue animating for a short time as dragged components settle
+    const interval = setInterval(() => {
+      updateDisplay();
+    }, 100);
+    setTimeout(() => clearInterval(interval), 400);
   }
 
   function onDragUpdate(result: DragUpdate) {
     console.log(result);
-    DrawWiresOnCanvas(canvas.current);
+    updateDisplay();
   }
 
   function draggingWireStarted(moduleId: string, socketIndex: number) {
-    disconnect({ moduleId, socketIndex });
+    disconnectSocket({ moduleId, socketIndex });
     setDraggingWire({ moduleId, socketIndex });
     console.log("draggingWireStarted", moduleId, socketIndex);
   }
@@ -44,17 +64,18 @@ export function ModuleManagement(): React.ReactElement {
     if (!draggingWire) return;
     setDraggingWire(null);
     createConnection(draggingWire, { moduleId, socketIndex: draggingWire.socketIndex });
-    DrawWiresOnCanvas(canvas.current);
+    ejectOverloadedModules();
+    updateDisplay();
   }
 
   function onMouseLeave() {
     setDraggingWire(null);
-    DrawWiresOnCanvas(canvas.current);
+    updateDisplay();
   }
 
   function onMouseUp() {
     setDraggingWire(null);
-    DrawWiresOnCanvas(canvas.current);
+    updateDisplay();
   }
 
   function onMouseMove(e: React.MouseEvent) {
@@ -62,8 +83,9 @@ export function ModuleManagement(): React.ReactElement {
     DrawWiresOnCanvas(canvas.current, draggingWire, {x: e.clientX, y: e.clientY});
   }
 
-  function maxModulesInstalled() {
-    return CyberDeckState.installedModules.filter(m => m).length >= CyberDeckState.baseRackSize;
+  // TODO-fico: rerender on module changes
+  function isMaxModulesInstalled() {
+    return CyberDeckState.installedModules.length >= getCurrentRackSize();
   }
 
   return (
@@ -103,7 +125,7 @@ export function ModuleManagement(): React.ReactElement {
             <Droppable
               droppableId={INSTALLED_MODULES}
               direction="vertical"
-              isDropDisabled={maxModulesInstalled() && !draggingInstalledModule}
+              isDropDisabled={isMaxModulesInstalled() && !draggingInstalledModule}
             >
               {(provided, snapshot) => (
                 <Box

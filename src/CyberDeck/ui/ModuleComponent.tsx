@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Typography } from "@mui/material";
 import {  Draggable } from "react-beautiful-dnd";
-import { CyberDeckState, socketColors } from "../models/CyberDeckState";
+import { CyberDeckEvents, CyberDeckState, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
 import { getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, Socket } from "../Types";
+import { useRerender } from "../../ui/React/hooks";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -16,6 +17,18 @@ export type DeckModuleProps = {
 };
 
 export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded, currentDragSource }: DeckModuleProps) {
+  const render = useRerender();
+  const updateDisplay = useCallback(() => {
+    render();
+  }, [render]);
+
+  useEffect(() => {
+    const clearSubscription = CyberDeckEvents.subscribe(() => updateDisplay());
+    updateDisplay();
+    return () => clearSubscription();
+  }, [updateDisplay]);
+
+
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
     e.preventDefault();

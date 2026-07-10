@@ -17,7 +17,7 @@ function createPowerSupply(level: number): DeckModule {
     extraRackSlots: 0,
     type: ModuleType.PowerSupply,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(Math.random() * (3 + level/2) + 1)
+    sockets: getRandomSockets(2 + level/2, 2)
   };
 }
 
@@ -26,7 +26,7 @@ function createProcessingModule(level: number): DeckModule {
     extraRackSlots: 0,
     type: ModuleType.ProcessingModule,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(Math.random() * (2 + level/4))
+    sockets: getRandomSockets(1 + level/3, 0, true),
   };
 }
 
@@ -35,7 +35,7 @@ function createRackExtension(level: number): DeckModule {
     extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
     type: ModuleType.RackExtension,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(Math.random() * (2 + level / 5)),
+    sockets: getRandomSockets(1 + level / 3, 0, true),
   };
 }
 
