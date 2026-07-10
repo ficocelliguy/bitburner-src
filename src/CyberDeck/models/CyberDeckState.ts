@@ -1,5 +1,6 @@
-import { createInitialModules } from "./moduleRack";
+import { createInitialModules } from "../utils/moduleUtilities";
 import { Settings } from "../../Settings/Settings";
+import { Connection, DeckModule } from "../Types";
 
 export const CyberDeckState = {
   hasCyberdeck: true,
@@ -12,20 +13,7 @@ export const CyberDeckState = {
     neurodes: 0,
     chips: 0,
   },
-};
-
-export type DeckModule = {
-  id: string;
-  sockets: SocketList;
-  type: string;
-  stats?: null;
-};
-export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
-
-export type Connection = [Socket, Socket];
-export type Socket = {
-  moduleId: string;
-  socketIndex: number;
+  netrunningBoost: 0
 };
 
 const t = Settings.theme;

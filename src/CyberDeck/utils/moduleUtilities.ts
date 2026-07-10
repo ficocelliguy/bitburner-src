@@ -1,6 +1,8 @@
-import { CyberDeckState, Socket, SocketList } from "./CyberDeckState";
+import { CyberDeckState } from "../models/CyberDeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { shuffle } from "lodash";
+import { ModuleType, Socket, SocketList } from "../Types";
+import { createModule } from "../models/CreateModule";
 
 
 export function getCurrentRackSize() {
@@ -46,24 +48,12 @@ export function getSocketLocation(id: string) {
 }
 
 
+
 export function createInitialModules() {
   for (let i = 0; i < 4; i++) {
-    CyberDeckState.installedModules.push({
-      id: `${(Math.random() * 1e3) | 0}`,
-      sockets: getRandomSockets(Math.random() * 3),
-      type: "Module",
-    });
+    CyberDeckState.installedModules.push(createModule());
   }
-  CyberDeckState.installedModules.push({
-    id: `${(Math.random() * 1e3) | 0}`,
-    sockets: getRandomSockets(8),
-    type: "Module",
-  });
   for (let i = 0; i < 10; i++) {
-    CyberDeckState.storedModules.push({
-      id: `${(Math.random() * 1e3) | 0}`,
-      sockets: getRandomSockets(Math.random() * 3),
-      type: "Module",
-    });
+    CyberDeckState.storedModules.push(createModule());
   }
 }

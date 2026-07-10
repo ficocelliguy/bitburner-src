@@ -3,10 +3,11 @@ import { Container, Typography, Box } from "@mui/material";
 import { DragDropContext, Droppable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
-import { CyberDeckState, Socket } from "../models/CyberDeckState";
+import { CyberDeckState } from "../models/CyberDeckState";
 import { ModuleComponent } from "./ModuleComponent";
-import { createConnection, handleModuleMoved } from "../models/ModuleMutation";
-import { DrawWiresOnCanvas } from "./wireCanvasDrawing";
+import { createConnection, disconnect, handleModuleMoved } from "../models/ModuleMutation";
+import { DrawWiresOnCanvas } from "./WireCanvasDrawing";
+import { Socket } from "../Types";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -34,6 +35,7 @@ export function ModuleManagement(): React.ReactElement {
   }
 
   function draggingWireStarted(moduleId: string, socketIndex: number) {
+    disconnect({ moduleId, socketIndex });
     setDraggingWire({ moduleId, socketIndex });
     console.log("draggingWireStarted", moduleId, socketIndex);
   }
@@ -174,8 +176,8 @@ export function ModuleManagement(): React.ReactElement {
                       key={module.id}
                       module={module}
                       index={index}
-                      draggingWireStarted={draggingWireStarted}
-                      draggingWireEnded={draggingWireEnded}
+                      draggingWireStarted={() => {}}
+                      draggingWireEnded={() => {}}
                       allowShift={!draggingWire}
                     />
                   ))}

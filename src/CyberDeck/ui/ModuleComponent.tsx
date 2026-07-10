@@ -1,9 +1,10 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import {  Draggable } from "react-beautiful-dnd";
-import { CyberDeckState, DeckModule, Socket, socketColors } from "../models/CyberDeckState";
+import { CyberDeckState, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
-import { getSocketId } from "../models/moduleRack";
+import { getSocketId } from "../utils/moduleUtilities";
+import { DeckModule, Socket } from "../Types";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -51,7 +52,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
           onMouseUp={() => socketDragEnd()}
         >
           <div>
-            <Typography sx={{ userSelect: "none", width: "140px", marginTop: "5px" }}>Drag Me {module.id}!</Typography>
+            <Typography sx={{ userSelect: "none", width: "160px", marginTop: "5px" }}>{module.type}!</Typography>
           </div>
           <div style={{ display: "inline-flex" }}>
             {module.sockets.map((isSocket, index) => (
