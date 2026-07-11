@@ -55,14 +55,3 @@ export function getSocketLocation(id: string) {
     y: rect.top + rect.height/2
   }
 }
-
-
-
-export function createInitialModules() {
-  for (let i = 0; i < 4; i++) {
-    CyberDeckState.installedModules.push(createModule());
-  }
-  for (let i = 0; i < 10; i++) {
-    CyberDeckState.storedModules.push(createModule());
-  }
-}

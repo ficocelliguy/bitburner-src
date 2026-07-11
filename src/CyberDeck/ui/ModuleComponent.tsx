@@ -6,6 +6,7 @@ import { Settings } from "../../Settings/Settings";
 import { getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
+import { getModuleIcon, getRarityColor } from "./Icons";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -17,7 +18,7 @@ export type DeckModuleProps = {
 };
 
 export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded, currentDragSource }: DeckModuleProps) {
-  const render = useRerender();
+  const render = useRerender(200);
   const updateDisplay = useCallback(() => {
     render();
   }, [render]);
@@ -57,16 +58,18 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
           {...provided.dragHandleProps}
           style={{
             ...provided.draggableProps.style,
-            border: `1px solid ${getChargedModuleIDs().includes(module.id) ? "yellow" : "grey"}`,
+            border: `1px solid ${
+              getChargedModuleIDs().includes(module.id) ? getRarityColor(module) : Settings.theme.button
+            }`,
             margin: "3px",
-            background: Settings.theme.backgroundprimary,
+            background: getChargedModuleIDs().includes(module.id)
+              ? Settings.theme.button
+              : Settings.theme.backgroundprimary,
             display: "inline-flex",
           }}
           onMouseUp={() => socketDragEnd()}
         >
-          <div>
-            <Typography sx={{ userSelect: "none", width: "160px", marginTop: "5px" }}>{module.type}!</Typography>
-          </div>
+          <div>{getModuleIcon(module)}</div>
           <div style={{ display: "inline-flex" }}>
             {module.sockets.map((isSocket, index) => (
               <div key={index} style={{ width: "24px", height: "24px", margin: "5px" }}>

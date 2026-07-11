@@ -17,7 +17,8 @@ function createPowerSupply(level: number): DeckModule {
     extraRackSlots: 0,
     type: ModuleType.PowerSupply,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(2 + level/2, 2)
+    sockets: getRandomSockets(2 + level/2, 2),
+    level,
   };
 }
 
@@ -26,7 +27,8 @@ function createProcessingModule(level: number): DeckModule {
     extraRackSlots: 0,
     type: ModuleType.ProcessingModule,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(1 + level/3, 0, true),
+    sockets: getRandomSockets(1 + level / 3, 0, true),
+    level,
   };
 }
 
@@ -36,6 +38,7 @@ function createRackExtension(level: number): DeckModule {
     type: ModuleType.RackExtension,
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
+    level,
   };
 }
 
@@ -64,4 +67,18 @@ function getLevel() {
     }
   }
   return level;
+}
+
+
+
+// TODO-fico: replace with better module set on prestige
+// TODO-fico: save modules
+export function createInitialModules() {
+  CyberDeckState.netrunningBoost =8;
+  for (let i = 0; i < 4; i++) {
+    CyberDeckState.installedModules.push(createModule());
+  }
+  for (let i = 0; i < 10; i++) {
+    CyberDeckState.storedModules.push(createModule());
+  }
 }

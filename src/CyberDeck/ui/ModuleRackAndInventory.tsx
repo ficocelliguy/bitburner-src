@@ -99,6 +99,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
       onMouseLeave={onMouseLeave}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
+      onMouseEnter={() => updateDisplay()}
     >
       <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
         Module Edit Page
