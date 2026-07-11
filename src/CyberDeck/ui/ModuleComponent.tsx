@@ -11,8 +11,8 @@ import { getModuleIcon, getRarityColor } from "./Icons";
 export type DeckModuleProps = {
   module: DeckModule;
   index: number;
-  draggingWireStarted: (moduleId: string, socketId: number) => void;
-  draggingWireEnded: (moduleId: string) => void;
+  draggingWireStarted?: ((moduleId: string, socketId: number) => void) | null;
+  draggingWireEnded?: ((moduleId: string) => void) | null;
   currentDragSource?: Socket | null;
   allowShift?: boolean;
 };
@@ -33,7 +33,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
     e.preventDefault();
-    draggingWireStarted(module.id, socketIndex);
+    draggingWireStarted?.(module.id, socketIndex);
   }
 
   function isConnected(index: number): boolean {
@@ -46,7 +46,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
   }
 
   function socketDragEnd() {
-    draggingWireEnded(module.id);
+    draggingWireEnded?.(module.id);
   }
 
   return (
@@ -84,6 +84,7 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
                       border: `6px solid ${socketColors[index]}`,
                       cursor: "crosshair",
                       background: isConnected(index) ? socketColors[index] : Settings.theme.backgroundprimary,
+                      pointerEvents: draggingWireStarted ? "auto" : "none",
                     }}
                   ></button>
                 ) : (

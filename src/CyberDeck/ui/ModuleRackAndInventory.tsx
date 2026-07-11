@@ -202,8 +202,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       key={module.id}
                       module={module}
                       index={index}
-                      draggingWireStarted={() => {}}
-                      draggingWireEnded={() => {}}
                       allowShift={!draggingWire}
                     />
                   ))}
