@@ -1,10 +1,11 @@
 export type DeckModule = {
   id: string;
+  level: number;
   sockets: SocketList;
   type: ModuleType;
   stats?: null;
-  extraRackSlots: number;
-  level: number;
+  extraRackSlots?: number;
+  consumableStats?: ConsumableStats;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];
@@ -19,4 +20,8 @@ export enum ModuleType {
   Uplink="Uplink",
   RackExtension="Rack Extension",
   SkillChip = "SkillChip",
+}
+
+export type ConsumableStats = {
+  netrunningBoost: number
 }

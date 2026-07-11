@@ -9,12 +9,14 @@ export function createModule(type: ModuleType = getRandomModuleType(), level: nu
   if (type == ModuleType.RackExtension) {
     return createRackExtension(level);
   }
+  if (type == ModuleType.SkillChip) {
+    return createSkillChip(level);
+  }
   return createProcessingModule(level);
 }
 
 function createPowerSupply(level: number): DeckModule {
   return {
-    extraRackSlots: 0,
     type: ModuleType.PowerSupply,
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(2 + level/2, 2),
@@ -24,7 +26,6 @@ function createPowerSupply(level: number): DeckModule {
 
 function createProcessingModule(level: number): DeckModule {
   return {
-    extraRackSlots: 0,
     type: ModuleType.ProcessingModule,
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
@@ -39,6 +40,20 @@ function createRackExtension(level: number): DeckModule {
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
     level,
+  };
+}
+
+function createSkillChip(level: number): DeckModule {
+  // TODO-fico: flesh out consumable stats
+  // TODO-fico: balance numbers
+  return {
+    type: ModuleType.SkillChip,
+    id: `${(Math.random() * 1e4) | 0}`,
+    sockets: getRandomSockets(1),
+    level,
+    consumableStats: {
+      netrunningBoost: Math.random() * (level / 25) + (level / 40) + 0.1,
+    },
   };
 }
 

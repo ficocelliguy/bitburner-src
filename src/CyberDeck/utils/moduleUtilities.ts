@@ -2,18 +2,17 @@ import { CyberDeckState, getChargedModuleIDs } from "../models/CyberDeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { shuffle } from "lodash";
 import { Socket, SocketList } from "../Types";
-import { createModule } from "../models/CreateModule";
 
 
 export function getCurrentRackSize() {
   const chargedModules = getChargedModuleIDs();
   const rackExtensionCount = CyberDeckState.installedModules
     .filter((module) => chargedModules.includes(module.id))
-    .reduce((sum, module) => sum + module.extraRackSlots, 0);
+    .reduce((sum, module) => sum + (module.extraRackSlots ?? 0), 0);
   return CyberDeckState.baseRackSize + rackExtensionCount;
 }
 
-export function getRandomSockets(baseCap: number, bonus: number, disadvantage = false): SocketList {
+export function getRandomSockets(baseCap: number, bonus: number = 0, disadvantage = false): SocketList {
   const socketCount1 = Math.random() * baseCap + bonus;
   const socketCount2 = Math.random() * baseCap + bonus;
   return getFixedCountSocketArray(disadvantage ? Math.min(socketCount1, socketCount2) : socketCount1);

@@ -7,6 +7,7 @@ import { getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
+import { socketIsCovered } from "../models/ModuleMutation";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -14,10 +15,19 @@ export type DeckModuleProps = {
   draggingWireStarted?: ((moduleId: string, socketId: number) => void) | null;
   draggingWireEnded?: ((moduleId: string) => void) | null;
   currentDragSource?: Socket | null;
+  draggingInstalledModule?: boolean;
   allowShift?: boolean;
 };
 
-export function ModuleComponent({ module, index, allowShift, draggingWireStarted, draggingWireEnded, currentDragSource }: DeckModuleProps) {
+export function ModuleComponent({
+  module,
+  index,
+  allowShift,
+  draggingWireStarted,
+  draggingWireEnded,
+  draggingInstalledModule,
+  currentDragSource,
+}: DeckModuleProps) {
   const render = useRerender(200);
   const updateDisplay = useCallback(() => {
     render();
@@ -28,7 +38,6 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
     updateDisplay();
     return () => clearSubscription();
   }, [updateDisplay]);
-
 
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
@@ -41,7 +50,10 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
       return true;
     }
     return CyberDeckState.connections.some(([source, destination]) => {
-      return (source.moduleId === module.id && source.socketIndex === index) || (destination.moduleId === module.id && destination.socketIndex === index);
+      return (
+        (source.moduleId === module.id && source.socketIndex === index) ||
+        (destination.moduleId === module.id && destination.socketIndex === index)
+      );
     });
   }
 
@@ -73,7 +85,8 @@ export function ModuleComponent({ module, index, allowShift, draggingWireStarted
           <div style={{ display: "inline-flex" }}>
             {module.sockets.map((isSocket, index) => (
               <div key={index} style={{ width: "24px", height: "24px", margin: "5px" }}>
-                {isSocket ? (
+                {isSocket &&
+                (!socketIsCovered({ socketIndex: index, moduleId: module.id }) || draggingInstalledModule) ? (
                   <button
                     id={getSocketId({ moduleId: module.id, socketIndex: index })}
                     onMouseDown={(e) => socketDragStart(e, index)}

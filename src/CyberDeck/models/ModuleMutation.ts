@@ -1,11 +1,10 @@
-
 import { DropResult } from "react-beautiful-dnd";
 import { MODULE_STORAGE } from "../ui/ModuleRackAndInventory";
-import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
+import { CyberDeckEvents, CyberDeckState, getChargedModuleIDs } from "./CyberDeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
-import { DeckModule, Socket } from "../Types";
+import { DeckModule, ModuleType, Socket } from "../Types";
 
 export function handleModuleMoved(result: DropResult) {
   if (!result.destination) {
@@ -38,6 +37,7 @@ function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinat
     disconnectModule(moduleToMove);
   }
   ejectOverloadedModules();
+  updateCoveredSockets();
   CyberDeckEvents.emit();
 }
 
@@ -76,14 +76,16 @@ export function createConnection(source: Socket, destination: Socket) {
 
   console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
+  consumeSkillChips();
+  updateCoveredSockets();
 }
 
 export function wireOverlapsSocket(socket: Socket) {
-  const socketModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id == socket.moduleId);
+  const socketModuleIndex = getModuleIndex(socket.moduleId);
   return CyberDeckState.connections.find(([s, d]) => {
     if (s.moduleId === socket.moduleId || d.moduleId === socket.moduleId) return false;
-    const sModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === s.moduleId);
-    const dModuleIndex = CyberDeckState.installedModules.findIndex((m) => m.id === d.moduleId);
+    const sModuleIndex = getModuleIndex(s.moduleId);
+    const dModuleIndex = getModuleIndex(d.moduleId);
     return (
       s.socketIndex == socket.socketIndex &&
       sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
@@ -95,6 +97,42 @@ function socketIsConnected(socket: Socket) {
   return CyberDeckState.connections.find(([s,d]) =>
     (s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex) ||
     (d.moduleId === socket.moduleId && d.socketIndex === socket.socketIndex));
+}
+
+export function socketIsCovered(socket: Socket) {
+  return CyberDeckState.coveredSockets.find((s) => s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex);
+}
+
+export function updateCoveredSockets() {
+  CyberDeckState.coveredSockets = [];
+  for (const module of CyberDeckState.installedModules) {
+    for (const [index, isSocket] of module.sockets.entries()) {
+      if (!isSocket) continue;
+      const socket = { moduleId: module.id, socketIndex: index };
+      if (determineIfSocketIsCovered(socket)) {
+        CyberDeckState.coveredSockets.push(socket);
+      }
+    }
+  }
+}
+
+function determineIfSocketIsCovered(socket: Socket) {
+  return CyberDeckState.connections.find(([s, d]) => {
+    const isUniqueSocket =
+      s.socketIndex === socket.socketIndex && s.moduleId !== socket.moduleId && d.moduleId !== socket.moduleId;
+    if (!isUniqueSocket) return false;
+    const socketModuleIndex = getModuleIndex(socket.moduleId);
+    const sModuleIndex = getModuleIndex(s.moduleId);
+    const dModuleIndex = getModuleIndex(d.moduleId);
+    return (
+      s.socketIndex == socket.socketIndex &&
+      sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
+    );
+  });
+}
+
+export function getModuleIndex(moduleId: string) {
+  return CyberDeckState.installedModules.findIndex((m) => m.id == moduleId);
 }
 
 export function disconnectSocket(source: Socket | undefined) {
@@ -114,4 +152,22 @@ export function disconnectModule(module: DeckModule) {
     if (!module.sockets[i]) continue;
     disconnectSocket({ moduleId: module.id, socketIndex: i });
   }
+}
+
+function consumeSkillChips() {
+  const chargedModuleIDs = getChargedModuleIDs();
+  const chargedSkillModules = CyberDeckState.installedModules.filter(
+    (m) => m.type === ModuleType.SkillChip && chargedModuleIDs.includes(m.id),
+  );
+  for (const module of chargedSkillModules) {
+    const stats = module.consumableStats;
+    if (stats?.netrunningBoost) {
+      CyberDeckState.netrunningBoost += stats.netrunningBoost;
+      SnackbarEvents.emit(`Consumed SkillChip. Gained ${stats.netrunningBoost} netrunning boost.`, ToastVariant.SUCCESS, 4000);
+    }
+    // TODO-fico: other consumable types (crafting boost, components, etc)
+
+    disconnectModule(module);
+  }
+  CyberDeckState.installedModules = CyberDeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
 }

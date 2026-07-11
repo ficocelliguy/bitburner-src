@@ -52,11 +52,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
     setTimeout(() => clearInterval(interval), 400);
   }
 
-  function onDragUpdate(result: DragUpdate) {
-    console.log(result);
-    updateDisplay();
-  }
-
   function draggingWireStarted(moduleId: string, socketIndex: number) {
     disconnectSocket({ moduleId, socketIndex });
     setDraggingWire({ moduleId, socketIndex });
@@ -71,17 +66,12 @@ export function ModuleRackAndInventory(): React.ReactElement {
     updateDisplay();
   }
 
-  function onMouseLeave() {
+  function clearDraggedWire() {
     setDraggingWire(null);
     updateDisplay();
   }
 
-  function onMouseUp() {
-    setDraggingWire(null);
-    updateDisplay();
-  }
-
-  function onMouseMove(e: React.MouseEvent) {
+  function redrawDraggedWire(e: React.MouseEvent) {
     if (draggingWire || draggingInstalledModule || draggingStoredModule) {
       DrawWiresOnCanvas(canvas.current, draggingWire, { x: e.clientX, y: e.clientY });
     }
@@ -96,9 +86,9 @@ export function ModuleRackAndInventory(): React.ReactElement {
       disableGutters
       maxWidth={false}
       sx={{ mx: 0 }}
-      onMouseLeave={onMouseLeave}
-      onMouseUp={onMouseUp}
-      onMouseMove={onMouseMove}
+      onMouseLeave={clearDraggedWire}
+      onMouseUp={clearDraggedWire}
+      onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
       <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
@@ -125,7 +115,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
           style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
         ></canvas>
         <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
-          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
             <Droppable
               droppableId={INSTALLED_MODULES}
               direction="vertical"
@@ -163,6 +153,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       index={index}
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}
+                      draggingInstalledModule={draggingInstalledModule}
                       currentDragSource={draggingWire}
                       allowShift={!draggingWire}
                     />
@@ -198,12 +189,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                   }}
                 >
                   {CyberDeckState.storedModules.map((module, index) => (
-                    <ModuleComponent
-                      key={module.id}
-                      module={module}
-                      index={index}
-                      allowShift={!draggingWire}
-                    />
+                    <ModuleComponent key={module.id} module={module} index={index} allowShift={!draggingWire} />
                   ))}
                   {provided.placeholder}
                 </Box>

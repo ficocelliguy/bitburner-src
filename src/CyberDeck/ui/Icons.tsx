@@ -48,7 +48,7 @@ export function getRarityColor(module: DeckModule) {
   return rarityColors[module.level] ?? t.cha;
 }
 
-
+// TODO-fico: remove once done
 const themeColors = {
   primarylight: "#0f0",
   primary: "#0c0",
