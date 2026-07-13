@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Typography, Box } from "@mui/material";
-import { DragDropContext, Droppable, DropResult, DragUpdate, DragStart } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
 import { CyberDeckEvents, CyberDeckState } from "../models/CyberDeckState";
@@ -10,11 +10,11 @@ import {
   disconnectSocket,
   ejectOverloadedModules,
   handleModuleMoved,
-} from "../models/ModuleMutation";
+} from "../models/moduleMutation";
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { DeckConnection } from "../models/CreateModule";
+import { DeckConnection } from "../models/createModule";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";

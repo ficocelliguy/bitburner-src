@@ -1,7 +1,7 @@
 import { Settings } from "../../Settings/Settings";
 import { Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
-import { createInitialModules, DeckConnection } from "./CreateModule";
+import { createInitialModules, DeckConnection } from "./createModule";
 
 /** Event emitter to allow the UI to subscribe to CyberDeck gameplay updates in order to trigger rerenders properly */
 export const CyberDeckEvents = new EventEmitter<[]>();
@@ -43,6 +43,11 @@ export function getChargedModuleIDs() : string[] {
     }
   }
   return chargedModules;
+}
+
+export function getChargedModules() : DeckModule[] {
+  const chargedModuleIDs = getChargedModuleIDs();
+  return CyberDeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }
 
 // TODO-fico: this is temporary rack setup

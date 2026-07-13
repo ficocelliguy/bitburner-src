@@ -1,6 +1,6 @@
 import React from "react";
 import { Socket, SocketList } from "../Types";
-import { socketIsCovered } from "../models/ModuleMutation";
+import { socketIsCovered } from "../models/moduleMutation";
 import { getSocketId } from "../utils/moduleUtilities";
 import { CyberDeckState, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";

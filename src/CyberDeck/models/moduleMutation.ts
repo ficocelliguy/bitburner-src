@@ -5,7 +5,8 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType, Socket } from "../Types";
-import { DeckConnection } from "./CreateModule";
+import { DeckConnection } from "./createModule";
+import { Player } from "@player";
 
 export function handleModuleMoved(result: DropResult) {
   if (!result.destination) {
@@ -37,7 +38,7 @@ function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinat
   if (destinationIsStorage) {
     disconnectModule(moduleToMove);
   }
-  updateSockets();
+  updateConnectedModules();
 }
 
 export function ejectOverloadedModules() {
@@ -75,13 +76,17 @@ export function createConnection(source: Socket, destination: Socket) {
 
   console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
-  updateSockets();
+  updateConnectedModules();
 }
 
-function updateSockets() {
+function updateConnectedModules() {
   consumeSkillChips();
   ejectOverloadedModules();
   updateCoveredSockets();
+
+  // Apply cyberdeck stat bonuses
+  Player.applyEntropy(Player.entropy);
+
   CyberDeckEvents.emit();
 }
 
@@ -106,12 +111,6 @@ export function wireOverlapsSocket(socket: Socket) {
       sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
     );
   });
-}
-
-function socketIsConnected(socket: Socket) {
-  return CyberDeckState.connections.find(([s,d]) =>
-    (s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex) ||
-    (d.moduleId === socket.moduleId && d.socketIndex === socket.socketIndex));
 }
 
 export function socketIsCovered(socket: Socket) {
@@ -160,6 +159,7 @@ export function disconnectSocket(source: Socket | undefined) {
   if (sourceConnection !== -1) {
     CyberDeckState.connections.splice(sourceConnection, 1);
   }
+  updateConnectedModules();
 }
 
 export function disconnectModule(module: DeckModule) {

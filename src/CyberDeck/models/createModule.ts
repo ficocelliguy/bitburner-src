@@ -27,8 +27,13 @@ function createPowerSupply(level: number): DeckModule {
   return {
     type: ModuleType.PowerSupply,
     id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(2 + level/2, 2),
+    sockets: getRandomSockets(2 + level / 2, 2),
     level,
+    stats: {
+      playerMults: {
+        hacking_exp: 0.99,
+      },
+    },
   };
 }
 
@@ -38,6 +43,11 @@ function createProcessingModule(level: number): DeckModule {
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
     level,
+    stats: {
+      playerMults: {
+        strength: 1.01,
+      }
+    }
   };
 }
 
@@ -60,7 +70,7 @@ function createSkillChip(level: number): DeckModule {
     sockets: getRandomSockets(1),
     level,
     consumableStats: {
-      netrunningBoost: Math.random() * (level / 25) + (level / 40) + 0.1,
+      netrunningBoost: Math.random() * (level / 25) + level / 40 + 0.1,
     },
   };
 }

@@ -4,6 +4,7 @@ import { staneksGift } from "../../CotMG/Helper";
 import { updateGoMults } from "../../Go/effects/effect";
 
 import type { PlayerObject } from "./PlayerObject";
+import { applyCyberdeckStatBonuses } from "../../CyberDeck/models/cyberdeckStatBonuses";
 
 export function applyEntropy(this: PlayerObject, stacks = 1): void {
   // Save the current HP ratio.
@@ -16,6 +17,7 @@ export function applyEntropy(this: PlayerObject, stacks = 1): void {
   this.mults = calculateEntropy(stacks);
   staneksGift.updateMults();
   updateGoMults();
+  applyCyberdeckStatBonuses();
 
   /**
    * The ratio of (hp.current / hp.max) may be wrong after multiple function calls above. We need to recalculate

@@ -1,9 +1,11 @@
+import { Multipliers } from "../PersonObjects/Multipliers";
+
 export type DeckModule = {
   id: string;
   level: number;
   sockets: SocketList;
   type: ModuleType;
-  stats?: null;
+  stats?: ModuleStats | null;
   extraRackSlots?: number;
   consumableStats?: ConsumableStats;
 };
@@ -25,4 +27,16 @@ export enum ModuleType {
 
 export type ConsumableStats = {
   netrunningBoost: number
+}
+export type ModuleStats = {
+  playerMults?: Partial<Multipliers> | null;
+  otherMults?: Partial<MiscMults> | null;
+};
+export type CyberdeckStats = {
+  playerMults: Multipliers;
+  otherMults: MiscMults;
+};
+
+export type MiscMults = {
+  cyberdeckCraftingSpeed: number;
 }
