@@ -5,6 +5,7 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType, Socket } from "../Types";
+import { DeckConnection } from "./CreateModule";
 
 export function handleModuleMoved(result: DropResult) {
   if (!result.destination) {
@@ -22,7 +23,7 @@ export function handleModuleMoved(result: DropResult) {
   // Undo the move if it causes invalid wiring
   if (CyberDeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
     moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.destination.index, result.source.index);
-    SnackbarEvents.emit(`Wires cannot overlap.`, ToastVariant.ERROR, 2000);
+    SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
   }
 }
 
@@ -36,9 +37,7 @@ function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinat
   if (destinationIsStorage) {
     disconnectModule(moduleToMove);
   }
-  ejectOverloadedModules();
-  updateCoveredSockets();
-  CyberDeckEvents.emit();
+  updateSockets();
 }
 
 export function ejectOverloadedModules() {
@@ -53,8 +52,8 @@ export function createConnection(source: Socket, destination: Socket) {
   // TODO: what happens when you go over a socket but not connect to it?
   // TODO-fico: prevent overlap of unconnected socket. Or maybe hide it?
 
-  const sourceModule = CyberDeckState.installedModules.find((m) => m.id == source.moduleId);
-  const destinationModule = CyberDeckState.installedModules.find((m) => m.id == destination.moduleId);
+  const sourceModule = getInstalledModule(source.moduleId);
+  const destinationModule = getInstalledModule(destination.moduleId);
   if (sourceModule == destinationModule) return;
   if (!destinationModule?.sockets[destination.socketIndex]) {
     SnackbarEvents.emit(`Target module does not have a socket of that color.`, ToastVariant.ERROR, 2000);
@@ -76,8 +75,24 @@ export function createConnection(source: Socket, destination: Socket) {
 
   console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
+  updateSockets();
+}
+
+function updateSockets() {
   consumeSkillChips();
+  ejectOverloadedModules();
   updateCoveredSockets();
+  CyberDeckEvents.emit();
+}
+
+function getInstalledModule(moduleId: string) {
+  if (moduleId == DeckConnection.id) {
+    return DeckConnection;
+  }
+  return (
+    CyberDeckState.installedModules.find((m) => m.id === moduleId) ||
+    CyberDeckState.storedModules.find((m) => m.id === moduleId)
+  );
 }
 
 export function wireOverlapsSocket(socket: Socket) {

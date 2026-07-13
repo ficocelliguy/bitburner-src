@@ -15,6 +15,7 @@ export type Socket = {
 };
 
 export enum ModuleType {
+  DeckConnection = "Deck Connection",
   PowerSupply = "Power Supply",
   ProcessingModule = "Processing Module",
   Uplink="Uplink",

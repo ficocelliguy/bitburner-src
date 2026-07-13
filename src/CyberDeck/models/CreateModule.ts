@@ -2,6 +2,14 @@ import { CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType } from "../Types";
 
+
+export const DeckConnection: DeckModule = {
+  type: ModuleType.DeckConnection,
+  id: "deck-connection",
+  sockets: [false, true, false, true, false, true, false, false],
+  level: 0,
+};
+
 export function createModule(type: ModuleType = getRandomModuleType(), level: number = getLevel()) {
   if (type == ModuleType.PowerSupply) {
     return createPowerSupply(level);

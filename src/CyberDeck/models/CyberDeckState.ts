@@ -1,7 +1,7 @@
 import { Settings } from "../../Settings/Settings";
 import { Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
-import { createInitialModules } from "./CreateModule";
+import { createInitialModules, DeckConnection } from "./CreateModule";
 
 /** Event emitter to allow the UI to subscribe to CyberDeck gameplay updates in order to trigger rerenders properly */
 export const CyberDeckEvents = new EventEmitter<[]>();
@@ -26,10 +26,9 @@ const t = Settings.theme;
 export const socketColors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
 
 export function getChargedModuleIDs() : string[] {
-  // TODO-fico: power port on deck rack instead of declaring that the first module is charged?
   if (!CyberDeckState.installedModules.length) return [];
 
-  const chargedModules = [CyberDeckState.installedModules[0].id];
+  const chargedModules = [DeckConnection.id];
   for (const moduleId of chargedModules) {
     const connections = CyberDeckState.connections.filter(
       ([source, destination]) => source.moduleId === moduleId || destination.moduleId === moduleId,

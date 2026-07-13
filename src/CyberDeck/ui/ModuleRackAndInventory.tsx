@@ -14,6 +14,7 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
+import { DeckConnection } from "../models/CreateModule";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -116,52 +117,71 @@ export function ModuleRackAndInventory(): React.ReactElement {
         ></canvas>
         <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
-            <Droppable
-              droppableId={INSTALLED_MODULES}
-              direction="vertical"
-              isDropDisabled={isMaxModulesInstalled() && !draggingInstalledModule}
+            <Box
+              display="flex"
+              flexGrow="1"
+              flexDirection="column"
+              alignItems="center"
+              whiteSpace="nowrap"
+              style={{
+                margin: "10px",
+                height: "500px",
+                width: "300px",
+                border: "1px solid red",
+                backgroundColor: Settings.theme.backgroundprimary,
+                overflowX: "scroll",
+              }}
             >
-              {(provided, snapshot) => (
-                <Box
-                  display="flex"
-                  flexGrow="1"
-                  flexDirection="column"
-                  alignItems="center"
-                  whiteSpace="nowrap"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  style={{
-                    margin: "10px",
-                    border: "1px solid red",
-                    height: "500px",
-                    width: "300px",
-                    backgroundColor: snapshot.isDraggingOver
-                      ? Settings.theme.backgroundsecondary
-                      : Settings.theme.backgroundprimary,
-                    overflowX: "scroll",
-                  }}
-                  onMouseUp={(e) => {
-                    if (e.button === 1) {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  {CyberDeckState.installedModules.map((module, index) => (
+              <Droppable droppableId={DeckConnection.id} direction="vertical" isDropDisabled>
+                {(provided) => (
+                  <span ref={provided.innerRef}>
                     <ModuleComponent
-                      key={module.id}
-                      module={module}
-                      index={index}
+                      module={DeckConnection}
+                      index={-1}
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}
-                      draggingInstalledModule={draggingInstalledModule}
                       currentDragSource={draggingWire}
-                      allowShift={!draggingWire}
+                      allowShift={false}
                     />
-                  ))}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
+                  </span>
+                )}
+              </Droppable>
+              <Droppable
+                droppableId={INSTALLED_MODULES}
+                direction="vertical"
+                isDropDisabled={isMaxModulesInstalled() && !draggingInstalledModule}
+              >
+                {(provided, snapshot) => (
+                  <Box
+                    display="flex"
+                    flexGrow="1"
+                    flexDirection="column"
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    style={{
+                      height: "500px",
+                      width: "300px",
+                    }}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {CyberDeckState.installedModules.map((module, index) => (
+                      <ModuleComponent
+                        key={module.id}
+                        module={module}
+                        index={index}
+                        draggingWireStarted={draggingWireStarted}
+                        draggingWireEnded={draggingWireEnded}
+                        draggingInstalledModule={draggingInstalledModule}
+                        currentDragSource={draggingWire}
+                        allowShift={!draggingWire}
+                      />
+                    ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </Box>
             <Droppable droppableId={MODULE_STORAGE} direction="vertical">
               {(provided, snapshot) => (
                 <Box
