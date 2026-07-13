@@ -95,18 +95,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
       <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
         Module Edit Page
       </Typography>
-      <div
-        id="testPointer"
-        style={{
-          border: "2px solid white",
-          borderRadius: "50%",
-          width: "50px",
-          height: "50px",
-          pointerEvents: "none",
-          position: "absolute",
-          opacity: draggingWire ? 1 : 0,
-        }}
-      ></div>
 
       <Container disableGutters maxWidth={false}>
         <canvas
@@ -141,6 +129,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}
                       currentDragSource={draggingWire}
+                      isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
                       allowShift={false}
                     />
                   </span>
@@ -174,6 +163,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                         draggingWireEnded={draggingWireEnded}
                         draggingInstalledModule={draggingInstalledModule}
                         currentDragSource={draggingWire}
+                        isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
                         allowShift={!draggingWire}
                       />
                     ))}
@@ -202,14 +192,15 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       : Settings.theme.backgroundprimary,
                     overflowX: "scroll",
                   }}
-                  onMouseUp={(e) => {
-                    if (e.button === 1) {
-                      e.preventDefault();
-                    }
-                  }}
                 >
                   {CyberDeckState.storedModules.map((module, index) => (
-                    <ModuleComponent key={module.id} module={module} index={index} allowShift={!draggingWire} />
+                    <ModuleComponent
+                      key={module.id}
+                      module={module}
+                      index={index}
+                      allowShift={!draggingWire}
+                      isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
+                    />
                   ))}
                   {provided.placeholder}
                 </Box>

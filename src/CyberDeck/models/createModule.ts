@@ -1,6 +1,7 @@
 import { CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType } from "../Types";
+import { generateStatBonus } from "./cyberdeckStatBonuses";
 
 
 export const DeckConnection: DeckModule = {
@@ -31,7 +32,7 @@ function createPowerSupply(level: number): DeckModule {
     level,
     stats: {
       playerMults: {
-        hacking_exp: 0.99,
+        hacking_exp: 1 + generateStatBonus(-0.03 + 0.001 * level, -0.005 + 0.002 * level, true),
       },
     },
   };
@@ -45,9 +46,9 @@ function createProcessingModule(level: number): DeckModule {
     level,
     stats: {
       playerMults: {
-        strength: 1.01,
-      }
-    }
+        strength: generateStatBonus(1.001 + 0.0001 * level, 1.004 + 0.0003 * level, level > 4),
+      },
+    },
   };
 }
 

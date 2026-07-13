@@ -42,3 +42,9 @@ function getDefaultMiscMults(): MiscMults {
     cyberdeckCraftingSpeed: 1,
   };
 }
+
+export function generateStatBonus(min: number, max: number, highWeighting = false) {
+  const range = max - min;
+  const weights = highWeighting ? [0.3, 0.3, 0.4] : [0.25, 0.25, 0.5];
+  return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
+}
