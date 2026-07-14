@@ -7,6 +7,7 @@ import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType, Socket } from "../Types";
 import { DeckConnection } from "./createModule";
 import { Player } from "@player";
+import { formatNumber } from "../../ui/formatNumber";
 
 export function handleModuleMoved(result: DropResult) {
   if (!result.destination) {
@@ -158,8 +159,8 @@ export function disconnectSocket(source: Socket | undefined) {
   );
   if (sourceConnection !== -1) {
     CyberDeckState.connections.splice(sourceConnection, 1);
+    updateConnectedModules();
   }
-  updateConnectedModules();
 }
 
 export function disconnectModule(module: DeckModule) {
@@ -178,7 +179,7 @@ function consumeSkillChips() {
     const stats = module.consumableStats;
     if (stats?.netrunningBoost) {
       CyberDeckState.netrunningBoost += stats.netrunningBoost;
-      SnackbarEvents.emit(`Consumed SkillChip. Gained ${stats.netrunningBoost} netrunning boost.`, ToastVariant.SUCCESS, 4000);
+      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunningBoost, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
     }
     // TODO-fico: other consumable types (crafting boost, components, etc)
 

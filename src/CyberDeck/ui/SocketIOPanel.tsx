@@ -4,6 +4,7 @@ import { socketIsCovered } from "../models/moduleMutation";
 import { getSocketId } from "../utils/moduleUtilities";
 import { CyberDeckState, socketColors } from "../models/CyberDeckState";
 import { Settings } from "../../Settings/Settings";
+import { cyberdeckStyles } from "./cyberdeckStyles";
 
 export type SocketIOPanelProps = {
   moduleId: string,
@@ -20,6 +21,7 @@ export function SocketIOPanel({
   draggingInstalledModule,
   currentDragSource,
 }: SocketIOPanelProps) {
+  const { classes } = cyberdeckStyles();
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
     e.stopPropagation();
     e.preventDefault();
@@ -39,19 +41,16 @@ export function SocketIOPanel({
   }
 
   return (
-    <div style={{ display: "inline-flex" }}>
+    <div className={classes.socketIOPanel}>
       {sockets.map((isSocket, index) => (
-        <div key={index} style={{ width: "24px", height: "24px", margin: "5px" }}>
+        <div key={index} style={{ width: "24px", height: "24px", margin: "auto 5px" }}>
           {isSocket && (!socketIsCovered({ socketIndex: index, moduleId }) || draggingInstalledModule) ? (
             <button
               id={getSocketId({ moduleId, socketIndex: index })}
+              className={classes.socket}
               onMouseDown={(e) => socketDragStart(e, index)}
               style={{
-                height: "24px",
-                width: "24px",
-                borderRadius: "50%",
                 border: `6px solid ${socketColors[index]}`,
-                cursor: "crosshair",
                 background: isConnected(index) ? socketColors[index] : Settings.theme.backgroundprimary,
                 pointerEvents: draggingWireStarted ? "auto" : "none",
               }}

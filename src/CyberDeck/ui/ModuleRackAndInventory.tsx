@@ -113,7 +113,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
-                height: "500px",
+                height: "calc(100vh - 200px)",
                 width: "300px",
                 border: "1px solid red",
                 backgroundColor: Settings.theme.backgroundprimary,
@@ -148,7 +148,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
                     alignItems="center"
                     whiteSpace="nowrap"
                     style={{
-                      height: "500px",
                       width: "300px",
                     }}
                     ref={provided.innerRef}
@@ -184,7 +183,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
                   {...provided.droppableProps}
                   style={{
                     margin: "10px",
-                    height: "500px",
                     width: "300px",
                     border: "1px solid green",
                     backgroundColor: snapshot.isDraggingOver

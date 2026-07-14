@@ -8,11 +8,11 @@ import MedicalInformationSharpIcon from "@mui/icons-material/MedicalInformationS
 import { Settings } from "../../Settings/Settings";
 
 export function getModuleIcon(module: DeckModule) {
-  return <div style={{padding: "5px", width: "30px", height: "30px", color:getRarityColor(module)}}>{getIconComponent(module)}</div>
+  return <div style={{padding: "5px", width: "50px", height: "50px", color:getRarityColor(module)}}>{getIconComponent(module)}</div>
 }
 
 function getIconComponent(module: DeckModule) {
-  const style = {width: "30px", height: "30px"};
+  const style = { width: "50px", height: "50px" };
   if (module.type === ModuleType.ProcessingModule) {
     return <MemoryIcon style={style} />;
   }
