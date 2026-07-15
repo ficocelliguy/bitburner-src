@@ -56,7 +56,6 @@ export function ModuleRackAndInventory(): React.ReactElement {
   function draggingWireStarted(moduleId: string, socketIndex: number) {
     disconnectSocket({ moduleId, socketIndex });
     setDraggingWire({ moduleId, socketIndex });
-    console.log("draggingWireStarted", moduleId, socketIndex);
   }
 
   function draggingWireEnded(moduleId: string) {
