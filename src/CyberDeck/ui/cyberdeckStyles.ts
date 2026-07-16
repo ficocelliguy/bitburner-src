@@ -141,7 +141,7 @@ body {
   background-color: #ffd700;
   border-radius: 50%;
   pointer-events: none;
-  animation: popOut 0.8s ease-out forwards;
+  animation: popOut 1.5s ease-out forwards;
 }
 
 @keyframes popOut {
@@ -175,17 +175,18 @@ function createSpark(x, y) {
   spark.style.top = `${y}px`;
 
   // Random trajectory
-  const destinationX = (Math.random() - 0.5) * 200;
-  const destinationY = (Math.random() - 0.5) * 200;
+  const destinationX = (Math.random() - 0.5) * 600;
+  const destinationY = (Math.random() - 0.5) * 600;
 
   spark.style.setProperty('--tx', `${destinationX}px`);
   spark.style.setProperty('--ty', `${destinationY}px`);
+  spark.style.setProperty("background-color", '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'));
 
   document.body.appendChild(spark);
 
   // Remove after animation completes
   setTimeout(() => {
     spark.remove();
-  }, 800);
+  }, 1500);
 }
  */

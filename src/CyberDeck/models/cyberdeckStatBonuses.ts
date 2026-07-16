@@ -18,7 +18,7 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
   for (const mult of playerMultsFromModules) {
     if (!mult) continue;
     for (const key of getRecordKeys(playerMults)) {
-      playerMults[key] += (mult[key] ?? 1) - 1;
+      playerMults[key] += mult[key] ?? 0;
     }
   }
 
@@ -27,7 +27,7 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
   for (const mult of miscMultsFromModules) {
     if (!mult) continue;
     for (const key of getRecordKeys(otherMults)) {
-      otherMults[key] += (mult[key] ?? 1) - 1;
+      otherMults[key] += mult[key] ?? 0;
     }
   }
   return {
@@ -47,4 +47,19 @@ export function generateStatBonus(min: number, max: number, highWeighting = fals
   const range = max - min;
   const weights = highWeighting ? [0.3, 0.3, 0.4] : [0.25, 0.25, 0.5];
   return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
+}
+
+export function displayStatBonuses(stats: CyberdeckStats): string {
+  // TODO-fico
+  const playerMults = Object.entries(stats.playerMults)
+    .map(([key, value]) => `${key}: ${formatAsPercent(+value)}`)
+    .join(", ");
+  const otherMults = Object.entries(stats.otherMults)
+    .map(([key, value]) => `${key}: ${formatAsPercent(+value)}`)
+    .join(", ");
+  return `Player Multipliers: { ${playerMults} }, Other Multipliers: { ${otherMults} }`;
+}
+
+function formatAsPercent(value: number): string {
+  return `${(value * 100).toFixed(2)}%`;
 }

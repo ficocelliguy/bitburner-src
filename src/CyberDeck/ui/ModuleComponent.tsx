@@ -7,6 +7,7 @@ import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
 import { Tooltip } from "@mui/material";
+import { displayStatBonuses } from "../models/cyberdeckStatBonuses";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -64,7 +65,7 @@ export function ModuleComponent({
     <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
       {(provided, snapshot) => (
         <Tooltip
-          title={JSON.stringify(module.stats, null, 2)}
+          title={displayStatBonuses(module.stats)}
           open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}
           placement="top"
           arrow
