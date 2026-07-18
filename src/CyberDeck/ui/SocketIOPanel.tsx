@@ -23,6 +23,7 @@ export function SocketIOPanel({
 }: SocketIOPanelProps) {
   const { classes } = cyberdeckStyles();
   function socketDragStart(e: React.MouseEvent<HTMLButtonElement>, socketIndex: number) {
+    if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
     draggingWireStarted?.(moduleId, socketIndex);

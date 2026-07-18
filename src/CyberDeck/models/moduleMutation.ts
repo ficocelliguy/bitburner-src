@@ -176,10 +176,10 @@ function consumeSkillChips() {
     (m) => m.type === ModuleType.SkillChip && chargedModuleIDs.includes(m.id),
   );
   for (const module of chargedSkillModules) {
-    const stats = module.consumableStats;
-    if (stats?.netrunningBoost) {
-      CyberDeckState.netrunningBoost += stats.netrunningBoost;
-      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunningBoost, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
+    const stats = module.stats?.consumableStats;
+    if (stats?.netrunning) {
+      CyberDeckState.netrunning += stats.netrunning;
+      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
     }
     // TODO-fico: other consumable types (crafting boost, components, etc)
 

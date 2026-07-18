@@ -1,7 +1,7 @@
 import { getChargedModules } from "./CyberDeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
-import { CyberdeckStats, MiscMults } from "../Types";
+import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 
 export function applyCyberdeckStatBonuses() {
@@ -30,9 +30,11 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
       otherMults[key] += mult[key] ?? 0;
     }
   }
+
   return {
     playerMults,
     otherMults,
+    extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
   };
 }
 
@@ -49,15 +51,26 @@ export function generateStatBonus(min: number, max: number, highWeighting = fals
   return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
 }
 
-export function displayStatBonuses(stats: CyberdeckStats): string {
-  // TODO-fico
-  const playerMults = Object.entries(stats.playerMults)
-    .map(([key, value]) => `${key}: ${formatAsPercent(+value)}`)
-    .join(", ");
-  const otherMults = Object.entries(stats.otherMults)
-    .map(([key, value]) => `${key}: ${formatAsPercent(+value)}`)
-    .join(", ");
-  return `Player Multipliers: { ${playerMults} }, Other Multipliers: { ${otherMults} }`;
+export function displayStatBonuses(stats: ModuleStats | null | undefined): string {
+  if (!stats) return "";
+  const results = [
+      ...Object.entries(stats.playerMults ?? {}),
+      ...Object.entries(stats.otherMults ?? {}),
+      ...Object.entries(stats.consumableStats ?? {})
+  ]
+  .filter(([__, value]) => value !== 0)
+  .map(([key, value]) => `${formatKey(key)}: ${formatAsPercent(+value)}`);
+
+
+  if (stats.extraRackSlots) {
+    results.push(`Rack Slots: ${stats.extraRackSlots}`);
+  }
+
+  return results.join(", ");
+}
+
+function formatKey(key: string): string {
+  return key.replaceAll("_", " ").replaceAll(/([a-z])([A-Z])/g, "$1 $2").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function formatAsPercent(value: number): string {

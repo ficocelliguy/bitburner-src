@@ -6,7 +6,7 @@ import { DeckModule, ModuleType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import { displayStatBonuses } from "../models/cyberdeckStatBonuses";
 
 export type DeckModuleProps = {
@@ -65,9 +65,14 @@ export function ModuleComponent({
     <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
       {(provided, snapshot) => (
         <Tooltip
-          title={displayStatBonuses(module.stats)}
+          title={
+            <div>
+              <h3 style={{ margin: "4px" }}>{module.type}</h3>
+              <div>{displayStatBonuses(module.stats)}</div>
+            </div>
+          }
           open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}
-          placement="top"
+          placement={index % 2 === 0 ? "top-end" : "top-start"}
           arrow
           enterDelay={600}
           enterNextDelay={400}
@@ -98,6 +103,18 @@ export function ModuleComponent({
             onContextMenu={(e) => e.preventDefault()}
           >
             <div>{getModuleIcon(module)}</div>
+            {module.type !== ModuleType.DeckConnection ? (
+              <Typography
+                style={{
+                  border: `1px solid ${Settings.theme.secondary}`,
+                  margin: "3px",
+                  width: "120px",
+                  fontSize: "9px",
+                }}
+              >
+                {displayStatBonuses(module.stats)}
+              </Typography>
+            ) : <div style={{width: "120px", margin: "3px"}}></div>}
             <SocketIOPanel
               moduleId={module.id}
               sockets={module.sockets}

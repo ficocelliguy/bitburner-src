@@ -6,8 +6,6 @@ export type DeckModule = {
   sockets: SocketList;
   type: ModuleType;
   stats?: ModuleStats | null;
-  extraRackSlots?: number;
-  consumableStats?: ConsumableStats;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];
@@ -26,15 +24,19 @@ export enum ModuleType {
 }
 
 export type ConsumableStats = {
-  netrunningBoost: number
+  netrunning: number
 }
 export type ModuleStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
+  extraRackSlots?: number;
+  consumableStats?: ConsumableStats;
 };
 export type CyberdeckStats = {
   playerMults: Multipliers;
   otherMults: MiscMults;
+  extraRackSlots: number;
+  consumableStats?: ConsumableStats;
 };
 
 export type MiscMults = {

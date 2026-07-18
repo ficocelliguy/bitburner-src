@@ -18,7 +18,25 @@ export const CyberDeckState = {
     neurodes: 0,
     chips: 0,
   },
-  netrunningBoost: 0
+  componentStats: {
+    ROM: {
+      backdoors: 0,
+      caches: 0,
+      pettyCrime: 0,
+      programs: 0,
+    },
+    chips: {
+      hacknet: 0,
+      companyWork: 0,
+      IPvGO: 0,
+    },
+    neurodes: {
+      kills: 0,
+      class: 0,
+      codingContracts: 0,
+    }
+  },
+  netrunning: 0,
 };
 
 const t = Settings.theme;

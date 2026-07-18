@@ -8,7 +8,7 @@ export function getCurrentRackSize() {
   const chargedModules = getChargedModuleIDs();
   const rackExtensionCount = CyberDeckState.installedModules
     .filter((module) => chargedModules.includes(module.id))
-    .reduce((sum, module) => sum + (module.extraRackSlots ?? 0), 0);
+    .reduce((sum, module) => sum + (module.stats?.extraRackSlots ?? 0), 0);
   return CyberDeckState.baseRackSize + rackExtensionCount;
 }
 
