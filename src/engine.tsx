@@ -57,6 +57,8 @@ import { processDarknet } from "./DarkNet/controllers/NetworkMovement";
 import { hasDarknetAccess } from "./DarkNet/utils/darknetAuthUtils";
 import { initForeignServers } from "./Server/ServerHelpers";
 import { apr1 } from "./Terminal/commands/apr1";
+import { CyberDeckState } from "./CyberDeck/models/CyberDeckState";
+import { gainCyberdeckComponents } from "./CyberDeck/models/componentEconomy";
 
 declare global {
   // This property is only available in the dev build
@@ -121,6 +123,10 @@ const Engine = {
     // Darknet
     if (hasDarknetAccess()) {
       processDarknet(numCycles);
+    }
+
+    if (CyberDeckState) {
+      gainCyberdeckComponents(numCycles);
     }
 
     // Update the running time of all active scripts
