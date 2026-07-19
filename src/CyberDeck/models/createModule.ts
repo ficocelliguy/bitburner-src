@@ -21,6 +21,9 @@ export function createModule(type: ModuleType = getRandomModuleType(), level: nu
   if (type == ModuleType.SkillChip) {
     return createSkillChip(level);
   }
+  if (type == ModuleType.Uplink) {
+    return createUplink(level);
+  }
   return createProcessingModule(level);
 }
 
@@ -51,6 +54,21 @@ function createProcessingModule(level: number): DeckModule {
     },
   };
 }
+
+function createUplink(level: number): DeckModule {
+  return {
+    type: ModuleType.Uplink,
+    id: `${(Math.random() * 1e4) | 0}`,
+    sockets: getRandomSockets(1 + level / 3, 0, true),
+    level,
+    stats: {
+      otherMults: {
+        romProduction: generateStatBonus(0.1 + 0.1 * level, 0.2 + 0.1 * level, level > 4),
+      },
+    },
+  };
+}
+
 
 function createRackExtension(level: number): DeckModule {
   return {

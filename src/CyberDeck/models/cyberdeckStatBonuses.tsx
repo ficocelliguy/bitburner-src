@@ -1,8 +1,11 @@
+import React from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { getChargedModules } from "./CyberDeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
+import { Settings } from "../../Settings/Settings";
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses().playerMults;
@@ -41,7 +44,10 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
 
 function getDefaultMiscMults(): MiscMults {
   return {
-    cyberdeckCraftingSpeed: 1,
+    chipProduction: 0,
+    neurodeProduction: 0,
+    romProduction: 0,
+    craftSpeed: 1
   };
 }
 
@@ -51,26 +57,35 @@ export function generateStatBonus(min: number, max: number, highWeighting = fals
   return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
 }
 
-export function displayStatBonuses(stats: ModuleStats | null | undefined): string {
-  if (!stats) return "";
+export function displayStatBonuses(stats: ModuleStats | null | undefined): JSX.Element {
+  if (!stats) return <></>;
   const results = [
       ...Object.entries(stats.playerMults ?? {}),
       ...Object.entries(stats.otherMults ?? {}),
       ...Object.entries(stats.consumableStats ?? {})
   ]
   .filter(([__, value]) => value !== 0)
-  .map(([key, value]) => `${formatKey(key)}: ${formatAsPercent(+value)}`);
+  .map(([key, value]) => formatStat(key, +value));
 
 
   if (stats.extraRackSlots) {
-    results.push(`Rack Slots: ${stats.extraRackSlots}`);
+    results.push(<div className="buff">{`Rack Slots: ${stats.extraRackSlots}`}</div>);
   }
 
-  return results.join(", ");
+  return <>{results.map((result, index) => <React.Fragment key={index}>{result}{index < results.length - 1 ? ", " : ""}</React.Fragment>)}</>;
 }
 
-function formatKey(key: string): string {
-  return key.replaceAll("_", " ").replaceAll(/([a-z])([A-Z])/g, "$1 $2").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+function formatStat(key: string, value: number): JSX.Element {
+  const formattedKey = key
+    .replaceAll("_", " ")
+    .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  const valueStr = key.includes("Production") ? value.toFixed(2) : formatAsPercent(value);
+  const isBuff = key.includes("_cost") ? value < 0 : value > 0;
+
+  return <Typography sx={{fontSize: "10px", display: "inline-flex"}}>{`${formattedKey}: `}<div style={{color: isBuff? Settings.theme.primary : Settings.theme.error, paddingLeft: "4px"}}>{valueStr}</div></Typography>;
 }
 
 function formatAsPercent(value: number): string {

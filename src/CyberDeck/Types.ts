@@ -40,5 +40,8 @@ export type CyberdeckStats = {
 };
 
 export type MiscMults = {
-  cyberdeckCraftingSpeed: number;
+  craftSpeed: number;
+  romProduction: number;
+  chipProduction: number;
+  neurodeProduction: number;
 }
