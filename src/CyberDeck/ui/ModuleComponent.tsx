@@ -7,7 +7,8 @@ import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
 import { Tooltip, Typography } from "@mui/material";
-import { displayStatBonuses } from "../models/cyberdeckStatBonuses";
+import { StatBonus } from "../models/StatBonuses";
+import { cyberdeckStyles } from "./cyberdeckStyles";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -31,6 +32,7 @@ export function ModuleComponent({
   isAnyDragActive,
 }: DeckModuleProps) {
   const render = useRerender(200);
+  const { classes } = cyberdeckStyles();
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
   const [tooltipPinnedOpen, setTooltipPinnedOpen] = React.useState(false);
   const updateDisplay = useCallback(() => {
@@ -68,7 +70,7 @@ export function ModuleComponent({
           title={
             <div>
               <h3 style={{ margin: "4px" }}>{module.type}</h3>
-              <div>{displayStatBonuses(module.stats)}</div>
+              <div><StatBonus stats={module.stats} /></div>
             </div>
           }
           open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}
@@ -92,29 +94,23 @@ export function ModuleComponent({
                   ? getRarityColor(module)
                   : Settings.theme.button
               }`,
-              margin: "3px",
               background: getChargedModuleIDs().includes(module.id)
                 ? Settings.theme.button
                 : Settings.theme.backgroundprimary,
-              display: "inline-flex",
             }}
+            className={classes.modulePanel}
             onMouseUp={() => socketDragEnd()}
             onMouseDown={openTooltipOnRightClick}
             onContextMenu={(e) => e.preventDefault()}
           >
             <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-              <Typography
-                style={{
-                  border: `1px solid ${Settings.theme.secondary}`,
-                  margin: "3px",
-                  width: "120px",
-                  fontSize: "9px",
-                }}
-              >
-                {displayStatBonuses(module.stats)}
+              <Typography className={classes.statsPanel}>
+                <StatBonus stats={module.stats} />
               </Typography>
-            ) : <div style={{width: "120px", margin: "3px"}}></div>}
+            ) : (
+              <div style={{ width: "120px", margin: "3px" }}></div>
+            )}
             <SocketIOPanel
               moduleId={module.id}
               sockets={module.sockets}

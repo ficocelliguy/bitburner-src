@@ -1,11 +1,41 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { getChargedModules } from "./CyberDeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
+
+
+export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
+  if (!stats) return <></>;
+  const statList = [
+    ...Object.entries(stats.playerMults ?? {}),
+    ...Object.entries(stats.otherMults ?? {}),
+    ...Object.entries(stats.consumableStats ?? {}),
+  ]
+
+  if (stats.extraRackSlots) {
+    statList.push([`Rack Slots`, stats.extraRackSlots]);
+  }
+
+  const results = statList
+    .filter(([__, value]) => !!value)
+    .map(([key, value]) => formatStat(key, value));
+
+  return (
+    <>
+      {results.map((result, index) => (
+        <div key={index}>
+          {result}
+          {index < results.length - 1 ? ", " : ""}
+        </div>
+      ))}
+    </>
+  );
+}
+
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses().playerMults;
@@ -57,24 +87,6 @@ export function generateStatBonus(min: number, max: number, highWeighting = fals
   return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
 }
 
-export function displayStatBonuses(stats: ModuleStats | null | undefined): JSX.Element {
-  if (!stats) return <></>;
-  const results = [
-      ...Object.entries(stats.playerMults ?? {}),
-      ...Object.entries(stats.otherMults ?? {}),
-      ...Object.entries(stats.consumableStats ?? {})
-  ]
-  .filter(([__, value]) => value !== 0)
-  .map(([key, value]) => formatStat(key, +value));
-
-
-  if (stats.extraRackSlots) {
-    results.push(<div className="buff">{`Rack Slots: ${stats.extraRackSlots}`}</div>);
-  }
-
-  return <>{results.map((result, index) => <React.Fragment key={index}>{result}{index < results.length - 1 ? ", " : ""}</React.Fragment>)}</>;
-}
-
 function formatStat(key: string, value: number): JSX.Element {
   const formattedKey = key
     .replaceAll("_", " ")
@@ -82,10 +94,17 @@ function formatStat(key: string, value: number): JSX.Element {
     .toLowerCase()
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
-  const valueStr = key.includes("Production") ? value.toFixed(2) : formatAsPercent(value);
+  const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") ? value.toFixed(2) : formatAsPercent(value);
   const isBuff = key.includes("_cost") ? value < 0 : value > 0;
 
-  return <Typography sx={{fontSize: "10px", display: "inline-flex"}}>{`${formattedKey}: `}<div style={{color: isBuff? Settings.theme.primary : Settings.theme.error, paddingLeft: "4px"}}>{valueStr}</div></Typography>;
+  return (
+    <Typography sx={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
+      {`${formattedKey}: `}
+      <div style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
+        {valueStr}
+      </div>
+    </Typography>
+  );
 }
 
 function formatAsPercent(value: number): string {

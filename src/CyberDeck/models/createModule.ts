@@ -1,7 +1,7 @@
 import { CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType } from "../Types";
-import { generateStatBonus } from "./cyberdeckStatBonuses";
+import { generateStatBonus } from "./StatBonuses";
 
 
 export const DeckConnection: DeckModule = {

@@ -2,7 +2,7 @@ import { CyberDeckState, minCyclesToProcess } from "./CyberDeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
-import { getCyberdeckStatBonuses } from "./cyberdeckStatBonuses";
+import { getCyberdeckStatBonuses } from "./StatBonuses";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
