@@ -29,7 +29,7 @@ export function handleModuleMoved(result: DropResult) {
   }
 }
 
-function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
+export function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
   const sourceLocation = sourceIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
 

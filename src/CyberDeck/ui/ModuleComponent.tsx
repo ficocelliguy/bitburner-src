@@ -70,7 +70,9 @@ export function ModuleComponent({
           title={
             <div>
               <h3 style={{ margin: "4px" }}>{module.type}</h3>
-              <div><StatBonus stats={module.stats} /></div>
+              <div>
+                <StatBonus stats={module.stats} />
+              </div>
             </div>
           }
           open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}
@@ -92,7 +94,7 @@ export function ModuleComponent({
                   ? "transparent"
                   : getChargedModuleIDs().includes(module.id)
                   ? getRarityColor(module)
-                  : Settings.theme.button
+                  : Settings.theme.well
               }`,
               background: getChargedModuleIDs().includes(module.id)
                 ? Settings.theme.button
@@ -105,11 +107,9 @@ export function ModuleComponent({
           >
             <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-              <Typography className={classes.statsPanel}>
                 <StatBonus stats={module.stats} />
-              </Typography>
             ) : (
-              <div style={{ width: "120px", margin: "3px" }}></div>
+              <div style={{ width: "130px", margin: "3px" }}></div>
             )}
             <SocketIOPanel
               moduleId={module.id}

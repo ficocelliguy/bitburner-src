@@ -6,10 +6,12 @@ import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
+import { cyberdeckStyles } from "../ui/cyberdeckStyles";
 
 
 export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
   if (!stats) return <></>;
+  const { classes } = cyberdeckStyles();
   const statList = [
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
@@ -25,14 +27,14 @@ export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) 
     .map(([key, value]) => formatStat(key, value));
 
   return (
-    <>
+    <Typography className={classes.statsPanel}>
       {results.map((result, index) => (
         <div key={index}>
           {result}
           {index < results.length - 1 ? ", " : ""}
         </div>
       ))}
-    </>
+    </Typography>
   );
 }
 

@@ -8,6 +8,7 @@ import { ModuleRackAndInventory } from "./ui/ModuleRackAndInventory";
 import { cyberdeckStyles } from "./ui/cyberdeckStyles";
 import { CyberDeckState } from "./models/CyberDeckState";
 import { useRerender } from "../ui/React/hooks";
+import { CraftingPage } from "./ui/CraftingPage";
 
 export function CyberDeckRoot(): React.ReactElement {
   useRerender(1000);
@@ -43,6 +44,7 @@ export function CyberDeckRoot(): React.ReactElement {
         </div>
       </Tabs>
       {value === 0 && <ModuleRackAndInventory />}
+      {value === 1 && <CraftingPage />}
       {value === 2 && <NetrunningPortal />}
     </Container>
   );

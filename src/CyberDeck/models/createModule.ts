@@ -2,6 +2,7 @@ import { CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType } from "../Types";
 import { generateStatBonus } from "./StatBonuses";
+import { disconnectModule, moveModule } from "./moduleMutation";
 
 
 export const DeckConnection: DeckModule = {
@@ -137,4 +138,50 @@ export function createInitialModules() {
   for (let i = 0; i < 10; i++) {
     CyberDeckState.storedModules.push(createModule());
   }
+}
+
+export function craftICE() {
+  // TODO-fico: validation
+  // TODO-fico: balance numbers
+  CyberDeckState.components.chips -= 20;
+  CyberDeckState.components.ROM -= 20;
+  CyberDeckState.components.neurodes -= 20;
+  CyberDeckState.components.ICE += 1;
+}
+
+export function craftPowerSupply() {
+  // TODO-fico: validation
+  // TODO-fico: balance numbers
+  CyberDeckState.components.chips -= 20;
+  CyberDeckState.components.ROM -= 10;
+  CyberDeckState.storedModules.push(createPowerSupply(0));
+}
+
+export function craftProcessingModule() {
+  // TODO-fico: validation
+  // TODO-fico: balance numbers
+  CyberDeckState.components.chips -= 10;
+  CyberDeckState.components.ROM -= 20;
+  CyberDeckState.storedModules.push(createProcessingModule(0));
+}
+
+export function craftUplink() {
+  // TODO-fico: validation
+  // TODO-fico: balance numbers
+  CyberDeckState.components.ROM -= 10;
+  CyberDeckState.components.neurodes -= 20;
+  CyberDeckState.storedModules.push(createUplink(0));
+}
+
+export function disassembleModule(module: DeckModule) {
+  // TODO-fico: validation
+  // TODO-fico: balance numbers
+  CyberDeckState.components.chips += 2;
+  CyberDeckState.components.ROM += 2;
+  CyberDeckState.components.neurodes += 2;
+  disconnectModule(module);
+  if (CyberDeckState.installedModules.includes(module)) {
+    moveModule(module, false, true, 0);
+  }
+  CyberDeckState.storedModules = CyberDeckState.storedModules.filter((m) => m !== module);
 }

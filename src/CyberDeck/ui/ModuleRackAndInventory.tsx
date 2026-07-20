@@ -112,7 +112,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
-                height: "calc(100vh - 200px)",
+                height: "calc(100vh - 250px)",
                 width: "300px",
                 border: "1px solid red",
                 backgroundColor: Settings.theme.backgroundprimary,
@@ -183,6 +183,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                   style={{
                     margin: "10px",
                     width: "300px",
+                    maxHeight: "calc(100vh - 250px)",
                     border: "1px solid green",
                     backgroundColor: snapshot.isDraggingOver
                       ? Settings.theme.backgroundsecondary

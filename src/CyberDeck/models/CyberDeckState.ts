@@ -20,6 +20,7 @@ export const CyberDeckState = {
     ROM: 0,
     neurodes: 0,
     chips: 0,
+    ICE: 0,
   },
   componentStats: {
     ROM: {
@@ -37,7 +38,7 @@ export const CyberDeckState = {
       kills: 0,
       class: 0,
       codingContracts: 0,
-    }
+    },
   },
   netrunning: 0,
 };
