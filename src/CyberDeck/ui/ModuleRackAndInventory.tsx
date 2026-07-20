@@ -16,6 +16,7 @@ import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { DeckConnection } from "../models/createModule";
+import { cyberdeckStyles } from "./cyberdeckStyles";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -23,6 +24,7 @@ export const TRASH_CAN = "trashcan";
 
 export function ModuleRackAndInventory(): React.ReactElement {
   const render = useRerender();
+  const {classes} = cyberdeckStyles();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
   const [draggingStoredModule, setDraggingStoredModule] = useState(false);
@@ -102,7 +104,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
       <Container disableGutters maxWidth={false}>
         <canvas
           ref={canvas}
-          width={"500px"}
+          width={"800px"}
           height={"800px"}
           style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
         ></canvas>
@@ -152,7 +154,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                     whiteSpace="nowrap"
                     style={{
                       width: "476px",
-                      backgroundColor: snapshot.isDraggingOver ? Settings.theme.well : Settings.theme.backgroundprimary,
+                      backgroundColor: Settings.theme.backgroundprimary,
                     }}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
@@ -171,6 +173,37 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       />
                     ))}
                     {provided.placeholder}
+                    <div
+                      style={{
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      {Array.from({ length: getCurrentRackSize() }).map((_, index) => (
+                        <div
+                          key={index}
+                          className={classes.modulePanel}
+                          style={{
+                            height: "60px",
+                            border: `1px solid ${Settings.theme.button}`,
+                          }}
+                        >
+                          <div
+                            key={index}
+                            className={classes.emptyModuleSlot}
+                            style={{
+                              backgroundColor:
+                                snapshot.isDraggingOver && draggingStoredModule
+                                  ? Settings.theme.well
+                                  : Settings.theme.backgroundprimary,
+                            }}
+                          ></div>
+                        </div>
+                      ))}
+                    </div>
                   </Box>
                 )}
               </Droppable>
@@ -200,7 +233,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                     style={{
                       maxHeight: "calc(100vh - 360px)",
                       border: "1px solid green",
-                      backgroundColor: snapshot.isDraggingOver ? Settings.theme.well : Settings.theme.backgroundprimary,
+                      backgroundColor: Settings.theme.backgroundprimary,
                       overflowX: "scroll",
                     }}
                   >

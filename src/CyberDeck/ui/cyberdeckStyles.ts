@@ -38,8 +38,11 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
   modulePanel: {
     margin: "3px",
     display: "inline-flex",
+    boxSizing: "border-box",
     cornerTopLeftShape: "bevel",
     borderTopLeftRadius: "10px",
+    width: "476px",
+    height: "60px",
   },
   socketIOPanel: {
     display: "inline-flex",
@@ -47,6 +50,14 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     borderRadius: "10px",
     cornerShape: "bevel",
     margin: "6px 2px",
+  },
+  emptyModuleSlot: {
+    width: "100%",
+    border: `1px solid ${Settings.theme.button}`,
+    margin: "6px",
+    borderTop: `1px solid ${Settings.theme.button}`,
+    borderTopLeftRadius: "7px",
+    cornerTopLeftShape: "bevel",
   },
   statsPanel: {
     border: `1px solid ${Settings.theme.secondarydark}`,

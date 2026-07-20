@@ -88,13 +88,14 @@ export function ModuleComponent({
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             style={{
+              zIndex: 1,
               ...provided.draggableProps.style,
-              border: `1px solid ${
+              border: `2px solid ${
                 module.type === ModuleType.DeckConnection
                   ? "transparent"
                   : getChargedModuleIDs().includes(module.id)
                   ? getRarityColor(module)
-                  : Settings.theme.well
+                  : Settings.theme.welllight
               }`,
               background: getChargedModuleIDs().includes(module.id)
                 ? Settings.theme.button
@@ -107,7 +108,7 @@ export function ModuleComponent({
           >
             <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-                <StatBonus stats={module.stats} />
+              <StatBonus stats={module.stats} />
             ) : (
               <div style={{ width: "130px", margin: "3px" }}></div>
             )}
