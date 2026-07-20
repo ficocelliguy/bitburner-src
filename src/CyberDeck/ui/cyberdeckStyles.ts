@@ -92,6 +92,7 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    transform: "scale(1)",
     transition: "transform 0.5s ease-out",
     "&:hover": {
       transform: "scale(1.08)",

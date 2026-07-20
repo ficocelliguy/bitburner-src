@@ -4,6 +4,7 @@ import { cyberdeckStyles } from "./cyberdeckStyles";
 import { DeckModule } from "../Types";
 import { ModuleComponent } from "./ModuleComponent";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { ModuleLootCover } from "./ModuleLootCover";
 
 type RewardsModalProps = {
   open: boolean;
@@ -31,7 +32,7 @@ export function RewardsModal({ open, onClose, rewards, componentRewards }: Rewar
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
                     {rewards.map((module, index) => (
-                      <ModuleComponent key={index} module={module} index={index} allowShift={false} />
+                      <ModuleLootCover key={module.id} module={module} index={index} />
                     ))}
                     {provided.placeholder}
                   </div>

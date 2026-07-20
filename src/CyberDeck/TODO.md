@@ -1,23 +1,15 @@
 
 - Show ice count
 - make modal showing crafting or netrunning result
-  - click to reveal?
   - sparkles?
 
 - netrunning
   - animated background
   - show ICE cost
-  - get random modules
+  - trash can in rewards modal?
   - cooldown
     - Different UX when cooling down
     - show timer
-
-- show max modules on rack
-  - number / max
-  - background indicating size
-
-- crafting takes time
-  - show progress on crafting tab title?
 
 - more stat options on module rolls
 
