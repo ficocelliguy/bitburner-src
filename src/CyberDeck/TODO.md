@@ -8,6 +8,9 @@
   - animated background
   - show ICE cost
   - get random modules
+  - cooldown
+    - Different UX when cooling down
+    - show timer
 
 - show max modules on rack
   - number / max
@@ -32,8 +35,9 @@
   - CCTs
 
 
+- offline production?
 
-
+- save and load
 
 
 

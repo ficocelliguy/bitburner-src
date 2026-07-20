@@ -6,7 +6,7 @@ import { createInitialModules, DeckConnection } from "./createModule";
 /** Event emitter to allow the UI to subscribe to CyberDeck gameplay updates in order to trigger rerenders properly */
 export const CyberDeckEvents = new EventEmitter<[]>();
 
-export const minCyclesToProcess = 10;
+export const minCyclesToProcess = 20;
 
 export const CyberDeckState = {
   hasCyberdeck: true,

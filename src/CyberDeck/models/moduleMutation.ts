@@ -1,11 +1,11 @@
 import { DropResult } from "react-beautiful-dnd";
-import { MODULE_STORAGE } from "../ui/ModuleRackAndInventory";
+import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventory";
 import { CyberDeckEvents, CyberDeckState, getChargedModuleIDs } from "./CyberDeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType, Socket } from "../Types";
-import { DeckConnection } from "./createModule";
+import { DeckConnection, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";
 
@@ -19,6 +19,12 @@ export function handleModuleMoved(result: DropResult) {
 
   const sourceLocation = sourceIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
   const moduleToMove = sourceLocation[result.source.index]
+
+
+  if (result.destination.droppableId == TRASH_CAN) {
+    disassembleModule(moduleToMove, true);
+    return;
+  }
 
   moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
 

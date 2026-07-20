@@ -1,8 +1,10 @@
-import { CyberDeckState } from "./CyberDeckState";
+import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType } from "../Types";
 import { generateStatBonus } from "./StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
 
 
 export const DeckConnection: DeckModule = {
@@ -173,7 +175,7 @@ export function craftUplink() {
   CyberDeckState.storedModules.push(createUplink(0));
 }
 
-export function disassembleModule(module: DeckModule) {
+export function disassembleModule(module: DeckModule, showToast: boolean = false) {
   // TODO-fico: validation
   // TODO-fico: balance numbers
   CyberDeckState.components.chips += 2;
@@ -184,4 +186,8 @@ export function disassembleModule(module: DeckModule) {
     moveModule(module, false, true, 0);
   }
   CyberDeckState.storedModules = CyberDeckState.storedModules.filter((m) => m !== module);
+  if (showToast) {
+    SnackbarEvents.emit(`Module disassembled. Gained +2 chips, +2 ROM, +2 neurodes.`, ToastVariant.INFO, 2000);
+  }
+  CyberDeckEvents.emit();
 }

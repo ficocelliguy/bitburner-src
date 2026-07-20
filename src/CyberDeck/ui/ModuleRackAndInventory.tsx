@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Typography, Box } from "@mui/material";
+import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
@@ -18,6 +19,7 @@ import { DeckConnection } from "../models/createModule";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
+export const TRASH_CAN = "trashcan";
 
 export function ModuleRackAndInventory(): React.ReactElement {
   const render = useRerender();
@@ -38,11 +40,13 @@ export function ModuleRackAndInventory(): React.ReactElement {
   }, [updateDisplay]);
 
   function onDragStart(result: DragStart) {
+    document.body.style.overflow = "hidden";
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
     setDraggingStoredModule(result.source.droppableId === MODULE_STORAGE);
   }
 
   function onDragEnd(result: DropResult) {
+    document.body.style.overflow = "unset";
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
     setDraggingStoredModule(false);
@@ -98,8 +102,8 @@ export function ModuleRackAndInventory(): React.ReactElement {
       <Container disableGutters maxWidth={false}>
         <canvas
           ref={canvas}
-          width={"1150px"}
-          height={"550px"}
+          width={"500px"}
+          height={"800px"}
           style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
         ></canvas>
         <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
@@ -113,7 +117,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
               style={{
                 margin: "10px",
                 height: "calc(100vh - 250px)",
-                width: "300px",
+                width: "476px",
                 border: "1px solid red",
                 backgroundColor: Settings.theme.backgroundprimary,
                 overflowX: "scroll",
@@ -147,7 +151,8 @@ export function ModuleRackAndInventory(): React.ReactElement {
                     alignItems="center"
                     whiteSpace="nowrap"
                     style={{
-                      width: "300px",
+                      width: "476px",
+                      backgroundColor: snapshot.isDraggingOver ? Settings.theme.well : Settings.theme.backgroundprimary,
                     }}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
@@ -170,40 +175,70 @@ export function ModuleRackAndInventory(): React.ReactElement {
                 )}
               </Droppable>
             </Box>
-            <Droppable droppableId={MODULE_STORAGE} direction="vertical">
-              {(provided, snapshot) => (
-                <Box
-                  display="flex"
-                  flexGrow="1"
-                  flexDirection="column"
-                  alignItems="center"
-                  whiteSpace="nowrap"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  style={{
-                    margin: "10px",
-                    width: "300px",
-                    maxHeight: "calc(100vh - 250px)",
-                    border: "1px solid green",
-                    backgroundColor: snapshot.isDraggingOver
-                      ? Settings.theme.backgroundsecondary
-                      : Settings.theme.backgroundprimary,
-                    overflowX: "scroll",
-                  }}
-                >
-                  {CyberDeckState.storedModules.map((module, index) => (
-                    <ModuleComponent
-                      key={module.id}
-                      module={module}
-                      index={index}
-                      allowShift={!draggingWire}
-                      isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
-                    />
-                  ))}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
+            <Box
+              display="flex"
+              flexGrow="1"
+              flexDirection="column"
+              alignItems="center"
+              whiteSpace="nowrap"
+              style={{
+                margin: "10px",
+                width: "476px",
+                maxHeight: "calc(100vh - 250px)",
+              }}
+            >
+              <Droppable droppableId={MODULE_STORAGE} direction="vertical">
+                {(provided, snapshot) => (
+                  <Box
+                    display="flex"
+                    flexGrow="1"
+                    flexDirection="column"
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    style={{
+                      maxHeight: "calc(100vh - 360px)",
+                      border: "1px solid green",
+                      backgroundColor: snapshot.isDraggingOver ? Settings.theme.well : Settings.theme.backgroundprimary,
+                      overflowX: "scroll",
+                    }}
+                  >
+                    {CyberDeckState.storedModules.map((module, index) => (
+                      <ModuleComponent
+                        key={module.id}
+                        module={module}
+                        index={index}
+                        allowShift={!draggingWire}
+                        isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
+                      />
+                    ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+              <Droppable droppableId={TRASH_CAN} direction="vertical">
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100px",
+                      width: "476px",
+                      marginTop: "10px",
+                      backgroundColor: snapshot.isDraggingOver
+                        ? Settings.theme.warningdark
+                        : Settings.theme.backgroundprimary,
+                      border: `1px solid ${Settings.theme.error}`,
+                    }}
+                  >
+                    <RecyclingOutlinedIcon style={{ fontSize: 40, color: Settings.theme.error }} />
+                  </div>
+                )}
+              </Droppable>
+            </Box>
           </DragDropContext>
         </div>
       </Container>
