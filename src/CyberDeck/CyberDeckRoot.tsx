@@ -41,6 +41,7 @@ export function CyberDeckRoot(): React.ReactElement {
           <Typography sx={{ fontSize: "10px" }}>ROM: {Math.floor(CyberDeckState.components.ROM)}</Typography>
           <Typography sx={{ fontSize: "10px" }}>Neurodes: {Math.floor(CyberDeckState.components.neurodes)}</Typography>
           <Typography sx={{ fontSize: "10px" }}>Chips: {Math.floor(CyberDeckState.components.chips)}</Typography>
+          <Typography sx={{ fontSize: "10px" }}>ICEbreakers: {Math.floor(CyberDeckState.components.ICE)}</Typography>
         </div>
       </Tabs>
       {value === 0 && <ModuleRackAndInventory />}

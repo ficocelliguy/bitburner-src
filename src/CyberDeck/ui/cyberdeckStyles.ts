@@ -219,6 +219,70 @@ function createSpark(x, y) {
 }
  */
 
+/*
+marquee text
+
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <!-- Original text group -->
+    <div class="ticker-items">
+      <span>✦ BREAKING NEWS: CSS Marquees are back!</span>
+    </div>
+    <!-- Duplicate text group for seamless looping -->
+    <div class="ticker-items" aria-hidden="true">
+      <span>✦ BREAKING NEWS: CSS Marquees are back!</span>
+    </div>
+  </div>
+</div>
+
+
+
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+  box-sizing: border-box;
+  width: 400px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-loop 5s linear infinite;
+}
+
+.ticker-items {
+  display: flex;
+  justify-content: space-around;
+  justify-content: space-around;
+  white-space: nowrap;
+  padding-right: 2rem; /
+}
+
+.ticker-items span {
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 0 2rem;
+}
+
+@keyframes ticker-loop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+ */
+
 // TODO-fico: remove once done
 const themeColors = {
   primarylight: "#0f0",

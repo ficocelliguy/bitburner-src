@@ -28,7 +28,7 @@ export function RewardsModal({ open, onClose, rewards, componentRewards }: Rewar
           <>
             <Typography variant="h6">Modules:</Typography>
             <DragDropContext onDragEnd={() => {}}>
-              <Droppable droppableId="modules" isDropDisabled>
+              <Droppable droppableId="modules">
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
                     {rewards.map((module, index) => (

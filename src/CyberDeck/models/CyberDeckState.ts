@@ -16,6 +16,7 @@ export const CyberDeckState = {
   storedModules: [] as DeckModule[],
   connections: [] as Connection[],
   coveredSockets: [] as Socket[],
+  lastNetrunningTimestamp: null as number | null,
   components: {
     ROM: 0,
     neurodes: 0,

@@ -1,5 +1,6 @@
 
 - Show ice count
+
 - make modal showing crafting or netrunning result
   - sparkles?
 

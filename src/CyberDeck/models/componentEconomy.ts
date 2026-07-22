@@ -101,3 +101,13 @@ function getAllWorkRep() {
   }
   return total;
 }
+
+export function getCurrentNetrunningIceCost(): number {
+  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1) - 1000 * 5;
+  if (timeSinceLastRun < 0) {
+    return Infinity;
+  }
+
+  const diminishingCosts = 1 + 5e5 / timeSinceLastRun;
+  return Math.floor(diminishingCosts) || 1;
+}
