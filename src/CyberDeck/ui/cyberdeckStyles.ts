@@ -82,7 +82,11 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     height: "50px",
     minHeight: "unset",
     width: "210px",
-  },
+  }
+}));
+
+
+export const portalStyles = makeStyles<unknown, portalStyle>({ uniqId: "cyberdeckStyles" })((theme: Theme, __, classes) => ({
   portalContainer: {
     margin: "150px auto 10px auto",
     cursor: "pointer",
@@ -126,6 +130,25 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
       boxShadow: "0 0 40px rgba(0, 255, 123, 0.4), inset 0 0 30px rgba(0, 255, 123, 0.4)",
     },
   },
+  portalDisabled: {
+    cursor: "not-allowed",
+    [`& .${classes.portalRing}`]: {
+      animation: `${spin} 20s linear infinite`,
+      "&::after": {
+        boxShadow: "0 0 40px rgba(189, 0, 0, 0.6), inset 0 0 30px rgba(189, 0, 0, 0.6)",
+      },
+    },
+    [`& .${classes.portalRingReverse}`]: {
+      animation: `${spinReverse} 15s linear infinite`,
+      "&::after": {
+        boxShadow: "0 0 40px rgba(255, 167, 86, 0.4), inset 0 0 30px rgba(255, 167, 86, 0.4)",
+      },
+    },
+    [`& .${classes.portalCore}`]: {
+      background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(100,210,255,0) 100%)",
+      animation: `${pulse} 5s ease-in-out infinite`,
+    },
+  },
   orbiter: {
     width: "1px",
     height: "100%",
@@ -147,6 +170,8 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     animation: `${growAndFade} 1.5s ease-in forwards`,
   },
 }));
+
+type portalStyle = "portalContainer" | "portalRing" | "portalRingReverse" | "portalDisabled" | "orbiter" | "portalCore" | "enteringPortal";
 
 /*
 

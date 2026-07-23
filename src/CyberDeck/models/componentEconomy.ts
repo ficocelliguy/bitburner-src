@@ -3,6 +3,7 @@ import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
 import { getCyberdeckStatBonuses } from "./StatBonuses";
+import { createModule } from "./createModule";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -110,4 +111,15 @@ export function getCurrentNetrunningIceCost(): number {
 
   const diminishingCosts = 1 + 5e5 / timeSinceLastRun;
   return Math.floor(diminishingCosts) || 1;
+}
+
+export function netRun() {
+  if (CyberDeckState.components.ICE < getCurrentNetrunningIceCost()) {
+    return;
+  }
+  const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
+  CyberDeckState.storedModules.unshift(...rewards);
+  CyberDeckState.lastNetrunningTimestamp = Date.now();
+  CyberDeckState.components.ICE -= getCurrentNetrunningIceCost();
+  return rewards;
 }
