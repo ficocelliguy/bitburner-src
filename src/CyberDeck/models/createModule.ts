@@ -1,6 +1,6 @@
 import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import { DeckModule, ModuleType } from "../Types";
+import { DeckModule, ModuleStats, ModuleType } from "../Types";
 import { generateStatBonus } from "./StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
@@ -28,6 +28,50 @@ export function createModule(type: ModuleType = getRandomModuleType(), level: nu
     return createUplink(level);
   }
   return createProcessingModule(level);
+}
+
+function getFullStatBlock(level: number): ModuleStats {
+  const highWeight = level > 4 && Math.random() < 0.4;
+  return {
+    playerMults: {
+      hacking_exp: generateStatBonus(0.001 + 0.001 * level, 0.004 + 0.0003 * level, highWeight),
+      strength: generateStatBonus(0.001 + 0.0001 * level, 0.004 + 0.0003 * level, highWeight),
+      strength_exp: 0,
+      defense: 0,
+      defense_exp: 0,
+      dexterity: 0,
+      dexterity_exp: 0,
+      agility: 0,
+      agility_exp: 0,
+      charisma: 0,
+      charisma_exp: 0,
+      hacknet_node_money: 0,
+      hacknet_node_purchase_cost: 0,
+      hacknet_node_ram_cost: 0,
+      hacknet_node_core_cost: 0,
+      hacknet_node_level_cost: 0,
+      company_rep: 0,
+      work_money: 0,
+      crime_success: 0,
+      crime_money: 0,
+    },
+    otherMults: {
+      romProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
+      chipProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
+      neurodeProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
+      stock_commission: 0, // getBuyTransactionCost
+    },
+    consumableStats: {
+      netrunning: Math.random() * (level / 25) + level / 40 + 0.1,
+    },
+    endgameStats: {
+      bladeburner_stamina_gain: 0,
+      graft_speed: 0,
+      sleeve_sync: 0,
+      stanek_charge: 0,
+    },
+    extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
+  };
 }
 
 function createPowerSupply(level: number): DeckModule {
@@ -119,10 +163,11 @@ function getRandomModuleType() {
 }
 
 function getLevel() {
+  const levelUpAttempts = ((CyberDeckState.netrunning * 16 + 10) / CyberDeckState.netrunning + 11) + Math.random() * 4;
   let level = 0;
-  for (let i = 0; i < CyberDeckState.netrunning + Math.random() * 4; i++) {
-    if (Math.random() < 0.5 - i/20) {
-      level++
+  for (let i = 0; i < levelUpAttempts ; i++) {
+    if (Math.random() < 0.5 - i / 20) {
+      level++;
     }
   }
   return level;

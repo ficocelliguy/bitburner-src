@@ -30,7 +30,7 @@ export function RewardsModal({ open, onClose, rewards, componentRewards }: Rewar
             <DragDropContext onDragEnd={() => {}}>
               <Droppable droppableId="modules">
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <div {...provided.droppableProps} style={{height: "300px"}} ref={provided.innerRef}>
                     {rewards.map((module, index) => (
                       <ModuleLootCover key={module.id} module={module} index={index} />
                     ))}

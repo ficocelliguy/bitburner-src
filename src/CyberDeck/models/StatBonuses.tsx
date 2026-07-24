@@ -11,12 +11,12 @@ import { cyberdeckStyles } from "../ui/cyberdeckStyles";
 
 export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
   if (!stats) return <></>;
-  const { classes } = cyberdeckStyles();
   const statList = [
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
     ...Object.entries(stats.consumableStats ?? {}),
-  ]
+    ...Object.entries(stats.endgameStats ?? {}),
+  ];
 
   if (stats.extraRackSlots) {
     statList.push([`Rack Slots`, stats.extraRackSlots]);
@@ -27,14 +27,14 @@ export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) 
     .map(([key, value]) => formatStat(key, value));
 
   return (
-    <Typography className={classes.statsPanel}>
+    <>
       {results.map((result, index) => (
         <div key={index}>
           {result}
           {index < results.length - 1 ? ", " : ""}
         </div>
       ))}
-    </Typography>
+    </>
   );
 }
 
@@ -79,7 +79,8 @@ function getDefaultMiscMults(): MiscMults {
     chipProduction: 0,
     neurodeProduction: 0,
     romProduction: 0,
-    craftSpeed: 1
+    program_creation_speed: 0,
+    stock_commission: 0,
   };
 }
 
@@ -94,16 +95,17 @@ function formatStat(key: string, value: number): JSX.Element {
     .replaceAll("_", " ")
     .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
     .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+    .replaceAll(" Exp", "XP");
 
-  const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") ? value.toFixed(2) : formatAsPercent(value);
+  const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
   const isBuff = key.includes("_cost") ? value < 0 : value > 0;
 
   return (
     <Typography sx={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
       {`${formattedKey}: `}
       <div style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
-        {valueStr}
+        {value > 0 ? "+" : ""}{valueStr}
       </div>
     </Typography>
   );

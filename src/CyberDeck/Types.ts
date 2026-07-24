@@ -31,7 +31,9 @@ export type ModuleStats = {
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
   consumableStats?: ConsumableStats;
+  endgameStats?: EndgameMults;
 };
+
 export type CyberdeckStats = {
   playerMults: Multipliers;
   otherMults: MiscMults;
@@ -40,8 +42,16 @@ export type CyberdeckStats = {
 };
 
 export type MiscMults = {
-  craftSpeed: number;
   romProduction: number;
   chipProduction: number;
   neurodeProduction: number;
-}
+  program_creation_speed: number;
+  stock_commission: number;
+};
+
+export type EndgameMults = {
+  bladeburner_stamina_gain: number;
+  graft_speed: number;
+  sleeve_sync: number;
+  stanek_charge: number;
+};

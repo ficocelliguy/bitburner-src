@@ -4,7 +4,6 @@ import { Socket } from "../Types";
 
 
 export function DrawWiresOnCanvas(canvas: HTMLCanvasElement | null, startingSocket: Socket | null = null, mouseLocation: {x: number, y: number} | null = null) {
-  console.log("DrawWiresOnCanvas");
   const ctx = canvas?.getContext("2d");
   if (!canvas || !ctx) return;
   const canvasLocation = canvas.getBoundingClientRect();

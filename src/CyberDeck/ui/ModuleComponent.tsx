@@ -51,6 +51,8 @@ export function ModuleComponent({
     return () => clearSubscription();
   }, [updateDisplay]);
 
+    const chargedModuleIDs = getChargedModuleIDs();
+
   function socketDragEnd() {
     draggingWireEnded?.(module.id);
   }
@@ -69,7 +71,8 @@ export function ModuleComponent({
         <Tooltip
           title={
             <div>
-              <h3 style={{ margin: "4px" }}>{module.type}</h3>
+              <h5 style={{ margin: "4px" }}>{module.type} [Rarity {module.level}]</h5>
+             <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - no stat boosts.)"}</div>
               <div>
                 <StatBonus stats={module.stats} />
               </div>
@@ -108,7 +111,9 @@ export function ModuleComponent({
           >
             <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-              <StatBonus stats={module.stats} />
+              <Typography className={classes.statsPanel}>
+                <StatBonus stats={module.stats} />
+              </Typography>
             ) : (
               <div style={{ width: "130px", margin: "3px" }}></div>
             )}
