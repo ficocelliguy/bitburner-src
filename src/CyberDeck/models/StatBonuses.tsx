@@ -6,7 +6,6 @@ import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
-import { cyberdeckStyles } from "../ui/cyberdeckStyles";
 
 
 export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
@@ -102,11 +101,11 @@ function formatStat(key: string, value: number): JSX.Element {
   const isBuff = key.includes("_cost") ? value < 0 : value > 0;
 
   return (
-    <Typography sx={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
+    <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
       {`${formattedKey}: `}
-      <div style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
+      <span style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
         {value > 0 ? "+" : ""}{valueStr}
-      </div>
+      </span>
     </Typography>
   );
 }

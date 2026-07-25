@@ -1,10 +1,11 @@
 import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import { DeckModule, ModuleStats, ModuleType } from "../Types";
+import { ComponentCounts, DeckModule, ModuleStats, ModuleType } from "../Types";
 import { generateStatBonus } from "./StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
+import { ICEbreakerCraftingCost, powerSupplyCraftingCost, processingModuleCraftingCost, uplinkCraftingCost } from "./constants";
 
 
 export const DeckConnection: DeckModule = {
@@ -163,7 +164,7 @@ function getRandomModuleType() {
 }
 
 function getLevel() {
-  const levelUpAttempts = ((CyberDeckState.netrunning * 16 + 10) / CyberDeckState.netrunning + 11) + Math.random() * 4;
+  const levelUpAttempts = (CyberDeckState.netrunning / (CyberDeckState.netrunning + 1)) * 16 + Math.random() * 4;
   let level = 0;
   for (let i = 0; i < levelUpAttempts ; i++) {
     if (Math.random() < 0.5 - i / 20) {
@@ -173,55 +174,72 @@ function getLevel() {
   return level;
 }
 
-
-
 // TODO-fico: replace with better module set on prestige
 // TODO-fico: save modules
 export function createInitialModules() {
-  CyberDeckState.netrunning =8;
+  CyberDeckState.netrunning = 8;
   for (let i = 0; i < 4; i++) {
     CyberDeckState.installedModules.push(createModule());
   }
   for (let i = 0; i < 10; i++) {
     CyberDeckState.storedModules.push(createModule());
   }
+  CyberDeckState.netrunning = 0;
+}
+
+export function canAffordComponentCost(cost: Partial<ComponentCounts>) {
+  if (CyberDeckState.components.chips < (cost.chips ?? 0)) return false;
+  if (CyberDeckState.components.ROM < (cost.ROM ?? 0)) return false;
+  if (CyberDeckState.components.neurodes < (cost.neurodes ?? 0)) return false;
+  if (CyberDeckState.components.ICE < (cost.ICE ?? 0)) return false;
+  return true;
+}
+
+export function payComponentCost(cost: Partial<ComponentCounts>) {
+  CyberDeckState.components.chips -= (cost.chips ?? 0);
+  CyberDeckState.components.ROM -= (cost.ROM ?? 0);
+  CyberDeckState.components.neurodes -= (cost.neurodes ?? 0);
+  CyberDeckState.components.ICE -= (cost.ICE ?? 0);
 }
 
 export function craftICE() {
-  // TODO-fico: validation
-  // TODO-fico: balance numbers
-  CyberDeckState.components.chips -= 20;
-  CyberDeckState.components.ROM -= 20;
-  CyberDeckState.components.neurodes -= 20;
+  if (!canAffordComponentCost(ICEbreakerCraftingCost)) {
+    return false;
+  }
+  payComponentCost(ICEbreakerCraftingCost);
   CyberDeckState.components.ICE += 1;
   CyberDeckEvents.emit();
+  return true;
 }
 
 export function craftPowerSupply() {
-  // TODO-fico: validation
-  // TODO-fico: balance numbers
-  CyberDeckState.components.chips -= 20;
-  CyberDeckState.components.ROM -= 10;
-  CyberDeckState.storedModules.push(createPowerSupply(0));
+  if (!canAffordComponentCost(powerSupplyCraftingCost)) {
+    return false;
+  }
+  payComponentCost(powerSupplyCraftingCost);
+  CyberDeckState.storedModules.push(createPowerSupply(CyberDeckState.crafting));
   CyberDeckEvents.emit();
+  return true;
 }
 
 export function craftProcessingModule() {
-  // TODO-fico: validation
-  // TODO-fico: balance numbers
-  CyberDeckState.components.chips -= 10;
-  CyberDeckState.components.ROM -= 20;
-  CyberDeckState.storedModules.push(createProcessingModule(0));
+  if (!canAffordComponentCost(processingModuleCraftingCost)) {
+    return false;
+  }
+  payComponentCost(processingModuleCraftingCost);
+  CyberDeckState.storedModules.push(createProcessingModule(CyberDeckState.crafting));
   CyberDeckEvents.emit();
+  return true;
 }
 
 export function craftUplink() {
-  // TODO-fico: validation
-  // TODO-fico: balance numbers
-  CyberDeckState.components.ROM -= 10;
-  CyberDeckState.components.neurodes -= 20;
-  CyberDeckState.storedModules.push(createUplink(0));
+  if (!canAffordComponentCost(uplinkCraftingCost)) {
+    return false;
+  }
+  payComponentCost(uplinkCraftingCost);
+  CyberDeckState.storedModules.push(createUplink(CyberDeckState.crafting));
   CyberDeckEvents.emit();
+  return true;
 }
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {

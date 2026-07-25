@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Container, Tabs, Tab, Typography } from "@mui/material";
 import { NetrunningPortal } from "./ui/NetrunningPortal";
 import MemoryIcon from "@mui/icons-material/Memory";
 import ConstructionSharpIcon from "@mui/icons-material/ConstructionSharp";
@@ -21,15 +21,22 @@ export function CyberDeckRoot(): React.ReactElement {
   }
   return (
     <Container disableGutters maxWidth={false} sx={{ mx: 0 }}>
-      <Tabs variant="fullWidth" value={value} onChange={handleChange} sx={{ minWidth: "fit-content", maxWidth: "45%" }}>
-        <Tab label="Module Management" icon={<MemoryIcon />} iconPosition={"start"} className={classes.tab} />
-        <Tab label="Crafting" icon={<ConstructionSharpIcon />} iconPosition={"start"} className={classes.tab} />
-        <Tab
-          label="Netrunning"
-          icon={<SettingsInputComponentSharpIcon />}
-          iconPosition={"start"}
-          className={classes.tab}
-        />
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tabs
+          variant="fullWidth"
+          value={value}
+          onChange={handleChange}
+          sx={{ minWidth: "fit-content", maxWidth: "45%" }}
+        >
+          <Tab label="Module Management" icon={<MemoryIcon />} iconPosition={"start"} className={classes.tab} />
+          <Tab label="Crafting" icon={<ConstructionSharpIcon />} iconPosition={"start"} className={classes.tab} />
+          <Tab
+            label="Netrunning"
+            icon={<SettingsInputComponentSharpIcon />}
+            iconPosition={"start"}
+            className={classes.tab}
+          />
+        </Tabs>
         <div
           style={{
             display: "flex",
@@ -43,7 +50,7 @@ export function CyberDeckRoot(): React.ReactElement {
           <Typography sx={{ fontSize: "10px" }}>Chips: {Math.floor(CyberDeckState.components.chips)}</Typography>
           <Typography sx={{ fontSize: "10px" }}>ICEbreakers: {Math.floor(CyberDeckState.components.ICE)}</Typography>
         </div>
-      </Tabs>
+      </Box>
       {value === 0 && <ModuleRackAndInventory />}
       {value === 1 && <CraftingPage />}
       {value === 2 && <NetrunningPortal />}

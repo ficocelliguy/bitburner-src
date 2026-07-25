@@ -111,9 +111,9 @@ export function ModuleComponent({
           >
             <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-              <Typography className={classes.statsPanel}>
+              <div className={classes.statsPanel}>
                 <StatBonus stats={module.stats} />
-              </Typography>
+              </div>
             ) : (
               <div style={{ width: "130px", margin: "3px" }}></div>
             )}

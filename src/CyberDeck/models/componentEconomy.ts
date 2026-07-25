@@ -123,9 +123,12 @@ export function netRun() {
   if (CyberDeckState.components.ICE < getCurrentNetrunningIceCost()) {
     return;
   }
+  CyberDeckState.components.ICE -= getCurrentNetrunningIceCost();
   const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
+  if (!rewards.some(m => m.level >= 3)) {
+    rewards[2] = createModule(undefined, 3);
+  }
   CyberDeckState.storedModules.unshift(...rewards);
   CyberDeckState.lastNetrunningTimestamp = Date.now();
-  CyberDeckState.components.ICE -= getCurrentNetrunningIceCost();
   return rewards;
 }

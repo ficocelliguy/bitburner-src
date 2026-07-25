@@ -5,6 +5,11 @@
 - make modal showing crafting or netrunning result
   - sparkles?
 
+- crafting
+  - align buttons
+  - show costs
+  - require enough components to use
+
 - netrunning
   - animated background
   - show ICE cost
@@ -13,6 +18,7 @@
     - show timer
 
 - more stat options on module rolls
+  - helper function for scaling stats
 
 - cyberdeck server itself?
 

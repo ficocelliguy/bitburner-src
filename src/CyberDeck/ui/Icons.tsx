@@ -32,18 +32,19 @@ function getIconComponent(module: DeckModule) {
 
 export function getRarityColor(module: DeckModule) {
   const t = Settings.theme;
+  if (module.level < 0) {
+    return t.errordark;
+  }
   const rarityColors = [
-    t.rep,
-    t.maplocation,
     t.secondarylight,
+    t.secondarylight,
+    t.maplocation,
     t.infolight,
     t.info,
     t.warninglight,
     t.money,
     t.successlight,
     t.success,
-    t.errordark,
-    t.error,
   ];
   return rarityColors[module.level] ?? t.cha;
 }

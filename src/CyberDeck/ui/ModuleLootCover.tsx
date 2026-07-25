@@ -11,6 +11,7 @@ export function ModuleLootCover({ module, index }: { module: DeckModule, index: 
 
   return (
     <Typography
+      component="div"
       onClick={() => setOpen(true)}
       sx={
         open

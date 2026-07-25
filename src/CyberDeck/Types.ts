@@ -34,6 +34,13 @@ export type ModuleStats = {
   endgameStats?: EndgameMults;
 };
 
+export type ComponentCounts = {
+  ROM: number;
+  neurodes: number;
+  chips: number;
+  ICE: number;
+}
+
 export type CyberdeckStats = {
   playerMults: Multipliers;
   otherMults: MiscMults;

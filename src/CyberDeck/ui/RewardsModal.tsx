@@ -19,7 +19,7 @@ type RewardsModalProps = {
 
 export function RewardsModal({ open, onClose, rewards, componentRewards }: RewardsModalProps) {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm">
       <DialogTitle>Rewards</DialogTitle>
       <DialogContent>
         {rewards.length > 0 && (
