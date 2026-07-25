@@ -194,6 +194,7 @@ export function craftICE() {
   CyberDeckState.components.ROM -= 20;
   CyberDeckState.components.neurodes -= 20;
   CyberDeckState.components.ICE += 1;
+  CyberDeckEvents.emit();
 }
 
 export function craftPowerSupply() {
@@ -202,6 +203,7 @@ export function craftPowerSupply() {
   CyberDeckState.components.chips -= 20;
   CyberDeckState.components.ROM -= 10;
   CyberDeckState.storedModules.push(createPowerSupply(0));
+  CyberDeckEvents.emit();
 }
 
 export function craftProcessingModule() {
@@ -210,6 +212,7 @@ export function craftProcessingModule() {
   CyberDeckState.components.chips -= 10;
   CyberDeckState.components.ROM -= 20;
   CyberDeckState.storedModules.push(createProcessingModule(0));
+  CyberDeckEvents.emit();
 }
 
 export function craftUplink() {
@@ -218,6 +221,7 @@ export function craftUplink() {
   CyberDeckState.components.ROM -= 10;
   CyberDeckState.components.neurodes -= 20;
   CyberDeckState.storedModules.push(createUplink(0));
+  CyberDeckEvents.emit();
 }
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {

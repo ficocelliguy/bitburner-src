@@ -16,20 +16,20 @@ export function ModuleLootCover({ module, index }: { module: DeckModule, index: 
         open
           ? {
               backgroundColor: Settings.theme.backgroundprimary,
-              height: "64px",
+              height: "68px",
             }
           : {
               cursor: "pointer",
               backgroundColor: Settings.theme.backgroundprimary,
               border: `1px solid ${Settings.theme.button}`,
-              height: "64px",
+              height: "68px",
               "&:hover": { backgroundColor: Settings.theme.button },
             }
       }
     >
       {open ? "   " : "Click to reveal..."}
       <div style={{ opacity: open ? 1 : 0, transition: "opacity 1s ease-in" }}>
-        <ModuleComponent module={module} index={index} />
+        <ModuleComponent module={module} index={index} allowShift={true} />
       </div>
     </Typography>
   );

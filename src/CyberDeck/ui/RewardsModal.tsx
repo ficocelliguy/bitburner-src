@@ -18,8 +18,6 @@ type RewardsModalProps = {
 };
 
 export function RewardsModal({ open, onClose, rewards, componentRewards }: RewardsModalProps) {
-  const { classes } = cyberdeckStyles();
-
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Rewards</DialogTitle>

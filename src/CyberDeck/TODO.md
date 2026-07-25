@@ -1,5 +1,6 @@
 
 - Show ice count
+  - icons
 
 - make modal showing crafting or netrunning result
   - sparkles?
@@ -9,7 +10,6 @@
   - show ICE cost
   - trash can in rewards modal?
   - cooldown
-    - Different UX when cooling down
     - show timer
 
 - more stat options on module rolls

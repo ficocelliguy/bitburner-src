@@ -1,9 +1,10 @@
-import { CyberDeckState, minCyclesToProcess } from "./CyberDeckState";
+import { CyberDeckState } from "./CyberDeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
 import { getCyberdeckStatBonuses } from "./StatBonuses";
 import { createModule } from "./createModule";
+import { minCyclesToProcess, netrunningCooldownMs } from "./constants";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -103,13 +104,18 @@ function getAllWorkRep() {
   return total;
 }
 
+export function getNetrunningCooldown(): number {
+  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1);
+  return Math.max(netrunningCooldownMs - timeSinceLastRun, 0);
+}
+
 export function getCurrentNetrunningIceCost(): number {
-  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1) - 1000 * 5;
-  if (timeSinceLastRun < 0) {
+  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1);
+  if (timeSinceLastRun < netrunningCooldownMs) {
     return Infinity;
   }
 
-  const diminishingCosts = 1 + 5e5 / timeSinceLastRun;
+  const diminishingCosts = 1 + 5e5 / (timeSinceLastRun - netrunningCooldownMs);
   return Math.floor(diminishingCosts) || 1;
 }
 

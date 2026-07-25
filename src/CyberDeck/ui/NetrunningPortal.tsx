@@ -4,7 +4,8 @@ import {  portalStyles } from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
 import { DeckModule } from "../Types";
 import { CyberDeckState } from "../models/CyberDeckState";
-import { getCurrentNetrunningIceCost, netRun } from "../models/componentEconomy";
+import { getCurrentNetrunningIceCost, getNetrunningCooldown, netRun } from "../models/componentEconomy";
+import { format } from "date-fns";
 
 export function NetrunningPortal(): React.ReactElement {
   const { classes } = portalStyles({});
@@ -37,17 +38,23 @@ export function NetrunningPortal(): React.ReactElement {
       {showPortal && (
         <>
           <div
-            className={`${classes.portalContainer} ${entering ? classes.enteringPortal : ""} ${disabled ? classes.portalDisabled : ""}`}
+            className={`${classes.portalContainer} ${entering ? classes.enteringPortal : ""} ${
+              disabled ? classes.portalDisabled : ""
+            }`}
             onClick={handlePortalClick}
           >
             <div className={`${classes.portalRing}`}></div>
-            <div
-              className={`${classes.portalRing} ${classes.portalRingReverse}`}
-            ></div>
+            <div className={`${classes.portalRing} ${classes.portalRingReverse}`}></div>
             <div className={`${classes.orbiter}`}></div>
             <div className={`${classes.portalCore}`}></div>
           </div>
-          <Typography>ICEbreakers needed: {cost}</Typography>
+          {!entering &&
+            <Typography sx={{ textAlign: "center" }}>
+              {cost === Infinity
+                ? `Trace decay: ${format(getNetrunningCooldown(), "mm:ss")}`
+                : `ICEbreakers needed: ${cost}`}
+            </Typography>
+          }
         </>
       )}
     </Container>
