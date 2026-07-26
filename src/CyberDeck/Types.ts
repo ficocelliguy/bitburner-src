@@ -53,6 +53,7 @@ export type MiscMults = {
   chipProduction: number;
   neurodeProduction: number;
   program_creation_speed: number;
+  crime_speed: number;
   stock_commission: number;
 };
 

@@ -81,7 +81,6 @@ export function createConnection(source: Socket, destination: Socket) {
     return;
   }
 
-  console.log("Connecting ", getSocketId(source), " to ", getSocketId(destination));
   CyberDeckState.connections.push([source, destination]);
   updateConnectedModules();
 }

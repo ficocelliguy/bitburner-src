@@ -11,32 +11,40 @@ import {
   uplinkCraftingCost,
 } from "../models/constants";
 import { getModIconComponent, getModuleIcon } from "./Icons";
-import { ModuleType } from "../Types";
+import { DeckModule, ModuleType } from "../Types";
 import { Settings } from "../../Settings/Settings";
+import { RewardsModal } from "./RewardsModal";
 
 
 export function CraftingPage(): React.ReactElement {
-
-  function tryCraftICE() {
-    craftICE();
-  }
+  const [showRewardsModal, setShowRewardsModal] = React.useState(false);
+  const [netrunningRewards, setNetrunningRewards] = React.useState<DeckModule[]>([]);
 
   function tryCraftPowerSupply() {
-    craftPowerSupply();
+    craft(craftPowerSupply());
   }
 
   function tryCraftUplink() {
-    craftUplink();
+    craft(craftUplink());
   }
 
   function tryCraftProcessingModule() {
-    craftProcessingModule();
+    craft(craftProcessingModule());
+  }
+
+  function craft(results: DeckModule | null) {
+    if (!results) { return; }
+    setNetrunningRewards([results]);
+    setShowRewardsModal(true);
   }
 
   return (
     <div style={{ padding: "20px" }}>
-      <Button onClick={tryCraftICE}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}>
+      <RewardsModal open={showRewardsModal} rewards={netrunningRewards} onClose={() => setShowRewardsModal(false)} />
+      <Button onClick={() => craftICE()}>
+        <div
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
+        >
           <span>
             Craft <ComponentSymbol symbol={componentSymbols.ICE} /> ICEbreaker
           </span>

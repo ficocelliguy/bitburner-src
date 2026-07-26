@@ -7,6 +7,7 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import {
   componentSymbols, ICEbreakerCraftingCost, powerSupplyCraftingCost, processingModuleCraftingCost, uplinkCraftingCost } from "./constants";
+import { saveGame } from "../../SaveObject";
 
 
 export const DeckConnection: DeckModule = {
@@ -215,32 +216,38 @@ export function craftICE() {
 
 export function craftPowerSupply() {
   if (!canAffordComponentCost(powerSupplyCraftingCost)) {
-    return false;
+    return null;
   }
   payComponentCost(powerSupplyCraftingCost);
-  CyberDeckState.storedModules.push(createPowerSupply(CyberDeckState.crafting));
+  const newComponent = createPowerSupply(CyberDeckState.crafting);
+  CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
-  return true;
+  void saveGame();
+  return newComponent;
 }
 
 export function craftProcessingModule() {
   if (!canAffordComponentCost(processingModuleCraftingCost)) {
-    return false;
+    return null;
   }
   payComponentCost(processingModuleCraftingCost);
-  CyberDeckState.storedModules.push(createProcessingModule(CyberDeckState.crafting));
+  const newComponent = createProcessingModule(CyberDeckState.crafting);
+  CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
-  return true;
+  void saveGame();
+  return newComponent;
 }
 
 export function craftUplink() {
   if (!canAffordComponentCost(uplinkCraftingCost)) {
-    return false;
+    return null;
   }
   payComponentCost(uplinkCraftingCost);
-  CyberDeckState.storedModules.push(createUplink(CyberDeckState.crafting));
+  const newComponent = createUplink(CyberDeckState.crafting);
+  CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
-  return true;
+  void saveGame();
+  return newComponent;
 }
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {

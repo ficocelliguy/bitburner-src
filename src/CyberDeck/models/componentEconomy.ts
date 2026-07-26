@@ -6,6 +6,8 @@ import { getCyberdeckStatBonuses } from "./StatBonuses";
 import { createModule } from "./createModule";
 import { minCyclesToProcess, netrunningCooldownMs } from "./constants";
 import { saveGame } from "../../SaveObject";
+import { isClassWork } from "../../Work/ClassWork";
+import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -35,18 +37,17 @@ export function gainCyberdeckComponents(cycles: number) {
   CyberDeckState.components.neurodes += stats.otherMults.neurodeProduction;
   CyberDeckState.components.ROM += stats.otherMults.romProduction;
 
-
   // Violent crime gives neurodes
-  // TODO-fico: classes and ccts should give neurodes
+  // TODO-fico: ccts should give neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
-    const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount);
+    const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * 3;
     CyberDeckState.components.neurodes += newNeurodes;
     CyberDeckState.componentStats.neurodes.kills += newNeurodes;
     lastStatsSnapshot.killCount = Player.numPeopleKilled;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
   // Petty crime gives ROM
-  // TODO-fico: nuke/backdoor, caches, programs should also give ROM
+  // TODO-fico: nuke/backdoor, caches should also give ROM
   else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
     const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
     const newROM = 0.1 + (10 * newMoney + 1e7) / (newMoney + 1e7);
@@ -54,10 +55,23 @@ export function gainCyberdeckComponents(cycles: number) {
     CyberDeckState.componentStats.ROM.pettyCrime += newROM;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
+  // Making programs gives ROM
+  if (isCreateProgramWork(Player.currentWork)) {
+    CyberDeckState.components.ROM += 3;
+    CyberDeckState.componentStats.ROM.programs += 3;
+  }
 
-  // Working gives chips
-  // TODO-fico: IPvGO should also give chips
+  // Classes give neurodes
+  if (isClassWork(Player.currentWork)) {
+    const tuition = Player.currentWork.calculateRates().money * -1;
+    const newNeurodes = 0.5 + tuition / 50;
+    CyberDeckState.components.neurodes += newNeurodes;
+    CyberDeckState.componentStats.neurodes.class += newNeurodes;
+  }
+
+  // Company job gives chips
   if (getAllWorkRep() > lastStatsSnapshot.totalWorkRep) {
+    // TODO-fico: IPvGO should also give chips
     const newRep = getAllWorkRep() - lastStatsSnapshot.totalWorkRep;
     const newChips = 0.1 + (10 * newRep + 1000) / (newRep + 1000);
     CyberDeckState.components.chips += newChips;
@@ -65,7 +79,7 @@ export function gainCyberdeckComponents(cycles: number) {
     lastStatsSnapshot.totalWorkRep = getAllWorkRep();
   }
 
-  // hacknet gives chips
+  // Hacknet gives chips
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
     const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
     const newChips = 0.1 + (10 * newIncome + 1e6) / (newIncome + 1e6);
@@ -73,8 +87,6 @@ export function gainCyberdeckComponents(cycles: number) {
     CyberDeckState.componentStats.chips.hacknet += newChips;
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
   }
-
-
 }
 
 function initStats() {

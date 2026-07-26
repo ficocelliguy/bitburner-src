@@ -81,6 +81,7 @@ function getDefaultMiscMults(): MiscMults {
     neurodeProduction: 0,
     romProduction: 0,
     program_creation_speed: 0,
+    crime_speed: 0,
     stock_commission: 0,
   };
 }

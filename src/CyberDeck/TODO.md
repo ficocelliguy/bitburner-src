@@ -1,13 +1,10 @@
 
-- Show ice count
-  - icons
 
 - make modal showing crafting or netrunning result
   - sparkles?
 
 - crafting
   - align buttons
-  - show costs
   - require enough components to use
 
 - netrunning
@@ -28,11 +25,8 @@
 - more ways to get components
   - backdooring/nuking
   - darknet cache
-  - manual program
-  - school
   - IPvGO
   - CCTs
-
 
 - offline production?
 
