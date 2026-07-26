@@ -166,7 +166,7 @@ function getRandomModuleType() {
 }
 
 function getLevel() {
-  const levelUpAttempts = (CyberDeckState.netrunning / (CyberDeckState.netrunning + 1)) * 16 + Math.random() * 4;
+  const levelUpAttempts = (CyberDeckState.netrunningLevel / (CyberDeckState.netrunningLevel + 1)) * 16 + Math.random() * 4;
   let level = 0;
   for (let i = 0; i < levelUpAttempts ; i++) {
     if (Math.random() < 0.5 - i / 20) {
@@ -179,14 +179,14 @@ function getLevel() {
 // TODO-fico: replace with better module set on prestige
 // TODO-fico: save modules
 export function createInitialModules() {
-  CyberDeckState.netrunning = 8;
+  CyberDeckState.netrunningLevel = 8;
   for (let i = 0; i < 4; i++) {
     CyberDeckState.installedModules.push(createModule());
   }
   for (let i = 0; i < 10; i++) {
     CyberDeckState.storedModules.push(createModule());
   }
-  CyberDeckState.netrunning = 0;
+  CyberDeckState.netrunningLevel = 0;
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>) {
@@ -219,7 +219,7 @@ export function craftPowerSupply() {
     return null;
   }
   payComponentCost(powerSupplyCraftingCost);
-  const newComponent = createPowerSupply(CyberDeckState.crafting);
+  const newComponent = createPowerSupply(CyberDeckState.craftingLevel);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();
@@ -231,7 +231,7 @@ export function craftProcessingModule() {
     return null;
   }
   payComponentCost(processingModuleCraftingCost);
-  const newComponent = createProcessingModule(CyberDeckState.crafting);
+  const newComponent = createProcessingModule(CyberDeckState.craftingLevel);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();
@@ -243,7 +243,7 @@ export function craftUplink() {
     return null;
   }
   payComponentCost(uplinkCraftingCost);
-  const newComponent = createUplink(CyberDeckState.crafting);
+  const newComponent = createUplink(CyberDeckState.craftingLevel);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();

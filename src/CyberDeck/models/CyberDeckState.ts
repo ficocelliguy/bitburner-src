@@ -1,5 +1,5 @@
 import { Settings } from "../../Settings/Settings";
-import { ComponentCounts, Connection, DeckModule, Socket } from "../Types";
+import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { createInitialModules, DeckConnection } from "./createModule";
 
@@ -14,7 +14,7 @@ export const CyberDeckState = {
   storedModules: [] as DeckModule[],
   connections: [] as Connection[],
   coveredSockets: [] as Socket[],
-  lastNetrunningTimestamp: null as number | null,
+  lastNetrunningTimestamp: 0,
   components: {
     ROM: 0,
     neurodes: 0,
@@ -38,9 +38,9 @@ export const CyberDeckState = {
       class: 0,
       codingContracts: 0,
     },
-  },
-  netrunning: 0,
-  crafting: 0,
+  } as ComponentStats,
+  netrunningLevel: 0,
+  craftingLevel: 0,
 };
 
 const t = Settings.theme;

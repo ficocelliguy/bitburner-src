@@ -34,6 +34,7 @@ import { getDarkscapeNavigator } from "./DarkNet/effects/effects";
 import { CodingContractEventEmitter } from "./CodingContract/CodingContractEventEmitter";
 import { showLiterature } from "./Literature/LiteratureHelpers";
 import { prestigeDarknetState } from "./DarkNet/models/DarknetState";
+import { prestigeCyberdeck } from "./CyberDeck/utils/prestigeCyberdeck";
 
 const BitNode8StartingMoney = 250e6;
 function delayedDialog(message: string, canBeDismissedEasily = true) {
@@ -67,7 +68,8 @@ export function prestigeAugmentation(): void {
   }
 
   Player.prestigeAugmentation();
-  Go.prestigeAugmentation();
+    Go.prestigeAugmentation();
+    prestigeCyberdeck();
 
   const homeComp = Player.getHomeComputer();
   // Delete all servers except home computer
@@ -221,6 +223,7 @@ export function prestigeSourceFile(isFlume: boolean): void {
   prestigeAllServers(); // Must be done before initForeignServers()
 
   prestigeDarknetState(true);
+  prestigeCyberdeck(true);
 
   // Reset home computer (only the programs) and add to AllServers
   AddToAllServers(homeComp);

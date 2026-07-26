@@ -118,12 +118,12 @@ function getAllWorkRep() {
 }
 
 export function getNetrunningCooldown(): number {
-  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1);
+  const timeSinceLastRun = Date.now() - CyberDeckState.lastNetrunningTimestamp;
   return Math.max(netrunningCooldownMs - timeSinceLastRun, 0);
 }
 
 export function getCurrentNetrunningIceCost(): number {
-  const timeSinceLastRun = Date.now() - (CyberDeckState.lastNetrunningTimestamp ?? 1);
+  const timeSinceLastRun = Date.now() - CyberDeckState.lastNetrunningTimestamp;
   if (timeSinceLastRun < netrunningCooldownMs) {
     return Infinity;
   }

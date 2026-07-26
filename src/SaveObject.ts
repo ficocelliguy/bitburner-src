@@ -37,6 +37,7 @@ import { InfiltrationState } from "./Infiltration/formulas/game";
 import { hasDarknetAccess } from "./DarkNet/utils/darknetAuthUtils";
 import { loadSettings } from "./Settings/SettingsUtils";
 import { getBitNodeLevel } from "./BitNode/BitNodeUtils";
+import { getCyberdeckSaveData, loadCyberdeckSaveData } from "./CyberDeck/utils/SaveLoad";
 
 /* SaveObject.js
  *  Defines the object used to save/load games
@@ -91,6 +92,7 @@ export type BitburnerSaveObjectType = {
   StaneksGiftSave: string;
   GoSave: unknown; // "loadGo" function can process unknown data
   DarknetSave: unknown;
+  CyberdeckSave: unknown;
   InfiltrationsSave: unknown;
 };
 
@@ -187,6 +189,7 @@ export async function getSaveData(forceExcludeRunningScripts = false): Promise<S
   save.StaneksGiftSave = JSON.stringify(staneksGift);
   save.GoSave = JSON.stringify(getGoSave());
   save.DarknetSave = JSON.stringify(getDarkNetSave());
+  save.CyberdeckSave = JSON.stringify(getCyberdeckSaveData());
   save.InfiltrationsSave = JSON.stringify(InfiltrationState);
 
   if (Player.gang) save.AllGangsSave = JSON.stringify(AllGangs);
@@ -441,6 +444,7 @@ class BitburnerSaveObject implements BitburnerSaveObjectType {
   StaneksGiftSave = "";
   GoSave = "";
   DarknetSave = "";
+  CyberdeckSave = "";
   InfiltrationsSave = "";
 
   toJSON(): IReviverValue {
@@ -484,6 +488,7 @@ export async function loadGame(saveData: SaveData): Promise<boolean> {
   loadFactions(saveObj.FactionsSave, Player);
   loadGo(saveObj.GoSave);
   loadDarkNet(saveObj.DarknetSave);
+  loadCyberdeckSaveData(saveObj.CyberdeckSave);
   loadInfiltrations(saveObj.InfiltrationsSave);
 
   try {

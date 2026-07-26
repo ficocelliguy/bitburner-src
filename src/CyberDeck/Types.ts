@@ -63,3 +63,22 @@ export type EndgameMults = {
   sleeve_sync: number;
   stanek_charge: number;
 };
+
+export type ComponentStats = {
+  ROM: {
+    backdoors: number;
+    caches: number;
+    pettyCrime: number;
+    programs: number;
+  };
+  chips: {
+    hacknet: number;
+    companyWork: number;
+    IPvGO: number;
+  };
+  neurodes: {
+    kills: number;
+    class: number;
+    codingContracts: number;
+  };
+};
