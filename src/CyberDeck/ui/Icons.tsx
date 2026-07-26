@@ -8,24 +8,24 @@ import MedicalInformationSharpIcon from "@mui/icons-material/MedicalInformationS
 import { Settings } from "../../Settings/Settings";
 
 export function getModuleIcon(module: DeckModule) {
-  return <div style={{padding: "5px", width: "50px", height: "50px", color:getRarityColor(module)}}>{getIconComponent(module)}</div>
+  return <div style={{padding: "5px", width: "50px", height: "50px", color:getRarityColor(module)}}>{getModIconComponent(module.type)}</div>
 }
 
-function getIconComponent(module: DeckModule) {
-  const style = { width: "50px", height: "50px" };
-  if (module.type === ModuleType.ProcessingModule) {
+export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
+  const style = { width: `${size}px`, height: `${size}px` };
+  if (moduleType === ModuleType.ProcessingModule) {
     return <MemoryIcon style={style} />;
   }
-  if (module.type === ModuleType.PowerSupply) {
+  if (moduleType === ModuleType.PowerSupply) {
     return <LanOutlinedIcon style={style} />;
   }
-  if (module.type === ModuleType.RackExtension) {
+  if (moduleType === ModuleType.RackExtension) {
     return <AllInboxSharpIcon style={style} />;
   }
-  if (module.type === ModuleType.Uplink) {
+  if (moduleType === ModuleType.Uplink) {
     return <PodcastsOutlinedIcon style={style} />;
   }
-  if (module.type === ModuleType.SkillChip) {
+  if (moduleType === ModuleType.SkillChip) {
     return <MedicalInformationSharpIcon style={style}/>;
   }
 }

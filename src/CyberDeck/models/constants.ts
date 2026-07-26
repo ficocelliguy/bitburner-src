@@ -3,6 +3,13 @@ import { ComponentCounts } from "../Types";
 export const netrunningCooldownMs = 1000 * 20;
 export const minCyclesToProcess = 20;
 
+export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
+  ROM: "⛃",
+  neurodes: "⌬",
+  chips: "⌨ ",
+  ICE: "❅",
+};
+
 export const ICEbreakerCraftingCost: ComponentCounts = {
   ROM: 20,
   neurodes: 20,

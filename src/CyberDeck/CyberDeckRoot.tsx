@@ -9,6 +9,10 @@ import { cyberdeckStyles } from "./ui/cyberdeckStyles";
 import { CyberDeckState } from "./models/CyberDeckState";
 import { useRerender } from "../ui/React/hooks";
 import { CraftingPage } from "./ui/CraftingPage";
+import { ComponentSymbol } from "./ui/ComponentCost";
+import { formatNumber } from "../ui/formatNumber";
+import { componentSymbols } from "./models/constants";
+import { Settings } from "../Settings/Settings";
 
 export function CyberDeckRoot(): React.ReactElement {
   useRerender(1000);
@@ -40,15 +44,28 @@ export function CyberDeckRoot(): React.ReactElement {
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            margin: "5px auto 0 10px",
+            flexDirection: "row",
+            alignItems: "flex-start",
+            marginLeft: "5px",
+            gap: "7px"
           }}
         >
-          <Typography sx={{ fontSize: "10px" }}>ROM: {Math.floor(CyberDeckState.components.ROM)}</Typography>
-          <Typography sx={{ fontSize: "10px" }}>Neurodes: {Math.floor(CyberDeckState.components.neurodes)}</Typography>
-          <Typography sx={{ fontSize: "10px" }}>Chips: {Math.floor(CyberDeckState.components.chips)}</Typography>
-          <Typography sx={{ fontSize: "10px" }}>ICEbreakers: {Math.floor(CyberDeckState.components.ICE)}</Typography>
+          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
+              <ComponentSymbol symbol={componentSymbols.ROM} />:{formatNumber(Math.floor(CyberDeckState.components.ROM), 0, 1000)}
+            </Typography>
+            <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
+              <ComponentSymbol symbol={componentSymbols.neurodes} />:{formatNumber(Math.floor(CyberDeckState.components.neurodes), 0, 1000)}
+            </Typography>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+            <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
+              <ComponentSymbol symbol={componentSymbols.chips} />:{formatNumber(Math.floor(CyberDeckState.components.chips), 0, 1000)}
+            </Typography>
+            <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
+              <ComponentSymbol symbol={componentSymbols.ICE} />:{formatNumber(Math.floor(CyberDeckState.components.ICE), 0, 1000)}
+            </Typography>
+          </div>
         </div>
       </Box>
       {value === 0 && <ModuleRackAndInventory />}

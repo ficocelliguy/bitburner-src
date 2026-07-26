@@ -4,7 +4,7 @@ import {  portalStyles } from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
 import { DeckModule } from "../Types";
 import { CyberDeckState } from "../models/CyberDeckState";
-import { getCurrentNetrunningIceCost, getNetrunningCooldown, netRun } from "../models/componentEconomy";
+import { canNetrun, getCurrentNetrunningIceCost, getNetrunningCooldown, netRun } from "../models/componentEconomy";
 import { format } from "date-fns";
 
 export function NetrunningPortal(): React.ReactElement {
@@ -17,11 +17,10 @@ export function NetrunningPortal(): React.ReactElement {
   const cost = getCurrentNetrunningIceCost();
   const disabled = !entering && CyberDeckState.components.ICE < cost;
 
-  function handlePortalClick() {
-    const rewards = netRun();
-    if (!rewards) return;
+  async function handlePortalClick() {
+    if (!canNetrun()) return;
     setEntering(true);
-
+    const rewards = await netRun();
     setNetrunningRewards(rewards);
     setTimeout(() => { if (!entering) { setShowPortal(false); setShowRewardsModal(true); }}, 1200);
   }
@@ -41,7 +40,7 @@ export function NetrunningPortal(): React.ReactElement {
             className={`${classes.portalContainer} ${entering ? classes.enteringPortal : ""} ${
               disabled ? classes.portalDisabled : ""
             }`}
-            onClick={handlePortalClick}
+            onClick={() => void handlePortalClick()}
           >
             <div className={`${classes.portalRing}`}></div>
             <div className={`${classes.portalRing} ${classes.portalRingReverse}`}></div>

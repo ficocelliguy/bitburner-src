@@ -6,6 +6,8 @@ import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
+import { ComponentSymbol } from "../ui/ComponentCost";
+import { componentSymbols } from "./constants";
 
 
 export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
@@ -95,19 +97,33 @@ function formatStat(key: string, value: number): JSX.Element {
     .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
     .toLowerCase()
     .replace(/\b\w/g, (c) => c.toUpperCase())
-    .replaceAll(" Exp", "XP");
+    .replaceAll(" Exp", "XP")
 
   const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
   const isBuff = key.includes("_cost") ? value < 0 : value > 0;
 
   return (
     <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
-      {`${formattedKey}: `}
+      <FormattedKeyElement formattedKey={formattedKey} />:
       <span style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
-        {value > 0 ? "+" : ""}{valueStr}
+        {value > 0 ? "+" : ""}
+        {valueStr}
       </span>
     </Typography>
   );
+}
+
+function FormattedKeyElement({ formattedKey }: { formattedKey: string }): JSX.Element {
+  if (formattedKey === "Rom Production") {
+    return <ComponentSymbol symbol={componentSymbols.ROM} />;
+  }
+  if (formattedKey === "Chip Production") {
+    return <ComponentSymbol symbol={componentSymbols.chips} />;
+  }
+  if (formattedKey === "Neurode Production") {
+    return <ComponentSymbol symbol={componentSymbols.neurodes} />;
+  }
+  return <>{formattedKey}</>;
 }
 
 function formatAsPercent(value: number): string {

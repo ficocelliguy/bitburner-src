@@ -5,6 +5,7 @@ import { Companies } from "../../Company/Companies";
 import { getCyberdeckStatBonuses } from "./StatBonuses";
 import { createModule } from "./createModule";
 import { minCyclesToProcess, netrunningCooldownMs } from "./constants";
+import { saveGame } from "../../SaveObject";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -119,9 +120,13 @@ export function getCurrentNetrunningIceCost(): number {
   return Math.floor(diminishingCosts) || 1;
 }
 
-export function netRun() {
-  if (CyberDeckState.components.ICE < getCurrentNetrunningIceCost()) {
-    return;
+export function canNetrun() {
+  return CyberDeckState.components.ICE >= getCurrentNetrunningIceCost();
+}
+
+export async function netRun() {
+  if (!canNetrun()) {
+    return [];
   }
   CyberDeckState.components.ICE -= getCurrentNetrunningIceCost();
   const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
@@ -130,5 +135,6 @@ export function netRun() {
   }
   CyberDeckState.storedModules.unshift(...rewards);
   CyberDeckState.lastNetrunningTimestamp = Date.now();
+  await saveGame();
   return rewards;
 }

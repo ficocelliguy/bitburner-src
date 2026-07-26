@@ -5,6 +5,8 @@ import { DeckModule } from "../Types";
 import { ModuleComponent } from "./ModuleComponent";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { ModuleLootCover } from "./ModuleLootCover";
+import { ComponentSymbol } from "./ComponentCost";
+import { componentSymbols } from "../models/constants";
 
 type RewardsModalProps = {
   open: boolean;
@@ -43,7 +45,7 @@ export function RewardsModal({ open, onClose, rewards, componentRewards }: Rewar
           <>
             <Typography variant="h6">Components:</Typography>
             <div>
-              Chips: {componentRewards.chips}, Neurodes: {componentRewards.neurodes}, ROM: {componentRewards.ROM}
+              <ComponentSymbol symbol={componentSymbols.chips} />: {componentRewards.chips}, <ComponentSymbol symbol={componentSymbols.neurodes} />: {componentRewards.neurodes}, <ComponentSymbol symbol={componentSymbols.ROM} />: {componentRewards.ROM}
             </div>
           </>
         )}
