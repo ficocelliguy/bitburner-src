@@ -10,7 +10,6 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberDeckState.connections = [];
     CyberDeckState.coveredSockets = [];
     CyberDeckState.netrunningLevel = 0;
-    CyberDeckState.craftingLevel = 0;
   }
   CyberDeckState.components = {
     chips: 0,

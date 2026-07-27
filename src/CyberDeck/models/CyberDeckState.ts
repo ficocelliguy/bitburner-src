@@ -40,7 +40,12 @@ export const CyberDeckState = {
     },
   } as ComponentStats,
   netrunningLevel: 0,
-  craftingLevel: 0,
+  netrunningSeed: 0,
+  netrunningSeedUsages: 0,
+  netrunningCorruptedSeed: 0,
+  netrunningCorruptedSeedUsages: 0,
+  craftingSeed: 0,
+  craftingSeedUsages: 0,
 };
 
 const t = Settings.theme;

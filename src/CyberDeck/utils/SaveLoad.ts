@@ -13,7 +13,6 @@ type CyberdeckSaveData = {
   components: ComponentCounts;
   componentStats: ComponentStats;
   netrunningLevel: number;
-  craftingLevel: number;
 };
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
@@ -27,7 +26,6 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     components: CyberDeckState.components,
     componentStats: CyberDeckState.componentStats,
     netrunningLevel: CyberDeckState.netrunningLevel,
-    craftingLevel: CyberDeckState.craftingLevel,
   };
 }
 
@@ -49,7 +47,6 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       components,
       componentStats,
       netrunningLevel,
-      craftingLevel,
     } = parsedData;
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
@@ -60,8 +57,6 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberDeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
     CyberDeckState.netrunningLevel = netrunningLevel;
-    if (typeof craftingLevel !== "number") throw new Error("Invalid cyberdeck savestring value: craftingLevel");
-    CyberDeckState.craftingLevel = craftingLevel;
 
 
     if (!isModuleArray(installedModules)) throw new Error("Invalid cyberdeck savestring value: installedModules");

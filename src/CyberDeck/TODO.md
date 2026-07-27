@@ -32,6 +32,13 @@
 
 - dev menu
 
+- seed netrunning, glitch netrunning, and crafting
+  - seed is based on save ID + source-files 
+  - track number of usages of seed, include in save data
+  - when creating a module, make an IP or module VIN that can be used to create the module again later
+  - rolls a percent of max level as part of seed - max level is based on netrunning level
+    - roll with disadvantage to keep higher rarities more rare? roll 3 keep lowest 2?
+
 
 
 CYBERDECK

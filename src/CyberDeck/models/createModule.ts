@@ -219,7 +219,7 @@ export function craftPowerSupply() {
     return null;
   }
   payComponentCost(powerSupplyCraftingCost);
-  const newComponent = createPowerSupply(CyberDeckState.craftingLevel);
+  const newComponent = createPowerSupply(1);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();
@@ -231,7 +231,7 @@ export function craftProcessingModule() {
     return null;
   }
   payComponentCost(processingModuleCraftingCost);
-  const newComponent = createProcessingModule(CyberDeckState.craftingLevel);
+  const newComponent = createProcessingModule(1);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();
@@ -243,7 +243,7 @@ export function craftUplink() {
     return null;
   }
   payComponentCost(uplinkCraftingCost);
-  const newComponent = createUplink(CyberDeckState.craftingLevel);
+  const newComponent = createUplink(1);
   CyberDeckState.storedModules.push(newComponent);
   CyberDeckEvents.emit();
   void saveGame();
