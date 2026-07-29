@@ -1,4 +1,4 @@
-import { CyberDeckState } from "./CyberDeckState";
+import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
@@ -18,11 +18,11 @@ const lastStatsSnapshot = {
 }
 
 export function gainCyberdeckComponents(cycles: number) {
-  CyberDeckState.storedCycles += cycles;
+  CyberdeckState.storedCycles += cycles;
   initStats();
 
   if (
-    CyberDeckState.storedCycles < minCyclesToProcess ||
+    CyberdeckState.storedCycles < minCyclesToProcess ||
     lastStatsSnapshot.killCount === null ||
     lastStatsSnapshot.totalWorkRep === null ||
     lastStatsSnapshot.crimeMoney === null ||
@@ -30,19 +30,19 @@ export function gainCyberdeckComponents(cycles: number) {
   ) {
     return;
   }
-  CyberDeckState.storedCycles -= minCyclesToProcess;
+  CyberdeckState.storedCycles -= minCyclesToProcess;
 
   const stats = getCyberdeckStatBonuses();
-  CyberDeckState.components.chips += stats.otherMults.chipProduction;
-  CyberDeckState.components.neurodes += stats.otherMults.neurodeProduction;
-  CyberDeckState.components.ROM += stats.otherMults.romProduction;
+  CyberdeckState.components.chips += stats.otherMults.chipProduction;
+  CyberdeckState.components.neurodes += stats.otherMults.neurodeProduction;
+  CyberdeckState.components.ROM += stats.otherMults.romProduction;
 
   // Violent crime gives neurodes
   // TODO-fico: ccts should give neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
     const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * 3;
-    CyberDeckState.components.neurodes += newNeurodes;
-    CyberDeckState.componentStats.neurodes.kills += newNeurodes;
+    CyberdeckState.components.neurodes += newNeurodes;
+    CyberdeckState.componentStats.neurodes.kills += newNeurodes;
     lastStatsSnapshot.killCount = Player.numPeopleKilled;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
@@ -51,22 +51,22 @@ export function gainCyberdeckComponents(cycles: number) {
   else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
     const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
     const newROM = 0.1 + (10 * newMoney + 1e7) / (newMoney + 1e7);
-    CyberDeckState.components.ROM += newROM;
-    CyberDeckState.componentStats.ROM.pettyCrime += newROM;
+    CyberdeckState.components.ROM += newROM;
+    CyberdeckState.componentStats.ROM.pettyCrime += newROM;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
   // Making programs gives ROM
   if (isCreateProgramWork(Player.currentWork)) {
-    CyberDeckState.components.ROM += 3;
-    CyberDeckState.componentStats.ROM.programs += 3;
+    CyberdeckState.components.ROM += 3;
+    CyberdeckState.componentStats.ROM.programs += 3;
   }
 
   // Classes give neurodes
   if (isClassWork(Player.currentWork)) {
     const tuition = Player.currentWork.calculateRates().money * -1;
     const newNeurodes = 0.5 + tuition / 50;
-    CyberDeckState.components.neurodes += newNeurodes;
-    CyberDeckState.componentStats.neurodes.class += newNeurodes;
+    CyberdeckState.components.neurodes += newNeurodes;
+    CyberdeckState.componentStats.neurodes.class += newNeurodes;
   }
 
   // Company job gives chips
@@ -74,8 +74,8 @@ export function gainCyberdeckComponents(cycles: number) {
     // TODO-fico: IPvGO should also give chips
     const newRep = getAllWorkRep() - lastStatsSnapshot.totalWorkRep;
     const newChips = 0.1 + (10 * newRep + 1000) / (newRep + 1000);
-    CyberDeckState.components.chips += newChips;
-    CyberDeckState.componentStats.chips.companyWork += newChips;
+    CyberdeckState.components.chips += newChips;
+    CyberdeckState.componentStats.chips.companyWork += newChips;
     lastStatsSnapshot.totalWorkRep = getAllWorkRep();
   }
 
@@ -83,8 +83,8 @@ export function gainCyberdeckComponents(cycles: number) {
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
     const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
     const newChips = 0.1 + (10 * newIncome + 1e6) / (newIncome + 1e6);
-    CyberDeckState.components.chips += newChips;
-    CyberDeckState.componentStats.chips.hacknet += newChips;
+    CyberdeckState.components.chips += newChips;
+    CyberdeckState.componentStats.chips.hacknet += newChips;
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
   }
 }
@@ -118,12 +118,12 @@ function getAllWorkRep() {
 }
 
 export function getNetrunningCooldown(): number {
-  const timeSinceLastRun = Date.now() - CyberDeckState.lastNetrunningTimestamp;
+  const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
   return Math.max(netrunningCooldownMs - timeSinceLastRun, 0);
 }
 
 export function getCurrentNetrunningIceCost(): number {
-  const timeSinceLastRun = Date.now() - CyberDeckState.lastNetrunningTimestamp;
+  const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
   if (timeSinceLastRun < netrunningCooldownMs) {
     return Infinity;
   }
@@ -133,20 +133,20 @@ export function getCurrentNetrunningIceCost(): number {
 }
 
 export function canNetrun() {
-  return CyberDeckState.components.ICE >= getCurrentNetrunningIceCost();
+  return CyberdeckState.components.ICE >= getCurrentNetrunningIceCost();
 }
 
 export async function netRun() {
   if (!canNetrun()) {
     return [];
   }
-  CyberDeckState.components.ICE -= getCurrentNetrunningIceCost();
+  CyberdeckState.components.ICE -= getCurrentNetrunningIceCost();
   const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
   if (!rewards.some(m => m.level >= 3)) {
     rewards[2] = createModule(undefined, 3);
   }
-  CyberDeckState.storedModules.unshift(...rewards);
-  CyberDeckState.lastNetrunningTimestamp = Date.now();
+  CyberdeckState.storedModules.unshift(...rewards);
+  CyberdeckState.lastNetrunningTimestamp = Date.now();
   await saveGame();
   return rewards;
 }

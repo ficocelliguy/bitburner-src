@@ -1,4 +1,4 @@
-import { CyberDeckState, socketColors } from "../models/CyberDeckState";
+import { CyberdeckState, socketColors } from "../models/CyberdeckState";
 import { getSocketId } from "../utils/moduleUtilities";
 import { Socket } from "../Types";
 
@@ -17,7 +17,7 @@ export function DrawWiresOnCanvas(canvas: HTMLCanvasElement | null, startingSock
     drawLine(startingSocket.socketIndex, ctx, startX, startY, mouseLocation.x - canvasLocation.x, mouseLocation.y - canvasLocation.y);
   }
 
-  for (const connection of CyberDeckState.connections) {
+  for (const connection of CyberdeckState.connections) {
     const [source, destination] = connection;
     const sourceLocation = document.getElementById(getSocketId(source))?.getBoundingClientRect();
     const destinationLocation = document.getElementById(getSocketId(destination))?.getBoundingClientRect();

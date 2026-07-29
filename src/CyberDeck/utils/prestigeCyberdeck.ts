@@ -1,23 +1,23 @@
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberdeckState } from "../models/CyberdeckState";
 
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
-    CyberDeckState.hasCyberdeck = true; // TODO-fico
-    CyberDeckState.storedCycles = 0;
-    CyberDeckState.installedModules = [];
-    CyberDeckState.storedModules = [];
-    CyberDeckState.connections = [];
-    CyberDeckState.coveredSockets = [];
-    CyberDeckState.netrunningLevel = 0;
+    CyberdeckState.hasCyberdeck = true; // TODO-fico
+    CyberdeckState.storedCycles = 0;
+    CyberdeckState.installedModules = [];
+    CyberdeckState.storedModules = [];
+    CyberdeckState.connections = [];
+    CyberdeckState.coveredSockets = [];
+    CyberdeckState.netrunningLevel = 0;
   }
-  CyberDeckState.components = {
+  CyberdeckState.components = {
     chips: 0,
     ROM: 0,
     neurodes: 0,
     ICE: 2,
   };
-  CyberDeckState.componentStats = {
+  CyberdeckState.componentStats = {
     ROM: {
       backdoors: 0,
       caches: 0,
@@ -35,5 +35,5 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
       codingContracts: 0,
     }
   };
-  CyberDeckState.lastNetrunningTimestamp = 0;
+  CyberdeckState.lastNetrunningTimestamp = 0;
 }

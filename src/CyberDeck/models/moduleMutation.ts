@@ -1,6 +1,6 @@
 import { DropResult } from "react-beautiful-dnd";
-import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventory";
-import { CyberDeckEvents, CyberDeckState, getChargedModuleIDs } from "./CyberDeckState";
+import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventoryPage";
+import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "./CyberdeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
@@ -17,7 +17,7 @@ export function handleModuleMoved(result: DropResult) {
   const sourceIsStorage = result.source.droppableId === MODULE_STORAGE;
   const destinationIsStorage = result.destination.droppableId === MODULE_STORAGE;
 
-  const sourceLocation = sourceIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
+  const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const moduleToMove = sourceLocation[result.source.index]
 
 
@@ -29,15 +29,15 @@ export function handleModuleMoved(result: DropResult) {
   moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
 
   // Undo the move if it causes invalid wiring
-  if (CyberDeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
+  if (CyberdeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
     moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.destination.index, result.source.index);
     SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
   }
 }
 
 export function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
-  const sourceLocation = sourceIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
-  const destinationLocation = destinationIsStorage ? CyberDeckState.storedModules : CyberDeckState.installedModules;
+  const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
+  const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
 
   sourceLocation.splice(sourceIndex, 1);
   destinationLocation.splice(destinationIndex, 0, moduleToMove);
@@ -49,9 +49,9 @@ export function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, d
 }
 
 export function ejectOverloadedModules() {
-  for (const module of CyberDeckState.installedModules.slice(getCurrentRackSize())) {
+  for (const module of CyberdeckState.installedModules.slice(getCurrentRackSize())) {
     disconnectModule(module);
-    moveModule(module, false, true, CyberDeckState.installedModules.indexOf(module));
+    moveModule(module, false, true, CyberdeckState.installedModules.indexOf(module));
   }
 }
 
@@ -81,7 +81,7 @@ export function createConnection(source: Socket, destination: Socket) {
     return;
   }
 
-  CyberDeckState.connections.push([source, destination]);
+  CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
 }
 
@@ -93,7 +93,7 @@ function updateConnectedModules() {
   // Apply cyberdeck stat bonuses
   Player.applyEntropy(Player.entropy);
 
-  CyberDeckEvents.emit();
+  CyberdeckEvents.emit();
 }
 
 function getInstalledModule(moduleId: string) {
@@ -101,14 +101,14 @@ function getInstalledModule(moduleId: string) {
     return DeckConnection;
   }
   return (
-    CyberDeckState.installedModules.find((m) => m.id === moduleId) ||
-    CyberDeckState.storedModules.find((m) => m.id === moduleId)
+    CyberdeckState.installedModules.find((m) => m.id === moduleId) ||
+    CyberdeckState.storedModules.find((m) => m.id === moduleId)
   );
 }
 
 export function wireOverlapsSocket(socket: Socket) {
   const socketModuleIndex = getModuleIndex(socket.moduleId);
-  return CyberDeckState.connections.find(([s, d]) => {
+  return CyberdeckState.connections.find(([s, d]) => {
     if (s.moduleId === socket.moduleId || d.moduleId === socket.moduleId) return false;
     const sModuleIndex = getModuleIndex(s.moduleId);
     const dModuleIndex = getModuleIndex(d.moduleId);
@@ -120,24 +120,24 @@ export function wireOverlapsSocket(socket: Socket) {
 }
 
 export function socketIsCovered(socket: Socket) {
-  return CyberDeckState.coveredSockets.find((s) => s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex);
+  return CyberdeckState.coveredSockets.find((s) => s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex);
 }
 
 export function updateCoveredSockets() {
-  CyberDeckState.coveredSockets = [];
-  for (const module of CyberDeckState.installedModules) {
+  CyberdeckState.coveredSockets = [];
+  for (const module of CyberdeckState.installedModules) {
     for (const [index, isSocket] of module.sockets.entries()) {
       if (!isSocket) continue;
       const socket = { moduleId: module.id, socketIndex: index };
       if (determineIfSocketIsCovered(socket)) {
-        CyberDeckState.coveredSockets.push(socket);
+        CyberdeckState.coveredSockets.push(socket);
       }
     }
   }
 }
 
 function determineIfSocketIsCovered(socket: Socket) {
-  return CyberDeckState.connections.find(([s, d]) => {
+  return CyberdeckState.connections.find(([s, d]) => {
     const isUniqueSocket =
       s.socketIndex === socket.socketIndex && s.moduleId !== socket.moduleId && d.moduleId !== socket.moduleId;
     if (!isUniqueSocket) return false;
@@ -152,18 +152,18 @@ function determineIfSocketIsCovered(socket: Socket) {
 }
 
 export function getModuleIndex(moduleId: string) {
-  return CyberDeckState.installedModules.findIndex((m) => m.id == moduleId);
+  return CyberdeckState.installedModules.findIndex((m) => m.id == moduleId);
 }
 
 export function disconnectSocket(source: Socket | undefined) {
   if (!source) return;
-  const sourceConnection = CyberDeckState.connections.findIndex(
+  const sourceConnection = CyberdeckState.connections.findIndex(
     ([s, d]) =>
       (s.socketIndex === source.socketIndex && s.moduleId === source.moduleId) ||
       (d.socketIndex === source.socketIndex && d.moduleId === source.moduleId),
   );
   if (sourceConnection !== -1) {
-    CyberDeckState.connections.splice(sourceConnection, 1);
+    CyberdeckState.connections.splice(sourceConnection, 1);
     updateConnectedModules();
   }
 }
@@ -177,18 +177,18 @@ export function disconnectModule(module: DeckModule) {
 
 function consumeSkillChips() {
   const chargedModuleIDs = getChargedModuleIDs();
-  const chargedSkillModules = CyberDeckState.installedModules.filter(
+  const chargedSkillModules = CyberdeckState.installedModules.filter(
     (m) => m.type === ModuleType.SkillChip && chargedModuleIDs.includes(m.id),
   );
   for (const module of chargedSkillModules) {
     const stats = module.stats?.consumableStats;
     if (stats?.netrunning) {
-      CyberDeckState.netrunningLevel += stats.netrunning;
+      CyberdeckState.netrunningLevel += stats.netrunning;
       SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
     }
     // TODO-fico: other consumable types (crafting boost, components, etc)
 
     disconnectModule(module);
   }
-  CyberDeckState.installedModules = CyberDeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
+  CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
 }

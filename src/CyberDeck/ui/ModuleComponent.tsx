@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { CyberDeckEvents, getChargedModuleIDs } from "../models/CyberDeckState";
+import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { DeckModule, ModuleType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
@@ -46,7 +46,7 @@ export function ModuleComponent({
   }, [isAnyDragActive]);
 
   useEffect(() => {
-    const clearSubscription = CyberDeckEvents.subscribe(() => updateDisplay());
+    const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
     updateDisplay();
     return () => clearSubscription();
   }, [updateDisplay]);

@@ -1,17 +1,17 @@
 import React from "react";
 import { ComponentCounts } from "../Types";
 import { Settings } from "../../Settings/Settings";
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberdeckState } from "../models/CyberdeckState";
 import { componentSymbols } from "../models/constants";
 
 
 export function ComponentCost({ cost }: { cost: ComponentCounts }) {
   return (
   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
-      <ComponentCostRow available={CyberDeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
-      <ComponentCostRow available={CyberDeckState.components.neurodes} cost={cost.neurodes} symbol={componentSymbols.neurodes} />
-      <ComponentCostRow available={CyberDeckState.components.chips} cost={cost.chips} symbol={componentSymbols.chips} />
-      <ComponentCostRow available={CyberDeckState.components.ICE} cost={cost.ICE} symbol={componentSymbols.ICE} />
+      <ComponentCostRow available={CyberdeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
+      <ComponentCostRow available={CyberdeckState.components.neurodes} cost={cost.neurodes} symbol={componentSymbols.neurodes} />
+      <ComponentCostRow available={CyberdeckState.components.chips} cost={cost.chips} symbol={componentSymbols.chips} />
+      <ComponentCostRow available={CyberdeckState.components.ICE} cost={cost.ICE} symbol={componentSymbols.ICE} />
     </div>
   );
 }

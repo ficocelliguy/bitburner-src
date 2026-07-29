@@ -4,7 +4,7 @@ import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
-import { CyberDeckEvents, CyberDeckState } from "../models/CyberDeckState";
+import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { ModuleComponent } from "./ModuleComponent";
 import {
   createConnection,
@@ -22,7 +22,7 @@ export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
 export const TRASH_CAN = "trashcan";
 
-export function ModuleRackAndInventory(): React.ReactElement {
+export function ModuleRackAndInventoryPage(): React.ReactElement {
   const render = useRerender();
   const {classes} = cyberdeckStyles();
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -36,7 +36,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
   }, [render]);
 
   useEffect(() => {
-    const clearSubscription = CyberDeckEvents.subscribe(() => updateDisplay());
+    const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
     updateDisplay();
     return () => clearSubscription();
   }, [updateDisplay]);
@@ -84,7 +84,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
   }
 
   function isMaxModulesInstalled() {
-    return CyberDeckState.installedModules.length >= getCurrentRackSize();
+    return CyberdeckState.installedModules.length >= getCurrentRackSize();
   }
 
   return (
@@ -159,7 +159,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {CyberDeckState.installedModules.map((module, index) => (
+                    {CyberdeckState.installedModules.map((module, index) => (
                       <ModuleComponent
                         key={module.id}
                         module={module}
@@ -237,7 +237,7 @@ export function ModuleRackAndInventory(): React.ReactElement {
                       overflowX: "scroll",
                     }}
                   >
-                    {CyberDeckState.storedModules.map((module, index) => (
+                    {CyberdeckState.storedModules.map((module, index) => (
                       <ModuleComponent
                         key={module.id}
                         module={module}

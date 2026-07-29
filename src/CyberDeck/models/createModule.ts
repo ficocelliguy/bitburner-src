@@ -1,4 +1,4 @@
-import { CyberDeckEvents, CyberDeckState } from "./CyberDeckState";
+import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckModule, ModuleStats, ModuleType } from "../Types";
 import { generateStatBonus } from "./StatBonuses";
@@ -166,7 +166,7 @@ function getRandomModuleType() {
 }
 
 function getLevel() {
-  const levelUpAttempts = (CyberDeckState.netrunningLevel / (CyberDeckState.netrunningLevel + 1)) * 16 + Math.random() * 4;
+  const levelUpAttempts = (CyberdeckState.netrunningLevel / (CyberdeckState.netrunningLevel + 1)) * 16 + Math.random() * 4;
   let level = 0;
   for (let i = 0; i < levelUpAttempts ; i++) {
     if (Math.random() < 0.5 - i / 20) {
@@ -179,29 +179,29 @@ function getLevel() {
 // TODO-fico: replace with better module set on prestige
 // TODO-fico: save modules
 export function createInitialModules() {
-  CyberDeckState.netrunningLevel = 8;
+  CyberdeckState.netrunningLevel = 8;
   for (let i = 0; i < 4; i++) {
-    CyberDeckState.installedModules.push(createModule());
+    CyberdeckState.installedModules.push(createModule());
   }
   for (let i = 0; i < 10; i++) {
-    CyberDeckState.storedModules.push(createModule());
+    CyberdeckState.storedModules.push(createModule());
   }
-  CyberDeckState.netrunningLevel = 0;
+  CyberdeckState.netrunningLevel = 0;
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>) {
-  if (CyberDeckState.components.chips < (cost.chips ?? 0)) return false;
-  if (CyberDeckState.components.ROM < (cost.ROM ?? 0)) return false;
-  if (CyberDeckState.components.neurodes < (cost.neurodes ?? 0)) return false;
-  if (CyberDeckState.components.ICE < (cost.ICE ?? 0)) return false;
+  if (CyberdeckState.components.chips < (cost.chips ?? 0)) return false;
+  if (CyberdeckState.components.ROM < (cost.ROM ?? 0)) return false;
+  if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0)) return false;
+  if (CyberdeckState.components.ICE < (cost.ICE ?? 0)) return false;
   return true;
 }
 
 export function payComponentCost(cost: Partial<ComponentCounts>) {
-  CyberDeckState.components.chips -= (cost.chips ?? 0);
-  CyberDeckState.components.ROM -= (cost.ROM ?? 0);
-  CyberDeckState.components.neurodes -= (cost.neurodes ?? 0);
-  CyberDeckState.components.ICE -= (cost.ICE ?? 0);
+  CyberdeckState.components.chips -= (cost.chips ?? 0);
+  CyberdeckState.components.ROM -= (cost.ROM ?? 0);
+  CyberdeckState.components.neurodes -= (cost.neurodes ?? 0);
+  CyberdeckState.components.ICE -= (cost.ICE ?? 0);
 }
 
 export function craftICE() {
@@ -209,8 +209,8 @@ export function craftICE() {
     return false;
   }
   payComponentCost(ICEbreakerCraftingCost);
-  CyberDeckState.components.ICE += 1;
-  CyberDeckEvents.emit();
+  CyberdeckState.components.ICE += 1;
+  CyberdeckEvents.emit();
   return true;
 }
 
@@ -220,8 +220,8 @@ export function craftPowerSupply() {
   }
   payComponentCost(powerSupplyCraftingCost);
   const newComponent = createPowerSupply(1);
-  CyberDeckState.storedModules.push(newComponent);
-  CyberDeckEvents.emit();
+  CyberdeckState.storedModules.push(newComponent);
+  CyberdeckEvents.emit();
   void saveGame();
   return newComponent;
 }
@@ -232,8 +232,8 @@ export function craftProcessingModule() {
   }
   payComponentCost(processingModuleCraftingCost);
   const newComponent = createProcessingModule(1);
-  CyberDeckState.storedModules.push(newComponent);
-  CyberDeckEvents.emit();
+  CyberdeckState.storedModules.push(newComponent);
+  CyberdeckEvents.emit();
   void saveGame();
   return newComponent;
 }
@@ -244,8 +244,8 @@ export function craftUplink() {
   }
   payComponentCost(uplinkCraftingCost);
   const newComponent = createUplink(1);
-  CyberDeckState.storedModules.push(newComponent);
-  CyberDeckEvents.emit();
+  CyberdeckState.storedModules.push(newComponent);
+  CyberdeckEvents.emit();
   void saveGame();
   return newComponent;
 }
@@ -253,16 +253,16 @@ export function craftUplink() {
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {
   // TODO-fico: validation
   // TODO-fico: balance numbers
-  CyberDeckState.components.chips += 2;
-  CyberDeckState.components.ROM += 2;
-  CyberDeckState.components.neurodes += 2;
+  CyberdeckState.components.chips += 2;
+  CyberdeckState.components.ROM += 2;
+  CyberdeckState.components.neurodes += 2;
   disconnectModule(module);
-  if (CyberDeckState.installedModules.includes(module)) {
+  if (CyberdeckState.installedModules.includes(module)) {
     moveModule(module, false, true, 0);
   }
-  CyberDeckState.storedModules = CyberDeckState.storedModules.filter((m) => m !== module);
+  CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
   if (showToast) {
     SnackbarEvents.emit(`Module disassembled. Gained +2 ${componentSymbols.chips}, +2 ${componentSymbols.ROM}, +2 ${componentSymbols.neurodes}.`, ToastVariant.INFO, 2000);
   }
-  CyberDeckEvents.emit();
+  CyberdeckEvents.emit();
 }

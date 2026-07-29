@@ -3,10 +3,10 @@ import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from 
 import { EventEmitter } from "../../utils/EventEmitter";
 import { createInitialModules, DeckConnection } from "./createModule";
 
-/** Event emitter to allow the UI to subscribe to CyberDeck gameplay updates in order to trigger rerenders properly */
-export const CyberDeckEvents = new EventEmitter<[]>();
+/** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
+export const CyberdeckEvents = new EventEmitter<[]>();
 
-export const CyberDeckState = {
+export const CyberdeckState = {
   hasCyberdeck: true,
   storedCycles: 0,
   baseRackSize: 6,
@@ -53,11 +53,11 @@ const t = Settings.theme;
 export const socketColors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
 
 export function getChargedModuleIDs() : string[] {
-  if (!CyberDeckState.installedModules.length) return [];
+  if (!CyberdeckState.installedModules.length) return [];
 
   const chargedModules = [DeckConnection.id];
   for (const moduleId of chargedModules) {
-    const connections = CyberDeckState.connections.filter(
+    const connections = CyberdeckState.connections.filter(
       ([source, destination]) => source.moduleId === moduleId || destination.moduleId === moduleId,
     );
     for (const [source, destination] of connections) {
@@ -74,7 +74,7 @@ export function getChargedModuleIDs() : string[] {
 
 export function getChargedModules() : DeckModule[] {
   const chargedModuleIDs = getChargedModuleIDs();
-  return CyberDeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
+  return CyberdeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }
 
 // TODO-fico: this is temporary rack setup

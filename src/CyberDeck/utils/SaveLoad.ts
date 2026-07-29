@@ -1,5 +1,5 @@
 import { ComponentCounts, ComponentStats, Connection, DeckModule } from "../Types";
-import { CyberDeckEvents, CyberDeckState } from "../models/CyberDeckState";
+import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
 
@@ -17,15 +17,15 @@ type CyberdeckSaveData = {
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
-    hasCyberdeck: CyberDeckState.hasCyberdeck,
-    baseRackSize: CyberDeckState.baseRackSize,
-    installedModules: CyberDeckState.installedModules,
-    storedModules: CyberDeckState.storedModules,
-    connections: CyberDeckState.connections,
-    lastNetrunningTimestamp: CyberDeckState.lastNetrunningTimestamp,
-    components: CyberDeckState.components,
-    componentStats: CyberDeckState.componentStats,
-    netrunningLevel: CyberDeckState.netrunningLevel,
+    hasCyberdeck: CyberdeckState.hasCyberdeck,
+    baseRackSize: CyberdeckState.baseRackSize,
+    installedModules: CyberdeckState.installedModules,
+    storedModules: CyberdeckState.storedModules,
+    connections: CyberdeckState.connections,
+    lastNetrunningTimestamp: CyberdeckState.lastNetrunningTimestamp,
+    components: CyberdeckState.components,
+    componentStats: CyberdeckState.componentStats,
+    netrunningLevel: CyberdeckState.netrunningLevel,
   };
 }
 
@@ -50,31 +50,31 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     } = parsedData;
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
-    CyberDeckState.hasCyberdeck = hasCyberdeck;
+    CyberdeckState.hasCyberdeck = hasCyberdeck;
     if (typeof baseRackSize !== "number") throw new Error("Invalid cyberdeck savestring value: baseRackSize");
-    CyberDeckState.baseRackSize = baseRackSize;
+    CyberdeckState.baseRackSize = baseRackSize;
     if (typeof lastNetrunningTimestamp !== "number") throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
-    CyberDeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
+    CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
-    CyberDeckState.netrunningLevel = netrunningLevel;
+    CyberdeckState.netrunningLevel = netrunningLevel;
 
 
     if (!isModuleArray(installedModules)) throw new Error("Invalid cyberdeck savestring value: installedModules");
-    CyberDeckState.installedModules = installedModules;
+    CyberdeckState.installedModules = installedModules;
     if (!isModuleArray(storedModules)) throw new Error("Invalid cyberdeck savestring value: storedModules");
-    CyberDeckState.storedModules = storedModules;
+    CyberdeckState.storedModules = storedModules;
 
     if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
-    CyberDeckState.connections = connections;
+    CyberdeckState.connections = connections;
     if (!isComponentCounts(components)) throw new Error("Invalid cyberdeck savestring value: components");
-    CyberDeckState.components = components;
+    CyberdeckState.components = components;
     if (!isComponentStats(componentStats)) throw new Error("Invalid cyberdeck savestring value: componentStats");
-    CyberDeckState.componentStats = componentStats;
+    CyberdeckState.componentStats = componentStats;
 
     updateCoveredSockets();
 
     // Emit an event to notify that the state has changed
-    CyberDeckEvents.emit();
+    CyberdeckEvents.emit();
   } catch (error) {
     console.error(error);
     console.error("Invalid Cyberdeck data:", saveString);

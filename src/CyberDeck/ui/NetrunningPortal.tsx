@@ -3,7 +3,7 @@ import { Container, Typography } from "@mui/material";
 import {  portalStyles } from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
 import { DeckModule } from "../Types";
-import { CyberDeckState } from "../models/CyberDeckState";
+import { CyberdeckState } from "../models/CyberdeckState";
 import { canNetrun, getCurrentNetrunningIceCost, getNetrunningCooldown, netRun } from "../models/componentEconomy";
 import { format } from "date-fns";
 
@@ -15,7 +15,7 @@ export function NetrunningPortal(): React.ReactElement {
   const [netrunningRewards, setNetrunningRewards] = React.useState<DeckModule[]>([]);
 
   const cost = getCurrentNetrunningIceCost();
-  const disabled = !entering && CyberDeckState.components.ICE < cost;
+  const disabled = !entering && CyberdeckState.components.ICE < cost;
 
   async function handlePortalClick() {
     if (!canNetrun()) return;

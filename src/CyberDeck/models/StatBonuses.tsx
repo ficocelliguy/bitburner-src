@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { getChargedModules } from "./CyberDeckState";
+import { getChargedModules } from "./CyberdeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
@@ -10,8 +10,8 @@ import { ComponentSymbol } from "../ui/ComponentCost";
 import { componentSymbols } from "./constants";
 
 
-export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) {
-  if (!stats) return <></>;
+export function StatBonus({ stats = {}, emptyMessage = "" }: { stats?: ModuleStats, emptyMessage?: string }) {
+  // TODO-fico: cache this with useEffect or similar
   const statList = [
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
@@ -25,7 +25,10 @@ export function StatBonus({ stats }: { stats: ModuleStats | null | undefined }) 
 
   const results = statList
     .filter(([__, value]) => !!value)
+    .sort(([keyA, valueA], [keyB, valueB]) => Number(isBuff(keyB, valueB)) - Number(isBuff(keyA, valueA)))
     .map(([key, value]) => formatStat(key, value));
+
+  if (!results.length) return <div>{emptyMessage}</div>;
 
   return (
     <>
@@ -46,10 +49,15 @@ export function applyCyberdeckStatBonuses() {
   Player.updateSkillLevels();
 }
 
-export function getCyberdeckStatBonuses(): CyberdeckStats {
+export function getCyberdeckStatBonuses(startMultsAt1 = true): CyberdeckStats {
   const chargedModules = getChargedModules();
 
   const playerMults = defaultMultipliers();
+  if (!startMultsAt1) {
+    for (const key of getRecordKeys(playerMults)) {
+      playerMults[key] = 0;
+    }
+  }
   const playerMultsFromModules = chargedModules.map((m) => m.stats?.playerMults);
   for (const mult of playerMultsFromModules) {
     if (!mult) continue;
@@ -101,17 +109,20 @@ function formatStat(key: string, value: number): JSX.Element {
     .replaceAll(" Exp", "XP")
 
   const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
-  const isBuff = key.includes("_cost") ? value < 0 : value > 0;
 
   return (
     <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
       <FormattedKeyElement formattedKey={formattedKey} />:
-      <span style={{ color: isBuff ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
+      <span style={{ color: isBuff(key, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
         {value > 0 ? "+" : ""}
         {valueStr}
       </span>
     </Typography>
   );
+}
+
+export function isBuff(key: string, value: number): boolean {
+  return key.includes("_cost") ? value < 0 : value > 0;
 }
 
 function FormattedKeyElement({ formattedKey }: { formattedKey: string }): JSX.Element {

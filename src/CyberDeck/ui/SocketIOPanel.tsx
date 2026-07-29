@@ -2,7 +2,7 @@ import React from "react";
 import { Socket, SocketList } from "../Types";
 import { socketIsCovered } from "../models/moduleMutation";
 import { getSocketId } from "../utils/moduleUtilities";
-import { CyberDeckState, socketColors } from "../models/CyberDeckState";
+import { CyberdeckState, socketColors } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { cyberdeckStyles } from "./cyberdeckStyles";
 
@@ -33,7 +33,7 @@ export function SocketIOPanel({
     if (currentDragSource?.moduleId === moduleId && currentDragSource?.socketIndex === index) {
       return true;
     }
-    return CyberDeckState.connections.some(([source, destination]) => {
+    return CyberdeckState.connections.some(([source, destination]) => {
       return (
         (source.moduleId === moduleId && source.socketIndex === index) ||
         (destination.moduleId === moduleId && destination.socketIndex === index)
