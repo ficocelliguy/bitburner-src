@@ -48,7 +48,7 @@ export type CyberdeckStats = {
   otherMults: MiscMults;
   extraRackSlots: number;
   consumableStats?: ConsumableStats;
-  endgameStats?: EndgameMults;
+  endgameStats: EndgameMults;
 };
 
 export type MiscMults = {
@@ -57,7 +57,7 @@ export type MiscMults = {
   neurodeProduction: number;
   program_creation_speed: number;
   crime_speed: number;
-  stock_commission: number;
+  stock_fees: number;
   cct_money: number;
   IPvGO_power: number;
 };

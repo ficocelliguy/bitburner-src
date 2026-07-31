@@ -115,7 +115,7 @@ export function ModuleComponent({
                 <StatBonus stats={module.stats} />
               </div>
             ) : (
-              <div style={{ width: "130px", margin: "3px" }}></div>
+              <div style={{ width: "135px", margin: "3px" }}></div>
             )}
             <SocketIOPanel
               moduleId={module.id}

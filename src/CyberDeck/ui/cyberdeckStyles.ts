@@ -65,7 +65,7 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     cornerShape: "bevel",
     background: Settings.theme.button,
     margin: "6px 2px",
-    width: "130px",
+    width: "135px",
     fontSize: "9px",
     alignContent: "center",
   },

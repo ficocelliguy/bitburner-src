@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Typography, Box, Button } from "@mui/material";
 import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
@@ -15,8 +15,9 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { DeckConnection } from "../models/createModule";
+import { createInitialModules, DeckConnection } from "../models/createModule";
 import { cyberdeckStyles } from "./cyberdeckStyles";
+import { prestigeCyberdeck } from "../utils/prestigeCyberdeck";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -100,6 +101,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
         Module Edit Page
       </Typography>
+      <Button onClick={() => {prestigeCyberdeck(true); createInitialModules(); CyberdeckEvents.emit()}}>Generate new mods</Button>
 
       <Container disableGutters maxWidth={false}>
         <canvas

@@ -1,13 +1,23 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckModule, ModuleType } from "../Types";
-import { getStatRollRange, generateStatBonus } from "./StatBonuses";
+import {
+  ComponentCounts,
+  ConsumableStats,
+  CyberdeckStats,
+  DeckModule,
+  EndgameMults,
+  MiscMults,
+  ModuleType,
+} from "../Types";
+import { getStatRollRange } from "./StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import {
   componentSymbols, ICEbreakerCraftingCost, powerSupplyCraftingCost, processingModuleCraftingCost, uplinkCraftingCost } from "./constants";
 import { saveGame } from "../../SaveObject";
+import { getRecordKeys } from "../../Types/Record";
+import { Multipliers } from "@nsdefs";
 
 
 export const DeckConnection: DeckModule = {
@@ -34,101 +44,125 @@ export function createModule(type: ModuleType = getRandomModuleType(), level: nu
 }
 
 function getAllStatRanges(level: number) {
-  return {
-    playerMults: {
-      hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
-      hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
-      strength: getStatRollRange(level, 1.2, 1.2, 1.5),
-      strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-      defense: getStatRollRange(level, 1.2, 1.2, 1.5),
-      defense_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-      dexterity: getStatRollRange(level, 1.2, 1.2, 1.5),
-      dexterity_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-      agility: getStatRollRange(level, 1.2, 1.2, 1.5),
-      agility_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-      charisma: getStatRollRange(level, 1, 1, 1.5),
-      charisma_exp: getStatRollRange(level, 1, 1, 1.5),
-      hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
-      hacknet_node_purchase_cost: getStatRollRange(level, -1.2, -2, -1.5),
-      hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
-      hacknet_node_core_cost: getStatRollRange(level, -1.2, -2, -1.5),
-      hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
-      company_rep: getStatRollRange(level, 1, 1.5, 2),
-      work_money: getStatRollRange(level, 3, 10, 5),
-      crime_success: getStatRollRange(level, 2, 5, 2),
-      crime_money: getStatRollRange(level, 1.5, 3, 1.5),
-    },
-    otherMults: {
-      romProduction: getStatRollRange(level, 10, 30, 8),
-      chipProduction: getStatRollRange(level, 10, 30, 8),
-      neurodeProduction: getStatRollRange(level, 10, 30, 8),
-      program_creation_speed: getStatRollRange(level, -1.5, -3, -1.5),
-      crime_speed: getStatRollRange(level, -1.5, -3, -1.5),
-      stock_commission: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
-      cct_money: getStatRollRange(level, 3, 8, 3),
-      IPvGO_power: getStatRollRange(level, 1, 3, 1),
-    },
-    consumableStats: {
-      netrunning: getStatRollRange(level, 10, 30, 8),
-      netrun_cooldown: getStatRollRange(level, -1.5, -3, -1.5),
-      mod_storage: getStatRollRange(level, 20, 40, 10),
-    },
-    endgameStats: {
-      bladeburner_stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
-      graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
-      sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
-      stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
-    },
-    extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
+  const playerMults: Partial<{ [K in keyof Multipliers]: [number, number] }> = {
+    hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
+    hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
+    strength: getStatRollRange(level, 1.2, 1.2, 1.5),
+    strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+    defense: getStatRollRange(level, 1.2, 1.2, 1.5),
+    defense_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+    dexterity: getStatRollRange(level, 1.2, 1.2, 1.5),
+    dexterity_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+    agility: getStatRollRange(level, 1.2, 1.2, 1.5),
+    agility_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+    charisma: getStatRollRange(level, 1, 1, 1.5),
+    charisma_exp: getStatRollRange(level, 1, 1, 1.5),
+    hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
+    hacknet_node_purchase_cost: getStatRollRange(level, -1.2, -2, -1.5),
+    hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
+    hacknet_node_core_cost: getStatRollRange(level, -1.2, -2, -1.5),
+    hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
+    company_rep: getStatRollRange(level, 1, 1.5, 2),
+    work_money: getStatRollRange(level, 3, 10, 5),
+    crime_success: getStatRollRange(level, 2, 5, 2),
+    crime_money: getStatRollRange(level, 1.5, 3, 1.5),
   };
+  const otherMults: { [K in keyof MiscMults]: [number, number] } = {
+    romProduction: getStatRollRange(level, 10, 30, 8),
+    chipProduction: getStatRollRange(level, 10, 30, 8),
+    neurodeProduction: getStatRollRange(level, 10, 30, 8),
+    program_creation_speed: getStatRollRange(level, 1.5, 3, 1.5),
+    crime_speed: getStatRollRange(level, 1.5, 3, 1.5),
+    stock_fees: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
+    cct_money: getStatRollRange(level, 3, 8, 3),
+    IPvGO_power: getStatRollRange(level, 1, 3, 1),
+  };
+  const consumableStats: { [K in keyof ConsumableStats]: [number, number] } = {
+    netrunning: getStatRollRange(level, 10, 30, 8),
+    netrun_cooldown: getStatRollRange(level, -1.5, -3, -1.5),
+    mod_storage: getStatRollRange(level, 20, 40, 10),
+  };
+  const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
+    bladeburner_stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
+    graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
+    sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
+    stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
+  };
+
+  return {
+    playerMults,
+    otherMults,
+    consumableStats,
+    endgameStats,
+    extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1, // TODO-fico
+  } as const;
 }
 
 function createPowerSupply(level: number): DeckModule {
+  const debuff = getDebuff(level);
+
   return {
     type: ModuleType.PowerSupply,
-    id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(2 + level / 2, 2),
+    id: `${(Math.random() * 1e4) | 0}`, // TODO: use seed
+    sockets: getRandomSockets(2 + level / 2, 2), // TODO: use seed
     level,
     stats: {
-      playerMults: {
-        hacking_exp: generateStatBonus(-0.03 + 0.001 * level, -0.005 + 0.002 * level),
-      },
+      playerMults: debuff,
     },
   };
 }
 
 function createProcessingModule(level: number): DeckModule {
+
+  const rng1 = Math.random();
+  const rng2 = Math.random();
+
+  const fullStats = getAllStatRanges(Math.max(level, 1));
+  const otherStatKeys = getRecordKeys(fullStats.otherMults);
+  const statToAdd = otherStatKeys[Math.floor(rng1 * otherStatKeys.length)];
+  const valueRange: [number, number] = fullStats.otherMults[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * rng2;
+
+  const debuff = getDebuff(level);
+
+
   return {
     type: ModuleType.ProcessingModule,
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
     level,
     stats: {
-      playerMults: {
-        strength: generateStatBonus(0.001 + 0.0001 * level, 0.004 + 0.0003 * level),
+      playerMults: debuff,
+      otherMults: {
+        [statToAdd]: value,
       },
     },
   };
 }
 
 function createUplink(level: number): DeckModule {
+
+  const buff = getPlayerStatBuff(level);
+  const debuff = getDebuff(level);
+  const mergedStats = mergeBuffs(debuff, buff);
+
   return {
     type: ModuleType.Uplink,
     id: `${(Math.random() * 1e4) | 0}`,
     sockets: getRandomSockets(1 + level / 3, 0, true),
     level,
     stats: {
-      otherMults: {
-        romProduction: generateStatBonus(0.1 + 0.1 * level, 0.2 + 0.1 * level),
-      },
+      playerMults: mergedStats,
     },
   };
 }
 
 
 function createRackExtension(level: number): DeckModule {
+  const debuff = getDebuff(level);
   return {
     stats: {
+      playerMults: debuff,
       extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
     },
     type: ModuleType.RackExtension,
@@ -139,19 +173,72 @@ function createRackExtension(level: number): DeckModule {
 }
 
 function createSkillChip(level: number): DeckModule {
-  // TODO-fico: flesh out consumable stats
-  // TODO-fico: balance numbers
+  const rng1 = Math.random();
+  const rng2 = Math.random();
+
+  const fullStats = getAllStatRanges(level);
+
+  const consumableKeys = getRecordKeys(fullStats.consumableStats);
+  const statToAdd = consumableKeys[Math.floor(rng1 * consumableKeys.length)];
+  const valueRange: [number, number] = fullStats.consumableStats[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * rng2;
+
   return {
     type: ModuleType.SkillChip,
-    id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(1),
+    id: `${(Math.random() * 1e4) | 0}`, // TODO: use seed
+    sockets: getRandomSockets(1), // TODO: use seed
     level,
     stats: {
       consumableStats: {
-        netrunning: Math.random() * (level / 25) + level / 40 + 0.1,
+        [statToAdd]: value,
       },
-    }
+    },
   };
+}
+
+function getPlayerStatBuff(level: number): Partial<Multipliers> {
+  const rng1 = Math.random();
+  const rng2 = Math.random();
+
+  const fullStats = getAllStatRanges(Math.max(level, 1));
+
+  const playerMultKeys = getRecordKeys(fullStats.playerMults);
+  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
+  const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0,0];
+  const value = (valueRange[1] - valueRange[0])  * rng2;
+
+  return {
+      [statToAdd]: value,
+  };
+}
+
+function getDebuff(level: number): Partial<Multipliers> {
+  const rng1 = Math.random(); // TODO: use seed
+  const rng2 = Math.random();
+
+  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+
+  const playerMultKeys = getRecordKeys(fullStats.playerMults);
+  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
+  const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0,0];
+  const value = (valueRange[1] - valueRange[0]) * -1 * rng2;
+
+  return {
+      [statToAdd]: value,
+  }
+}
+
+function mergeBuffs(buff1: Partial<Multipliers>, buff2: Partial<Multipliers>): Partial<Multipliers> {
+  const merged: Partial<Multipliers> = {};
+  const keys = new Set<string>([...(buff1 ? Object.keys(buff1) : []), ...(buff2 ? Object.keys(buff2) : [])]);
+
+  for (const key of keys) {
+    const value1 = buff1[key as keyof Multipliers] ?? 0;
+    const value2 = buff2[key as keyof Multipliers] ?? 0;
+    merged[key as keyof Multipliers] = value1 + value2;
+  }
+
+  return merged;
 }
 
 function getRandomModuleType() {
@@ -183,7 +270,6 @@ function getLevel() {
 }
 
 // TODO-fico: replace with better module set on prestige
-// TODO-fico: save modules
 export function createInitialModules() {
   CyberdeckState.netrunningLevel = 8;
   for (let i = 0; i < 4; i++) {

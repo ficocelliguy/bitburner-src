@@ -100,7 +100,7 @@ function getDefaultMiscMults(): MiscMults {
     romProduction: 0,
     program_creation_speed: 0,
     crime_speed: 0,
-    stock_commission: 0,
+    stock_fees: 0,
     cct_money: 0,
     IPvGO_power: 0,
   };
@@ -117,17 +117,11 @@ function getDefaultEndgameMults(): EndgameMults {
 
 // At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.2% per level.
 // At the max of level 12, the min is 0.7% and the max is 3%.
-export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1) {
+export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1): [number, number] {
   return [
     0.001 * minScaling + 0.0005 * level * growthScaling,
     0.006 * maxScaling + 0.002 * level * growthScaling,
   ];
-}
-
-export function generateStatBonus(min: number, max: number) {
-  const range = max - min;
-  const weights = [0.25, 0.25, 0.03];
-  return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
 }
 
 function formatStat(key: string, value: number): JSX.Element {
@@ -137,13 +131,15 @@ function formatStat(key: string, value: number): JSX.Element {
     .toLowerCase()
     .replace(/\b\w/g, (c) => c.toUpperCase())
     .replaceAll(" Exp", "XP")
+    .replaceAll("Hacknet Node", "Hnet")
+    .replaceAll("Cooldown", "CD")
 
   const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
 
   return (
-    <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "4px", color: Settings.theme.rep }}>
+    <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "3px", color: Settings.theme.rep, lineHeight: "11px" }}>
       <FormattedKeyElement formattedKey={formattedKey} />:
-      <span style={{ color: isBuff(key, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "4px" }}>
+      <span style={{ color: isBuff(key, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "3px" }}>
         {value > 0 ? "+" : ""}
         {valueStr}
       </span>
@@ -152,7 +148,7 @@ function formatStat(key: string, value: number): JSX.Element {
 }
 
 export function isBuff(key: string, value: number): boolean {
-  return key.includes("_cost") ? value < 0 : value > 0;
+  return key.includes("_cost") || key.includes("_cooldown") || key.includes("_commission") ? value < 0 : value > 0;
 }
 
 function FormattedKeyElement({ formattedKey }: { formattedKey: string }): JSX.Element {
