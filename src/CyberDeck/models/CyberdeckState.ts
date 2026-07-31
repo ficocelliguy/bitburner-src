@@ -19,6 +19,7 @@ export const CyberdeckState = {
     ROM: 0,
     neurodes: 0,
     chips: 0,
+    cores: 0,
     ICE: 4,
   } as ComponentCounts,
   componentStats: {

@@ -182,9 +182,9 @@ function consumeSkillChips() {
   );
   for (const module of chargedSkillModules) {
     const stats = module.stats?.consumableStats;
-    if (stats?.netrunning) {
-      CyberdeckState.netrunningLevel += stats.netrunning;
-      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
+    if (stats?.netrunning_lvl) {
+      CyberdeckState.netrunningLevel += stats.netrunning_lvl;
+      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
     }
     // TODO-fico: other consumable types (crafting boost, components, etc)
 

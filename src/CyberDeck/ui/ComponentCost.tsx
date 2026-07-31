@@ -11,6 +11,7 @@ export function ComponentCost({ cost }: { cost: ComponentCounts }) {
       <ComponentCostRow available={CyberdeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
       <ComponentCostRow available={CyberdeckState.components.neurodes} cost={cost.neurodes} symbol={componentSymbols.neurodes} />
       <ComponentCostRow available={CyberdeckState.components.chips} cost={cost.chips} symbol={componentSymbols.chips} />
+      <ComponentCostRow available={CyberdeckState.components.cores} cost={cost.cores} symbol={componentSymbols.cores} />
       <ComponentCostRow available={CyberdeckState.components.ICE} cost={cost.ICE} symbol={componentSymbols.ICE} />
     </div>
   );
@@ -41,6 +42,8 @@ function getSymbolColor(symbol: string): string {
       return Settings.theme.primary;
     case componentSymbols.ICE: // ICEbreakers
       return Settings.theme.infolight;
+    case componentSymbols.cores: // cores
+      return Settings.theme.rep;
     default:
       return Settings.theme.error;
   }

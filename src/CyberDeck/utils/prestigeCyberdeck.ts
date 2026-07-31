@@ -15,6 +15,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     chips: 0,
     ROM: 0,
     neurodes: 0,
+    cores: 0,
     ICE: 2,
   };
   CyberdeckState.componentStats = {

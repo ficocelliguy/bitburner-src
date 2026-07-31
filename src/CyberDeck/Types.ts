@@ -24,7 +24,7 @@ export enum ModuleType {
 }
 
 export type ConsumableStats = {
-  netrunning: number,
+  netrunning_lvl: number,
   netrun_cooldown: number,
   mod_storage: number,
 }
@@ -40,6 +40,7 @@ export type ComponentCounts = {
   ROM: number;
   neurodes: number;
   chips: number;
+  cores: number;
   ICE: number;
 }
 
@@ -60,13 +61,15 @@ export type MiscMults = {
   stock_fees: number;
   cct_money: number;
   IPvGO_power: number;
+  class_cost: number;
 };
 
 export type EndgameMults = {
-  bladeburner_stamina_gain: number;
+  stamina_gain: number;
   graft_speed: number;
   sleeve_sync: number;
   stanek_charge: number;
+  equipment_cost: number;
 };
 
 export type ComponentStats = {

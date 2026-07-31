@@ -58,7 +58,6 @@ function getAllStatRanges(level: number) {
     charisma: getStatRollRange(level, 1, 1, 1.5),
     charisma_exp: getStatRollRange(level, 1, 1, 1.5),
     hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
-    hacknet_node_purchase_cost: getStatRollRange(level, -1.2, -2, -1.5),
     hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
     hacknet_node_core_cost: getStatRollRange(level, -1.2, -2, -1.5),
     hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
@@ -74,19 +73,21 @@ function getAllStatRanges(level: number) {
     program_creation_speed: getStatRollRange(level, 1.5, 3, 1.5),
     crime_speed: getStatRollRange(level, 1.5, 3, 1.5),
     stock_fees: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
-    cct_money: getStatRollRange(level, 3, 8, 3),
+    cct_money: getStatRollRange(level, 3, 4, 2),
     IPvGO_power: getStatRollRange(level, 1, 3, 1),
+    class_cost: getStatRollRange(level, -2, -4, -3),
   };
   const consumableStats: { [K in keyof ConsumableStats]: [number, number] } = {
-    netrunning: getStatRollRange(level, 10, 30, 8),
+    netrunning_lvl: getStatRollRange(level, 10, 30, 8),
     netrun_cooldown: getStatRollRange(level, -1.5, -3, -1.5),
     mod_storage: getStatRollRange(level, 20, 40, 10),
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
-    bladeburner_stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
+    stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
     graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
     sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
     stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
+    equipment_cost: getStatRollRange(level, -1.5, -3, -1.5),
   };
 
   return {
@@ -99,7 +100,8 @@ function getAllStatRanges(level: number) {
 }
 
 function createPowerSupply(level: number): DeckModule {
-  const debuff = getDebuff(level);
+  const debuff = getDebuff(level); // TODO: higher levels don't have debuff
+  // TODO: debuff in exchange for more slots
 
   return {
     type: ModuleType.PowerSupply,

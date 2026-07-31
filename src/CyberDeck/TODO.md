@@ -38,6 +38,9 @@
 
 - Mod storage limits
 
+- mod cores required for crafting? ⛯ 
+- re-position component location
+
 - offline production?
 
 - dev menu

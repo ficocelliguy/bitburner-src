@@ -103,15 +103,17 @@ function getDefaultMiscMults(): MiscMults {
     stock_fees: 0,
     cct_money: 0,
     IPvGO_power: 0,
+    class_cost: 0,
   };
 }
 
 function getDefaultEndgameMults(): EndgameMults {
   return {
-    bladeburner_stamina_gain: 0,
+    stamina_gain: 0,
     graft_speed: 0,
     sleeve_sync: 0,
     stanek_charge: 0,
+    equipment_cost: 0,
   };
 }
 
