@@ -1,7 +1,7 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckModule, ModuleStats, ModuleType } from "../Types";
-import { generateStatBonus } from "./StatBonuses";
+import { ComponentCounts, DeckModule, ModuleType } from "../Types";
+import { getStatRollRange, generateStatBonus } from "./StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -33,45 +33,51 @@ export function createModule(type: ModuleType = getRandomModuleType(), level: nu
   return createProcessingModule(level);
 }
 
-function getFullStatBlock(level: number): ModuleStats {
-  const highWeight = level > 4 && Math.random() < 0.4;
+function getAllStatRanges(level: number) {
   return {
     playerMults: {
-      hacking_exp: generateStatBonus(0.001 + 0.001 * level, 0.004 + 0.0003 * level, highWeight),
-      strength: generateStatBonus(0.001 + 0.0001 * level, 0.004 + 0.0003 * level, highWeight),
-      strength_exp: 0,
-      defense: 0,
-      defense_exp: 0,
-      dexterity: 0,
-      dexterity_exp: 0,
-      agility: 0,
-      agility_exp: 0,
-      charisma: 0,
-      charisma_exp: 0,
-      hacknet_node_money: 0,
-      hacknet_node_purchase_cost: 0,
-      hacknet_node_ram_cost: 0,
-      hacknet_node_core_cost: 0,
-      hacknet_node_level_cost: 0,
-      company_rep: 0,
-      work_money: 0,
-      crime_success: 0,
-      crime_money: 0,
+      hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
+      hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
+      strength: getStatRollRange(level, 1.2, 1.2, 1.5),
+      strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+      defense: getStatRollRange(level, 1.2, 1.2, 1.5),
+      defense_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+      dexterity: getStatRollRange(level, 1.2, 1.2, 1.5),
+      dexterity_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+      agility: getStatRollRange(level, 1.2, 1.2, 1.5),
+      agility_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+      charisma: getStatRollRange(level, 1, 1, 1.5),
+      charisma_exp: getStatRollRange(level, 1, 1, 1.5),
+      hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
+      hacknet_node_purchase_cost: getStatRollRange(level, -1.2, -2, -1.5),
+      hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
+      hacknet_node_core_cost: getStatRollRange(level, -1.2, -2, -1.5),
+      hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
+      company_rep: getStatRollRange(level, 1, 1.5, 2),
+      work_money: getStatRollRange(level, 3, 10, 5),
+      crime_success: getStatRollRange(level, 2, 5, 2),
+      crime_money: getStatRollRange(level, 1.5, 3, 1.5),
     },
     otherMults: {
-      romProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
-      chipProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
-      neurodeProduction: generateStatBonus(0.01 + 0.05 * level, 0.15 + 0.08 * level, highWeight),
-      stock_commission: 0, // getBuyTransactionCost
+      romProduction: getStatRollRange(level, 10, 30, 8),
+      chipProduction: getStatRollRange(level, 10, 30, 8),
+      neurodeProduction: getStatRollRange(level, 10, 30, 8),
+      program_creation_speed: getStatRollRange(level, -1.5, -3, -1.5),
+      crime_speed: getStatRollRange(level, -1.5, -3, -1.5),
+      stock_commission: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
+      cct_money: getStatRollRange(level, 3, 8, 3),
+      IPvGO_power: getStatRollRange(level, 1, 3, 1),
     },
     consumableStats: {
-      netrunning: Math.random() * (level / 25) + level / 40 + 0.1,
+      netrunning: getStatRollRange(level, 10, 30, 8),
+      netrun_cooldown: getStatRollRange(level, -1.5, -3, -1.5),
+      mod_storage: getStatRollRange(level, 20, 40, 10),
     },
     endgameStats: {
-      bladeburner_stamina_gain: 0,
-      graft_speed: 0,
-      sleeve_sync: 0,
-      stanek_charge: 0,
+      bladeburner_stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
+      graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
+      sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
+      stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
     },
     extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
   };
@@ -85,7 +91,7 @@ function createPowerSupply(level: number): DeckModule {
     level,
     stats: {
       playerMults: {
-        hacking_exp: generateStatBonus(-0.03 + 0.001 * level, -0.005 + 0.002 * level, true),
+        hacking_exp: generateStatBonus(-0.03 + 0.001 * level, -0.005 + 0.002 * level),
       },
     },
   };
@@ -99,7 +105,7 @@ function createProcessingModule(level: number): DeckModule {
     level,
     stats: {
       playerMults: {
-        strength: generateStatBonus(0.001 + 0.0001 * level, 0.004 + 0.0003 * level, level > 4),
+        strength: generateStatBonus(0.001 + 0.0001 * level, 0.004 + 0.0003 * level),
       },
     },
   };
@@ -113,7 +119,7 @@ function createUplink(level: number): DeckModule {
     level,
     stats: {
       otherMults: {
-        romProduction: generateStatBonus(0.1 + 0.1 * level, 0.2 + 0.1 * level, level > 4),
+        romProduction: generateStatBonus(0.1 + 0.1 * level, 0.2 + 0.1 * level),
       },
     },
   };

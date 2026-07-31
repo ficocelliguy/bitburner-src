@@ -24,14 +24,16 @@ export enum ModuleType {
 }
 
 export type ConsumableStats = {
-  netrunning: number
+  netrunning: number,
+  netrun_cooldown: number,
+  mod_storage: number,
 }
 export type ModuleStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
-  consumableStats?: ConsumableStats;
-  endgameStats?: EndgameMults;
+  consumableStats?: Partial<ConsumableStats>;
+  endgameStats?: Partial<EndgameMults>;
 };
 
 export type ComponentCounts = {
@@ -46,6 +48,7 @@ export type CyberdeckStats = {
   otherMults: MiscMults;
   extraRackSlots: number;
   consumableStats?: ConsumableStats;
+  endgameStats?: EndgameMults;
 };
 
 export type MiscMults = {
@@ -55,6 +58,8 @@ export type MiscMults = {
   program_creation_speed: number;
   crime_speed: number;
   stock_commission: number;
+  cct_money: number;
+  IPvGO_power: number;
 };
 
 export type EndgameMults = {

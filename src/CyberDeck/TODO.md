@@ -36,6 +36,8 @@
   - IPvGO
   - CCTs
 
+- Mod storage limits
+
 - offline production?
 
 - dev menu

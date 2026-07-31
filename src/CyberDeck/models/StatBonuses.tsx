@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import { getChargedModules } from "./CyberdeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
-import { CyberdeckStats, MiscMults, ModuleStats } from "../Types";
+import { CyberdeckStats, EndgameMults, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
 import { ComponentSymbol } from "../ui/ComponentCost";
@@ -75,9 +75,19 @@ export function getCyberdeckStatBonuses(startMultsAt1 = true): CyberdeckStats {
     }
   }
 
+  const endgameStats: EndgameMults = getDefaultEndgameMults();
+  const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
+  for (const mult of endgameMultsFromModules) {
+    if (!mult) continue;
+    for (const key of getRecordKeys(endgameStats)) {
+      endgameStats[key] += mult[key] ?? 0;
+    }
+  }
+
   return {
     playerMults,
     otherMults,
+    endgameStats,
     extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
   };
 }
@@ -91,12 +101,32 @@ function getDefaultMiscMults(): MiscMults {
     program_creation_speed: 0,
     crime_speed: 0,
     stock_commission: 0,
+    cct_money: 0,
+    IPvGO_power: 0,
   };
 }
 
-export function generateStatBonus(min: number, max: number, highWeighting = false) {
+function getDefaultEndgameMults(): EndgameMults {
+  return {
+    bladeburner_stamina_gain: 0,
+    graft_speed: 0,
+    sleeve_sync: 0,
+    stanek_charge: 0,
+  };
+}
+
+// At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.2% per level.
+// At the max of level 12, the min is 0.7% and the max is 3%.
+export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1) {
+  return [
+    0.001 * minScaling + 0.0005 * level * growthScaling,
+    0.006 * maxScaling + 0.002 * level * growthScaling,
+  ];
+}
+
+export function generateStatBonus(min: number, max: number) {
   const range = max - min;
-  const weights = highWeighting ? [0.3, 0.3, 0.4] : [0.25, 0.25, 0.5];
+  const weights = [0.25, 0.25, 0.03];
   return weights.reduce((sum, weight) => sum + weight * range * Math.random(), min);
 }
 
