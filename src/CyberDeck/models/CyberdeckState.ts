@@ -2,6 +2,8 @@ import { Settings } from "../../Settings/Settings";
 import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { createInitialModules, DeckConnection } from "./createModule";
+import { setupSeeds } from "../utils/prestigeCyberdeck";
+import { WHRNG } from "../../Casino/RNG";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
 export const CyberdeckEvents = new EventEmitter<[]>();
@@ -47,6 +49,9 @@ export const CyberdeckState = {
   netrunningCorruptedSeedUsages: 0,
   craftingSeed: 0,
   craftingSeedUsages: 0,
+  netrunningWHRNG: null as WHRNG | null,
+  netrunningCorruptedWHRNG: null as WHRNG | null,
+  craftingWHRNG: null as WHRNG | null,
 };
 
 const t = Settings.theme;
@@ -78,5 +83,6 @@ export function getChargedModules() : DeckModule[] {
   return CyberdeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }
 
-// TODO-fico: this is temporary rack setup
+// TODO-fico: this is temporary setup
 createInitialModules();
+setTimeout(() => {if (!CyberdeckState.netrunningSeed) {setupSeeds()}}, 1000);

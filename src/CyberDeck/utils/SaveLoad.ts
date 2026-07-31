@@ -2,6 +2,7 @@ import { ComponentCounts, ComponentStats, Connection, DeckModule } from "../Type
 import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
+import { WHRNG } from "../../Casino/RNG";
 
 type CyberdeckSaveData = {
   hasCyberdeck: boolean;
@@ -13,6 +14,12 @@ type CyberdeckSaveData = {
   components: ComponentCounts;
   componentStats: ComponentStats;
   netrunningLevel: number;
+  netrunningSeed: number,
+  netrunningSeedUsages: number,
+  netrunningCorruptedSeed: number,
+  netrunningCorruptedSeedUsages: number,
+  craftingSeed: number,
+  craftingSeedUsages: number,
 };
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
@@ -26,6 +33,12 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     components: CyberdeckState.components,
     componentStats: CyberdeckState.componentStats,
     netrunningLevel: CyberdeckState.netrunningLevel,
+    craftingSeed: CyberdeckState.craftingSeed,
+    craftingSeedUsages: CyberdeckState.craftingSeedUsages,
+    netrunningSeed: CyberdeckState.netrunningSeed,
+    netrunningSeedUsages: CyberdeckState.netrunningSeedUsages,
+    netrunningCorruptedSeed: CyberdeckState.netrunningCorruptedSeed,
+    netrunningCorruptedSeedUsages: CyberdeckState.netrunningCorruptedSeedUsages,
   };
 }
 
@@ -47,6 +60,12 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       components,
       componentStats,
       netrunningLevel,
+      netrunningSeed,
+      netrunningSeedUsages,
+      netrunningCorruptedSeed,
+      netrunningCorruptedSeedUsages,
+      craftingSeed,
+      craftingSeedUsages,
     } = parsedData;
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
@@ -72,6 +91,21 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberdeckState.componentStats = componentStats;
 
     updateCoveredSockets();
+
+    if (typeof netrunningSeed !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningSeed");
+    CyberdeckState.netrunningSeed = netrunningSeed;
+    if (typeof netrunningSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningSeedUsages");
+    CyberdeckState.netrunningSeedUsages = netrunningSeedUsages;
+    if (typeof netrunningCorruptedSeed !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeed");
+    CyberdeckState.netrunningCorruptedSeed = netrunningCorruptedSeed;
+    if (typeof netrunningCorruptedSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeedUsages");
+    CyberdeckState.netrunningCorruptedSeedUsages = netrunningCorruptedSeedUsages;
+    if (typeof craftingSeed !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeed");
+    CyberdeckState.craftingSeed = craftingSeed;
+    if (typeof craftingSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeedUsages");
+    CyberdeckState.craftingSeedUsages = craftingSeedUsages;
+
+    setupCyberdeckRNG();
 
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();
@@ -115,4 +149,20 @@ function isComponentStats(obj: unknown): obj is ComponentStats {
     typeof obj.chips === "object" &&
     typeof obj.neurodes === "object"
   );
+}
+
+
+export function setupCyberdeckRNG() {
+  CyberdeckState.netrunningWHRNG = new WHRNG(CyberdeckState.netrunningSeed);
+  for (let i = 0; i < CyberdeckState.netrunningSeedUsages; i++) {
+    CyberdeckState.netrunningWHRNG.step();
+  }
+  CyberdeckState.craftingWHRNG = new WHRNG(CyberdeckState.craftingSeed);
+  for (let i = 0; i < CyberdeckState.craftingSeedUsages; i++) {
+    CyberdeckState.craftingWHRNG.step();
+  }
+  CyberdeckState.netrunningCorruptedWHRNG = new WHRNG(CyberdeckState.netrunningCorruptedSeed);
+  for (let i = 0; i < CyberdeckState.netrunningCorruptedSeedUsages; i++) {
+    CyberdeckState.netrunningCorruptedWHRNG.step();
+  }
 }

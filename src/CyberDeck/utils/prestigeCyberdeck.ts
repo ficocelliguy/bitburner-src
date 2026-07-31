@@ -1,5 +1,6 @@
 import { CyberdeckState } from "../models/CyberdeckState";
-
+import { Player } from "@player";
+import { setupCyberdeckRNG } from "./SaveLoad";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
@@ -10,6 +11,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.connections = [];
     CyberdeckState.coveredSockets = [];
     CyberdeckState.netrunningLevel = 0;
+    setupSeeds();
   }
   CyberdeckState.components = {
     chips: 0,
@@ -37,4 +39,27 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     }
   };
   CyberdeckState.lastNetrunningTimestamp = 0;
+}
+
+export function setupSeeds() {
+  const ID = Player.identifier;
+  const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
+  CyberdeckState.netrunningSeed = stringToSeed(`${ID}-${sourceFileCount}-run`);
+  CyberdeckState.craftingSeed = stringToSeed(`${ID}-${sourceFileCount}-craft`);
+  CyberdeckState.netrunningCorruptedSeed = stringToSeed(`${ID}-${sourceFileCount}-glitch`);
+  CyberdeckState.netrunningSeedUsages = 0;
+  CyberdeckState.craftingSeedUsages = 0;
+  CyberdeckState.netrunningCorruptedSeedUsages = 0;
+  setupCyberdeckRNG();
+}
+
+function stringToSeed(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    // Bitwise operations to turn the string into a 32-bit signed integer
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return Math.abs(hash); // Returns a positive integer seed
 }
