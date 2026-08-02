@@ -98,10 +98,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <Typography variant={"h4"} sx={{ mx: 0, pb: 10 }}>
-        Module Edit Page
-      </Typography>
-      <Button onClick={() => {prestigeCyberdeck(true); createInitialModules(); CyberdeckEvents.emit()}}>Generate new mods</Button>
+      <Button onClick={() => {prestigeCyberdeck(true); createInitialModules(); CyberdeckEvents.emit()}}>Testing tool: Generate new mods</Button>
 
       <Container disableGutters maxWidth={false}>
         <canvas

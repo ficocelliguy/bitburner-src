@@ -11,7 +11,7 @@ export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   chips: "⌨ ",
   cores: "⛯",
   ICE: "❅",
-};
+} as const;
 
 export const ICEbreakerCraftingCost: ComponentCounts = {
   ROM: 20,
