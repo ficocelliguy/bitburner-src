@@ -1,18 +1,23 @@
 import React from "react";
 import { Container, Typography } from "@mui/material";
-import {  portalStyles } from "./cyberdeckStyles";
+import { portalStyles } from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
-import { DeckModule } from "../Types";
+import { NetrunningRewards } from "../Types";
 import { CyberdeckState } from "../models/CyberdeckState";
-import { canNetrun, getCurrentNetrunningIceCost, getNetrunningCooldown, netRun } from "../models/componentEconomy";
-import { format } from "date-fns";
+import {
+  canNetrun,
+  getCurrentNetrunningIceCost,
+  getNetrunningTraceFraction,
+  netRun,
+} from "../models/componentEconomy";
+import { formatNumber } from "../../ui/formatNumber";
 
 export function NetrunningPortal(): React.ReactElement {
   const { classes } = portalStyles({});
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [netrunningRewards, setNetrunningRewards] = React.useState<DeckModule[]>([]);
+const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
 
   const cost = getCurrentNetrunningIceCost();
   const disabled = !entering && CyberdeckState.components.ICE < cost;
@@ -21,7 +26,8 @@ export function NetrunningPortal(): React.ReactElement {
     if (!canNetrun()) return;
     setEntering(true);
     const rewards = await netRun();
-    setNetrunningRewards(rewards);
+    if (!rewards.success) return;
+    setNetrunningModRewards(rewards);
     setTimeout(() => { if (!entering) { setShowPortal(false); setShowRewardsModal(true); }}, 1200);
   }
 
@@ -33,7 +39,7 @@ export function NetrunningPortal(): React.ReactElement {
 
   return (
     <Container disableGutters maxWidth={false} sx={{ m: 3 }}>
-      <RewardsModal open={showRewardsModal} onClose={() => resetPortal()} rewards={netrunningRewards} />
+      <RewardsModal open={showRewardsModal} onClose={() => resetPortal()} rewards={netrunningModRewards} />
       {showPortal && (
         <>
           <div
@@ -47,13 +53,18 @@ export function NetrunningPortal(): React.ReactElement {
             <div className={`${classes.orbiter}`}></div>
             <div className={`${classes.portalCore}`}></div>
           </div>
-          {!entering &&
-            <Typography sx={{ textAlign: "center" }}>
-              {cost === Infinity
-                ? `Trace decay: ${format(getNetrunningCooldown(), "mm:ss")}`
-                : `ICEbreakers needed: ${cost}`}
-            </Typography>
-          }
+          {!entering && (
+            <>
+              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
+                {`ICEbreakers needed: ${cost}`}
+              </Typography>
+              {cost > 1 && (
+                <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
+                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction() * 100, 2)}%
+                </Typography>
+              )}
+            </>
+          )}
         </>
       )}
     </Container>

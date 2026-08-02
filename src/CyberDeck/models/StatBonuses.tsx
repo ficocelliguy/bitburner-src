@@ -35,7 +35,6 @@ export function StatBonus({ stats = {}, emptyMessage = "" }: { stats?: ModuleSta
       {results.map((result, index) => (
         <div key={index}>
           {result}
-          {index < results.length - 1 ? ", " : ""}
         </div>
       ))}
     </>

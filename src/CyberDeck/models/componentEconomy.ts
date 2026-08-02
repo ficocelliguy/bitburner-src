@@ -4,10 +4,11 @@ import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
 import { getCyberdeckStatBonuses } from "./StatBonuses";
 import { createModule } from "./createModule";
-import { minCyclesToProcess, netrunningCooldownMs } from "./constants";
+import { minCyclesToProcess, netrunningInitialTraceDecayWindowMs, netrunningTraceDecayMs } from "./constants";
 import { saveGame } from "../../SaveObject";
 import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
+import { NetrunningRewards } from "../Types";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -117,36 +118,45 @@ function getAllWorkRep() {
   return total;
 }
 
-export function getNetrunningCooldown(): number {
-  const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
-  return Math.max(netrunningCooldownMs - timeSinceLastRun, 0);
-}
-
 export function getCurrentNetrunningIceCost(): number {
   const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
-  if (timeSinceLastRun < netrunningCooldownMs) {
-    return Infinity;
-  }
 
-  const diminishingCosts = 1 + 5e5 / (timeSinceLastRun - netrunningCooldownMs);
-  return Math.floor(diminishingCosts) || 1;
+  const diminishingCosts = 1 + netrunningTraceDecayMs / (timeSinceLastRun);
+  const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
+  return Math.floor(diminishingCosts * recencyMultiplier) || 1;
+}
+
+export function getNetrunningTraceFraction(): number {
+  const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
+  return ((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs) ** 2;
 }
 
 export function canNetrun() {
   return CyberdeckState.components.ICE >= getCurrentNetrunningIceCost();
 }
 
-export async function netRun() {
+export async function netRun(): Promise<NetrunningRewards> {
   if (!canNetrun()) {
-    return [];
+    return { success: false, modules: [], components: {} };
   }
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost();
   const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
   if (!rewards.some(m => m.level >= 3)) {
     rewards[2] = createModule(undefined, 3);
   }
+  CyberdeckState.components.chips += 1;
+  CyberdeckState.componentStats.chips.netrunning += 1;
+  CyberdeckState.components.cores += 1;
+  CyberdeckState.componentStats.cores.netrunning += 1;
   CyberdeckState.storedModules.unshift(...rewards);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
   await saveGame();
-  return rewards;
+  return {
+    success: true,
+    modules: rewards,
+    components: {
+      chips: 1,
+      cores: 1
+    }
+  };
 }

@@ -281,6 +281,11 @@ export function createInitialModules() {
     CyberdeckState.storedModules.push(createModule());
   }
   CyberdeckState.netrunningLevel = 0;
+  CyberdeckState.components.ROM = 25;
+  CyberdeckState.components.chips = 25;
+  CyberdeckState.components.neurodes = 25;
+  CyberdeckState.components.ICE = 4;
+  CyberdeckState.components.cores = 4;
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>) {

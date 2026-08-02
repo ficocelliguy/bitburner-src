@@ -26,16 +26,22 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
       caches: 0,
       pettyCrime: 0,
       programs: 0,
+      netrunning: 0,
     },
     chips: {
       hacknet: 0,
       companyWork: 0,
       IPvGO: 0,
+      netrunning: 0,
     },
     neurodes: {
       kills: 0,
       class: 0,
       codingContracts: 0,
+      netrunning: 0,
+    },
+    cores: {
+      netrunning: 0,
     }
   };
   CyberdeckState.lastNetrunningTimestamp = 0;

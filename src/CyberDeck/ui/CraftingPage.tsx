@@ -18,7 +18,7 @@ import { RewardsModal } from "./RewardsModal";
 
 export function CraftingPage(): React.ReactElement {
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [netrunningRewards, setNetrunningRewards] = React.useState<DeckModule[]>([]);
+  const [craftingRewards, setCraftingRewards] = React.useState<DeckModule[]>([]);
 
   function tryCraftPowerSupply() {
     craft(craftPowerSupply());
@@ -34,13 +34,13 @@ export function CraftingPage(): React.ReactElement {
 
   function craft(results: DeckModule | null) {
     if (!results) { return; }
-    setNetrunningRewards([results]);
+    setCraftingRewards([results]);
     setShowRewardsModal(true);
   }
 
   return (
     <div style={{ padding: "20px" }}>
-      <RewardsModal open={showRewardsModal} rewards={netrunningRewards} onClose={() => setShowRewardsModal(false)} />
+      <RewardsModal open={showRewardsModal} rewards={{success: true, modules: craftingRewards, components: {}}} onClose={() => setShowRewardsModal(false)} />
       <Button onClick={() => craftICE()}>
         <div
           style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}

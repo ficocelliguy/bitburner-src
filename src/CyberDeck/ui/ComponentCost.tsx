@@ -19,7 +19,7 @@ export function ComponentCost({ cost }: { cost: ComponentCounts }) {
 
 export function ComponentSymbol({symbol}: {symbol: string}) {
   const isROM = symbol === componentSymbols.ROM;
-  return <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-4px" : "0" }}> {symbol}</span>;
+  return <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-2px" : "0" }}> {symbol}</span>;
 }
 
 export function ComponentCostRow({ available, cost, symbol }: { available: number; cost: number; symbol: string }) {

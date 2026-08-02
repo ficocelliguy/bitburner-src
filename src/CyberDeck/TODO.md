@@ -39,6 +39,7 @@
 - Mod storage limits
 
 - mod cores required for crafting? ⛯ 
+  - sometimes get cores when netrunning
 - re-position component location
 
 - offline production?
@@ -46,6 +47,13 @@
 - dev menu
 
 - api
+
+
+TODO LATER:
+
+- BN
+- Full docs
+- 
 
 
 CYBERDECK

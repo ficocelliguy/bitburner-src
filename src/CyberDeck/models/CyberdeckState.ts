@@ -18,11 +18,11 @@ export const CyberdeckState = {
   coveredSockets: [] as Socket[],
   lastNetrunningTimestamp: 0,
   components: {
-    ROM: 0,
-    neurodes: 0,
-    chips: 0,
-    cores: 0,
-    ICE: 4,
+    ROM: 25,
+    neurodes: 25,
+    chips: 25,
+    cores: 4,
+    ICE: 3,
   } as ComponentCounts,
   componentStats: {
     ROM: {
@@ -30,17 +30,23 @@ export const CyberdeckState = {
       caches: 0,
       pettyCrime: 0,
       programs: 0,
+      netrunning: 0,
     },
     chips: {
       hacknet: 0,
       companyWork: 0,
       IPvGO: 0,
+      netrunning: 0,
     },
     neurodes: {
       kills: 0,
       class: 0,
       codingContracts: 0,
+      netrunning: 0,
     },
+    cores: {
+      netrunning: 0,
+    }
   } as ComponentStats,
   netrunningLevel: 0,
   netrunningSeed: 0,

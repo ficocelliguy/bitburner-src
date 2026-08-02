@@ -1,6 +1,8 @@
 import { ComponentCounts } from "../Types";
 
-export const netrunningCooldownMs = 1000 * 20;
+// TODO-fico: change these after testing to slower cooldowns
+export const netrunningTraceDecayMs = 5e4; //5e5
+export const netrunningInitialTraceDecayWindowMs = 8000; // 20000
 export const minCyclesToProcess = 20;
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {

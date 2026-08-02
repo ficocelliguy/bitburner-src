@@ -78,15 +78,27 @@ export type ComponentStats = {
     caches: number;
     pettyCrime: number;
     programs: number;
+    netrunning: number;
   };
   chips: {
     hacknet: number;
     companyWork: number;
     IPvGO: number;
+    netrunning: number;
   };
   neurodes: {
     kills: number;
     class: number;
     codingContracts: number;
+    netrunning: number;
   };
+  cores: {
+    netrunning: number;
+  }
+};
+
+export type NetrunningRewards = {
+  success: boolean;
+  modules: DeckModule[];
+  components: Partial<ComponentCounts>;
 };
