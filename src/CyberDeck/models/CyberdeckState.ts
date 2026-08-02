@@ -11,12 +11,16 @@ export const CyberdeckEvents = new EventEmitter<[]>();
 export const CyberdeckState = {
   hasCyberdeck: true,
   storedCycles: 0,
-  baseRackSize: 6,
+  baseRackSize: 5,
+  modStorageSize: 6,
+  netrunningCooldownLevel: 0,
+  netrunningLevel: 0,
+  craftingLevel: 0,
+  lastNetrunningTimestamp: 0,
   installedModules: [] as DeckModule[],
   storedModules: [] as DeckModule[],
   connections: [] as Connection[],
   coveredSockets: [] as Socket[],
-  lastNetrunningTimestamp: 0,
   components: {
     ROM: 25,
     neurodes: 25,
@@ -46,9 +50,8 @@ export const CyberdeckState = {
     },
     cores: {
       netrunning: 0,
-    }
+    },
   } as ComponentStats,
-  netrunningLevel: 0,
   netrunningSeed: 0,
   netrunningSeedUsages: 0,
   netrunningCorruptedSeed: 0,

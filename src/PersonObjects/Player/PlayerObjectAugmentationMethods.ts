@@ -4,7 +4,7 @@ import { staneksGift } from "../../CotMG/Helper";
 import { updateGoMults } from "../../Go/effects/effect";
 
 import type { PlayerObject } from "./PlayerObject";
-import { applyCyberdeckStatBonuses } from "../../CyberDeck/models/StatBonuses";
+import { applyCyberdeckStatBonuses } from "../../CyberDeck/ui/StatBonuses";
 
 export function applyEntropy(this: PlayerObject, stacks = 1): void {
   // Save the current HP ratio.

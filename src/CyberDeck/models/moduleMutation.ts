@@ -181,12 +181,27 @@ function consumeSkillChips() {
     (m) => m.type === ModuleType.SkillChip && chargedModuleIDs.includes(m.id),
   );
   for (const module of chargedSkillModules) {
-    const stats = module.stats?.consumableStats;
-    if (stats?.netrunning_lvl) {
+    const stats = module.stats?.consumableStats ?? {};
+    if (stats.netrunning_lvl) {
       CyberdeckState.netrunningLevel += stats.netrunning_lvl;
       SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
     }
-    // TODO-fico: other consumable types (crafting boost, components, etc)
+    if (stats.crafting_lvl) {
+      CyberdeckState.craftingLevel += stats.crafting_lvl;
+      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.crafting_lvl, 2)} crafting boost.`, ToastVariant.SUCCESS, 4000);
+    }
+    if (stats.netrun_cooldown_lvl) {
+      CyberdeckState.netrunningCooldownLevel += stats.netrun_cooldown_lvl;
+      SnackbarEvents.emit(
+        `Consumed SkillChip. Gained ${formatNumber(stats.netrun_cooldown_lvl, 2)} trace decay reduction boost.`,
+        ToastVariant.SUCCESS,
+        4000,
+      );
+    }
+    if (stats.mod_storage) {
+      CyberdeckState.modStorageSize += stats.mod_storage;
+      SnackbarEvents.emit(`Consumed SkillChip. Increased mod storage by ${formatNumber(stats.mod_storage, 2)} slots.`, ToastVariant.SUCCESS, 4000);
+    }
 
     disconnectModule(module);
   }

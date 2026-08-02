@@ -7,7 +7,7 @@ import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
 import { Tooltip, Typography } from "@mui/material";
-import { StatBonus } from "../models/StatBonuses";
+import { StatBonus } from "./StatBonuses";
 import { cyberdeckStyles } from "./cyberdeckStyles";
 
 export type DeckModuleProps = {

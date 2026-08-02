@@ -1,13 +1,13 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { getChargedModules } from "./CyberdeckState";
+import { getChargedModules } from "../models/CyberdeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
 import { CyberdeckStats, EndgameMults, MiscMults, ModuleStats } from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
-import { ComponentSymbol } from "../ui/ComponentCost";
-import { componentSymbols } from "./constants";
+import { ComponentSymbol } from "./ComponentCost";
+import { componentSymbols } from "../models/constants";
 
 
 export function StatBonus({ stats = {}, emptyMessage = "" }: { stats?: ModuleStats, emptyMessage?: string }) {
@@ -134,6 +134,7 @@ function formatStat(key: string, value: number): JSX.Element {
     .replaceAll(" Exp", "XP")
     .replaceAll("Hacknet Node", "Hnet")
     .replaceAll("Cooldown", "CD")
+    .replaceAll("Level", "LVL")
 
   const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
 

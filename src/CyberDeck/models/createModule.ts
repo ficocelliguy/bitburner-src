@@ -3,13 +3,12 @@ import { getRandomSockets } from "../utils/moduleUtilities";
 import {
   ComponentCounts,
   ConsumableStats,
-  CyberdeckStats,
   DeckModule,
   EndgameMults,
   MiscMults,
   ModuleType,
 } from "../Types";
-import { getStatRollRange } from "./StatBonuses";
+import { getStatRollRange } from "../ui/StatBonuses";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -79,7 +78,8 @@ function getAllStatRanges(level: number) {
   };
   const consumableStats: { [K in keyof ConsumableStats]: [number, number] } = {
     netrunning_lvl: getStatRollRange(level, 10, 30, 8),
-    netrun_cooldown: getStatRollRange(level, -1.5, -3, -1.5),
+    crafting_lvl: getStatRollRange(level, 10, 30, 8),
+    netrun_cooldown_lvl: getStatRollRange(level, 10, 30, 8),
     mod_storage: getStatRollRange(level, 20, 40, 10),
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
@@ -260,10 +260,11 @@ function getRandomModuleType() {
   return ModuleType.SkillChip;
 }
 
-function getLevel() {
-  const levelUpAttempts = (CyberdeckState.netrunningLevel / (CyberdeckState.netrunningLevel + 1)) * 16 + Math.random() * 4;
+function getLevel(levelBoost = CyberdeckState.netrunningLevel) {
+  const levelUpAttempts =
+    (levelBoost / (levelBoost + 1)) * 16 + 4;
   let level = 0;
-  for (let i = 0; i < levelUpAttempts ; i++) {
+  for (let i = 0; i < levelUpAttempts; i++) {
     if (Math.random() < 0.5 - i / 20) {
       level++;
     }
@@ -318,7 +319,7 @@ export function craftPowerSupply() {
     return null;
   }
   payComponentCost(powerSupplyCraftingCost);
-  const newComponent = createPowerSupply(1);
+  const newComponent = createPowerSupply(getLevel(CyberdeckState.craftingLevel));
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();
@@ -330,7 +331,7 @@ export function craftProcessingModule() {
     return null;
   }
   payComponentCost(processingModuleCraftingCost);
-  const newComponent = createProcessingModule(1);
+  const newComponent = createProcessingModule(getLevel(CyberdeckState.craftingLevel));
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();
@@ -342,7 +343,7 @@ export function craftUplink() {
     return null;
   }
   payComponentCost(uplinkCraftingCost);
-  const newComponent = createUplink(1);
+  const newComponent = createUplink(getLevel(CyberdeckState.craftingLevel));
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();

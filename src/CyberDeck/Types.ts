@@ -24,10 +24,11 @@ export enum ModuleType {
 }
 
 export type ConsumableStats = {
-  netrunning_lvl: number,
-  netrun_cooldown: number,
-  mod_storage: number,
-}
+  netrunning_lvl: number;
+  netrun_cooldown_lvl: number;
+  mod_storage: number;
+  crafting_lvl: number;
+};
 export type ModuleStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;

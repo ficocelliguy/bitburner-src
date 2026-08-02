@@ -1,16 +1,22 @@
 
 - fix reward modal - component stat window is too small (or text is too big) causing wrapping
 
+- show netrunning level and crafting level etc on stats page
+
+- short and full names for all stats
+
+- tooltips for components
+
+- module type info in tooltips
+
+- cyberdeck base connection label/brand
+
 - seed netrunning, glitch netrunning, and crafting
   - seed is based on save ID + source-files
   - track number of usages of seed, include in save data
   - when creating a module, make an IP or module VIN that can be used to create the module again later
   - rolls a percent of max level as part of seed - max level is based on netrunning level
     - roll with disadvantage to keep higher rarities more rare? roll 3 keep lowest 2?
-
-- stats page
-  - current cyberdeck bonuses
-  - total production stats
 
 - make modal showing crafting or netrunning result
   - sparkles?
@@ -21,13 +27,6 @@
 - netrunning
   - animated background
   - trash can in rewards modal?
-  - cooldown
-    - show timer
-
-- more stat options on module rolls
-  - helper function for scaling stats
-
-- cyberdeck server itself?
 
 - Corrupted modules
 - Glitch netrunning
@@ -42,7 +41,12 @@
 
 - mod cores required for crafting? ⛯ 
   - sometimes get cores when netrunning
-- re-position component location
+- re-position component counts widget location
+
+- stats page
+  - cleanup styling
+
+- cyberdeck server itself?
 
 - offline production?
 

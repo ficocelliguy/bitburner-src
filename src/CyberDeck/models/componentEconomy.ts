@@ -2,7 +2,7 @@ import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
-import { getCyberdeckStatBonuses } from "./StatBonuses";
+import { getCyberdeckStatBonuses } from "../ui/StatBonuses";
 import { createModule } from "./createModule";
 import { minCyclesToProcess, netrunningInitialTraceDecayWindowMs, netrunningTraceDecayMs } from "./constants";
 import { saveGame } from "../../SaveObject";
@@ -123,7 +123,8 @@ export function getCurrentNetrunningIceCost(): number {
 
   const diminishingCosts = 1 + netrunningTraceDecayMs / (timeSinceLastRun);
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
-  return Math.floor(diminishingCosts * recencyMultiplier) || 1;
+  const netrunningCooldownBoost = ((CyberdeckState.netrunningCooldownLevel) / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
+  return Math.floor(diminishingCosts * recencyMultiplier * netrunningCooldownBoost) || 1;
 }
 
 export function getNetrunningTraceFraction(): number {

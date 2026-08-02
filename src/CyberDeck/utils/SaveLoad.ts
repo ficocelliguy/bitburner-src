@@ -7,25 +7,30 @@ import { WHRNG } from "../../Casino/RNG";
 type CyberdeckSaveData = {
   hasCyberdeck: boolean;
   baseRackSize: number;
+  modStorageSize: number;
+  netrunningLevel: number;
+  craftingLevel: number;
+  netrunningCooldownLevel: number;
   installedModules: DeckModule[];
   storedModules: DeckModule[];
   connections: Connection[];
   lastNetrunningTimestamp: number;
   components: ComponentCounts;
   componentStats: ComponentStats;
-  netrunningLevel: number;
-  netrunningSeed: number,
-  netrunningSeedUsages: number,
-  netrunningCorruptedSeed: number,
-  netrunningCorruptedSeedUsages: number,
-  craftingSeed: number,
-  craftingSeedUsages: number,
+  netrunningSeed: number;
+  netrunningSeedUsages: number;
+  netrunningCorruptedSeed: number;
+  netrunningCorruptedSeedUsages: number;
+  craftingSeed: number;
+  craftingSeedUsages: number;
 };
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
     hasCyberdeck: CyberdeckState.hasCyberdeck,
     baseRackSize: CyberdeckState.baseRackSize,
+    modStorageSize: CyberdeckState.modStorageSize,
+    netrunningCooldownLevel: CyberdeckState.netrunningCooldownLevel,
     installedModules: CyberdeckState.installedModules,
     storedModules: CyberdeckState.storedModules,
     connections: CyberdeckState.connections,
@@ -33,6 +38,7 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     components: CyberdeckState.components,
     componentStats: CyberdeckState.componentStats,
     netrunningLevel: CyberdeckState.netrunningLevel,
+    craftingLevel: CyberdeckState.craftingLevel,
     craftingSeed: CyberdeckState.craftingSeed,
     craftingSeedUsages: CyberdeckState.craftingSeedUsages,
     netrunningSeed: CyberdeckState.netrunningSeed,
@@ -53,13 +59,16 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     const {
       hasCyberdeck,
       baseRackSize,
+      modStorageSize,
+      netrunningLevel,
+      craftingLevel,
+      netrunningCooldownLevel,
       installedModules,
       storedModules,
       connections,
       lastNetrunningTimestamp,
       components,
       componentStats,
-      netrunningLevel,
       netrunningSeed,
       netrunningSeedUsages,
       netrunningCorruptedSeed,
@@ -72,6 +81,12 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberdeckState.hasCyberdeck = hasCyberdeck;
     if (typeof baseRackSize !== "number") throw new Error("Invalid cyberdeck savestring value: baseRackSize");
     CyberdeckState.baseRackSize = baseRackSize;
+    if (typeof modStorageSize !== "number") throw new Error("Invalid cyberdeck savestring value: modStorageSize");
+    CyberdeckState.modStorageSize = modStorageSize;
+    if (typeof craftingLevel !== "number") throw new Error("Invalid cyberdeck savestring value: craftingLevel");
+    CyberdeckState.craftingLevel = craftingLevel;
+    if (typeof netrunningCooldownLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCooldownLevel");
+    CyberdeckState.netrunningCooldownLevel = netrunningCooldownLevel;
     if (typeof lastNetrunningTimestamp !== "number") throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
