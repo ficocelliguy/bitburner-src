@@ -1,4 +1,6 @@
 
+- fix reward modal - component stat window is too small (or text is too big) causing wrapping
+
 - seed netrunning, glitch netrunning, and crafting
   - seed is based on save ID + source-files
   - track number of usages of seed, include in save data
