@@ -1,13 +1,7 @@
 
 - fix reward modal - component stat window is too small (or text is too big) causing wrapping
 
-- show netrunning level and crafting level etc on stats page
-
-- short and full names for all stats
-
 - tooltips for components
-
-- module type info in tooltips
 
 - cyberdeck base connection label/brand
 

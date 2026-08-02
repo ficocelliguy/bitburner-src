@@ -3,41 +3,101 @@ import { Typography } from "@mui/material";
 import { getChargedModules } from "../models/CyberdeckState";
 import { defaultMultipliers, mergeMultipliers } from "../../PersonObjects/Multipliers";
 import { getRecordKeys } from "../../Types/Record";
-import { CyberdeckStats, EndgameMults, MiscMults, ModuleStats } from "../Types";
+import {
+  ConsumableStats,
+  CyberdeckStats,
+  EndgameMults,
+  MiscMults,
+  ModKey,
+  ModuleStats,
+  statBonusLongNames,
+  statBonusShortNames,
+} from "../Types";
 import { Player } from "@player";
 import { Settings } from "../../Settings/Settings";
 import { ComponentSymbol } from "./ComponentCost";
 import { componentSymbols } from "../models/constants";
 
 
-export function StatBonus({ stats = {}, emptyMessage = "" }: { stats?: ModuleStats, emptyMessage?: string }) {
+export function StatBonus({
+  stats = {},
+  emptyMessage = "",
+  fontSize = 10,
+  useShortStatNames = true,
+}: {
+  stats?: ModuleStats;
+  emptyMessage?: string;
+  fontSize?: number;
+  useShortStatNames?: boolean;
+}) {
   // TODO-fico: cache this with useEffect or similar
   const statList = [
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
     ...Object.entries(stats.consumableStats ?? {}),
     ...Object.entries(stats.endgameStats ?? {}),
-  ];
+  ] as [ModKey, number][];
 
   if (stats.extraRackSlots) {
-    statList.push([`Rack Slots`, stats.extraRackSlots]);
+    statList.push([`extraRackSlots`, stats.extraRackSlots]);
   }
 
   const results = statList
     .filter(([__, value]) => !!value)
-    .sort(([keyA, valueA], [keyB, valueB]) => Number(isBuff(keyB, valueB)) - Number(isBuff(keyA, valueA)))
-    .map(([key, value]) => formatStat(key, value));
+    .sort(([keyA, valueA], [keyB, valueB]) => Number(isBuff(keyB, valueB)) - Number(isBuff(keyA, valueA)));
 
   if (!results.length) return <div>{emptyMessage}</div>;
 
   return (
     <>
-      {results.map((result, index) => (
-        <div key={index}>
-          {result}
-        </div>
+      {results.map(([key, value], index) => (
+        <FormatStat key={index} keyName={key} value={value} useShortName={useShortStatNames} fontSize={fontSize} />
       ))}
     </>
+  );
+}
+
+function FormatStat({
+  keyName,
+  value,
+  fontSize = 10,
+  useShortName = true,
+}: {
+  keyName: ModKey;
+  value: number;
+  fontSize?: number;
+  useShortName?: boolean;
+}): JSX.Element {
+  const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
+  const formattedKey = keyNameSource[keyName];
+
+  const valueStr = keyName.includes("RackSlots")
+    ? Math.floor(value)
+    : keyName.includes("Production") || keyName.includes("netrunning")
+    ? value.toFixed(2)
+    : formatAsPercent(value);
+
+  return (
+    <Typography
+      style={{
+        fontSize: `${fontSize}px`,
+        display: "flex",
+        justifyContent: "space-between",
+        padding: `${Math.ceil(fontSize/10)}px 3px`,
+        color: Settings.theme.rep,
+        lineHeight: "11px",
+      }}
+    >
+      <span>
+        <FormattedKeyElement formattedKey={formattedKey} />:
+      </span>
+      <span
+        style={{ color: isBuff(keyName, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "3px" }}
+      >
+        {value > 0 ? "+" : ""}
+        {valueStr}
+      </span>
+    </Typography>
   );
 }
 
@@ -87,6 +147,7 @@ export function getCyberdeckStatBonuses(startMultsAt1 = true): CyberdeckStats {
     playerMults,
     otherMults,
     endgameStats,
+    consumableStats: getDefaultConsumableStats(),
     extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
   };
 }
@@ -116,6 +177,15 @@ function getDefaultEndgameMults(): EndgameMults {
   };
 }
 
+function getDefaultConsumableStats(): ConsumableStats {
+  return {
+    netrunning_lvl: 0,
+    netrun_cooldown_lvl: 0,
+    mod_storage: 0,
+    crafting_lvl: 0,
+  };
+}
+
 // At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.2% per level.
 // At the max of level 12, the min is 0.7% and the max is 3%.
 export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1): [number, number] {
@@ -125,31 +195,7 @@ export function getStatRollRange(level: number, minScaling: number = 1, maxScali
   ];
 }
 
-function formatStat(key: string, value: number): JSX.Element {
-  const formattedKey = key
-    .replaceAll("_", " ")
-    .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase())
-    .replaceAll(" Exp", "XP")
-    .replaceAll("Hacknet Node", "Hnet")
-    .replaceAll("Cooldown", "CD")
-    .replaceAll("Level", "LVL")
-
-  const valueStr = key.includes("Rack Slots") ? Math.floor(value) : key.includes("Production") || key.includes("netrunning") ? value.toFixed(2) : formatAsPercent(value);
-
-  return (
-    <Typography style={{ fontSize: "10px", display: "inline-flex", paddingLeft: "3px", color: Settings.theme.rep, lineHeight: "11px" }}>
-      <FormattedKeyElement formattedKey={formattedKey} />:
-      <span style={{ color: isBuff(key, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "3px" }}>
-        {value > 0 ? "+" : ""}
-        {valueStr}
-      </span>
-    </Typography>
-  );
-}
-
-export function isBuff(key: string, value: number): boolean {
+export function isBuff(key: ModKey, value: number): boolean {
   return key.includes("_cost") || key.includes("_cooldown") || key.includes("_commission") ? value < 0 : value > 0;
 }
 

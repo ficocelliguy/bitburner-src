@@ -9,6 +9,7 @@ import { SocketIOPanel } from "./SocketIOPanel";
 import { Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { cyberdeckStyles } from "./cyberdeckStyles";
+import { getModuleDescription } from "../models/constants";
 
 export type DeckModuleProps = {
   module: DeckModule;
@@ -71,11 +72,16 @@ export function ModuleComponent({
         <Tooltip
           title={
             <div>
-              <h5 style={{ margin: "4px" }}>{module.type} [Rarity {module.level}]</h5>
-             <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - no stat boosts.)"}</div>
-              <div>
-                <StatBonus stats={module.stats} />
+              <h5 style={{ margin: "4px" }}>
+                {module.type} [Rarity {module.level}]
+              </h5>
+              <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}</div>
+              <div style={{margin: "10px 0"}}>
+                <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
               </div>
+              <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "300px" }}>
+                {getModuleDescription(module.type)}
+              </Typography>
             </div>
           }
           open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}

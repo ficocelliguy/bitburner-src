@@ -5,6 +5,7 @@ import { getCyberdeckStatBonuses, StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
 import { Settings } from "../../Settings/Settings";
+import { formatNumber } from "../../ui/formatNumber";
 
 
 export function StatsPage() : React.ReactElement {
@@ -22,13 +23,27 @@ export function StatsPage() : React.ReactElement {
       </div>
       <div>
         <Typography variant="h4" gutterBottom>
+          Current Levels
+        </Typography>
+        <Typography component="div" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
+          <span>Netrunning level: {formatNumber(CyberdeckState.netrunningLevel, 2)}</span>
+          <br />
+          <span>Trace decay reduction level: {formatNumber(CyberdeckState.netrunningCooldownLevel, 2)}</span>
+          <br />
+          <span>Crafting level: {formatNumber(CyberdeckState.craftingLevel, 2)}</span>
+          <br />
+          <span>Mod storage: {formatNumber(CyberdeckState.modStorageSize, 2)}</span>
+          <br />
+        </Typography>
+      </div>
+      <div>
+        <Typography variant="h4" gutterBottom>
           Component Stats
         </Typography>
         <Typography component="pre" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
           {JSON.stringify(CyberdeckState.componentStats, null, 2)}
         </Typography>
       </div>
-
     </div>
   );
 }
