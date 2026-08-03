@@ -1,15 +1,15 @@
 
-- cyberdeck base connection label/brand
+- Mod storage limits
+- storage filtering / search
 
- - fix mod styling at low resolutions
 
 - seed netrunning, glitch netrunning, and crafting
   - seed is based on save ID + source-files
   - track number of usages of seed, include in save data
+    - use to generate new seed via a string
   - when creating a module, make an IP or module VIN that can be used to create the module again later
   - rolls a percent of max level as part of seed - max level is based on netrunning level
     - roll with disadvantage to keep higher rarities more rare? roll 3 keep lowest 2?
-
 
 - crafting
   - align buttons
@@ -18,8 +18,8 @@
   - animated background
   - trash can in rewards modal?
 
-- Corrupted modules
 - Glitch netrunning
+  - Corrupted modules 
 
 - more ways to get components
   - backdooring/nuking
@@ -27,9 +27,6 @@
   - IPvGO
   - CCTs
 
-- Mod storage limits
-
-- storage filtering / search
 
 - mod cores required for crafting? ⛯ 
   - sometimes get cores when netrunning

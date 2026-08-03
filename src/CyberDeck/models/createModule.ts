@@ -58,7 +58,6 @@ function getAllStatRanges(level: number) {
     charisma_exp: getStatRollRange(level, 1, 1, 1.5),
     hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
     hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
-    hacknet_node_core_cost: getStatRollRange(level, -1.2, -2, -1.5),
     hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
     company_rep: getStatRollRange(level, 1, 1.5, 2),
     work_money: getStatRollRange(level, 3, 10, 5),

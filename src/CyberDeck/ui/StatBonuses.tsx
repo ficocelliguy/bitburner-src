@@ -73,7 +73,7 @@ function FormatStat({
 
   const valueStr = keyName.includes("RackSlots")
     ? Math.floor(value)
-    : keyName.includes("Production") || keyName.includes("netrunning")
+    : keyName.includes("Production") || keyName.includes("netrunning") || keyName.includes("crafting")
     ? value.toFixed(2)
     : formatAsPercent(value);
 
@@ -92,7 +92,7 @@ function FormatStat({
         <FormattedKeyElement formattedKey={formattedKey} />:
       </span>
       <span
-        style={{ color: isBuff(keyName, value) ? Settings.theme.primary : Settings.theme.warning, paddingLeft: "3px" }}
+        style={{ color: isBuff(keyName, value) ? Settings.theme.primary : Settings.theme.hp, paddingLeft: "3px" }}
       >
         {value > 0 ? "+" : ""}
         {valueStr}
@@ -196,7 +196,7 @@ export function getStatRollRange(level: number, minScaling: number = 1, maxScali
 }
 
 export function isBuff(key: ModKey, value: number): boolean {
-  return key.includes("_cost") || key.includes("_cooldown") || key.includes("_commission") ? value < 0 : value > 0;
+  return key.includes("_cost") || key.includes("_cooldown") || key.includes("_fee") ? value < 0 : value > 0;
 }
 
 function FormattedKeyElement({ formattedKey }: { formattedKey: string }): JSX.Element {

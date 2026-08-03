@@ -3,7 +3,7 @@ import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventoryPage";
 import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "./CyberdeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
-import { getCurrentRackSize, getSocketId } from "../utils/moduleUtilities";
+import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { DeckModule, ModuleType, Socket } from "../Types";
 import { DeckConnection, disassembleModule } from "./createModule";
 import { Player } from "@player";
@@ -206,4 +206,5 @@ function consumeSkillChips() {
     disconnectModule(module);
   }
   CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
+  CyberdeckEvents.emit();
 }

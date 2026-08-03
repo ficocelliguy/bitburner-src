@@ -13,12 +13,12 @@ export function StatsPage() : React.ReactElement {
   const bonuses = getCyberdeckStatBonuses(false);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <div>
+      <div style={{width: "300px"}}>
         <Typography variant="h4" gutterBottom>
           Cyberdeck Bonuses
         </Typography>
         <Typography component="div" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <StatBonus stats={bonuses} emptyMessage={"No current bonuses. Wire up some mods!"} />
+          <StatBonus stats={bonuses} emptyMessage={"No current bonuses. Wire up some mods!"} fontSize={14} useShortStatNames={false} />
         </Typography>
       </div>
       <div>

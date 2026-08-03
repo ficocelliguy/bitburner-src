@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Container, Typography, Box, Button } from "@mui/material";
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { Container, Box, Button } from "@mui/material";
 import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
@@ -33,14 +33,16 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
 
   const updateDisplay = useCallback(() => {
     render();
-    DrawWiresOnCanvas(canvas.current);
   }, [render]);
 
   useEffect(() => {
     const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
-    updateDisplay();
     return () => clearSubscription();
   }, [updateDisplay]);
+
+  useLayoutEffect(() => {
+    DrawWiresOnCanvas(canvas.current, draggingWire);
+  });
 
   function onDragStart(result: DragStart) {
     document.body.style.overflow = "hidden";
@@ -57,7 +59,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
     const interval = setInterval(() => {
       updateDisplay();
     }, 60);
-    setTimeout(() => clearInterval(interval), 400);
+    setTimeout(() => clearInterval(interval), 600);
   }
 
   function draggingWireStarted(moduleId: string, socketIndex: number) {
@@ -98,7 +100,15 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <Button onClick={() => {prestigeCyberdeck(true); createInitialModules(); CyberdeckEvents.emit()}}>Testing tool: Generate new mods</Button>
+      <Button
+        onClick={() => {
+          prestigeCyberdeck(true);
+          createInitialModules();
+          CyberdeckEvents.emit();
+        }}
+      >
+        Testing tool: Generate new mods
+      </Button>
 
       <Container disableGutters maxWidth={false}>
         <canvas
@@ -107,7 +117,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
           height={"800px"}
           style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
         ></canvas>
-        <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row" }}>
+        <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row", minWidth: "990px" }}>
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
             <Box
               display="flex"

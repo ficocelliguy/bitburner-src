@@ -2,27 +2,47 @@ import { CyberdeckState, socketColors } from "../models/CyberdeckState";
 import { getSocketId } from "../utils/moduleUtilities";
 import { Socket } from "../Types";
 
+const mostRecentMouseLocation = {x: 0, y: 0};
 
-export function DrawWiresOnCanvas(canvas: HTMLCanvasElement | null, startingSocket: Socket | null = null, mouseLocation: {x: number, y: number} | null = null) {
+export function DrawWiresOnCanvas(
+  canvas: HTMLCanvasElement | null,
+  startingSocket: Socket | null = null,
+  mouseLocation: { x: number; y: number } | null = null,
+) {
   const ctx = canvas?.getContext("2d");
   if (!canvas || !ctx) return;
   const canvasLocation = canvas.getBoundingClientRect();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const startingLocation = document.getElementById(getSocketId(startingSocket))?.getBoundingClientRect();
-  if (startingSocket && startingLocation && mouseLocation) {
+  if (mouseLocation) {
+    mostRecentMouseLocation.x = mouseLocation.x;
+    mostRecentMouseLocation.y = mouseLocation.y;
+  }
+  if (startingSocket && startingLocation) {
     const startX = startingLocation.x + startingLocation.width / 2 - canvasLocation.x;
     const startY = startingLocation.y + startingLocation.height / 2 - canvasLocation.y;
 
-    drawLine(startingSocket.socketIndex, ctx, startX, startY, mouseLocation.x - canvasLocation.x, mouseLocation.y - canvasLocation.y);
+    drawLine(
+      startingSocket.socketIndex,
+      ctx,
+      startX,
+      startY,
+      mostRecentMouseLocation.x - canvasLocation.x,
+      mostRecentMouseLocation.y - canvasLocation.y,
+    );
   }
 
   for (const connection of CyberdeckState.connections) {
     const [source, destination] = connection;
     const sourceLocation = document.getElementById(getSocketId(source))?.getBoundingClientRect();
     const destinationLocation = document.getElementById(getSocketId(destination))?.getBoundingClientRect();
-    if (!sourceLocation ||  !destinationLocation) {
-      console.error(`Could not find source or destination location for connection: ${getSocketId(source)} -> ${getSocketId(destination)}`);
+    if (!sourceLocation || !destinationLocation) {
+      console.error(
+        `Could not find source or destination location for connection: ${getSocketId(source)} -> ${getSocketId(
+          destination,
+        )}`,
+      );
       continue;
     }
     const startX = sourceLocation.x + sourceLocation.width / 2 - canvasLocation.x;

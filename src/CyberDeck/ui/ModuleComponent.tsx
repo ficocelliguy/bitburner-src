@@ -72,11 +72,11 @@ export function ModuleComponent({
         <Tooltip
           title={
             <div>
-              <h5 style={{ margin: "4px" }}>
+              <h5 style={{ margin: "4px", textAlign: "center" }}>
                 {module.type} [Rarity {module.level}]
               </h5>
               <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}</div>
-              <div style={{margin: "10px 0"}}>
+              <div style={{ margin: "10px 0" }}>
                 <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
               </div>
               <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "300px" }}>
@@ -115,13 +115,32 @@ export function ModuleComponent({
             onMouseDown={openTooltipOnRightClick}
             onContextMenu={(e) => e.preventDefault()}
           >
-            <div>{getModuleIcon(module)}</div>
             {module.type !== ModuleType.DeckConnection ? (
-              <div className={classes.statsPanel}>
-                <StatBonus stats={module.stats} />
-              </div>
+              <>
+                <div>{getModuleIcon(module)}</div>
+                <div className={classes.statsPanel}>
+                  <StatBonus stats={module.stats} />
+                </div>
+              </>
             ) : (
-              <div style={{ width: "135px", margin: "3px" }}></div>
+              <div>
+                <Typography
+                  style={{
+                    width: "193px",
+                    marginTop: "6px",
+                    fontSize: "13px",
+                    textAlign: "center",
+                    fontStyle: "italic",
+                  }}
+                >
+                  Hosaka Mark I
+                </Typography>
+                <Typography
+                  style={{ width: "193px", marginTop: "4px", textAlign: "center" }}
+                >
+                  保坂 マークI
+                </Typography>
+              </div>
             )}
             <SocketIOPanel
               moduleId={module.id}
