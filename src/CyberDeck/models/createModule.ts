@@ -60,7 +60,7 @@ function getAllStatRanges(level: number) {
     hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
     hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
     company_rep: getStatRollRange(level, 1, 1.5, 2),
-    work_money: getStatRollRange(level, 3, 10, 5),
+    work_money: getStatRollRange(level, 1, 10, 5),
     crime_success: getStatRollRange(level, 2, 5, 2),
     crime_money: getStatRollRange(level, 1.5, 3, 1.5),
   };
@@ -82,7 +82,7 @@ function getAllStatRanges(level: number) {
     mod_storage: getStatRollRange(level, 20, 40, 10),
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
-    stamina_gain: getStatRollRange(level, 1.5, 1.5, 1.5),
+    stamina_gain: getStatRollRange(level, 1, 1.5, 1.5),
     graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
     sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
     stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),

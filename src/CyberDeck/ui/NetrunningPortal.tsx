@@ -11,6 +11,7 @@ import {
   netRun,
 } from "../models/componentEconomy";
 import { formatNumber } from "../../ui/formatNumber";
+import { Settings } from "../../Settings/Settings";
 
 export function NetrunningPortal(): React.ReactElement {
   const { classes } = portalStyles({});
@@ -20,7 +21,7 @@ export function NetrunningPortal(): React.ReactElement {
 const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
 
   const cost = getCurrentNetrunningIceCost();
-  const disabled = !entering && CyberdeckState.components.ICE < cost;
+  const disabled = !entering && !canNetrun();
 
   async function handlePortalClick() {
     if (!canNetrun()) return;
@@ -55,15 +56,16 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
           </div>
           {!entering && (
             <>
-              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
-                {`ICEbreakers needed: ${cost}`}
-              </Typography>
+              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>{`ICEbreakers needed: ${cost}`}</Typography>
               {cost > 1 && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
                   Hostile trace risk: {formatNumber(getNetrunningTraceFraction() * 100, 2)}%
                 </Typography>
               )}
             </>
+          )}
+          {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length && (
+            <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>Module storage full!</Typography>
           )}
         </>
       )}

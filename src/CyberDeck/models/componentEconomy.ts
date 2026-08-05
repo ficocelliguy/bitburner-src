@@ -133,7 +133,7 @@ export function getNetrunningTraceFraction(): number {
 }
 
 export function canNetrun() {
-  return CyberdeckState.components.ICE >= getCurrentNetrunningIceCost();
+  return CyberdeckState.components.ICE >= getCurrentNetrunningIceCost() && CyberdeckState.modStorageSize > CyberdeckState.storedModules.length;
 }
 
 export async function netRun(): Promise<NetrunningRewards> {

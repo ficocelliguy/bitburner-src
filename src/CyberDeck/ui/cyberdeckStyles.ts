@@ -41,7 +41,7 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
     boxSizing: "border-box",
     cornerTopLeftShape: "bevel",
     borderTopLeftRadius: "10px",
-    width: "476px",
+    width: "462px",
     height: "60px",
   },
   socketIOPanel: {

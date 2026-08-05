@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { Container, Box, Button } from "@mui/material";
+import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
@@ -30,6 +30,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
   const [draggingStoredModule, setDraggingStoredModule] = useState(false);
   const [draggingWire, setDraggingWire] = useState<Socket | null>(null);
+  const [modFilter, setModFilter] = useState("");
 
   const updateDisplay = useCallback(() => {
     render();
@@ -90,6 +91,18 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
     return CyberdeckState.installedModules.length >= getCurrentRackSize();
   }
 
+  function handleModFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setModFilter(e.target.value);
+  }
+
+  function getFilteredStoredModules() {
+    if (!modFilter) return CyberdeckState.storedModules;
+    const filterLower = modFilter.toLowerCase();
+    return CyberdeckState.storedModules.filter((module) =>
+      `rarity:${module.level} ${module.type} ${JSON.stringify(module.stats)}`.toLowerCase().includes(filterLower)
+    );
+  }
+
   return (
     <Container
       disableGutters
@@ -117,19 +130,17 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
           height={"800px"}
           style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
         ></canvas>
-        <div style={{ border: "1px solid blue", display: "flex", flexDirection: "row", minWidth: "990px" }}>
+        <div style={{ display: "flex", flexDirection: "row", minWidth: "990px", maxWidth: "1100px" }}>
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
             <Box
               display="flex"
-              flexGrow="1"
               flexDirection="column"
               alignItems="center"
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
                 height: "calc(100vh - 250px)",
-                width: "476px",
-                border: "1px solid red",
+                width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
                 overflowX: "scroll",
               }}
@@ -162,7 +173,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                     alignItems="center"
                     whiteSpace="nowrap"
                     style={{
-                      width: "476px",
+                      width: "462px",
                       backgroundColor: Settings.theme.backgroundprimary,
                     }}
                     ref={provided.innerRef}
@@ -224,16 +235,15 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               alignItems="center"
               whiteSpace="nowrap"
               style={{
-                margin: "10px",
-                width: "476px",
+                margin: "6px",
+                width: "462px",
                 maxHeight: "calc(100vh - 250px)",
               }}
             >
               <Droppable droppableId={MODULE_STORAGE} direction="vertical">
-                {(provided, snapshot) => (
+                {(provided) => (
                   <Box
                     display="flex"
-                    flexGrow="1"
                     flexDirection="column"
                     alignItems="center"
                     whiteSpace="nowrap"
@@ -241,21 +251,70 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                     {...provided.droppableProps}
                     style={{
                       maxHeight: "calc(100vh - 360px)",
-                      border: "1px solid green",
+                      border: `1px solid ${Settings.theme.button}`,
                       backgroundColor: Settings.theme.backgroundprimary,
-                      overflowX: "scroll",
+                      padding: "3px",
                     }}
                   >
-                    {CyberdeckState.storedModules.map((module, index) => (
-                      <ModuleComponent
-                        key={module.id}
-                        module={module}
-                        index={index}
-                        allowShift={!draggingWire}
-                        isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
-                      />
-                    ))}
-                    {provided.placeholder}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        height: "60px",
+                        width: "462px",
+                        margin: "3px",
+                        border: `1px solid ${Settings.theme.well}`,
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ padding: "10px" }}>
+                        Mod Storage:{" "}
+                        <span
+                          style={{
+                            color:
+                              CyberdeckState.storedModules.length > CyberdeckState.modStorageSize
+                                ? Settings.theme.warning
+                                : Settings.theme.primary,
+                          }}
+                        >
+                          {CyberdeckState.storedModules.length} / {Math.floor(CyberdeckState.modStorageSize)}
+                        </span>
+                      </Typography>
+                      <div>
+                        <FormControl sx={{ m: 0.5, width: "25ch", padding: "6px" }} variant="outlined">
+                          <InputLabel sx={{ fontSize: "12px" }} size="small" htmlFor={`mod-filter-input`}>
+                            Filter Stored Mods
+                          </InputLabel>
+                          <OutlinedInput
+                            size="small"
+                            sx={{ fontSize: "12px" }}
+                            id={`mod-filter-input`}
+                            type={"text"}
+                            label="Filter Stored Mods"
+                            onChange={handleModFilterChange}
+                          />
+                        </FormControl>
+                      </div>
+                    </div>
+                    <Box
+                      display="flex"
+                      flexGrow="1"
+                      flexDirection="column"
+                      alignItems="center"
+                      whiteSpace="nowrap"
+                      style={{ height: "calc(100vh - 420px)", overflowY: "scroll" }}
+                    >
+                      {getFilteredStoredModules().map((module, index) => (
+                        <ModuleComponent
+                          key={module.id}
+                          module={module}
+                          index={index}
+                          allowShift={!draggingWire}
+                          isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </Box>
                   </Box>
                 )}
               </Droppable>
@@ -268,7 +327,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                       justifyContent: "center",
                       alignItems: "center",
                       height: "100px",
-                      width: "476px",
+                      width: "480px",
                       marginTop: "10px",
                       backgroundColor: snapshot.isDraggingOver
                         ? Settings.theme.warningdark

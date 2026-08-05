@@ -3,12 +3,12 @@ import { DeckModule, ModuleType } from "../Types";
 import MemoryIcon from "@mui/icons-material/Memory";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import AllInboxSharpIcon from "@mui/icons-material/AllInboxSharp";
-import PodcastsOutlinedIcon from "@mui/icons-material/PodcastsOutlined";
 import MedicalInformationSharpIcon from "@mui/icons-material/MedicalInformationSharp";
+import SimCardOutlinedIcon from "@mui/icons-material/SimCardOutlined";
 import { Settings } from "../../Settings/Settings";
 
 export function getModuleIcon(module: DeckModule) {
-  return <div style={{padding: "5px", width: "50px", height: "50px", color:getRarityColor(module)}}>{getModIconComponent(module.type)}</div>
+  return <div style={{padding: "8px 2px", width: "40px", height: "40px", color:getRarityColor(module)}}>{getModIconComponent(module.type, 40)}</div>
 }
 
 export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
@@ -23,7 +23,7 @@ export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
     return <AllInboxSharpIcon style={style} />;
   }
   if (moduleType === ModuleType.Uplink) {
-    return <PodcastsOutlinedIcon style={style} />;
+    return <SimCardOutlinedIcon style={style} />;
   }
   if (moduleType === ModuleType.SkillChip) {
     return <MedicalInformationSharpIcon style={style}/>;

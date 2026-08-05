@@ -12,7 +12,7 @@ export const CyberdeckState = {
   hasCyberdeck: true,
   storedCycles: 0,
   baseRackSize: 5,
-  modStorageSize: 6,
+  modStorageSize: 8,
   netrunningCooldownLevel: 0,
   netrunningLevel: 0,
   craftingLevel: 0,
@@ -68,9 +68,9 @@ const t = Settings.theme;
 export const socketColors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
 
 export function getChargedModuleIDs() : string[] {
-  if (!CyberdeckState.installedModules.length) return [];
-
   const chargedModules = [DeckConnection.id];
+  if (!CyberdeckState.installedModules.length) return chargedModules;
+
   for (const moduleId of chargedModules) {
     const connections = CyberdeckState.connections.filter(
       ([source, destination]) => source.moduleId === moduleId || destination.moduleId === moduleId,

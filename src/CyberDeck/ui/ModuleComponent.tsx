@@ -68,7 +68,7 @@ export function ModuleComponent({
 
   return (
     <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <Tooltip
           title={
             <div>
@@ -101,7 +101,7 @@ export function ModuleComponent({
               ...provided.draggableProps.style,
               border: `2px solid ${
                 module.type === ModuleType.DeckConnection
-                  ? "transparent"
+                  ? Settings.theme.button
                   : getChargedModuleIDs().includes(module.id)
                   ? getRarityColor(module)
                   : Settings.theme.welllight
@@ -126,7 +126,7 @@ export function ModuleComponent({
               <div>
                 <Typography
                   style={{
-                    width: "193px",
+                    width: "179px",
                     marginTop: "6px",
                     fontSize: "13px",
                     textAlign: "center",
@@ -135,11 +135,7 @@ export function ModuleComponent({
                 >
                   Hosaka Mark I
                 </Typography>
-                <Typography
-                  style={{ width: "193px", marginTop: "4px", textAlign: "center" }}
-                >
-                  保坂 マークI
-                </Typography>
+                <Typography style={{ width: "179px", marginTop: "4px", textAlign: "center" }}>保坂 マークI</Typography>
               </div>
             )}
             <SocketIOPanel
