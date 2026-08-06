@@ -75,7 +75,12 @@ export function ModuleComponent({
               <h5 style={{ margin: "4px", textAlign: "center" }}>
                 {module.type} [Rarity {module.level}]
               </h5>
-              <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}</div>
+              <div>{chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}</div>{" "}
+              <Typography
+                sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
+              >
+                {module.id}
+              </Typography>
               <div style={{ margin: "10px 0" }}>
                 <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
               </div>

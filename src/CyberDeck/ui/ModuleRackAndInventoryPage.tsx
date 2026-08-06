@@ -17,7 +17,6 @@ import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { createInitialModules, DeckConnection } from "../models/createModule";
 import { cyberdeckStyles } from "./cyberdeckStyles";
-import { prestigeCyberdeck } from "../utils/prestigeCyberdeck";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -115,8 +114,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
     >
       <Button
         onClick={() => {
-          prestigeCyberdeck(true);
-          createInitialModules();
+          createInitialModules(true);
           CyberdeckEvents.emit();
         }}
       >
@@ -320,23 +318,26 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               </Droppable>
               <Droppable droppableId={TRASH_CAN} direction="vertical">
                 {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100px",
-                      width: "480px",
-                      marginTop: "10px",
-                      backgroundColor: snapshot.isDraggingOver
-                        ? Settings.theme.warningdark
-                        : Settings.theme.backgroundprimary,
-                      border: `1px solid ${Settings.theme.error}`,
-                    }}
-                  >
-                    <RecyclingOutlinedIcon style={{ fontSize: 40, color: Settings.theme.error }} />
-                  </div>
+                  <>
+                    <div
+                      ref={provided.innerRef}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        minHeight: "90px",
+                        width: "480px",
+                        marginTop: "10px",
+                        backgroundColor: snapshot.isDraggingOver
+                          ? Settings.theme.warningdark
+                          : Settings.theme.backgroundprimary,
+                        border: `1px solid ${Settings.theme.error}`,
+                      }}
+                    >
+                      <RecyclingOutlinedIcon style={{ fontSize: 40, color: Settings.theme.error }} />
+                    </div>
+                    {provided.placeholder}
+                  </>
                 )}
               </Droppable>
             </Box>

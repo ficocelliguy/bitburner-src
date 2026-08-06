@@ -2,7 +2,6 @@ import { Settings } from "../../Settings/Settings";
 import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { createInitialModules, DeckConnection } from "./createModule";
-import { setupSeeds } from "../utils/prestigeCyberdeck";
 import { WHRNG } from "../../Casino/RNG";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
@@ -93,5 +92,4 @@ export function getChargedModules() : DeckModule[] {
 }
 
 // TODO-fico: this is temporary setup
-createInitialModules();
-setTimeout(() => {if (!CyberdeckState.netrunningSeed) {setupSeeds()}}, 1000);
+setTimeout(createInitialModules, 500);

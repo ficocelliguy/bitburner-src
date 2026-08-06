@@ -2,6 +2,7 @@ import { CyberdeckState, getChargedModuleIDs } from "../models/CyberdeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { shuffle } from "lodash";
 import { Socket, SocketList } from "../Types";
+import { WHRNG } from "../../Casino/RNG";
 
 
 export function getCurrentRackSize() {
@@ -12,9 +13,9 @@ export function getCurrentRackSize() {
   return CyberdeckState.baseRackSize + rackExtensionCount;
 }
 
-export function getRandomSockets(baseCap: number, bonus: number = 0, disadvantage = false): SocketList {
-  const socketCount1 = Math.random() * baseCap + bonus;
-  const socketCount2 = Math.random() * baseCap + bonus;
+export function getRandomSockets(rng: WHRNG, baseCap: number, bonus: number = 0, disadvantage = false): SocketList {
+  const socketCount1 = rng.random() * baseCap + bonus;
+  const socketCount2 = rng.random() * baseCap + bonus;
   return getFixedCountSocketArray(disadvantage ? Math.min(socketCount1, socketCount2) : socketCount1);
 }
 
@@ -24,7 +25,7 @@ function getFixedCountSocketArray(socketCount: number): SocketList {
   for (let i = 0; i < count; i++) {
     array[i] = true;
   }
-  const result = shuffle(array);
+  const result = shuffle(array); // TODO: use seed
   if (!isSocketList(result)) {
     throw new Error(`Somehow mis-shuffled sockets: ${JSON.stringify(result, null, 2)}`);
   }

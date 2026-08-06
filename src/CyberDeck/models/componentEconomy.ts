@@ -9,6 +9,7 @@ import { saveGame } from "../../SaveObject";
 import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 import { NetrunningRewards } from "../Types";
+import { getNextNetrunningWHRNG } from "../utils/statRng";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -141,9 +142,10 @@ export async function netRun(): Promise<NetrunningRewards> {
     return { success: false, modules: [], components: {} };
   }
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost();
-  const rewards = [createModule(), createModule(), createModule()].sort((m1, m2) => m1.level - m2.level);
+  const rng = getNextNetrunningWHRNG();
+  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.level - m2.level);
   if (!rewards.some(m => m.level >= 3)) {
-    rewards[2] = createModule(undefined, 3);
+    rewards[2] = createModule(rng, undefined, 3);
   }
   CyberdeckState.components.chips += 1;
   CyberdeckState.componentStats.chips.netrunning += 1;

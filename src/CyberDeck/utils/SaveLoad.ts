@@ -120,8 +120,6 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     if (typeof craftingSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeedUsages");
     CyberdeckState.craftingSeedUsages = craftingSeedUsages;
 
-    setupCyberdeckRNG();
-
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();
   } catch (error) {
@@ -164,20 +162,4 @@ function isComponentStats(obj: unknown): obj is ComponentStats {
     typeof obj.chips === "object" &&
     typeof obj.neurodes === "object"
   );
-}
-
-
-export function setupCyberdeckRNG() {
-  CyberdeckState.netrunningWHRNG = new WHRNG(CyberdeckState.netrunningSeed);
-  for (let i = 0; i < CyberdeckState.netrunningSeedUsages; i++) {
-    CyberdeckState.netrunningWHRNG.step();
-  }
-  CyberdeckState.craftingWHRNG = new WHRNG(CyberdeckState.craftingSeed);
-  for (let i = 0; i < CyberdeckState.craftingSeedUsages; i++) {
-    CyberdeckState.craftingWHRNG.step();
-  }
-  CyberdeckState.netrunningCorruptedWHRNG = new WHRNG(CyberdeckState.netrunningCorruptedSeed);
-  for (let i = 0; i < CyberdeckState.netrunningCorruptedSeedUsages; i++) {
-    CyberdeckState.netrunningCorruptedWHRNG.step();
-  }
 }

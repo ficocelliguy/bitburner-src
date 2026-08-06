@@ -1,111 +1,61 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import {
-  ComponentCounts,
-  ConsumableStats,
-  DeckModule,
-  EndgameMults,
-  MiscMults,
-  ModuleType,
-} from "../Types";
-import { getStatRollRange } from "../ui/StatBonuses";
+import { ComponentCounts, DeckModule, ModuleType } from "../Types";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import {
-  componentSymbols, ICEbreakerCraftingCost, powerSupplyCraftingCost, processingModuleCraftingCost, uplinkCraftingCost } from "./constants";
+  componentSymbols,
+  ICEbreakerCraftingCost,
+  powerSupplyCraftingCost,
+  processingModuleCraftingCost,
+  uplinkCraftingCost,
+} from "./constants";
 import { saveGame } from "../../SaveObject";
 import { getRecordKeys } from "../../Types/Record";
 import { Multipliers } from "@nsdefs";
+import {
+  getAllStatRanges,
+  getDebuff,
+  getID,
+  getLevel,
+  getNextCraftingWHRNG,
+  getPlayerStatBuff,
+} from "../utils/statRng";
+import { WHRNG } from "../../Casino/RNG";
 
 
 export const DeckConnection: DeckModule = {
   type: ModuleType.DeckConnection,
-  id: "deck-connection",
+  id: "Hosaka Mk 1 Cyberdeck",
   sockets: [false, true, false, true, false, true, false, false],
   level: 10,
 };
 
-export function createModule(type: ModuleType = getRandomModuleType(), level: number = getLevel()) {
+export function createModule(rng: WHRNG, type: ModuleType = getRandomModuleType(rng), level: number = getLevel(rng)) {
   if (type == ModuleType.PowerSupply) {
-    return createPowerSupply(level);
+    return createPowerSupply(level, rng);
   }
   if (type == ModuleType.RackExtension) {
-    return createRackExtension(level);
+    return createRackExtension(level, rng);
   }
   if (type == ModuleType.SkillChip) {
-    return createSkillChip(level);
+    return createSkillChip(level, rng);
   }
   if (type == ModuleType.Uplink) {
-    return createUplink(level);
+    return createUplink(level, rng);
   }
-  return createProcessingModule(level);
+  return createProcessingModule(level, rng);
 }
 
-function getAllStatRanges(level: number) {
-  const playerMults: Partial<{ [K in keyof Multipliers]: [number, number] }> = {
-    hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
-    hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
-    strength: getStatRollRange(level, 1.2, 1.2, 1.5),
-    strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    defense: getStatRollRange(level, 1.2, 1.2, 1.5),
-    defense_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    dexterity: getStatRollRange(level, 1.2, 1.2, 1.5),
-    dexterity_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    agility: getStatRollRange(level, 1.2, 1.2, 1.5),
-    agility_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    charisma: getStatRollRange(level, 1, 1, 1.5),
-    charisma_exp: getStatRollRange(level, 1, 1, 1.5),
-    hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
-    hacknet_node_ram_cost: getStatRollRange(level, -1.2, -2, -1.5),
-    hacknet_node_level_cost: getStatRollRange(level, -1.2, -2, -1.5),
-    company_rep: getStatRollRange(level, 1, 1.5, 2),
-    work_money: getStatRollRange(level, 1, 10, 5),
-    crime_success: getStatRollRange(level, 2, 5, 2),
-    crime_money: getStatRollRange(level, 1.5, 3, 1.5),
-  };
-  const otherMults: { [K in keyof MiscMults]: [number, number] } = {
-    romProduction: getStatRollRange(level, 10, 30, 8),
-    chipProduction: getStatRollRange(level, 10, 30, 8),
-    neurodeProduction: getStatRollRange(level, 10, 30, 8),
-    program_creation_speed: getStatRollRange(level, 1.5, 3, 1.5),
-    crime_speed: getStatRollRange(level, 1.5, 3, 1.5),
-    stock_fees: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
-    cct_money: getStatRollRange(level, 3, 4, 2),
-    IPvGO_power: getStatRollRange(level, 1, 3, 1),
-    class_cost: getStatRollRange(level, -2, -4, -3),
-  };
-  const consumableStats: { [K in keyof ConsumableStats]: [number, number] } = {
-    netrunning_lvl: getStatRollRange(level, 10, 30, 8),
-    crafting_lvl: getStatRollRange(level, 10, 30, 8),
-    netrun_cooldown_lvl: getStatRollRange(level, 10, 30, 8),
-    mod_storage: getStatRollRange(level, 20, 40, 10),
-  };
-  const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
-    stamina_gain: getStatRollRange(level, 1, 1.5, 1.5),
-    graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
-    sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
-    stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
-    equipment_cost: getStatRollRange(level, -1.5, -3, -1.5),
-  };
-
-  return {
-    playerMults,
-    otherMults,
-    consumableStats,
-    endgameStats,
-    extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1, // TODO-fico
-  } as const;
-}
-
-function createPowerSupply(level: number): DeckModule {
-  const debuff = getDebuff(level); // TODO: higher levels don't have debuff
+function createPowerSupply(level: number, rng: WHRNG): DeckModule {
+  const debuff = getDebuff(level, rng); // TODO: higher levels don't have debuff
   // TODO: debuff in exchange for more slots
 
   return {
     type: ModuleType.PowerSupply,
-    id: `${(Math.random() * 1e4) | 0}`, // TODO: use seed
-    sockets: getRandomSockets(2 + level / 2, 2), // TODO: use seed
+    id: getID(rng),
+    sockets: getRandomSockets(rng, 2 + level / 2, 2),
     level,
     stats: {
       playerMults: debuff,
@@ -113,24 +63,20 @@ function createPowerSupply(level: number): DeckModule {
   };
 }
 
-function createProcessingModule(level: number): DeckModule {
-
-  const rng1 = Math.random();
-  const rng2 = Math.random();
-
+function createProcessingModule(level: number, rng: WHRNG): DeckModule {
   const fullStats = getAllStatRanges(Math.max(level, 1));
   const otherStatKeys = getRecordKeys(fullStats.otherMults);
-  const statToAdd = otherStatKeys[Math.floor(rng1 * otherStatKeys.length)];
+  const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
   const valueRange: [number, number] = fullStats.otherMults[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * rng2;
+  const value = (valueRange[1] - valueRange[0]) * rng.random();
 
-  const debuff = getDebuff(level);
+  const debuff = getDebuff(level, rng);
 
 
   return {
     type: ModuleType.ProcessingModule,
-    id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(1 + level / 3, 0, true),
+    id: getID(rng),
+    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
     stats: {
       playerMults: debuff,
@@ -141,16 +87,16 @@ function createProcessingModule(level: number): DeckModule {
   };
 }
 
-function createUplink(level: number): DeckModule {
+function createUplink(level: number, rng: WHRNG): DeckModule {
 
-  const buff = getPlayerStatBuff(level);
-  const debuff = getDebuff(level);
+  const buff = getPlayerStatBuff(level, rng);
+  const debuff = getDebuff(level, rng);
   const mergedStats = mergeBuffs(debuff, buff);
 
   return {
     type: ModuleType.Uplink,
-    id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(1 + level / 3, 0, true),
+    id: getID(rng),
+    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
     stats: {
       playerMults: mergedStats,
@@ -159,23 +105,23 @@ function createUplink(level: number): DeckModule {
 }
 
 
-function createRackExtension(level: number): DeckModule {
-  const debuff = getDebuff(level);
+function createRackExtension(level: number, rng: WHRNG): DeckModule {
+  const debuff = getDebuff(level, rng);
   return {
     stats: {
       playerMults: debuff,
-      extraRackSlots: Math.floor(Math.random() * (2 + level / 4)) || 1,
+      extraRackSlots: Math.floor(rng.random() * (2 + level / 4)) || 1,
     },
     type: ModuleType.RackExtension,
-    id: `${(Math.random() * 1e4) | 0}`,
-    sockets: getRandomSockets(1 + level / 3, 0, true),
+    id: getID(rng),
+    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
   };
 }
 
-function createSkillChip(level: number): DeckModule {
-  const rng1 = Math.random();
-  const rng2 = Math.random();
+function createSkillChip(level: number, rng: WHRNG): DeckModule {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
 
   const fullStats = getAllStatRanges(level);
 
@@ -186,8 +132,8 @@ function createSkillChip(level: number): DeckModule {
 
   return {
     type: ModuleType.SkillChip,
-    id: `${(Math.random() * 1e4) | 0}`, // TODO: use seed
-    sockets: getRandomSockets(1), // TODO: use seed
+    id: getID(rng),
+    sockets: getRandomSockets(rng, 1),
     level,
     stats: {
       consumableStats: {
@@ -195,38 +141,6 @@ function createSkillChip(level: number): DeckModule {
       },
     },
   };
-}
-
-function getPlayerStatBuff(level: number): Partial<Multipliers> {
-  const rng1 = Math.random();
-  const rng2 = Math.random();
-
-  const fullStats = getAllStatRanges(Math.max(level, 1));
-
-  const playerMultKeys = getRecordKeys(fullStats.playerMults);
-  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
-  const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0,0];
-  const value = (valueRange[1] - valueRange[0])  * rng2;
-
-  return {
-      [statToAdd]: value,
-  };
-}
-
-function getDebuff(level: number): Partial<Multipliers> {
-  const rng1 = Math.random(); // TODO: use seed
-  const rng2 = Math.random();
-
-  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
-
-  const playerMultKeys = getRecordKeys(fullStats.playerMults);
-  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
-  const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0,0];
-  const value = (valueRange[1] - valueRange[0]) * -1 * rng2;
-
-  return {
-      [statToAdd]: value,
-  }
 }
 
 function mergeBuffs(buff1: Partial<Multipliers>, buff2: Partial<Multipliers>): Partial<Multipliers> {
@@ -242,43 +156,37 @@ function mergeBuffs(buff1: Partial<Multipliers>, buff2: Partial<Multipliers>): P
   return merged;
 }
 
-function getRandomModuleType() {
-  const rng = Math.random();
-  if (rng < 0.2) {
+function getRandomModuleType(rng: WHRNG) {
+  const roll = rng.random();
+  if (roll < 0.2) {
     return ModuleType.PowerSupply;
   }
-  if (rng < 0.3) {
+  if (roll < 0.3) {
     return ModuleType.RackExtension;
   }
-  if (rng < 0.6) {
+  if (roll < 0.6) {
     return ModuleType.ProcessingModule;
   }
-  if (rng < 0.9) {
+  if (roll < 0.9) {
     return ModuleType.Uplink;
   }
   return ModuleType.SkillChip;
 }
 
-function getLevel(levelBoost = CyberdeckState.netrunningLevel) {
-  const levelUpAttempts =
-    (levelBoost / (levelBoost + 1)) * 16 + 4;
-  let level = 0;
-  for (let i = 0; i < levelUpAttempts; i++) {
-    if (Math.random() < 0.5 - i / 20) {
-      level++;
-    }
-  }
-  return level;
-}
-
 // TODO-fico: replace with better module set on prestige
-export function createInitialModules() {
+export function createInitialModules(force = false) {
+  if (CyberdeckState.storedModules.length > 0 && !force) {
+    return;
+  }
+  CyberdeckState.installedModules = [];
+  CyberdeckState.storedModules = [];
+  CyberdeckState.connections = [];
   CyberdeckState.netrunningLevel = 8;
   for (let i = 0; i < 4; i++) {
-    CyberdeckState.installedModules.push(createModule());
+    CyberdeckState.installedModules.push(createModule(getNextCraftingWHRNG()));
   }
-  for (let i = 0; i < 10; i++) {
-    CyberdeckState.storedModules.push(createModule());
+  for (let i = 0; i < 5; i++) {
+    CyberdeckState.storedModules.push(createModule(getNextCraftingWHRNG()));
   }
   CyberdeckState.netrunningLevel = 0;
   CyberdeckState.components.ROM = 25;
@@ -318,7 +226,8 @@ export function craftPowerSupply() {
     return null;
   }
   payComponentCost(powerSupplyCraftingCost);
-  const newComponent = createPowerSupply(getLevel(CyberdeckState.craftingLevel));
+  const rng = getNextCraftingWHRNG();
+  const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();
@@ -330,7 +239,8 @@ export function craftProcessingModule() {
     return null;
   }
   payComponentCost(processingModuleCraftingCost);
-  const newComponent = createProcessingModule(getLevel(CyberdeckState.craftingLevel));
+  const rng = getNextCraftingWHRNG();
+  const newComponent = createProcessingModule(getLevel(rng, CyberdeckState.craftingLevel), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();
@@ -342,7 +252,8 @@ export function craftUplink() {
     return null;
   }
   payComponentCost(uplinkCraftingCost);
-  const newComponent = createUplink(getLevel(CyberdeckState.craftingLevel));
+  const rng = getNextCraftingWHRNG();
+  const newComponent = createUplink(getLevel(rng, CyberdeckState.craftingLevel), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   void saveGame();
