@@ -147,19 +147,30 @@ export async function netRun(): Promise<NetrunningRewards> {
   if (!rewards.some(m => m.level >= 3)) {
     rewards[2] = createModule(rng, undefined, 3);
   }
-  CyberdeckState.components.chips += 1;
-  CyberdeckState.componentStats.chips.netrunning += 1;
-  CyberdeckState.components.cores += 1;
-  CyberdeckState.componentStats.cores.netrunning += 1;
   CyberdeckState.storedModules.unshift(...rewards);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
+
+  const chipsGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  CyberdeckState.components.chips += chipsGained;
+  CyberdeckState.componentStats.chips.netrunning += chipsGained;
+  const neurodesGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  CyberdeckState.components.neurodes += neurodesGained;
+  CyberdeckState.componentStats.neurodes.netrunning += neurodesGained;
+  const ROMGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  CyberdeckState.components.ROM += ROMGained;
+  CyberdeckState.componentStats.ROM.netrunning += ROMGained;
+  const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 1.5));
+  CyberdeckState.components.cores += coresGained;
+  CyberdeckState.componentStats.cores.netrunning += coresGained;
   await saveGame();
   return {
     success: true,
     modules: rewards,
     components: {
-      chips: 1,
-      cores: 1
-    }
+      chips: chipsGained,
+      neurodes: neurodesGained,
+      ROM: ROMGained,
+      cores: coresGained,
+    },
   };
 }

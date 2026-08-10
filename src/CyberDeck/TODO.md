@@ -1,9 +1,4 @@
 
-- seed netrunning, glitch netrunning, and crafting
-  - when creating a module, make an IP or module VIN that can be used to create the module again later
-  - rolls a percent of max level as part of seed - max level is based on netrunning level
-    - roll with disadvantage to keep higher rarities more rare? roll 3 keep lowest 2?
-
 - crafting
   - align buttons
 
@@ -22,12 +17,6 @@
   - CCTs
   - backing up save
 
-- mod cores
-  - sometimes get cores when netrunning
-
-- stats page
-  - cleanup styling
-
 - modal showing netrunning result
   - sparkles!
 
@@ -39,12 +28,19 @@
 
 - api
 
+- basic doc page
+
 
 TODO LATER:
 
 - BN
+
 - Full docs
-- 
+
+- when creating a module, make an IP or module VIN that can be used to create the module again later
+
+- stats page
+  - cleanup styling
 
 
 CYBERDECK

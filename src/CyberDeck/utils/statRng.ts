@@ -104,13 +104,21 @@ export function getAllStatRanges(level: number) {
 export function getPlayerStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
   const rng1 = rng.random();
   const rng2 = rng.random();
+  const rng3 = rng.random();
+  const rng4 = rng.random();
 
   const fullStats = getAllStatRanges(Math.max(level, 1));
 
   const playerMultKeys = getRecordKeys(fullStats.playerMults);
   const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
   const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0, 0];
-  const value = (valueRange[1] - valueRange[0]) * scalar * rng2 + valueRange[0];
+  // Roll three times and take the sum of the two lowest rolls, to create a range that makes higher values more rare
+  const valueRoll1 = (valueRange[1] - valueRange[0]) * scalar * rng2 * 0.5;
+  const valueRoll2 = (valueRange[1] - valueRange[0]) * scalar * rng3 * 0.5;
+  const valueRoll3 = (valueRange[1] - valueRange[0]) * scalar * rng4 * 0.5;
+  const weightedSum = valueRoll1 + valueRoll2 + valueRoll3 - Math.max(valueRoll1, valueRoll2, valueRoll3);
+
+  const value = valueRange[0] + weightedSum;
 
   return {
     [statToAdd]: value,
