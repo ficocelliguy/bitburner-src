@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput, Tooltip } from "@mui/material";
 import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
@@ -17,6 +17,7 @@ import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { createInitialModules, DeckConnection } from "../models/createModule";
 import { cyberdeckStyles } from "./cyberdeckStyles";
+import { TrashCan } from "./TrashCan";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -316,30 +317,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                   </Box>
                 )}
               </Droppable>
-              <Droppable droppableId={TRASH_CAN} direction="vertical">
-                {(provided, snapshot) => (
-                  <>
-                    <div
-                      ref={provided.innerRef}
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        minHeight: "90px",
-                        width: "480px",
-                        marginTop: "10px",
-                        backgroundColor: snapshot.isDraggingOver
-                          ? Settings.theme.warningdark
-                          : Settings.theme.backgroundprimary,
-                        border: `1px solid ${Settings.theme.error}`,
-                      }}
-                    >
-                      <RecyclingOutlinedIcon style={{ fontSize: 40, color: Settings.theme.error }} />
-                    </div>
-                    {provided.placeholder}
-                  </>
-                )}
-              </Droppable>
+              <TrashCan />
             </Box>
           </DragDropContext>
         </div>

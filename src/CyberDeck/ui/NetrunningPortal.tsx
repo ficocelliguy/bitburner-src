@@ -56,16 +56,19 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
           </div>
           {!entering && (
             <>
-              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>{`ICEbreakers needed: ${cost}`}</Typography>
+              {(CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) ? (
+                <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
+                  Module storage full!
+                </Typography>
+              ):(
+                <Typography sx={{ textAlign: "center", marginTop: "20px" }}>{`ICEbreakers needed: ${cost}`}</Typography>
+              )}
               {cost > 1 && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
                   Hostile trace risk: {formatNumber(getNetrunningTraceFraction() * 100, 2)}%
                 </Typography>
               )}
             </>
-          )}
-          {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length && (
-            <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>Module storage full!</Typography>
           )}
         </>
       )}

@@ -4,7 +4,6 @@
 
 - netrunning
   - animated background
-  - trash can in rewards modal?
     - tooltip for trash can
 
 - Glitch netrunning
