@@ -2,9 +2,9 @@ import { CyberdeckState } from "../models/CyberdeckState";
 import { Player } from "@player";
 import { WHRNG } from "../../Casino/RNG";
 import { Multipliers } from "@nsdefs";
-import { getStatRollRange } from "../ui/StatBonuses";
 import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
+import { getStatRollRange } from "./modStatsUtils";
 
 export function getNextNetrunningWHRNG() {
   const ID = Player.identifier;

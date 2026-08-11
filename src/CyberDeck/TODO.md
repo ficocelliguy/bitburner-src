@@ -1,4 +1,10 @@
 
+- mod storage filters
+  - include long stat names
+  - support exclusion terms starting with -
+
+- add favorite star that prevents deletion and sorts to top
+
 - crafting
   - align buttons
 

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput, Tooltip } from "@mui/material";
-import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
+import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
@@ -18,6 +17,7 @@ import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { createInitialModules, DeckConnection } from "../models/createModule";
 import { cyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
+import { getFilteredStoredModules } from "../utils/modStatsUtils";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -93,14 +93,6 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
 
   function handleModFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
     setModFilter(e.target.value);
-  }
-
-  function getFilteredStoredModules() {
-    if (!modFilter) return CyberdeckState.storedModules;
-    const filterLower = modFilter.toLowerCase();
-    return CyberdeckState.storedModules.filter((module) =>
-      `rarity:${module.level} ${module.type} ${JSON.stringify(module.stats)}`.toLowerCase().includes(filterLower)
-    );
   }
 
   return (
@@ -303,7 +295,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                       whiteSpace="nowrap"
                       style={{ height: "calc(100vh - 420px)", overflowY: "scroll" }}
                     >
-                      {getFilteredStoredModules().map((module, index) => (
+                      {getFilteredStoredModules(modFilter).map((module, index) => (
                         <ModuleComponent
                           key={module.id}
                           module={module}

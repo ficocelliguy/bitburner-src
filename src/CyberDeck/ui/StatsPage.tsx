@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { cyberdeckStyles } from "./cyberdeckStyles";
-import { getCyberdeckStatBonuses, StatBonus } from "./StatBonuses";
+import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
 import { Settings } from "../../Settings/Settings";
 import { formatNumber } from "../../ui/formatNumber";
+
+import { getCyberdeckStatBonuses } from "../effects";
 
 
 export function StatsPage() : React.ReactElement {

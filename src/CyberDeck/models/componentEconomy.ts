@@ -2,7 +2,6 @@ import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
-import { getCyberdeckStatBonuses } from "../ui/StatBonuses";
 import { createModule } from "./createModule";
 import { minCyclesToProcess, netrunningInitialTraceDecayWindowMs, netrunningTraceDecayMs } from "./constants";
 import { saveGame } from "../../SaveObject";
@@ -10,6 +9,8 @@ import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 import { NetrunningRewards } from "../Types";
 import { getNextNetrunningWHRNG } from "../utils/statRng";
+
+import { getCyberdeckStatBonuses } from "../effects";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
