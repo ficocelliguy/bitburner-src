@@ -1,10 +1,11 @@
-import { CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { Player } from "@player";
 import { WHRNG } from "../../Casino/RNG";
 import { Multipliers } from "@nsdefs";
-import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
+import { ConsumableStats, EndgameMults, MiscMults, ModuleType } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
 import { getStatRollRange } from "./modStatsUtils";
+import { getRandomSockets } from "./moduleUtilities";
 
 export function getNextNetrunningWHRNG() {
   const ID = Player.identifier;
@@ -135,6 +136,37 @@ export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partia
   const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
   const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0, 0];
   const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
+
+  return {
+    [statToAdd]: value,
+  };
+}
+
+export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<ConsumableStats> {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
+  const fullStats = getAllStatRanges(level);
+
+  const consumableKeys = getRecordKeys(fullStats.consumableStats);
+  const statToAdd = consumableKeys[Math.floor(rng1 * consumableKeys.length)];
+  const valueRange: [number, number] = fullStats.consumableStats[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * rng2 * scalar + valueRange[0];
+
+  return {
+    [statToAdd]: value,
+  };
+}
+
+export function getEndgameBuff(rng: WHRNG): Partial<EndgameMults> {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
+  const level = getLevel(rng, CyberdeckState.netrunningLevel * 2);
+  const fullStats = getAllStatRanges(level);
+
+  const endgameKeys = getRecordKeys(fullStats.endgameStats);
+  const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
+  const valueRange: [number, number] = fullStats.endgameStats[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * rng2 + valueRange[0];
 
   return {
     [statToAdd]: value,

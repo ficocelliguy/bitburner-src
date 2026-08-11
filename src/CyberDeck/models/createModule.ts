@@ -15,7 +15,7 @@ import { saveGame } from "../../SaveObject";
 import { getRecordKeys } from "../../Types/Record";
 import { Multipliers } from "@nsdefs";
 import {
-  getAllStatRanges,
+  getAllStatRanges, getConsumableBuff,
   getDebuff,
   getID,
   getLevel,
@@ -23,6 +23,7 @@ import {
   getPlayerStatBuff,
 } from "../utils/statRng";
 import { WHRNG } from "../../Casino/RNG";
+import { clampNumber } from "../../utils/helpers/clampNumber";
 
 
 export const DeckConnection: DeckModule = {
@@ -63,14 +64,14 @@ function createPowerSupply(level: number, rng: WHRNG): DeckModule {
   };
 }
 
-function createProcessingModule(level: number, rng: WHRNG): DeckModule {
+function createProcessingModule(level: number, rng: WHRNG, addDebuff = true): DeckModule {
   const fullStats = getAllStatRanges(Math.max(level, 1));
   const otherStatKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
   const valueRange: [number, number] = fullStats.otherMults[statToAdd];
   const value = (valueRange[1] - valueRange[0]) * rng.random();
 
-  const debuff = getDebuff(level, rng);
+  const debuff = addDebuff ? getDebuff(level, rng) : {};
 
 
   return {
@@ -87,10 +88,10 @@ function createProcessingModule(level: number, rng: WHRNG): DeckModule {
   };
 }
 
-function createUplink(level: number, rng: WHRNG): DeckModule {
+function createUplink(level: number, rng: WHRNG, addDebuff = true): DeckModule {
 
   const buff = getPlayerStatBuff(level, rng);
-  const debuff = getDebuff(level, rng);
+  const debuff = addDebuff ? getDebuff(level, rng) : {};
   const mergedStats = mergeBuffs(debuff, buff);
 
   return {
@@ -110,7 +111,7 @@ function createRackExtension(level: number, rng: WHRNG): DeckModule {
   return {
     stats: {
       playerMults: debuff,
-      extraRackSlots: Math.floor(rng.random() * (2 + level / 4)) || 1,
+      extraRackSlots: clampNumber(Math.floor(1 + level / 4), 1, 3),
     },
     type: ModuleType.RackExtension,
     id: getID(rng),
@@ -120,37 +121,28 @@ function createRackExtension(level: number, rng: WHRNG): DeckModule {
 }
 
 function createSkillChip(level: number, rng: WHRNG): DeckModule {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-
-  const fullStats = getAllStatRanges(level);
-
-  const consumableKeys = getRecordKeys(fullStats.consumableStats);
-  const statToAdd = consumableKeys[Math.floor(rng1 * consumableKeys.length)];
-  const valueRange: [number, number] = fullStats.consumableStats[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * rng2;
-
   return {
     type: ModuleType.SkillChip,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
     level,
     stats: {
-      consumableStats: {
-        [statToAdd]: value,
-      },
+      consumableStats: getConsumableBuff(level, rng),
     },
   };
 }
 
-function mergeBuffs(buff1: Partial<Multipliers>, buff2: Partial<Multipliers>): Partial<Multipliers> {
+export function mergeBuffs(...buffs: Partial<Multipliers>[]): Partial<Multipliers> {
   const merged: Partial<Multipliers> = {};
-  const keys = new Set<string>([...(buff1 ? Object.keys(buff1) : []), ...(buff2 ? Object.keys(buff2) : [])]);
+  const keys = new Set([...buffs.flatMap(buff => (buff ? Object.keys(buff) : []))]);
 
   for (const key of keys) {
-    const value1 = buff1[key as keyof Multipliers] ?? 0;
-    const value2 = buff2[key as keyof Multipliers] ?? 0;
-    merged[key as keyof Multipliers] = value1 + value2;
+    merged[key as keyof Multipliers] = buffs.reduce((sum, buff) => {
+      if (buff && key in buff) {
+        return sum + (buff[key as keyof Multipliers] ?? 0);
+      }
+      return sum;
+    }, 0);
   }
 
   return merged;

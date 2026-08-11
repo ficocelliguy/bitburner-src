@@ -18,8 +18,7 @@ export function getFormattedStatBonus(keyName: ModKey, value: number, useShortNa
   const valueStr = keyName.includes("RackSlots")
     ? Math.floor(value)
     : keyName.includes("Production") ||
-      keyName.includes("netrunning") ||
-      keyName.includes("crafting") ||
+      keyName.includes("lvl") ||
       keyName.includes("storage")
     ? value.toFixed(2)
     : formatAsPercent(value);
