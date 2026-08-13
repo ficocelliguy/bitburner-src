@@ -2,10 +2,7 @@ import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckModule, ModuleType } from "../Types";
 import { disconnectModule, moveModule } from "./moduleMutation";
-import { SnackbarEvents } from "../../ui/React/Snackbar";
-import { ToastVariant } from "@enums";
 import {
-  componentSymbols,
   ICEbreakerCraftingCost,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
@@ -15,7 +12,8 @@ import { saveGame } from "../../SaveObject";
 import { getRecordKeys } from "../../Types/Record";
 import { Multipliers } from "@nsdefs";
 import {
-  getAllStatRanges, getConsumableBuff,
+  getAllStatRanges,
+  getConsumableBuff,
   getDebuff,
   getID,
   getLevel,
@@ -24,6 +22,8 @@ import {
 } from "../utils/statRng";
 import { WHRNG } from "../../Casino/RNG";
 import { clampNumber } from "../../utils/helpers/clampNumber";
+
+import { gainComponentMessage } from "../ui/gainComponentToast";
 
 
 export const DeckConnection: DeckModule = {
@@ -253,18 +253,19 @@ export function craftUplink() {
 }
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {
-  // TODO-fico: validation
-  // TODO-fico: balance numbers
-  CyberdeckState.components.chips += 2;
-  CyberdeckState.components.ROM += 2;
-  CyberdeckState.components.neurodes += 2;
+  const chipsGained = module.type !== ModuleType.Uplink ? 2 : 0;
+  const ROMGained = 2;
+  const neurodesGained = module.type !== ModuleType.ProcessingModule ? 2 : 0;
+  CyberdeckState.components.chips += chipsGained;
+  CyberdeckState.components.ROM += ROMGained;
+  CyberdeckState.components.neurodes += neurodesGained;
+
   disconnectModule(module);
   if (CyberdeckState.installedModules.includes(module)) {
     moveModule(module, false, true, 0);
   }
   CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
-  if (showToast) {
-    SnackbarEvents.emit(`Module disassembled. Gained +2 ${componentSymbols.chips}, +2 ${componentSymbols.ROM}, +2 ${componentSymbols.neurodes}.`, ToastVariant.INFO, 2000);
-  }
+
+  if (showToast) { gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained }); }
   CyberdeckEvents.emit();
 }

@@ -1,5 +1,6 @@
 import { Factions } from "./Faction/Factions";
 import { Player } from "@player";
+import { gainCyberdeckComponentsFromSaveBackup } from "./CyberDeck/effects";
 
 export let LastExportBonus = 0;
 
@@ -16,6 +17,7 @@ export function giveExportBonus(): void {
   for (const facName of Player.factions) {
     Factions[facName].setFavor(Factions[facName].favor + 1);
   }
+  gainCyberdeckComponentsFromSaveBackup();
   LastExportBonus = new Date().getTime();
 }
 

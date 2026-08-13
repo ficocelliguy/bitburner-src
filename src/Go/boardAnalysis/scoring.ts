@@ -11,6 +11,7 @@ import { Factions } from "../../Faction/Factions";
 import { getEnumHelper } from "../../utils/EnumHelper";
 import { Go, GoEvents } from "../Go";
 import { addRepToFavor } from "../../Faction/formulas/favor";
+import { gainCyberdeckChipsFromIPvGO } from "../../CyberDeck/effects";
 
 /**
  * Returns the score of the current board.
@@ -93,6 +94,10 @@ export function endGoGame(boardState: BoardState) {
   Go.previousGame = boardState;
   resetAI(true);
   GoEvents.emit();
+
+  if (boardState.ai !== GoOpponent.none) {
+    gainCyberdeckChipsFromIPvGO(score[GoColor.black].sum, false);
+  }
 
   // Update multipliers with new bonuses, once at the end of the game
   Player.applyEntropy(Player.entropy);

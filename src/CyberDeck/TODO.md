@@ -8,14 +8,11 @@
     - tooltip for trash can
 
 - Glitch netrunning
-  - Corrupted modules 
-
-- more ways to get components
-  - backdooring/nuking
-  - darknet cache
-  - IPvGO
-  - CCTs
-  - backing up save
+  - Corrupted modules
+  - bonus corruption effects?
+    - can't be removed
+    - health loss?
+    - sockets in wrong order?
 
 - modal showing netrunning result
   - sparkles!

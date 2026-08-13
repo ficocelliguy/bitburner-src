@@ -16,6 +16,7 @@ import { Page } from "../ui/Router";
 import { knowAboutBitverse } from "../BitNode/BitNodeUtils";
 import { handleStormSeed } from "../DarkNet/effects/webstorm";
 import { clampNumber } from "../utils/helpers/clampNumber";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
 
 function requireHackingLevel(lvl: number) {
   return function () {
@@ -67,6 +68,7 @@ export const Programs: Record<CompletedProgramName, Program> = {
       }
       if (server.openPortCount >= server.numOpenPortsRequired) {
         server.hasAdminRights = true;
+        gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill);
         Terminal.print("NUKE successful! Gained root access to " + server.hostname);
         Terminal.print("You can now run scripts on this server.");
         return;

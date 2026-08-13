@@ -14,6 +14,7 @@ import type { CacheResult, CacheReward } from "@nsdefs";
 import { addClue, cctCooldownReached } from "./effects";
 import { getBitNodeMultipliers } from "../../BitNode/BitNode";
 import { pluralize } from "../../utils/I18nUtils";
+import { gainCyberdeckRomFromCache } from "../../CyberDeck/effects";
 
 export const generateCacheFilename = (isPhishingCache: boolean, prefix?: string) => {
   const filenamePrefix = prefix ?? cachePrefixes[Math.floor(Math.random() * cachePrefixes.length)];
@@ -46,6 +47,9 @@ export const getRewardFromCache = (server: DarknetServer, cacheName: string, sup
   const difficulty = server.difficulty;
   const karmaLoss = difficulty + 1;
   Player.karma -= karmaLoss;
+
+  gainCyberdeckRomFromCache(false);
+
   if (isLabyrinthServer(server.hostname) && cacheName.includes(LAB_CACHE_NAME)) {
     const labReward = getLabReward();
     return {

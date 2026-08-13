@@ -10,6 +10,7 @@ import { Router } from "../../ui/GameRoot";
 import { Engine } from "../../engine";
 import { SpecialServers } from "../../Server/data/SpecialServers";
 import { calculateHackingTime } from "../../Hacking";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../../CyberDeck/effects";
 
 export function backdoor(args: (string | number | boolean)[], server: BaseServer): undefined | TerminalAction {
   if (args.length !== 0) {
@@ -66,5 +67,7 @@ export function backdoor(args: (string | number | boolean)[], server: BaseServer
     Engine.checkCounters();
 
     Terminal.print(`Backdoor on '${server.hostname}' successful!`);
+
+    gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill ?? 0, true, true);
   });
 }

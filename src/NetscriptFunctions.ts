@@ -118,6 +118,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Literatures } from "./Literature/Literatures";
 import { Messages } from "./Message/MessageHelpers";
 import { setDeprecatedProperties } from "./utils/DeprecationHelper";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "./CyberDeck/effects";
 
 export const enums: NSEnums = {
   CityName,
@@ -539,6 +540,10 @@ export const ns: InternalAPI<NSFull> = {
     }
     server.hasAdminRights = true;
     helpers.log(ctx, () => `Executed NUKE.exe virus on '${server.hostname}' to gain root access.`);
+    const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill, false);
+    if (romGained) {
+      helpers.log(ctx, () => `Gained ${romGained} ROM components.`);
+    }
     return true;
   },
   brutessh: (ctx) => (_host?) => {

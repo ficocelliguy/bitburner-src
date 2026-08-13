@@ -59,6 +59,7 @@ import { recalculateNumberOfOwnedSleeves } from "../Sleeve/SleeveCovenantPurchas
 import { Player } from "@player";
 import { getRandomIntInclusive } from "../../utils/helpers/getRandomIntInclusive";
 import { getRecordKeys } from "../../Types/Record";
+import { gainCyberdeckComponentsFromCCT } from "../../CyberDeck/effects";
 
 export function init(this: PlayerObject): void {
   /* Initialize Player's home computer */
@@ -509,6 +510,8 @@ export function gainCodingContractReward(
   }
   // The new standard is smaller, more frequent rewards - a third of the reward size of the previous
   const adjustedScaling = rewardScaling / 3;
+
+  gainCyberdeckComponentsFromCCT(difficulty);
 
   switch (reward.type) {
     case CodingContractRewardType.FactionReputation: {

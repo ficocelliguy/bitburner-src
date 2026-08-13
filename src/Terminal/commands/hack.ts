@@ -17,6 +17,7 @@ import { Engine } from "../../engine";
 import { currentNodeMults } from "../../BitNode/BitNodeMultipliers";
 import { ServerConstants } from "../../Server/data/Constants";
 import { formatExp, formatMoney, formatSecurity } from "../../ui/formatNumber";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../../CyberDeck/effects";
 
 export function hack(args: (string | number | boolean)[], server: BaseServer): undefined | TerminalAction {
   if (args.length !== 0) return Terminal.error("Incorrect usage of hack command. Usage: hack");
@@ -44,6 +45,9 @@ export function hack(args: (string | number | boolean)[], server: BaseServer): u
     const expGainedOnFailure = expGainedOnSuccess / 4;
     if (rand < hackChance) {
       // Success!
+      if (!server.backdoorInstalled) {
+        gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill, false, true);
+      }
       server.backdoorInstalled = true;
       if (SpecialServers.WorldDaemon === server.hostname) {
         Router.toPage(Page.BitVerse, { flume: false, quick: false });

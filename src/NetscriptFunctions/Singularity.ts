@@ -54,6 +54,7 @@ import { Crimes } from "../Crime/Crimes";
 import { DarknetServer } from "../Server/DarknetServer";
 import { populateDarknet } from "../DarkNet/controllers/NetworkGenerator";
 import { deprecationWarning } from "../utils/DeprecationHelper";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
 
 export function NetscriptSingularity(): InternalAPI<ISingularity> {
   const runAfterReset = function (cbScript: ScriptFilePath) {
@@ -524,6 +525,10 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
 
       return helpers.netscriptDelay(ctx, installTime).then(function () {
         helpers.log(ctx, () => `Successfully installed backdoor on '${server.hostname}'`);
+        const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill ?? 0, false, true);
+        if (romGained) {
+          helpers.log(ctx, () => `Gained ${romGained} ROM components.`);
+        }
         server.backdoorInstalled = true;
 
         if (SpecialServers.WorldDaemon === server.hostname) {
