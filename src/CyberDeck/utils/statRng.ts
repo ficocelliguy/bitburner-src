@@ -87,10 +87,10 @@ export function getAllStatRanges(level: number) {
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
     stamina_gain: getStatRollRange(level, 1, 1.5, 1.5),
-    graft_speed: getStatRollRange(level, 0.8, 1.5, 1.2),
+    graft_speed: getStatRollRange(level, 0.4, 1.2, 1.2),
     sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
     stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
-    equipment_cost: getStatRollRange(level, -1.5, -3, -1.5),
+    equipment_cost: getStatRollRange(level, -1.5, -4, -1.5),
   };
 
   return {

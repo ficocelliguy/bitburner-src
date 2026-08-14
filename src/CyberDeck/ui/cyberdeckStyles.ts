@@ -23,6 +23,24 @@ const pulse = keyframes`
    50% { transform: scale(1.15); opacity: 1; }
 `;
 
+const getSkewFrames = () => {
+  let result = "";
+  const step = 2;
+  for (let i = 0; i < 100; i+= step ) {
+    const range = i > 94 ? 8 : 3
+    const hueRotate = Math.random() * 8 + (Math.random() < 0.85 ? 0 : 70);
+    const invert = Math.random() < 0.92 ? 0 : 1;
+    const transform = ` { transform: skew(${Math.random() * range - range / 2}deg, ${
+      Math.random() * 2 - 1
+    }deg); filter: hue-rotate(${hueRotate}deg) invert(${invert}); }\n`;
+    result += `${i}% ${transform}`;
+    result += `${i + step - 0.1}% ${transform}`;
+  }
+  return result;
+}
+
+const skewFrames = keyframes`${getSkewFrames()}`;
+
 const growAndFade = keyframes`
   0% {
     opacity: 1;
@@ -169,9 +187,20 @@ export const portalStyles = makeStyles<unknown, portalStyle>({ uniqId: "cyberdec
     pointerEvents: "none",
     animation: `${growAndFade} 1.5s ease-in forwards`,
   },
+  corruptedSkew: {
+    animation: `${skewFrames} 5s infinite`,
+  },
 }));
 
-type portalStyle = "portalContainer" | "portalRing" | "portalRingReverse" | "portalDisabled" | "orbiter" | "portalCore" | "enteringPortal";
+type portalStyle =
+  | "portalContainer"
+  | "portalRing"
+  | "portalRingReverse"
+  | "portalDisabled"
+  | "orbiter"
+  | "portalCore"
+  | "enteringPortal"
+  | "corruptedSkew";
 
 /*
 

@@ -4,6 +4,24 @@ import { getConsumableBuff, getDebuff, getEndgameBuff, getID } from "../utils/st
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { mergeBuffs } from "./createModule";
 
+export function createCorruptedModule(rng: WHRNG): DeckModule {
+  // TODO-fico
+  const roll = rng.random();
+  if (roll < 0.1) {
+    return getEndgameStatModule(rng);
+  }
+  if (roll < 0.15) {
+    return getCorruptedRackExtension(rng);
+  }
+  if (roll < 0.3) {
+    return getCorruptedSkillChip(rng);
+  }
+
+
+  return getJunkModule(rng);
+
+}
+
 
 const getJunkModule = (rng: WHRNG) => {
   const oneSocket = getRandomSockets(rng, 1 );

@@ -10,12 +10,11 @@
  * This subcomponent creates all of the buttons for interacting with those special
  * properties
  */
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 import type { Location } from "../Location";
-import { Locations } from "../Locations";
 import { CreateCorporationModal } from "../../Corporation/ui/modals/CreateCorporationModal";
 import { AugmentationName, CompletedProgramName, FactionName, LocationName, ToastVariant } from "@enums";
 import { Factions } from "../../Faction/Factions";
@@ -30,7 +29,6 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { N00dles } from "../../utils/helpers/N00dles";
 import { Exploit } from "../../Exploits/Exploit";
 import { applyAugmentation } from "../../Augmentation/AugmentationHelpers";
-import { CorruptibleText } from "../../ui/React/CorruptibleText";
 import { HacknetNode } from "../../Hacknet/HacknetNode";
 import { HacknetServer } from "../../Hacknet/HacknetServer";
 import { GetServer } from "../../Server/AllServers";
@@ -44,6 +42,7 @@ import { getDarkscapeNavigator } from "../../DarkNet/effects/effects";
 import { hasDarknetAccess } from "../../DarkNet/utils/darknetAuthUtils";
 import { DarknetConstants } from "../../DarkNet/Constants";
 import { formatMoney } from "../../ui/formatNumber";
+import { NetrunningPortal } from "../../CyberDeck/ui/NetrunningPortal";
 
 interface SpecialLocationProps {
   loc: Location;
@@ -370,23 +369,11 @@ export function SpecialLocation(props: SpecialLocationProps): React.ReactElement
   }
 
   function RenderGlitch(): React.ReactElement {
-    // If the user stays here for ~25 seconds, silently warp them to The Void.
-    useEffect(() => {
-      let delay = 0;
-      // This is a sum of 25 exponential random variables, which is equivalent
-      // to one Erlang-distributed random variable with mean 25sec and stddev 5sec.
-      for (let i = 0; i < 25; ++i) {
-        delay += -1000 * Math.log(1 - Math.random());
-      }
-      const id = setTimeout(() => Router.toPage(Page.Location, { location: Locations[LocationName.Void] }), delay);
-      return () => clearTimeout(id);
-    });
-
     return (
       <>
-        <Typography>
-          <CorruptibleText content={"An eerie aura surrounds this area. You feel you should leave."} spoiler={false} />
-        </Typography>
+        <div>
+          <NetrunningPortal corrupted={true} />
+        </div>
       </>
     );
   }

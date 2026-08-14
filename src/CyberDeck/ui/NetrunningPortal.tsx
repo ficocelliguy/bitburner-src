@@ -12,8 +12,9 @@ import {
 } from "../models/componentEconomy";
 import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
+import { CorruptibleText } from "../../ui/React/CorruptibleText";
 
-export function NetrunningPortal(): React.ReactElement {
+export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
   const { classes } = portalStyles({});
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
@@ -39,7 +40,7 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
   }
 
   return (
-    <Container disableGutters maxWidth={false} sx={{ m: 3 }}>
+    <Container disableGutters maxWidth={false} className={corrupted ? classes.corruptedSkew : ""} sx={{ m: 3 }}>
       <RewardsModal open={showRewardsModal} onClose={() => resetPortal()} rewards={netrunningModRewards} />
       {showPortal && (
         <>
@@ -56,12 +57,18 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
           </div>
           {!entering && (
             <>
-              {(CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) ? (
+              {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length ? (
                 <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
                   Module storage full!
                 </Typography>
-              ):(
-                <Typography sx={{ textAlign: "center", marginTop: "20px" }}>{`ICEbreakers needed: ${cost}`}</Typography>
+              ) : (
+                <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
+                  {corrupted ? (
+                    <CorruptibleText content={`ICEbreakers needed: ${cost}`} spoiler={false} />
+                  ) : (
+                    `ICEbreakers needed: ${cost}`
+                  )}
+                </Typography>
               )}
               {cost > 1 && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
