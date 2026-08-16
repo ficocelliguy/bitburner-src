@@ -6,7 +6,7 @@ export type DeckModule = {
   sockets: SocketList;
   type: ModuleType;
   favorite?: boolean;
-  stats?: ModuleStats | undefined;
+  stats: ModuleStats;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];
@@ -116,6 +116,7 @@ export const statBonusShortNames: {
   [key in ModKey]: string;
 } = {
   // Player Multipliers
+  hacking: "Hack Lvl",
   hacking_chance: "Hack Chance",
   hacking_exp: "Hack XP",
   strength: "Strength",
@@ -168,7 +169,6 @@ export const statBonusShortNames: {
   hacking_speed: "",
   hacking_money: "",
   hacking_grow: "",
-  hacking: "",
   hacknet_node_purchase_cost: "",
   faction_rep: "",
   dnet_money: "",
@@ -187,6 +187,7 @@ export const statBonusLongNames: {
     | "extraRackSlots"]: string;
 } = {
   // Player Multipliers
+  hacking: "Hack Lvl",
   hacking_chance: "Hack Success Chance",
   hacking_exp: "Hack Experience",
   strength: "Strength Level",
@@ -239,7 +240,6 @@ export const statBonusLongNames: {
   hacking_speed: "",
   hacking_money: "",
   hacking_grow: "",
-  hacking: "",
   hacknet_node_purchase_cost: "",
   faction_rep: "",
   dnet_money: "",

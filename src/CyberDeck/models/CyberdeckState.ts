@@ -16,6 +16,7 @@ export const CyberdeckState = {
   netrunningLevel: 0,
   craftingLevel: 0,
   lastNetrunningTimestamp: 0,
+  lastCorruptedNetrunningTimestamp: 0,
   installedModules: [] as DeckModule[],
   storedModules: [] as DeckModule[],
   connections: [] as Connection[],

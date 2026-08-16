@@ -1,5 +1,6 @@
 import {
   ConsumableStats,
+  CyberdeckStats,
   DeckModule,
   EndgameMults,
   MiscMults,
@@ -8,7 +9,10 @@ import {
   statBonusLongNames,
   statBonusShortNames,
 } from "../Types";
-import { CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
+import { getRecordKeys } from "../../Types/Record";
+import { defaultMultipliers } from "../../PersonObjects/Multipliers";
+import { Multipliers } from "@nsdefs";
 
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
@@ -112,4 +116,84 @@ export function getFilteredStoredModules(modFilter: string) {
   const filterLower = (isPositiveFilter ? modFilter : modFilter.slice(1)).toLowerCase();
 
   return CyberdeckState.storedModules.filter((module) => getModStatString(module).includes(filterLower) == isPositiveFilter);
+}
+
+export function getCyberdeckStatBonuses(): CyberdeckStats {
+  const chargedModules = getChargedModules();
+
+  const playerMults = defaultMultipliers();
+  const playerMultsFromModules = chargedModules.map((m) => m.stats?.playerMults);
+  for (const mult of playerMultsFromModules) {
+    if (!mult) continue;
+    for (const key of getRecordKeys(playerMults)) {
+      playerMults[key] += mult[key] ?? 0;
+    }
+  }
+
+  const miscMultsFromModules = chargedModules.map((m) => m.stats?.otherMults);
+  const otherMults = mergeOtherMults(...miscMultsFromModules);
+
+  const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
+  const endgameStats = mergeEndgameMults(...endgameMultsFromModules);
+
+  return {
+    playerMults,
+    otherMults,
+    endgameStats,
+    consumableStats: getDefaultConsumableStats(),
+    extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
+  };
+}
+
+export function mergeBuffs(...buffs: Partial<Multipliers>[]): Partial<Multipliers> {
+  const merged: Partial<Multipliers> = {};
+  const keys = new Set([...buffs.flatMap((buff) => (buff ? Object.keys(buff) : []))]);
+
+  for (const key of keys) {
+    merged[key as keyof Multipliers] = buffs.reduce((sum, buff) => {
+      if (buff && key in buff) {
+        return sum + (buff[key as keyof Multipliers] ?? 0);
+      }
+      return sum;
+    }, 0);
+  }
+
+  return merged;
+}
+
+export function mergeOtherMults(...mults: Partial<MiscMults | null | undefined>[]): MiscMults {
+  const otherMults: MiscMults = getDefaultMiscMults();
+  for (const mult of mults) {
+    if (!mult) continue;
+    for (const key of getRecordKeys(otherMults)) {
+      otherMults[key] += mult[key] ?? 0;
+      // cap cost reductions at -80%
+      if (key === "stock_fees" || key === "class_cost") {
+        otherMults[key] = Math.max(otherMults[key], -0.8);
+      }
+    }
+  }
+  return otherMults;
+}
+
+export function mergeEndgameMults(...mults: Partial<EndgameMults | null | undefined>[]): EndgameMults {
+  const endgameMults: EndgameMults = getDefaultEndgameMults();
+  for (const mult of mults) {
+    if (!mult) continue;
+    for (const key of getRecordKeys(endgameMults)) {
+      endgameMults[key] += mult[key] ?? 0;
+    }
+  }
+  return endgameMults;
+}
+
+export function mergeConsumableStats(...stats: Partial<ConsumableStats | null | undefined>[]): ConsumableStats {
+  const consumableStats: ConsumableStats = getDefaultConsumableStats();
+  for (const stat of stats) {
+    if (!stat) continue;
+    for (const key of getRecordKeys(consumableStats)) {
+      consumableStats[key] += stat[key] ?? 0;
+    }
+  }
+  return consumableStats;
 }

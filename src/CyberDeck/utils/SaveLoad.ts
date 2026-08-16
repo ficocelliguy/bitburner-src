@@ -15,6 +15,7 @@ type CyberdeckSaveData = {
   storedModules: DeckModule[];
   connections: Connection[];
   lastNetrunningTimestamp: number;
+  lastCorruptedNetrunningTimestamp: number;
   components: ComponentCounts;
   componentStats: ComponentStats;
   netrunningSeed: number;
@@ -35,6 +36,7 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     storedModules: CyberdeckState.storedModules,
     connections: CyberdeckState.connections,
     lastNetrunningTimestamp: CyberdeckState.lastNetrunningTimestamp,
+    lastCorruptedNetrunningTimestamp: CyberdeckState.lastCorruptedNetrunningTimestamp,
     components: CyberdeckState.components,
     componentStats: CyberdeckState.componentStats,
     netrunningLevel: CyberdeckState.netrunningLevel,
@@ -67,6 +69,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       storedModules,
       connections,
       lastNetrunningTimestamp,
+      lastCorruptedNetrunningTimestamp,
       components,
       componentStats,
       netrunningSeed,
@@ -89,6 +92,9 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberdeckState.netrunningCooldownLevel = netrunningCooldownLevel;
     if (typeof lastNetrunningTimestamp !== "number") throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
+    if (typeof lastCorruptedNetrunningTimestamp !== "number")
+      throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
+    CyberdeckState.lastCorruptedNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
     CyberdeckState.netrunningLevel = netrunningLevel;
 

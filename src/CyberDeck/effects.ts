@@ -1,9 +1,7 @@
 import { Player } from "@player";
-import { defaultMultipliers, mergeMultipliers } from "../PersonObjects/Multipliers";
-import { CyberdeckStats, EndgameMults, MiscMults } from "./Types";
-import { CyberdeckState, getChargedModules } from "./models/CyberdeckState";
-import { getRecordKeys } from "../Types/Record";
-import { getDefaultConsumableStats, getDefaultEndgameMults, getDefaultMiscMults } from "./utils/modStatsUtils";
+import { mergeMultipliers } from "../PersonObjects/Multipliers";
+import { CyberdeckState } from "./models/CyberdeckState";
+import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 
 export function applyCyberdeckStatBonuses() {
@@ -64,52 +62,4 @@ export function gainCyberdeckRomFromCache(showToast = true) {
   CyberdeckState.componentStats.ROM.caches += romGained;
   if (showToast) { gainComponentMessage({ ROM: romGained }) }
   return romGained;
-}
-
-export function getCyberdeckStatBonuses(startMultsAt1 = true): CyberdeckStats {
-  const chargedModules = getChargedModules();
-
-  const playerMults = defaultMultipliers();
-  if (!startMultsAt1) {
-    for (const key of getRecordKeys(playerMults)) {
-      playerMults[key] = 0;
-    }
-  }
-  const playerMultsFromModules = chargedModules.map((m) => m.stats?.playerMults);
-  for (const mult of playerMultsFromModules) {
-    if (!mult) continue;
-    for (const key of getRecordKeys(playerMults)) {
-      playerMults[key] += mult[key] ?? 0;
-    }
-  }
-
-  const otherMults: MiscMults = getDefaultMiscMults();
-  const miscMultsFromModules = chargedModules.map((m) => m.stats?.otherMults);
-  for (const mult of miscMultsFromModules) {
-    if (!mult) continue;
-    for (const key of getRecordKeys(otherMults)) {
-      otherMults[key] += mult[key] ?? 0;
-      // cap cost reductions at -80%
-      if (key === "stock_fees" || key === "class_cost") {
-        otherMults[key] = Math.max(otherMults[key], -0.8);
-      }
-    }
-  }
-
-  const endgameStats: EndgameMults = getDefaultEndgameMults();
-  const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
-  for (const mult of endgameMultsFromModules) {
-    if (!mult) continue;
-    for (const key of getRecordKeys(endgameStats)) {
-      endgameStats[key] += mult[key] ?? 0;
-    }
-  }
-
-  return {
-    playerMults,
-    otherMults,
-    endgameStats,
-    consumableStats: getDefaultConsumableStats(),
-    extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
-  };
 }

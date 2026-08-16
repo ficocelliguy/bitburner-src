@@ -50,6 +50,7 @@ export function getAllStatRanges(level: number) {
   const playerMults: Partial<{ [K in keyof Multipliers]: [number, number] }> = {
     hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
     hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
+    hacking: getStatRollRange(level, 0.5, 0.8, 1),
     strength: getStatRollRange(level, 1.2, 1.2, 1.5),
     strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
     defense: getStatRollRange(level, 1.2, 1.2, 1.5),
@@ -157,16 +158,47 @@ export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1)
   };
 }
 
-export function getEndgameBuff(rng: WHRNG): Partial<EndgameMults> {
+export function getEndgameBuff(level: number, rng: WHRNG): Partial<EndgameMults> {
   const rng1 = rng.random();
   const rng2 = rng.random();
-  const level = getLevel(rng, CyberdeckState.netrunningLevel * 2);
   const fullStats = getAllStatRanges(level);
 
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
   const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
   const valueRange: [number, number] = fullStats.endgameStats[statToAdd];
   const value = (valueRange[1] - valueRange[0]) * rng2 + valueRange[0];
+
+  return {
+    [statToAdd]: value,
+  };
+}
+
+export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
+
+  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+
+  const otherMultKeys = getRecordKeys(fullStats.otherMults);
+  const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
+  const valueRange: [number, number] = fullStats.otherMults[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
+
+  return {
+    [statToAdd]: value,
+  };
+}
+
+export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
+
+  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+
+  const endgameKeys = getRecordKeys(fullStats.endgameStats);
+  const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
+  const valueRange: [number, number] = fullStats.endgameStats[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
 
   return {
     [statToAdd]: value,

@@ -45,4 +45,5 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     }
   };
   CyberdeckState.lastNetrunningTimestamp = 0;
+  CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
 }

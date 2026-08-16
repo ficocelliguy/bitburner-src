@@ -10,7 +10,6 @@ import {
 } from "./constants";
 import { saveGame } from "../../SaveObject";
 import { getRecordKeys } from "../../Types/Record";
-import { Multipliers } from "@nsdefs";
 import {
   getAllStatRanges,
   getConsumableBuff,
@@ -18,6 +17,7 @@ import {
   getID,
   getLevel,
   getNextCraftingWHRNG,
+  getOtherStatDebuff,
   getPlayerStatBuff,
 } from "../utils/statRng";
 import { WHRNG } from "../../Casino/RNG";
@@ -26,6 +26,7 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
+import { mergeBuffs, mergeOtherMults } from "../utils/modStatsUtils";
 
 
 export const DeckConnection: DeckModule = {
@@ -33,6 +34,7 @@ export const DeckConnection: DeckModule = {
   id: "Hosaka Mk 1 Cyberdeck",
   sockets: [false, true, false, true, false, true, false, false],
   level: 10,
+  stats: {},
 };
 
 export function createModule(rng: WHRNG, type: ModuleType = getRandomModuleType(rng), level: number = getLevel(rng)) {
@@ -66,15 +68,17 @@ function createPowerSupply(level: number, rng: WHRNG): DeckModule {
   };
 }
 
-function createProcessingModule(level: number, rng: WHRNG, addDebuff = true): DeckModule {
+export function createProcessingModule(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckModule {
   const fullStats = getAllStatRanges(Math.max(level, 1));
   const otherStatKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
   const valueRange: [number, number] = fullStats.otherMults[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * rng.random();
+  const value = (valueRange[1] - valueRange[0]) * rng.random() * scalar + valueRange[0];
 
-  const debuff = addDebuff ? getDebuff(level, rng) : {};
-
+  const applyStandardDebuff = rng.random() < 0.5;
+  const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
+  const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
+  const effects = mergeOtherMults(otherMultDebuff, { [statToAdd]: value });
 
   return {
     type: ModuleType.ProcessingModule,
@@ -83,17 +87,17 @@ function createProcessingModule(level: number, rng: WHRNG, addDebuff = true): De
     level,
     stats: {
       playerMults: debuff,
-      otherMults: {
-        [statToAdd]: value,
-      },
+      otherMults: effects,
     },
   };
 }
 
-function createUplink(level: number, rng: WHRNG, addDebuff = true): DeckModule {
+export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckModule {
+  const buff = getPlayerStatBuff(level, rng, scalar);
 
-  const buff = getPlayerStatBuff(level, rng);
-  const debuff = addDebuff ? getDebuff(level, rng) : {};
+  const applyStandardDebuff = rng.random() < 0.8;
+  const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
+  const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
   const mergedStats = mergeBuffs(debuff, buff);
 
   return {
@@ -103,6 +107,7 @@ function createUplink(level: number, rng: WHRNG, addDebuff = true): DeckModule {
     level,
     stats: {
       playerMults: mergedStats,
+      otherMults: otherMultDebuff,
     },
   };
 }
@@ -132,22 +137,6 @@ function createSkillChip(level: number, rng: WHRNG): DeckModule {
       consumableStats: getConsumableBuff(level, rng),
     },
   };
-}
-
-export function mergeBuffs(...buffs: Partial<Multipliers>[]): Partial<Multipliers> {
-  const merged: Partial<Multipliers> = {};
-  const keys = new Set([...buffs.flatMap(buff => (buff ? Object.keys(buff) : []))]);
-
-  for (const key of keys) {
-    merged[key as keyof Multipliers] = buffs.reduce((sum, buff) => {
-      if (buff && key in buff) {
-        return sum + (buff[key as keyof Multipliers] ?? 0);
-      }
-      return sum;
-    }, 0);
-  }
-
-  return merged;
 }
 
 function getRandomModuleType(rng: WHRNG) {

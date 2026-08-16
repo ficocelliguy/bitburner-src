@@ -65,7 +65,7 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
   socketIOPanel: {
     display: "inline-flex",
     border: `1px solid ${Settings.theme.secondarydark}`,
-    borderRadius: "10px",
+    borderRadius: "8px",
     cornerShape: "bevel",
     margin: "6px 2px",
   },
@@ -79,7 +79,7 @@ export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme:
   },
   statsPanel: {
     border: `1px solid ${Settings.theme.secondarydark}`,
-    borderRadius: "10px",
+    borderRadius: "8px",
     cornerShape: "bevel",
     background: Settings.theme.button,
     margin: "6px 2px",

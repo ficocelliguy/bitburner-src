@@ -4,15 +4,10 @@ import { portalStyles } from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
 import { NetrunningRewards } from "../Types";
 import { CyberdeckState } from "../models/CyberdeckState";
-import {
-  canNetrun,
-  getCurrentNetrunningIceCost,
-  getNetrunningTraceFraction,
-  netRun,
-} from "../models/componentEconomy";
 import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
 import { CorruptibleText } from "../../ui/React/CorruptibleText";
+import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction, netRun } from "../models/netrun";
 
 export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
   const { classes } = portalStyles({});
@@ -22,12 +17,12 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
 const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
 
   const cost = getCurrentNetrunningIceCost();
-  const disabled = !entering && !canNetrun();
+  const disabled = !entering && !canNetrun(corrupted);
 
   async function handlePortalClick() {
-    if (!canNetrun()) return;
+    if (!canNetrun(corrupted)) return;
     setEntering(true);
-    const rewards = await netRun();
+    const rewards = await netRun(corrupted);
     if (!rewards.success) return;
     setNetrunningModRewards(rewards);
     setTimeout(() => { if (!entering) { setShowPortal(false); setShowRewardsModal(true); }}, 1200);

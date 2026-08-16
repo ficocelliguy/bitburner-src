@@ -1,6 +1,8 @@
 - crafting
   - align buttons
 
+- Add debuffs from other stat categories
+
 - Glitch netrunning
   - Corrupted modules
   - bonus corruption effects?
@@ -19,6 +21,17 @@
 - Add WiFUs
 
 - hook up all stats
+  - program_creation_speed
+  - crime_speed
+  - stock_fees
+  - cct_money
+  - IPvGO_power
+  - class_cost
+  - stamina_gain
+  - graft_speed
+  - sleeve_sync
+  - stanek_charge
+  - equipment_cost
 
 - dev menu
 

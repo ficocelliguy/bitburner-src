@@ -7,12 +7,13 @@ import { useRerender } from "../../ui/React/hooks";
 import { Settings } from "../../Settings/Settings";
 import { formatNumber } from "../../ui/formatNumber";
 
-import { getCyberdeckStatBonuses } from "../effects";
+
+import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 
 
 export function StatsPage() : React.ReactElement {
   useRerender(1000);
-  const bonuses = getCyberdeckStatBonuses(false);
+  const bonuses = getCyberdeckStatBonuses();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       <div style={{width: "300px"}}>
