@@ -5,6 +5,7 @@ export type DeckModule = {
   level: number;
   sockets: SocketList;
   type: ModuleType;
+  favorite?: boolean;
   stats?: ModuleStats | undefined;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];

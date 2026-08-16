@@ -24,6 +24,8 @@ import { WHRNG } from "../../Casino/RNG";
 import { clampNumber } from "../../utils/helpers/clampNumber";
 
 import { gainComponentMessage } from "../ui/gainComponentToast";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
 
 
 export const DeckConnection: DeckModule = {
@@ -253,6 +255,12 @@ export function craftUplink() {
 }
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false) {
+  if (module.favorite) {
+    if (showToast) {
+      SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000);
+    }
+    return false;
+  }
   const chipsGained = module.type !== ModuleType.Uplink ? 2 : 0;
   const ROMGained = 2;
   const neurodesGained = module.type !== ModuleType.ProcessingModule ? 2 : 0;
@@ -268,4 +276,5 @@ export function disassembleModule(module: DeckModule, showToast: boolean = false
 
   if (showToast) { gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained }); }
   CyberdeckEvents.emit();
+  return true;
 }

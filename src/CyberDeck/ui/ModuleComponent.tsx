@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
 import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { DeckModule, ModuleType, Socket } from "../Types";
@@ -35,16 +36,9 @@ export function ModuleComponent({
   const render = useRerender(200);
   const { classes } = cyberdeckStyles();
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
-  const [tooltipPinnedOpen, setTooltipPinnedOpen] = React.useState(false);
   const updateDisplay = useCallback(() => {
     render();
   }, [render]);
-
-  useEffect(() => {
-    if (isAnyDragActive) {
-      setTooltipPinnedOpen(false);
-    }
-  }, [isAnyDragActive]);
 
   useEffect(() => {
     const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
@@ -62,7 +56,7 @@ export function ModuleComponent({
     if (e.button === 2) {
       e.preventDefault();
       e.stopPropagation();
-      setTooltipPinnedOpen(!tooltipPinnedOpen);
+      module.favorite = !module.favorite;
     }
   }
 
@@ -91,7 +85,7 @@ export function ModuleComponent({
               </Typography>
             </div>
           }
-          open={!isAnyDragActive && (tooltipOpen || tooltipPinnedOpen)}
+          open={!isAnyDragActive && tooltipOpen}
           placement={index % 2 === 0 ? "top-end" : "top-start"}
           arrow
           enterDelay={600}
@@ -105,6 +99,7 @@ export function ModuleComponent({
             {...provided.dragHandleProps}
             style={{
               zIndex: 1,
+              position: "relative",
               ...provided.draggableProps.style,
               border: `2px solid ${
                 module.type === ModuleType.DeckConnection
@@ -125,6 +120,10 @@ export function ModuleComponent({
             {module.type !== ModuleType.DeckConnection ? (
               <>
                 <div>{getModuleIcon(module)}</div>
+                {module.favorite &&
+                  <div style={{position: "absolute", top: 0, left: "30px", color: Settings.theme.warning}}>
+                    <StarBorderOutlinedIcon style={{width: "20px", height: "20px"}} />
+                  </div>}
                 <div className={classes.statsPanel}>
                   <StatBonus stats={module.stats} />
                 </div>

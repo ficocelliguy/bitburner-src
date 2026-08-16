@@ -1,11 +1,5 @@
-- add favorite star that prevents deletion and sorts to top
-
 - crafting
   - align buttons
-
-- netrunning
-  - animated background
-    - tooltip for trash can
 
 - Glitch netrunning
   - Corrupted modules
@@ -18,8 +12,13 @@
   - sparkles!
 
 - cyberdeck server itself?
+  - create server
+  - preserve on install
+  - upgrade via crafting screen
 
-- offline production?
+- Add WiFUs
+
+- hook up all stats
 
 - dev menu
 
@@ -27,12 +26,16 @@
 
 - basic doc page
 
+- netrunning
+  - animated background
 
 TODO LATER:
 
 - BN
 
 - Full docs
+
+- offline production?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 

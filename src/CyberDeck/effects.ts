@@ -89,6 +89,10 @@ export function getCyberdeckStatBonuses(startMultsAt1 = true): CyberdeckStats {
     if (!mult) continue;
     for (const key of getRecordKeys(otherMults)) {
       otherMults[key] += mult[key] ?? 0;
+      // cap cost reductions at -80%
+      if (key === "stock_fees" || key === "class_cost") {
+        otherMults[key] = Math.max(otherMults[key], -0.8);
+      }
     }
   }
 
