@@ -3,17 +3,44 @@ import { ComponentCounts } from "../Types";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { componentSymbols } from "../models/constants";
+import { Player } from "@player";
+import { formatMoney } from "../../ui/formatNumber";
 
 
-export function ComponentCost({ cost }: { cost: ComponentCounts }) {
+export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; moneyCost?: number }) {
   return (
-  <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
-      <ComponentCostRow available={CyberdeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
-      <ComponentCostRow available={CyberdeckState.components.neurodes} cost={cost.neurodes} symbol={componentSymbols.neurodes} />
-      <ComponentCostRow available={CyberdeckState.components.chips} cost={cost.chips} symbol={componentSymbols.chips} />
-      <ComponentCostRow available={CyberdeckState.components.cores} cost={cost.cores} symbol={componentSymbols.cores} />
-      <ComponentCostRow available={CyberdeckState.components.ICE} cost={cost.ICE} symbol={componentSymbols.ICE} />
-    </div>
+    <>
+      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
+        <ComponentCostRow available={CyberdeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
+        <ComponentCostRow
+          available={CyberdeckState.components.neurodes}
+          cost={cost.neurodes}
+          symbol={componentSymbols.neurodes}
+        />
+        <ComponentCostRow
+          available={CyberdeckState.components.chips}
+          cost={cost.chips}
+          symbol={componentSymbols.chips}
+        />
+        <ComponentCostRow
+          available={CyberdeckState.components.cores}
+          cost={cost.cores}
+          symbol={componentSymbols.cores}
+        />
+        <ComponentCostRow available={CyberdeckState.components.ICE} cost={cost.ICE} symbol={componentSymbols.ICE} />
+      </div>
+      {moneyCost > 0 && (
+        <div
+          style={{
+            color: Player.money >= moneyCost ? Settings.theme.maplocation : Settings.theme.error,
+            alignItems: "center",
+          }}
+        >
+          {Player.money >= moneyCost ? "" : `${formatMoney(Math.floor(Player.money))}/`}
+          {formatMoney(moneyCost)}
+        </div>
+      )}
+    </>
   );
 }
 

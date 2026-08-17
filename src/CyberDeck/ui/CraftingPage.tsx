@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 
-import { Tooltip, Typography, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { craftICE, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
 import { ComponentCost, ComponentSymbol } from "./ComponentCost";
 import {
@@ -10,15 +10,28 @@ import {
   processingModuleCraftingCost,
   uplinkCraftingCost,
 } from "../models/constants";
-import { getModIconComponent, getModuleIcon } from "./Icons";
+import { getModIconComponent } from "./Icons";
 import { DeckModule, ModuleType } from "../Types";
 import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
+import {
+  getCyberdeckServerCoreUpgradeCost,
+  getCyberdeckServerRamUpgradeCost, upgradeCyberdeckServerCores,
+  upgradeCyberdeckServerRam,
+} from "../models/cyberdeckServer";
+import { CyberdeckEvents } from "../models/CyberdeckState";
+import { useRerender } from "../../ui/React/hooks";
 
 
 export function CraftingPage(): React.ReactElement {
+  const render = useRerender();
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
   const [craftingRewards, setCraftingRewards] = React.useState<DeckModule[]>([]);
+
+  useEffect(() => {
+    const clearSubscription = CyberdeckEvents.subscribe(() => render());
+    return () => clearSubscription();
+  }, [render]);
 
   function tryCraftPowerSupply() {
     craft(craftPowerSupply());
@@ -40,7 +53,11 @@ export function CraftingPage(): React.ReactElement {
 
   return (
     <div style={{ padding: "20px" }}>
-      <RewardsModal open={showRewardsModal} rewards={{success: true, modules: craftingRewards, components: {}}} onClose={() => setShowRewardsModal(false)} />
+      <RewardsModal
+        open={showRewardsModal}
+        rewards={{ success: true, modules: craftingRewards, components: {} }}
+        onClose={() => setShowRewardsModal(false)}
+      />
       <Button onClick={() => craftICE()}>
         <div
           style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
@@ -73,6 +90,28 @@ export function CraftingPage(): React.ReactElement {
         >
           <span>Craft {getModIconComponent(ModuleType.ProcessingModule, 16)} Processing Mod</span>
           <ComponentCost cost={processingModuleCraftingCost} />
+        </div>
+      </Button>
+      <Button onClick={upgradeCyberdeckServerRam}>
+        <div
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
+        >
+          <span>Upgrade cyberdeck Server RAM</span>
+          <ComponentCost
+            cost={getCyberdeckServerRamUpgradeCost().componentCost}
+            moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
+          />
+        </div>
+      </Button>
+      <Button onClick={upgradeCyberdeckServerCores}>
+        <div
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
+        >
+          <span>Upgrade cyberdeck Server Cores</span>
+          <ComponentCost
+            cost={getCyberdeckServerCoreUpgradeCost().componentCost}
+            moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
+          />
         </div>
       </Button>
     </div>

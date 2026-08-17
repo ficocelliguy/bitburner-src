@@ -28,6 +28,8 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { mergeBuffs, mergeOtherMults } from "../utils/modStatsUtils";
 
+import { addCyberdeckServer } from "./cyberdeckServer";
+
 
 export const DeckConnection: DeckModule = {
   type: ModuleType.DeckConnection,
@@ -177,6 +179,8 @@ export function createInitialModules(force = false) {
   CyberdeckState.components.neurodes = 25;
   CyberdeckState.components.ICE = 4;
   CyberdeckState.components.cores = 4;
+
+  addCyberdeckServer();
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>) {

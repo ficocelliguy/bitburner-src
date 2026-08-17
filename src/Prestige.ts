@@ -68,12 +68,13 @@ export function prestigeAugmentation(): void {
   }
 
   Player.prestigeAugmentation();
-    Go.prestigeAugmentation();
-    prestigeCyberdeck();
+  Go.prestigeAugmentation();
 
   const homeComp = Player.getHomeComputer();
   // Delete all servers except home computer
   prestigeAllServers();
+
+  prestigeCyberdeck();
 
   prestigeDarknetState(false);
 

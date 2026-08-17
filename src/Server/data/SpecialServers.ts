@@ -9,6 +9,7 @@ export const SpecialServers = {
   TheDarkArmyServer: ".",
   DaedalusServer: "The-Cave",
   WorldDaemon: "w0r1d_d43m0n",
+  Cyberdeck: "cyberdeck",
   DarkWeb: "darkweb",
   NormalLab: "th3_l4byr1nth",
   CruelLab: "cru3l_l4byr1nth",

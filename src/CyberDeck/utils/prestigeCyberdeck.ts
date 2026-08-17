@@ -1,4 +1,5 @@
 import { CyberdeckState } from "../models/CyberdeckState";
+import { addCyberdeckServer } from "../models/cyberdeckServer";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
@@ -12,6 +13,8 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.netrunningSeedUsages = 0;
     CyberdeckState.craftingSeedUsages = 0;
     CyberdeckState.netrunningCorruptedSeedUsages = 0;
+    CyberdeckState.serverRamUpgrades = 0;
+    CyberdeckState.serverCoreUpgrades = 0;
   }
   CyberdeckState.components = {
     chips: 0,
@@ -46,4 +49,8 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
   };
   CyberdeckState.lastNetrunningTimestamp = 0;
   CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
+
+  if (CyberdeckState.hasCyberdeck) {
+    addCyberdeckServer();
+  }
 }

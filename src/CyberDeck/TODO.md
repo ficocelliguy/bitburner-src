@@ -1,24 +1,21 @@
-- crafting
+REQUIRED FOR MVP
+
+crafting
   - align buttons
 
-- Add debuffs from other stat categories
+- Add WiFUs
 
-- Glitch netrunning
-  - Corrupted modules
-  - bonus corruption effects?
-    - can't be removed
-    - health loss?
-    - sockets in wrong order?
+- dev menu
+
+- api
+
+- basic doc page
+
+
+TODO:
 
 - modal showing netrunning result
   - sparkles!
-
-- cyberdeck server itself?
-  - create server
-  - preserve on install
-  - upgrade via crafting screen
-
-- Add WiFUs
 
 - hook up all stats
   - program_creation_speed
@@ -33,14 +30,9 @@
   - stanek_charge
   - equipment_cost
 
-- dev menu
-
-- api
-
-- basic doc page
-
 - netrunning
   - animated background
+
 
 TODO LATER:
 
@@ -54,6 +46,12 @@ TODO LATER:
 
 - stats page
   - cleanup styling
+
+- Glitch netrunning
+  - bonus corruption effects?
+    - can't be removed
+    - health loss?
+    - sockets in wrong order?
 
 
 CYBERDECK
