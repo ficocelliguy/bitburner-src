@@ -80,7 +80,7 @@ export function createProcessingModule(level: number, rng: WHRNG, addDebuff = tr
   const applyStandardDebuff = rng.random() < 0.5;
   const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
-  const effects = mergeOtherMults(otherMultDebuff, { [statToAdd]: value });
+  const effects = mergeOtherMults([otherMultDebuff, { [statToAdd]: value }]);
 
   return {
     type: ModuleType.ProcessingModule,
@@ -100,7 +100,7 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
   const applyStandardDebuff = rng.random() < 0.8;
   const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
-  const mergedStats = mergeBuffs(debuff, buff);
+  const mergedStats = mergeBuffs([debuff, buff]);
 
   return {
     type: ModuleType.Uplink,

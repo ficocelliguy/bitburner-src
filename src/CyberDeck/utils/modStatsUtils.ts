@@ -50,27 +50,63 @@ export function getStatBonusList(stats: ModuleStats = {}) {
     .sort(([keyA, valueA], [keyB, valueB]) => Number(isBuff(keyB, valueB)) - Number(isBuff(keyA, valueA)));
 }
 
-export function getDefaultMiscMults(): MiscMults {
+export function getDefaultPlayerMults(basis = 0): Multipliers {
   return {
-    chipProduction: 0,
-    neurodeProduction: 0,
-    romProduction: 0,
-    program_creation_speed: 0,
-    crime_speed: 0,
-    stock_fees: 0,
-    cct_money: 0,
-    IPvGO_power: 0,
-    class_cost: 0,
+    agility: basis,
+    agility_exp: basis,
+    bladeburner_analysis: basis,
+    bladeburner_max_stamina: basis,
+    bladeburner_stamina_gain: basis,
+    bladeburner_success_chance: basis,
+    charisma: basis,
+    charisma_exp: basis,
+    company_rep: basis,
+    crime_money: basis,
+    crime_success: basis,
+    defense: basis,
+    defense_exp: basis,
+    dexterity: basis,
+    dexterity_exp: basis,
+    dnet_money: basis,
+    faction_rep: basis,
+    hacking: basis,
+    hacking_exp: basis,
+    hacknet_node_core_cost: basis,
+    hacknet_node_level_cost: basis,
+    hacknet_node_money: basis,
+    hacknet_node_purchase_cost: basis,
+    hacknet_node_ram_cost: basis,
+    strength: basis,
+    strength_exp: basis,
+    work_money: basis,
+    hacking_speed: basis,
+    hacking_money: basis,
+    hacking_chance: basis,
+    hacking_grow: 0
+  }
+}
+
+export function getDefaultMiscMults(basis = 0): MiscMults {
+  return {
+    chipProduction: basis,
+    neurodeProduction: basis,
+    romProduction: basis,
+    program_creation_speed: basis,
+    crime_speed: basis,
+    stock_fees: basis,
+    cct_money: basis,
+    IPvGO_power: basis,
+    class_cost: basis,
   };
 }
 
-export function getDefaultEndgameMults(): EndgameMults {
+export function getDefaultEndgameMults(basis = 0): EndgameMults {
   return {
-    stamina_gain: 0,
-    graft_speed: 0,
-    sleeve_sync: 0,
-    stanek_charge: 0,
-    equipment_cost: 0,
+    stamina_gain: basis,
+    graft_speed: basis,
+    sleeve_sync: basis,
+    stanek_charge: basis,
+    equipment_cost: basis,
   };
 }
 
@@ -118,10 +154,10 @@ export function getFilteredStoredModules(modFilter: string) {
   return CyberdeckState.storedModules.filter((module) => getModStatString(module).includes(filterLower) == isPositiveFilter);
 }
 
-export function getCyberdeckStatBonuses(): CyberdeckStats {
+export function getCyberdeckStatBonuses(basis = 0): CyberdeckStats {
   const chargedModules = getChargedModules();
 
-  const playerMults = defaultMultipliers();
+  const playerMults = getDefaultPlayerMults(basis);
   const playerMultsFromModules = chargedModules.map((m) => m.stats?.playerMults);
   for (const mult of playerMultsFromModules) {
     if (!mult) continue;
@@ -131,10 +167,10 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
   }
 
   const miscMultsFromModules = chargedModules.map((m) => m.stats?.otherMults);
-  const otherMults = mergeOtherMults(...miscMultsFromModules);
+  const otherMults = mergeOtherMults(miscMultsFromModules, basis);
 
   const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
-  const endgameStats = mergeEndgameMults(...endgameMultsFromModules);
+  const endgameStats = mergeEndgameMults(endgameMultsFromModules, basis);
 
   return {
     playerMults,
@@ -145,8 +181,8 @@ export function getCyberdeckStatBonuses(): CyberdeckStats {
   };
 }
 
-export function mergeBuffs(...buffs: Partial<Multipliers>[]): Partial<Multipliers> {
-  const merged: Partial<Multipliers> = {};
+export function mergeBuffs(buffs: Partial<Multipliers>[], basis = 0): Multipliers {
+  const merged: Multipliers = getDefaultPlayerMults(basis);
   const keys = new Set([...buffs.flatMap((buff) => (buff ? Object.keys(buff) : []))]);
 
   for (const key of keys) {
@@ -161,8 +197,8 @@ export function mergeBuffs(...buffs: Partial<Multipliers>[]): Partial<Multiplier
   return merged;
 }
 
-export function mergeOtherMults(...mults: Partial<MiscMults | null | undefined>[]): MiscMults {
-  const otherMults: MiscMults = getDefaultMiscMults();
+export function mergeOtherMults(mults: Partial<MiscMults | null | undefined>[], basis = 0): MiscMults {
+  const otherMults: MiscMults = getDefaultMiscMults(basis);
   for (const mult of mults) {
     if (!mult) continue;
     for (const key of getRecordKeys(otherMults)) {
@@ -176,8 +212,8 @@ export function mergeOtherMults(...mults: Partial<MiscMults | null | undefined>[
   return otherMults;
 }
 
-export function mergeEndgameMults(...mults: Partial<EndgameMults | null | undefined>[]): EndgameMults {
-  const endgameMults: EndgameMults = getDefaultEndgameMults();
+export function mergeEndgameMults(mults: Partial<EndgameMults | null | undefined>[], basis = 0): EndgameMults {
+  const endgameMults: EndgameMults = getDefaultEndgameMults(basis);
   for (const mult of mults) {
     if (!mult) continue;
     for (const key of getRecordKeys(endgameMults)) {

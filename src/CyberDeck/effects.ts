@@ -5,7 +5,7 @@ import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 
 export function applyCyberdeckStatBonuses() {
-  const mults = getCyberdeckStatBonuses().playerMults;
+  const mults = getCyberdeckStatBonuses(1).playerMults;
   Player.mults = mergeMultipliers(Player.mults, mults);
   Player.updateSkillLevels();
 }

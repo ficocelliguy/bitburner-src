@@ -67,6 +67,7 @@ export function ComponentTooltip({
         <div>
           <h3 style={{ margin: "4px" }}>{details.name}</h3>
           <div style={{ margin: "10px 4px" }}>{details.description}</div>
+          <div style={{ margin: "10px 4px", fontSize: "13px" }}>{details.source}</div>
           <div
             style={{
               margin: "10px 4px",
@@ -93,6 +94,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "ROM Components",
         description: "A component used for making cyberdeck mods.",
+        source: "Obtained from some crime, backdooring servers, darknet caches, and creating programs.",
         lore:
           "Read-Only Memory cards have their contents flashed once and cannot be changed afterwards. This makes the software on them durable and resistant to tampering or data corruption.",
       };
@@ -100,6 +102,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "Neurodes",
         description: "A component used for making cyberdeck mods.",
+        source: "Obtained from crime kills, attending classes, and completing coding contracts.",
         lore:
           "Neurodes are specialized neural interface components that allow a netrunner to receive and transmit data directly to and from their nervous system, enabling deep-dive interaction with the digital world.",
       };
@@ -107,6 +110,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "Chips",
         description: "A component used for making cyberdeck mods.",
+        source: "Obtained from company work, IPvGO game completions, and hacknet profits.",
         lore:
           "A staple of cyberdeck mod construction. Chips are general-purpose programmable circuitboards used in a wide variety of digital applications.",
       };
@@ -114,6 +118,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "Cores",
         description: "Required for the construction of cyberdeck mods.",
+        source: "Obtained from netrunning.",
         lore:
           "The core is the most integral part of a cyberdeck mod, handling both central processing as well as uplink data transfer.",
       };
@@ -121,6 +126,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "ICEbreakers",
         description: "Digital defense-breakers used for netrunning.",
+        source: "Crafted from ROM, neurodes, and chips.",
         lore:
           "ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace. Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas, risking their minds and decks in the search for new mods.",
       };

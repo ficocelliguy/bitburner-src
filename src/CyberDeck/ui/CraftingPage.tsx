@@ -52,68 +52,73 @@ export function CraftingPage(): React.ReactElement {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", display: "flex", flexDirection: "row" }}>
       <RewardsModal
         open={showRewardsModal}
         rewards={{ success: true, modules: craftingRewards, components: {} }}
         onClose={() => setShowRewardsModal(false)}
       />
-      <Button onClick={() => craftICE()}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>
-            Craft <ComponentSymbol symbol={componentSymbols.ICE} /> ICEbreaker
-          </span>
-          <ComponentCost cost={ICEbreakerCraftingCost} />
-        </div>
-      </Button>
-      <Button onClick={tryCraftPowerSupply}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>Craft {getModIconComponent(ModuleType.PowerSupply, 16)} Power Supply Mod</span>
-          <ComponentCost cost={powerSupplyCraftingCost} />
-        </div>
-      </Button>
-      <Button onClick={tryCraftUplink}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>Craft {getModIconComponent(ModuleType.Uplink, 16)} Uplink Mod</span>
-          <ComponentCost cost={uplinkCraftingCost} />
-        </div>
-      </Button>
-      <Button onClick={tryCraftProcessingModule}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>Craft {getModIconComponent(ModuleType.ProcessingModule, 16)} Processing Mod</span>
-          <ComponentCost cost={processingModuleCraftingCost} />
-        </div>
-      </Button>
-      <Button onClick={upgradeCyberdeckServerRam}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>Upgrade cyberdeck Server RAM</span>
-          <ComponentCost
-            cost={getCyberdeckServerRamUpgradeCost().componentCost}
-            moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
-          />
-        </div>
-      </Button>
-      <Button onClick={upgradeCyberdeckServerCores}>
-        <div
-          style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation }}
-        >
-          <span>Upgrade cyberdeck Server Cores</span>
-          <ComponentCost
-            cost={getCyberdeckServerCoreUpgradeCost().componentCost}
-            moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
-          />
-        </div>
-      </Button>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
+        <Button onClick={() => craftICE()}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>
+              Craft <ComponentSymbol symbol={componentSymbols.ICE} /> ICEbreaker
+            </span>
+            <ComponentCost cost={ICEbreakerCraftingCost} />
+          </div>
+        </Button>
+        <Button onClick={tryCraftPowerSupply}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>Craft {getModIconComponent(ModuleType.PowerSupply, 16)} Power Supply Mod</span>
+            <ComponentCost cost={powerSupplyCraftingCost} />
+          </div>
+        </Button>
+        <Button onClick={tryCraftUplink}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>Craft {getModIconComponent(ModuleType.Uplink, 16)} Uplink Mod</span>
+            <ComponentCost cost={uplinkCraftingCost} />
+          </div>
+        </Button>
+        <Button onClick={tryCraftProcessingModule}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>Craft {getModIconComponent(ModuleType.ProcessingModule, 16)} Processing Mod</span>
+            <ComponentCost cost={processingModuleCraftingCost} />
+          </div>
+        </Button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
+        <Button onClick={upgradeCyberdeckServerRam}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>Upgrade cyberdeck Server RAM</span>
+            <ComponentCost
+              cost={getCyberdeckServerRamUpgradeCost().componentCost}
+              moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
+            />
+          </div>
+        </Button>
+        <Button onClick={upgradeCyberdeckServerCores}>
+          <div
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+          >
+            <span>Upgrade cyberdeck Server Cores</span>
+            <ComponentCost
+              cost={getCyberdeckServerCoreUpgradeCost().componentCost}
+              moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
+            />
+          </div>
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,5 @@
 REQUIRED FOR MVP
 
-crafting
-  - align buttons
-
 - Add WiFUs
 
 - dev menu

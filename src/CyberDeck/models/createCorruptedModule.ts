@@ -31,14 +31,14 @@ export function createCorruptedModule(rng: WHRNG): DeckModule {
 
   if (roll < 0.38) {
     const module = createProcessingModule(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
+    module.stats.playerMults ??= mergeBuffs([getDebuff(8, rng), module.stats?.playerMults ?? {}]);
     module.level = -1;
     return module;
   }
 
   if (roll < 0.46) {
     const module = createUplink(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
+    module.stats.playerMults ??= mergeBuffs([getDebuff(8, rng), module.stats?.playerMults ?? {}]);
     module.level = -1;
     return module;
   }
@@ -91,7 +91,7 @@ const getJunkModule = (rng: WHRNG) => {
 }
 
 const getCorruptedRackExtension = (rng: WHRNG): DeckModule => {
-  const debuffs = mergeBuffs(getDebuff(8, rng), getDebuff(8, rng));
+  const debuffs = mergeBuffs([getDebuff(8, rng), getDebuff(8, rng)]);
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
     type: ModuleType.RackExtension,
@@ -126,7 +126,7 @@ const getEndgameStatModule = (rng: WHRNG): DeckModule => {
   const buff = getEndgameBuff(level, rng);
   const standardDebuff = getDebuff(CyberdeckState.netrunningLevel, rng);
   const endgameDebuff = getEndgameStatDebuff(CyberdeckState.netrunningLevel / 2, rng);
-  const effects = mergeEndgameMults(buff, endgameDebuff);
+  const effects = mergeEndgameMults([buff, endgameDebuff]);
 
   return {
     type: ModuleType.ProcessingModule,
