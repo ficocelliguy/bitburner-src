@@ -4765,9 +4765,9 @@ export interface Darknet {
    * RAM cost: 4 GB
    *
    * @param host - Hostname/IP of the connected server to migrate.
-   * @returns A promise that resolves to a {@link DarknetResult} object.
+   * @returns A promise that resolves to a {@link DarknetResult} object with a `progress` field indicating the total migration progress in the range [0, 1].
    */
-  induceServerMigration(host: string): Promise<DarknetResult>;
+  induceServerMigration(host: string): Promise<DarknetResult & { progress: number }>;
 
   /**
    * Executes STORM_SEED.exe, if it is present on the server the script is running on.
@@ -6621,7 +6621,7 @@ interface DarknetFormulas {
   /**
    * Gets the time it will take to scrape logs from a server.
    * @param serverDetails - The server to check heartbleed log scraping time on.
-   * @param threads - The number of threads to use for the authentication. Optional, defaults to 1
+   * @param threads - The number of threads to use for log scraping. Optional, defaults to 1
    * @param player - The player object. Optional, defaults to the current player status
    */
   getHeartbleedTime(serverDetails: DarknetServerDetails, threads?: number, player?: Person): number;
@@ -9224,8 +9224,7 @@ export interface NS {
    *
    * Move the source file to the specified destination on the target server.
    *
-   * This command only works for scripts (.js, .jsx, .ts, .tsx) and text files (.txt, .json, .css). It cannot, however, be
-   * used to convert from script to text file, or vice versa.
+   * This command only works for scripts (.js, .jsx, .ts, .tsx) and text files (.txt, .json, .css).
    *
    * This function can also be used to rename files.
    *

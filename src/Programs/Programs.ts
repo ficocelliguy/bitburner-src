@@ -96,9 +96,12 @@ export const Programs: Record<CompletedProgramName, Program> = {
         Terminal.print("SSH Port (22) is already open!");
         return;
       }
+      if (server.purchasedByPlayer) {
+        Terminal.print("Opening ports on your own machines has no negative consequences in the game.");
+      }
 
       server.sshPortOpen = true;
-      Terminal.print("Opened SSH Port(22)!");
+      Terminal.print("Opened SSH Port (22)!");
       server.openPortCount++;
     },
   }),
@@ -120,6 +123,9 @@ export const Programs: Record<CompletedProgramName, Program> = {
       if (server.ftpPortOpen) {
         Terminal.print("FTP Port (21) is already open!");
         return;
+      }
+      if (server.purchasedByPlayer) {
+        Terminal.print("Opening ports on your own machines has no negative consequences in the game.");
       }
 
       server.ftpPortOpen = true;
@@ -146,6 +152,9 @@ export const Programs: Record<CompletedProgramName, Program> = {
         Terminal.print("SMTP Port (25) is already open!");
         return;
       }
+      if (server.purchasedByPlayer) {
+        Terminal.print("Opening ports on your own machines has no negative consequences in the game.");
+      }
 
       server.smtpPortOpen = true;
       Terminal.print("Opened SMTP Port (25)!");
@@ -171,6 +180,9 @@ export const Programs: Record<CompletedProgramName, Program> = {
         Terminal.print("HTTP Port (80) is already open!");
         return;
       }
+      if (server.purchasedByPlayer) {
+        Terminal.print("Opening ports on your own machines has no negative consequences in the game.");
+      }
 
       server.httpPortOpen = true;
       Terminal.print("Opened HTTP Port (80)!");
@@ -195,6 +207,9 @@ export const Programs: Record<CompletedProgramName, Program> = {
       if (server.sqlPortOpen) {
         Terminal.print("SQL Port (1433) is already open!");
         return;
+      }
+      if (server.purchasedByPlayer) {
+        Terminal.print("Opening ports on your own machines has no negative consequences in the game.");
       }
 
       server.sqlPortOpen = true;
