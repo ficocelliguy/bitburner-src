@@ -54,6 +54,7 @@ export function CraftingPage(): React.ReactElement {
   return (
     <div style={{ padding: "20px", display: "flex", flexDirection: "row" }}>
       <RewardsModal
+        title={"Crafting successful!"}
         open={showRewardsModal}
         rewards={{ success: true, modules: craftingRewards, components: {} }}
         onClose={() => setShowRewardsModal(false)}

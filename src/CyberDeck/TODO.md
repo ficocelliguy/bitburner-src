@@ -51,7 +51,8 @@ TODO LATER:
     - sockets in wrong order?
 
 
-CYBERDECK
+
+CYBERDECK: IDEA SCRATCH SPACE
 
 - Small, persistent cloud server, with upgradable cores, that gives buffs to scripts running on it
 - Small buffs for other mechanics - allows players to specialize

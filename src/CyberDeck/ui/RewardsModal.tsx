@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
-import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { ComponentCounts, DeckModule, NetrunningRewards } from "../Types";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { ModuleLootCover } from "./ModuleLootCover";
@@ -15,9 +14,11 @@ type RewardsModalProps = {
   open: boolean;
   onClose: () => void;
   rewards: NetrunningRewards;
+  title: string;
+  flavorText?: string;
 };
 
-export function RewardsModal({ open, onClose, rewards }: RewardsModalProps) {
+export function RewardsModal({ open, onClose, rewards, flavorText = "", title }: RewardsModalProps) {
   const [displayedModules, setDisplayedModules] = React.useState<DeckModule[]>(rewards.modules);
 
   React.useEffect(() => {
@@ -25,7 +26,7 @@ export function RewardsModal({ open, onClose, rewards }: RewardsModalProps) {
   }, [rewards]);
 
   function rewardsHaveComponents(componentRewards: Partial<ComponentCounts>): boolean {
-    return Object.values(componentRewards).some(value => value > 0);
+    return Object.values(componentRewards).some((value) => value > 0);
   }
 
   function onDragEnd(result: DropResult) {
@@ -38,39 +39,46 @@ export function RewardsModal({ open, onClose, rewards }: RewardsModalProps) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm">
-      <DialogTitle>Rewards</DialogTitle>
-      <DialogContent>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        {flavorText && (
+          <Typography
+            sx={{ fontStyle: "italic", fontSize: "13px", marginBottom: "12px", color: Settings.theme.maplocation }}
+          >
+            {flavorText}
+          </Typography>
+        )}
         {rewardsHaveComponents(rewards.components) && (
           <>
             <Typography variant="h6">Components Found:</Typography>
             <Typography
               component="div"
               sx={{
-                padding: "15px",
+                padding: "15px 25px",
                 border: `1px solid ${Settings.theme.button}`,
                 marginBottom: "12px",
                 color: Settings.theme.maplocation,
               }}
             >
               {!!rewards.components.chips && (
-                <>
+                <span>
                   <ComponentSymbol symbol={componentSymbols.chips} />: {rewards.components.chips}{" "}
-                </>
+                </span>
               )}
               {!!rewards.components.neurodes && (
-                <>
+                <span>
                   <ComponentSymbol symbol={componentSymbols.neurodes} />: {rewards.components.neurodes}{" "}
-                </>
+                </span>
               )}
               {!!rewards.components.ROM && (
-                <>
+                <span>
                   <ComponentSymbol symbol={componentSymbols.ROM} />: {rewards.components.ROM}{" "}
-                </>
+                </span>
               )}
               {!!rewards.components.cores && (
-                <>
+                <span>
                   <ComponentSymbol symbol={componentSymbols.cores} />: {rewards.components.cores}
-                </>
+                </span>
               )}
             </Typography>
           </>
@@ -81,7 +89,9 @@ export function RewardsModal({ open, onClose, rewards }: RewardsModalProps) {
             {(provided) => (
               <div {...provided.droppableProps} style={{ height: "300px", width: "470px" }} ref={provided.innerRef}>
                 {displayedModules.map((module, index) => (
-                  <ModuleLootCover key={module.id} module={module} index={index} />
+                  <div key={module.id} style={{ height: "80px"}}>
+                    <ModuleLootCover module={module} index={index} />
+                  </div>
                 ))}
                 {provided.placeholder}
               </div>

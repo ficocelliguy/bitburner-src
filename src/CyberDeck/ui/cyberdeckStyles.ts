@@ -22,17 +22,22 @@ const pulse = keyframes`
    0%, 100% { transform: scale(1); opacity: 0.8; }
    50% { transform: scale(1.15); opacity: 1; }
 `;
+const flicker = keyframes`
+   0% { filter: invert(0); }
+   25% { filter: invert(1); }
+   100% { filter: invert(0); }
+`;
 
 const getSkewFrames = () => {
   let result = "";
   const step = 2;
   for (let i = 0; i < 100; i+= step ) {
     const range = i > 94 ? 8 : 3
-    const hueRotate = Math.random() * 8 + (Math.random() < 0.85 ? 0 : 70);
-    const invert = Math.random() < 0.92 ? 0 : 1;
+    const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 360);
+    const scale = Math.random() < 0.92 ? 1 : 1.3;
     const transform = ` { transform: skew(${Math.random() * range - range / 2}deg, ${
       Math.random() * 2 - 1
-    }deg); filter: hue-rotate(${hueRotate}deg) invert(${invert}); }\n`;
+    }deg) scale(${scale}); filter: hue-rotate(${hueRotate}deg); }\n`;
     result += `${i}% ${transform}`;
     result += `${i + step - 0.1}% ${transform}`;
   }
@@ -189,6 +194,11 @@ export const portalStyles = makeStyles<unknown, portalStyle>({ uniqId: "cyberdec
   },
   corruptedSkew: {
     animation: `${skewFrames} 5s infinite`,
+    [`& .${classes.portalContainer}`]: {
+      "&:hover": {
+        animation: `${flicker} 0.2s`,
+      },
+    },
   },
 }));
 

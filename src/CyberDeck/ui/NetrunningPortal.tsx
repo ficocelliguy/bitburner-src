@@ -8,15 +8,17 @@ import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
 import { CorruptibleText } from "../../ui/React/CorruptibleText";
 import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction, netRun } from "../models/netrun";
+import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants";
+import { useRerender } from "../../ui/React/hooks";
 
 export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
+  useRerender(200);
   const { classes } = portalStyles({});
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
+  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
 
-  const cost = getCurrentNetrunningIceCost();
   const disabled = !entering && !canNetrun(corrupted);
 
   async function handlePortalClick() {
@@ -34,9 +36,19 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
     setShowPortal(true);
   }
 
+  function minimumCost(corrupted: boolean) {
+    return corrupted ? 5 : 1;
+  }
+
   return (
     <Container disableGutters maxWidth={false} className={corrupted ? classes.corruptedSkew : ""} sx={{ m: 3 }}>
-      <RewardsModal open={showRewardsModal} onClose={() => resetPortal()} rewards={netrunningModRewards} />
+      <RewardsModal
+        open={showRewardsModal}
+        onClose={() => resetPortal()}
+        rewards={netrunningModRewards}
+        title={"Netrunning Results"}
+        flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
+      />
       {showPortal && (
         <>
           <div
@@ -59,13 +71,16 @@ const [netrunningModRewards, setNetrunningModRewards] = React.useState<Netrunnin
               ) : (
                 <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
                   {corrupted ? (
-                    <CorruptibleText content={`ICEbreakers needed: ${cost}`} spoiler={false} />
+                    <CorruptibleText
+                      content={`ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
+                      spoiler={false}
+                    />
                   ) : (
-                    `ICEbreakers needed: ${cost}`
+                    `ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
                   )}
                 </Typography>
               )}
-              {cost > 1 && (
+              {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
                   Hostile trace risk: {formatNumber(getNetrunningTraceFraction() * 100, 2)}%
                 </Typography>

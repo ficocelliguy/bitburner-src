@@ -1,14 +1,32 @@
 import { CyberdeckState } from "./CyberdeckState";
-import { netrunningInitialTraceDecayWindowMs, netrunningTraceDecayMs } from "./constants";
+import {
+  corruptedNetrunningHardCooldownMs,
+  netrunningInitialTraceDecayWindowMs,
+  netrunningTraceDecayMs,
+} from "./constants";
 import { NetrunningRewards } from "../Types";
 import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
 import { saveGame } from "../../SaveObject";
 import { createCorruptedModule } from "./createCorruptedModule";
 
-export function getCurrentNetrunningIceCost(): number {
+export function getCurrentNetrunningIceCost(corrupted = false): number {
+  if (corrupted) {
+    return getCorruptedNetrunningIceCost();
+  }
   const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
+  return getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun);
+}
 
+function getCorruptedNetrunningIceCost(): number {
+  const timeSinceLastRun = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
+  if (timeSinceLastRun <= corruptedNetrunningHardCooldownMs) {
+    return Infinity;
+  }
+  return getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun - corruptedNetrunningHardCooldownMs) * 5;
+}
+
+function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number): number {
   const diminishingCosts = 1 + netrunningTraceDecayMs / (timeSinceLastRun);
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
   const netrunningCooldownBoost = ((CyberdeckState.netrunningCooldownLevel) / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
@@ -21,13 +39,10 @@ export function getNetrunningTraceFraction(): number {
 }
 
 export function canNetrun(corrupted = false): boolean {
-  if (corrupted) {
-    return (
-      CyberdeckState.components.ICE >= getCurrentCorruptedNetrunningIceCost() &&
-      CyberdeckState.modStorageSize > CyberdeckState.storedModules.length
-    );
-  }
-  return CyberdeckState.components.ICE >= getCurrentNetrunningIceCost() && CyberdeckState.modStorageSize > CyberdeckState.storedModules.length;
+  return (
+    CyberdeckState.components.ICE >= getCurrentNetrunningIceCost(corrupted) &&
+    CyberdeckState.modStorageSize >= CyberdeckState.storedModules.length
+  );
 }
 
 export async function netRun(corrupted = false): Promise<NetrunningRewards> {
@@ -72,12 +87,11 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
   };
 }
 
-function getCurrentCorruptedNetrunningIceCost(): number {
-  return Math.floor(getCurrentNetrunningIceCost() * 1.5); // TODO-fico
-}
-
 function corruptedNetrun(): NetrunningRewards {
-  CyberdeckState.components.ICE -= getCurrentCorruptedNetrunningIceCost();
+  if (!canNetrun(true)) {
+    return { success: false, modules: [], components: {} };
+  }
+  CyberdeckState.components.ICE -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const normalizeLevel = (level: number): number => level === -1 ? 99 : level;
