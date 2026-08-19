@@ -24,7 +24,7 @@ const pulse = keyframes`
 `;
 const flicker = keyframes`
    0% { filter: invert(0); }
-   25% { filter: invert(1); }
+   25% { filter: invert(0.8); }
    100% { filter: invert(0); }
 `;
 
@@ -35,9 +35,10 @@ const getSkewFrames = () => {
     const range = i > 94 ? 8 : 3
     const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 360);
     const scale = Math.random() < 0.92 ? 1 : 1.3;
+    const invert = Math.random() < 0.92 ? 0 : 0.2;
     const transform = ` { transform: skew(${Math.random() * range - range / 2}deg, ${
       Math.random() * 2 - 1
-    }deg) scale(${scale}); filter: hue-rotate(${hueRotate}deg); }\n`;
+    }deg) scale(${scale}); filter: hue-rotate(${hueRotate}deg) invert(${invert}); }\n`;
     result += `${i}% ${transform}`;
     result += `${i + step - 0.1}% ${transform}`;
   }
