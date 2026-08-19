@@ -4359,6 +4359,26 @@ export interface Cloud {
 }
 
 /**
+ * Count of various cyberdeck component types.
+ * @public
+ */
+type ComponentCounts = {
+  ROM: number;
+  neurodes: number;
+  chips: number;
+  cores: number;
+  ICE: number;
+};
+
+/**
+ * Cyberdeck API
+ * @public
+ */
+export interface Cyberdeck {
+  getComponentCounts(): ComponentCounts;
+}
+
+/**
  * Format API
  * @public
  */
