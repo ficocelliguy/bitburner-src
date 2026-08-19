@@ -60,6 +60,13 @@ export function ModuleComponent({
     }
   }
 
+  function getRarityText(rarity: number): string {
+    if (rarity < 0) {
+      return "[Corrupted]";
+    }
+    return `[Rarity ${rarity}]`;
+  }
+
   return (
     <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
       {(provided) => (
@@ -67,7 +74,7 @@ export function ModuleComponent({
           title={
             <div>
               <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                {module.type} [Rarity {module.level}]
+                {module.type} ${getRarityText(module.level)}
               </Typography>
               <div style={{ color: Settings.theme.warning }}>
                 {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}

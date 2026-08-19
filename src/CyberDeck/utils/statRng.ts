@@ -1,11 +1,10 @@
-import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckState } from "../models/CyberdeckState";
 import { Player } from "@player";
 import { WHRNG } from "../../Casino/RNG";
 import { Multipliers } from "@nsdefs";
-import { ConsumableStats, EndgameMults, MiscMults, ModuleType } from "../Types";
+import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
 import { getStatRollRange } from "./modStatsUtils";
-import { getRandomSockets } from "./moduleUtilities";
 
 export function getNextNetrunningWHRNG() {
   const ID = Player.identifier;
@@ -136,7 +135,7 @@ export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partia
   const playerMultKeys = getRecordKeys(fullStats.playerMults);
   const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
   const valueRange: [number, number] = fullStats.playerMults[statToAdd] ?? [0, 0];
-  const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
+  const value = ((valueRange[1] - valueRange[0]) * scalar * rng2 + valueRange[0]) * -1;
 
   return {
     [statToAdd]: value,
@@ -182,7 +181,7 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
   const otherMultKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
   const valueRange: [number, number] = fullStats.otherMults[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
+  const value = ((valueRange[1] - valueRange[0]) * scalar * rng2 + valueRange[0]) * -1;
 
   return {
     [statToAdd]: value,
@@ -198,7 +197,7 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
   const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
   const valueRange: [number, number] = fullStats.endgameStats[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * -1 * scalar * rng2 + valueRange[0];
+  const value = ((valueRange[1] - valueRange[0]) * scalar * rng2 + valueRange[0]) * -1;
 
   return {
     [statToAdd]: value,

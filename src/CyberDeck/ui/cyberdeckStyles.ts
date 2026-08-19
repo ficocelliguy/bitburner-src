@@ -14,10 +14,6 @@ const spinReverse = keyframes`
    50% { transform: rotate(-180deg) scale(0.95); }
    100% { transform: rotate(-360deg) scale(1); }
 `;
-const spinGradient = keyframes`
-   0% { --gradient-angle: 0deg; }
-   100% { --gradient-angle: 360deg; }
-`;
 const pulse = keyframes`
    0%, 100% { transform: scale(1); opacity: 0.8; }
    50% { transform: scale(1.15); opacity: 1; }
@@ -33,7 +29,7 @@ const getSkewFrames = () => {
   const step = 2;
   for (let i = 0; i < 100; i+= step ) {
     const range = i > 94 ? 8 : 3
-    const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 360);
+    const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 5 + 70);
     const scale = Math.random() < 0.92 ? 1 : 1.3;
     const invert = Math.random() < 0.92 ? 0 : 0.2;
     const transform = ` { transform: skew(${Math.random() * range - range / 2}deg, ${

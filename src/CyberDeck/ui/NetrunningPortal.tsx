@@ -82,7 +82,7 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
               )}
               {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
-                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction() * 100, 2)}%
+                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 100, 2)}%
                 </Typography>
               )}
             </>
