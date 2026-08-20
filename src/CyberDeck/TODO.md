@@ -1,5 +1,7 @@
 REQUIRED FOR MVP
 
+ why do some mods have a bunch of 0s in stats?
+
 - Add WiFUs
 
 - dev menu
@@ -53,6 +55,30 @@ TODO LATER:
     - health loss?
     - sockets in wrong order?
 
+
+
+Cyberdeck Expansion
+
+Project goals:
+- Let the player slowly assemble custom augment-like persistent buffs that reward long nodes
+- Ask the player to weigh tradeoffs / debuffs in exchange for buffs via randomized loot gacha
+- Add secondary bonuses to underutilized or niche mechanics (job work, hacknet money, manual program creation, crime, classes)
+- Add the potential for rarely finding small (<10%) boosts to some mechanics that otherwise cannot be boosted 
+- Avoid boosting very strong mechanics like faction rep or batching
+
+
+Puzzles the player may want to solve:
+- Given a list of mods (that each have connection limitations), how many of them can I actually connect/wire up? which ones' buffs are worth the associated debuffs? How can I maximize stats I care about?
+- How much do I spend time doing meta things (e.g. faction rep work) vs side things that help build up my cyberdeck mods?
+- How much do I wait for netrunning to fully reset, vs spending more resources to get new random mods more often?
+- When do I swap out mods with other ones I have in storage to buff something else? (moving mods takes a short amount of time, so "flash mobbing" is possible but requires planning)
+- How much do I spend resources on standard netrunning (for more consistent rewards) vs the more expensive corrupted netrunning (which may give junk, or mods with bigger tradeoffs, or exclusive stat boost types)?
+
+
+Open questions:
+- What parts of this should be limited to endgame? higher rarity mods? Specific stats? specific mod types e.g. rack extensions? caps on storage size or levels? ALl of it?
+- What other under-utilized mechanics could also have component gains associated with it?
+- What other currently fixed game stats could work with rare minor buffs?
 
 
 CYBERDECK: IDEA SCRATCH SPACE

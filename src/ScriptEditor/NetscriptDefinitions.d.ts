@@ -4370,12 +4370,78 @@ type ComponentCounts = {
   ICE: number;
 };
 
+type DeckModule = {
+  id: string;
+  level: number;
+  sockets: SocketList;
+  type: ModuleType;
+  favorite?: boolean;
+  stats: ModuleStats;
+};
+
+type ModuleStats = {
+  playerMults?: Partial<Multipliers> | null;
+  otherMults?: Partial<MiscMults> | null;
+  extraRackSlots?: number;
+  consumableStats?: Partial<ConsumableStats>;
+  endgameStats?: Partial<EndgameMults>;
+};
+
+type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+type Connection = [Socket, Socket];
+type Socket = {
+  moduleId: string;
+  socketIndex: number;
+};
+
+enum ModuleType {
+  DeckConnection = "Deck Connection",
+  PowerSupply = "Power Supply",
+  ProcessingModule = "Processing Module",
+  Uplink = "Uplink",
+  RackExtension = "Rack Extension",
+  SkillChip = "SkillChip",
+}
+
+type MiscMults = {
+  romProduction: number;
+  chipProduction: number;
+  neurodeProduction: number;
+  program_creation_speed: number;
+  crime_speed: number;
+  stock_fees: number;
+  cct_money: number;
+  IPvGO_power: number;
+  class_cost: number;
+};
+
+type ConsumableStats = {
+  netrunning_lvl: number;
+  netrun_cooldown_lvl: number;
+  mod_storage: number;
+  crafting_lvl: number;
+};
+
+type EndgameMults = {
+  stamina_gain: number;
+  graft_speed: number;
+  sleeve_sync: number;
+  stanek_charge: number;
+  equipment_cost: number;
+};
+
 /**
  * Cyberdeck API
  * @public
  */
 export interface Cyberdeck {
+  // TODO-fico: API documentation
   getComponentCounts(): ComponentCounts;
+  getStoredMods(): DeckModule[];
+  getInstalledMods(): DeckModule[];
+  getConnections(): Connection[];
+  recycleMod(modId: string): ComponentCounts;
+  favoriteMod(modId: string, favorite?: boolean): void;
 }
 
 /**
@@ -7262,6 +7328,11 @@ export interface NS {
    * Namespace for {@link Cloud | cloud} functions.
    */
   readonly cloud: Cloud;
+
+  /**
+   * Namespace for {@link Cyberdeck | cyberdeck} functions.
+   */
+  readonly cyberdeck: Cyberdeck;
 
   /**
    * Namespace for darknet functions. Contains spoilers.

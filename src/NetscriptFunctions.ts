@@ -119,6 +119,7 @@ import { Literatures } from "./Literature/Literatures";
 import { Messages } from "./Message/MessageHelpers";
 import { setDeprecatedProperties } from "./utils/DeprecationHelper";
 import { gainCyberdeckComponentsFromNukeOrBackdoor } from "./CyberDeck/effects";
+import { NetscriptCyberdeck } from "./CyberDeck/cyberdeckApi";
 
 export const enums: NSEnums = {
   CityName,
@@ -153,6 +154,7 @@ export const ns: InternalAPI<NSFull> = {
   gang: NetscriptGang(),
   go: NetscriptGo(),
   dnet: NetscriptDarknet(),
+  cyberdeck: NetscriptCyberdeck(),
   bladeburner: NetscriptBladeburner(),
   codingcontract: NetscriptCodingContract(),
   sleeve: NetscriptSleeve(),

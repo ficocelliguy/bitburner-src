@@ -234,6 +234,15 @@ const cloud = {
   deleteServer: 2.25,
 } as const;
 
+const cyberdeck = {
+  getComponentCounts: 0.05,
+  getStoredMods: 0.05,
+  getInstalledMods: 0.05,
+  getConnections: 0.05,
+  recycleMod: 0.05,
+  favoriteMod: 0.05,
+};
+
 // Darknet API
 const dnet = {
   authenticate: 0.4,
@@ -551,6 +560,7 @@ export const RamCosts: RamCostTree<NSFull> = {
   singularity,
   format,
   cloud,
+  cyberdeck,
   gang,
   go,
   dnet,

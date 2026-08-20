@@ -247,12 +247,12 @@ export function craftUplink() {
   return newComponent;
 }
 
-export function disassembleModule(module: DeckModule, showToast: boolean = false) {
+export function disassembleModule(module: DeckModule, showToast: boolean = false): ComponentCounts {
   if (module.favorite) {
     if (showToast) {
       SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000);
     }
-    return false;
+    return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
   const chipsGained = module.type !== ModuleType.Uplink ? 2 : 0;
   const ROMGained = 2;
@@ -269,5 +269,5 @@ export function disassembleModule(module: DeckModule, showToast: boolean = false
 
   if (showToast) { gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained }); }
   CyberdeckEvents.emit();
-  return true;
+  return { chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained, cores: 0, ICE: 0 };
 }
