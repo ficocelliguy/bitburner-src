@@ -46,6 +46,9 @@ export function createCorruptedModule(rng: WHRNG): DeckModule {
   if (roll < 0.39) {
     return createProcessingModule(getLevel(rng, 2), rng);
   }
+  if (roll < 0.45) {
+    return createUplink(getLevel(rng, 2), rng);
+  }
 
   return getJunkModule(rng);
 }

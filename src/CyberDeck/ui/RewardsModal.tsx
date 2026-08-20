@@ -12,7 +12,7 @@ import { TrashCan } from "./TrashCan";
 
 type RewardsModalProps = {
   open: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   rewards: NetrunningRewards;
   title: string;
   flavorText?: string;

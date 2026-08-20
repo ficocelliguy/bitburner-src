@@ -72,6 +72,7 @@ export function CyberdeckDev(): React.ReactElement {
     <>
       <RewardsModal
         open={showRewardsModal}
+        onClose={() => setShowRewardsModal(false)}
         rewards={netrunningModRewards}
         title={"Netrunning Results"}
         flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
@@ -94,6 +95,8 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
+          <br />
+          <br />
           <Tooltip title={<Typography>Acquire some components for the cyberdeck.</Typography>}>
             <span>
               <Button
@@ -105,6 +108,8 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
+          <br />
+          <br />
           <Tooltip title={<Typography>Acquire lots of components for the cyberdeck.</Typography>}>
             <span>
               <Button
@@ -116,7 +121,8 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
-
+          <br />
+          <br />
           <Tooltip title={<Typography>Acquire some mods from netrunning</Typography>}>
             <span>
               <Button
@@ -128,7 +134,8 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
-
+          <br />
+          <br />
           <Tooltip title={<Typography>Acquire some mods from netrunning at the Ishima Glitch</Typography>}>
             <span>
               <Button
@@ -140,6 +147,8 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
+          <br />
+          <br />
           <Tooltip title={<Typography>Remove all stored and installed mods from your cyberdeck</Typography>}>
             <span>
               <Button
