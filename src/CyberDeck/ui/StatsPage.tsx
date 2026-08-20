@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Container, Typography, Box } from "@mui/material";
-import { cyberdeckStyles } from "./cyberdeckStyles";
+import React from "react";
+import { Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";

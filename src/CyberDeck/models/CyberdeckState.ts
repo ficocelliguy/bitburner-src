@@ -93,6 +93,3 @@ export function getChargedModules() : DeckModule[] {
   const chargedModuleIDs = getChargedModuleIDs();
   return CyberdeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }
-
-// TODO-fico: this is temporary setup
-setTimeout(createInitialModules, 500);

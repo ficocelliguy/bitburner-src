@@ -1,8 +1,5 @@
-import { Theme } from "@mui/material/styles";
-import { makeStyles } from "tss-react/mui";
-import { keyframes } from "tss-react";
-import { Settings } from "../../Settings/Settings";
-
+import { keyframes } from "@emotion/react";
+import { useTheme } from "@mui/material/styles";
 
 const spin = keyframes`
    0% { transform: rotate(0deg) scale(1); }
@@ -27,8 +24,8 @@ const flicker = keyframes`
 const getSkewFrames = () => {
   let result = "";
   const step = 2;
-  for (let i = 0; i < 100; i+= step ) {
-    const range = i > 94 ? 8 : 3
+  for (let i = 0; i < 100; i += step) {
+    const range = i > 94 ? 8 : 3;
     const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 5 + 70);
     const scale = Math.random() < 0.92 ? 1 : 1.3;
     const invert = Math.random() < 0.92 ? 0 : 0.2;
@@ -39,7 +36,7 @@ const getSkewFrames = () => {
     result += `${i + step - 0.1}% ${transform}`;
   }
   return result;
-}
+};
 
 const skewFrames = keyframes`${getSkewFrames()}`;
 
@@ -54,160 +51,160 @@ const growAndFade = keyframes`
   }
 `;
 
-export const cyberdeckStyles = makeStyles({ uniqId: "cyberdeckStyles" })((theme: Theme, __, __classes) => ({
-  modulePanel: {
-    margin: "3px",
-    display: "inline-flex",
-    boxSizing: "border-box",
-    cornerTopLeftShape: "bevel",
-    borderTopLeftRadius: "10px",
-    width: "462px",
-    height: "60px",
-  },
-  socketIOPanel: {
-    display: "inline-flex",
-    border: `1px solid ${Settings.theme.secondarydark}`,
-    borderRadius: "8px",
-    cornerShape: "bevel",
-    margin: "6px 2px",
-  },
-  emptyModuleSlot: {
-    width: "100%",
-    border: `1px solid ${Settings.theme.button}`,
-    margin: "6px",
-    borderTop: `1px solid ${Settings.theme.button}`,
-    borderTopLeftRadius: "7px",
-    cornerTopLeftShape: "bevel",
-  },
-  statsPanel: {
-    border: `1px solid ${Settings.theme.secondarydark}`,
-    borderRadius: "8px",
-    cornerShape: "bevel",
-    background: Settings.theme.button,
-    margin: "6px 2px",
-    width: "135px",
-    fontSize: "9px",
-    alignContent: "center",
-  },
-  socket: {
-    height: "24px",
-    width: "24px",
-    borderRadius: "50%",
-    cursor: "crosshair",
-  },
-  tab: {
-    paddingTop: 0,
-    paddingBottom: 0,
-    whiteSpace: "pre",
-    height: "50px",
-    minHeight: "unset",
-    width: "210px",
-  }
-}));
+export const PORTAL_CONTAINER_CLASS = "portal-container";
+export const PORTAL_RING_CLASS = "portal-ring";
+export const PORTAL_RING_REVERSE_CLASS = "portal-ring-reverse";
+export const PORTAL_CORE_CLASS = "portal-core";
 
-
-export const portalStyles = makeStyles<unknown, portalStyle>({ uniqId: "cyberdeckStyles" })((theme: Theme, __, classes) => ({
-  portalContainer: {
-    margin: "150px auto 10px auto",
-    cursor: "pointer",
-    position: "relative",
-    width: "300px",
-    height: "300px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    transform: "scale(1)",
-    transition: "transform 0.5s ease-out",
-    "&:hover": {
-      transform: "scale(1.08)",
+export function useCyberdeckStyles() {
+  const theme = useTheme();
+  return {
+    modulePanel: {
+      margin: "3px",
+      display: "inline-flex",
+      boxSizing: "border-box",
+      cornerTopLeftShape: "bevel",
+      borderTopLeftRadius: "10px",
+      width: "462px",
+      height: "60px",
     },
-  },
-  portalRing: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    borderRadius: "50%",
-    border: "4px solid transparent",
-    animation: `${spin} 5s linear infinite`,
-    background:
-      "linear-gradient(#0a0a16) padding-box, linear-gradient(to right, transparent 20% , #ff007b 25%, #00ff7b 50%, #ff007b 75%, transparent 80%) border-box",
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      height: "100%",
+    socketIOPanel: {
+      display: "inline-flex",
+      border: `1px solid ${theme.palette.secondary.dark}`,
+      borderRadius: "8px",
+      cornerShape: "bevel",
+      margin: "6px 2px",
+    },
+    emptyModuleSlot: {
       width: "100%",
+      border: `1px solid ${theme.colors.button}`,
+      margin: "6px",
+      borderTop: `1px solid ${theme.colors.button}`,
+      borderTopLeftRadius: "7px",
+      cornerTopLeftShape: "bevel",
+    },
+    statsPanel: {
+      border: `1px solid ${theme.palette.secondary.dark}`,
+      borderRadius: "8px",
+      cornerShape: "bevel",
+      background: theme.colors.button,
+      margin: "6px 2px",
+      width: "135px",
+      fontSize: "9px",
+      alignContent: "center",
+    },
+    socket: {
+      height: "24px",
+      width: "24px",
       borderRadius: "50%",
-      boxShadow: "0 0 40px rgba(189, 0, 255, 0.6), inset 0 0 30px rgba(189, 0, 255, 0.6)",
+      cursor: "crosshair",
     },
-  },
-  portalRingReverse: {
-    width: "85%",
-    height: "85%",
-    animation: `${spinReverse} 2s linear infinite`,
-    background:
-      "linear-gradient(#0a0a16) padding-box, linear-gradient(to right, transparent 20% , #f9d423, #ff4e50, #f9d423, transparent 80%) border-box",
-    "&::after": {
-      boxShadow: "0 0 40px rgba(0, 255, 123, 0.4), inset 0 0 30px rgba(0, 255, 123, 0.4)",
+    tab: {
+      paddingTop: 0,
+      paddingBottom: 0,
+      whiteSpace: "pre",
+      height: "50px",
+      minHeight: "unset",
+      width: "210px",
     },
-  },
-  portalDisabled: {
-    cursor: "not-allowed",
-    [`& .${classes.portalRing}`]: {
-      animation: `${spin} 20s linear infinite`,
-      "&::after": {
-        boxShadow: "0 0 40px rgba(189, 0, 0, 0.6), inset 0 0 30px rgba(189, 0, 0, 0.6)",
-      },
-    },
-    [`& .${classes.portalRingReverse}`]: {
-      animation: `${spinReverse} 15s linear infinite`,
-      "&::after": {
-        boxShadow: "0 0 40px rgba(255, 167, 86, 0.4), inset 0 0 30px rgba(255, 167, 86, 0.4)",
-      },
-    },
-    [`& .${classes.portalCore}`]: {
-      background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(100,210,255,0) 100%)",
-      animation: `${pulse} 5s ease-in-out infinite`,
-    },
-  },
-  orbiter: {
-    width: "1px",
-    height: "100%",
-    animation: `${spinReverse} 2s linear infinite`,
-    boxShadow: "0 10px 20px -20px #ff4e50",
-  },
-  portalCore: {
-    position: "absolute",
-    width: "50%",
-    height: "50%",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(0,210,255,0) 100%)",
-    animation: `${pulse} 1.5s ease-in-out infinite`,
-    boxShadow: "0 0 80px #bd00ff",
-  },
-  enteringPortal: {
-    zIndex: 9999,
-    pointerEvents: "none",
-    animation: `${growAndFade} 1.5s ease-in forwards`,
-  },
-  corruptedSkew: {
-    animation: `${skewFrames} 5s infinite`,
-    [`& .${classes.portalContainer}`]: {
-      "&:hover": {
-        animation: `${flicker} 0.2s`,
-      },
-    },
-  },
-}));
+  } as const;
+}
 
-type portalStyle =
-  | "portalContainer"
-  | "portalRing"
-  | "portalRingReverse"
-  | "portalDisabled"
-  | "orbiter"
-  | "portalCore"
-  | "enteringPortal"
-  | "corruptedSkew";
+export function usePortalStyles() {
+  useTheme();
+  return {
+    portalContainer: {
+      margin: "150px auto 10px auto",
+      cursor: "pointer",
+      position: "relative",
+      width: "300px",
+      height: "300px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      transform: "scale(1)",
+      transition: "transform 0.5s ease-out",
+      "&:hover": {
+        transform: "scale(1.08)",
+      },
+    },
+    portalRing: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      border: "4px solid transparent",
+      animation: `${spin} 5s linear infinite`,
+      background:
+        "linear-gradient(#0a0a16) padding-box, linear-gradient(to right, transparent 20% , #ff007b 25%, #00ff7b 50%, #ff007b 75%, transparent 80%) border-box",
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        borderRadius: "50%",
+        boxShadow: "0 0 40px rgba(189, 0, 255, 0.6), inset 0 0 30px rgba(189, 0, 255, 0.6)",
+      },
+    },
+    portalRingReverse: {
+      width: "85%",
+      height: "85%",
+      animation: `${spinReverse} 2s linear infinite`,
+      background:
+        "linear-gradient(#0a0a16) padding-box, linear-gradient(to right, transparent 20% , #f9d423, #ff4e50, #f9d423, transparent 80%) border-box",
+      "&::after": {
+        boxShadow: "0 0 40px rgba(0, 255, 123, 0.4), inset 0 0 30px rgba(0, 255, 123, 0.4)",
+      },
+    },
+    portalDisabled: {
+      cursor: "not-allowed",
+      [`& .${PORTAL_RING_CLASS}`]: {
+        animation: `${spin} 20s linear infinite`,
+        "&::after": {
+          boxShadow: "0 0 40px rgba(189, 0, 0, 0.6), inset 0 0 30px rgba(189, 0, 0, 0.6)",
+        },
+      },
+      [`& .${PORTAL_RING_REVERSE_CLASS}`]: {
+        animation: `${spinReverse} 15s linear infinite`,
+        "&::after": {
+          boxShadow: "0 0 40px rgba(255, 167, 86, 0.4), inset 0 0 30px rgba(255, 167, 86, 0.4)",
+        },
+      },
+      [`& .${PORTAL_CORE_CLASS}`]: {
+        background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(100,210,255,0) 100%)",
+        animation: `${pulse} 5s ease-in-out infinite`,
+      },
+    },
+    orbiter: {
+      width: "1px",
+      height: "100%",
+      animation: `${spinReverse} 2s linear infinite`,
+      boxShadow: "0 10px 20px -20px #ff4e50",
+    },
+    portalCore: {
+      position: "absolute",
+      width: "50%",
+      height: "50%",
+      borderRadius: "50%",
+      background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(0,210,255,0) 100%)",
+      animation: `${pulse} 1.5s ease-in-out infinite`,
+      boxShadow: "0 0 80px #bd00ff",
+    },
+    enteringPortal: {
+      zIndex: 9999,
+      pointerEvents: "none",
+      animation: `${growAndFade} 1.5s ease-in forwards`,
+    },
+    corruptedSkew: {
+      animation: `${skewFrames} 5s infinite`,
+      [`& .${PORTAL_CONTAINER_CLASS}`]: {
+        "&:hover": {
+          animation: `${flicker} 0.2s`,
+        },
+      },
+    },
+  } as const;
+}
 
 /*
 
@@ -345,6 +342,8 @@ marquee text
  */
 
 // TODO-fico: remove once done
+// Reference: this is a snapshot of the Settings.theme color palette used for
+// styling this feature during development. Not consumed at runtime.
 const themeColors = {
   primarylight: "#0f0",
   primary: "#0c0",
@@ -385,3 +384,5 @@ const themeColors = {
   bnlvl2: "#48d1cc",
   bnlvl3: "#0000ff",
 };
+// Silence unused-variable warning without changing runtime behavior.
+void themeColors;

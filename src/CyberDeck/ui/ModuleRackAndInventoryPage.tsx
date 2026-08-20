@@ -15,7 +15,7 @@ import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { createInitialModules, DeckConnection } from "../models/createModule";
-import { cyberdeckStyles } from "./cyberdeckStyles";
+import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
 
@@ -25,7 +25,7 @@ export const TRASH_CAN = "trashcan";
 
 export function ModuleRackAndInventoryPage(): React.ReactElement {
   const render = useRerender();
-  const {classes} = cyberdeckStyles();
+  const styles = useCyberdeckStyles();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
   const [draggingStoredModule, setDraggingStoredModule] = useState(false);
@@ -194,25 +194,25 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                       }}
                     >
                       {Array.from({ length: getCurrentRackSize() }).map((_, index) => (
-                        <div
+                        <Box
                           key={index}
-                          className={classes.modulePanel}
+                          sx={styles.modulePanel}
                           style={{
                             height: "60px",
                             border: `1px solid ${Settings.theme.button}`,
                           }}
                         >
-                          <div
+                          <Box
                             key={index}
-                            className={classes.emptyModuleSlot}
+                            sx={styles.emptyModuleSlot}
                             style={{
                               backgroundColor:
                                 snapshot.isDraggingOver && draggingStoredModule
                                   ? Settings.theme.well
                                   : Settings.theme.backgroundprimary,
                             }}
-                          ></div>
-                        </div>
+                          />
+                        </Box>
                       ))}
                     </div>
                   </Box>

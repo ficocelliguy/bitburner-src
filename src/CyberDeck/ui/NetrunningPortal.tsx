@@ -1,6 +1,12 @@
 import React from "react";
-import { Container, Typography } from "@mui/material";
-import { portalStyles } from "./cyberdeckStyles";
+import { Box, Container, Typography } from "@mui/material";
+import {
+  PORTAL_CONTAINER_CLASS,
+  PORTAL_CORE_CLASS,
+  PORTAL_RING_CLASS,
+  PORTAL_RING_REVERSE_CLASS,
+  usePortalStyles,
+} from "./cyberdeckStyles";
 import { RewardsModal } from "./RewardsModal";
 import { NetrunningRewards } from "../Types";
 import { CyberdeckState } from "../models/CyberdeckState";
@@ -13,7 +19,7 @@ import { useRerender } from "../../ui/React/hooks";
 
 export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
   useRerender(200);
-  const { classes } = portalStyles({});
+  const styles = usePortalStyles();
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
@@ -41,7 +47,7 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
   }
 
   return (
-    <Container disableGutters maxWidth={false} className={corrupted ? classes.corruptedSkew : ""} sx={{ m: 3 }}>
+    <Container disableGutters maxWidth={false} sx={[{ m: 3 }, corrupted && styles.corruptedSkew]}>
       <RewardsModal
         open={showRewardsModal}
         onClose={() => resetPortal()}
@@ -51,17 +57,19 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
       />
       {showPortal && (
         <>
-          <div
-            className={`${classes.portalContainer} ${entering ? classes.enteringPortal : ""} ${
-              disabled ? classes.portalDisabled : ""
-            }`}
+          <Box
+            className={PORTAL_CONTAINER_CLASS}
+            sx={[styles.portalContainer, entering && styles.enteringPortal, disabled && styles.portalDisabled]}
             onClick={() => void handlePortalClick()}
           >
-            <div className={`${classes.portalRing}`}></div>
-            <div className={`${classes.portalRing} ${classes.portalRingReverse}`}></div>
-            <div className={`${classes.orbiter}`}></div>
-            <div className={`${classes.portalCore}`}></div>
-          </div>
+            <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
+            <Box
+              className={`${PORTAL_RING_CLASS} ${PORTAL_RING_REVERSE_CLASS}`}
+              sx={[styles.portalRing, styles.portalRingReverse]}
+            />
+            <Box sx={styles.orbiter} />
+            <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
+          </Box>
           {!entering && (
             <>
               {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length ? (

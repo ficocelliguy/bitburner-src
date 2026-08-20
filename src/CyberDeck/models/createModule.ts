@@ -158,7 +158,7 @@ function getRandomModuleType(rng: WHRNG) {
   return ModuleType.SkillChip;
 }
 
-// TODO-fico: replace with better module set on prestige
+// TODO-fico: replace with better module set on prestige / first time purchase
 export function createInitialModules(force = false) {
   if (CyberdeckState.storedModules.length > 0 && !force) {
     return;

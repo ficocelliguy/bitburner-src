@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Container, Tabs, Tab} from "@mui/material";
 import { NetrunningPortal } from "./ui/NetrunningPortal";
 import MemoryIcon from "@mui/icons-material/Memory";
@@ -6,16 +6,22 @@ import ConstructionSharpIcon from "@mui/icons-material/ConstructionSharp";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
 import SettingsInputComponentSharpIcon from "@mui/icons-material/SettingsInputComponentSharp";
 import { ModuleRackAndInventoryPage } from "./ui/ModuleRackAndInventoryPage";
-import { cyberdeckStyles } from "./ui/cyberdeckStyles";
+import { useCyberdeckStyles } from "./ui/cyberdeckStyles";
 import { useRerender } from "../ui/React/hooks";
 import { CraftingPage } from "./ui/CraftingPage";
 import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
+import { createInitialModules } from "./models/createModule";
 
 export function CyberDeckRoot(): React.ReactElement {
   useRerender(1000);
   const [value, setValue] = React.useState(0);
-  const { classes } = cyberdeckStyles();
+  const styles = useCyberdeckStyles();
+
+  useEffect(() => {
+    // TODO-fico: this is temporary setup
+    createInitialModules();
+  }, []);
 
 
   function handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -30,15 +36,15 @@ export function CyberDeckRoot(): React.ReactElement {
           onChange={handleChange}
           sx={{ minWidth: "fit-content", maxWidth: "45%" }}
         >
-          <Tab label="Manage Mods" icon={<MemoryIcon />} iconPosition={"start"} className={classes.tab} />
+          <Tab label="Manage Mods" icon={<MemoryIcon />} iconPosition={"start"} sx={styles.tab} />
           <Tab
             label="Netrun"
             icon={<SettingsInputComponentSharpIcon />}
             iconPosition={"start"}
-            className={classes.tab}
+            sx={styles.tab}
           />
-          <Tab label="Craft" icon={<ConstructionSharpIcon />} iconPosition={"start"} className={classes.tab} />
-          <Tab label="Stats" icon={<StackedBarChartOutlinedIcon />} iconPosition={"start"} className={classes.tab} />
+          <Tab label="Craft" icon={<ConstructionSharpIcon />} iconPosition={"start"} sx={styles.tab} />
+          <Tab label="Stats" icon={<StackedBarChartOutlinedIcon />} iconPosition={"start"} sx={styles.tab} />
         </Tabs>
       </Box>
       <ComponentInventoryCount />

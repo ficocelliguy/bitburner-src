@@ -7,9 +7,9 @@ import { DeckModule, ModuleType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
-import { Tooltip, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
-import { cyberdeckStyles } from "./cyberdeckStyles";
+import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { getModuleDescription } from "../models/constants";
 
 export type DeckModuleProps = {
@@ -34,7 +34,7 @@ export function ModuleComponent({
   isAnyDragActive,
 }: DeckModuleProps) {
   const render = useRerender(200);
-  const { classes } = cyberdeckStyles();
+  const styles = useCyberdeckStyles();
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
   const updateDisplay = useCallback(() => {
     render();
@@ -100,7 +100,7 @@ export function ModuleComponent({
           onOpen={() => setTooltipOpen(true)}
           onClose={() => setTooltipOpen(false)}
         >
-          <div
+          <Box
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
@@ -119,7 +119,7 @@ export function ModuleComponent({
                 ? Settings.theme.button
                 : Settings.theme.backgroundprimary,
             }}
-            className={classes.modulePanel}
+            sx={styles.modulePanel}
             onMouseUp={() => socketDragEnd()}
             onMouseDown={openTooltipOnRightClick}
             onContextMenu={(e) => e.preventDefault()}
@@ -131,9 +131,9 @@ export function ModuleComponent({
                   <div style={{position: "absolute", top: 0, left: "30px", color: Settings.theme.warning}}>
                     <StarBorderOutlinedIcon style={{width: "20px", height: "20px"}} />
                   </div>}
-                <div className={classes.statsPanel}>
+                <Box sx={styles.statsPanel}>
                   <StatBonus stats={module.stats} />
-                </div>
+                </Box>
               </>
             ) : (
               <div>
@@ -158,7 +158,7 @@ export function ModuleComponent({
               draggingWireStarted={draggingWireStarted}
               draggingInstalledModule={draggingInstalledModule}
             />
-          </div>
+          </Box>
         </Tooltip>
       )}
     </Draggable>
