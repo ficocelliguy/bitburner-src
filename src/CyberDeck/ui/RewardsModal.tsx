@@ -12,13 +12,13 @@ import { TrashCan } from "./TrashCan";
 
 type RewardsModalProps = {
   open: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   rewards: NetrunningRewards;
   title: string;
   flavorText?: string;
 };
 
-export function RewardsModal({ open, onClose, rewards, flavorText = "", title }: RewardsModalProps) {
+export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "", title }: RewardsModalProps) {
   const [displayedModules, setDisplayedModules] = React.useState<DeckModule[]>(rewards.modules);
 
   React.useEffect(() => {

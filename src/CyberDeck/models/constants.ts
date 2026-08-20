@@ -1,4 +1,5 @@
 import { ComponentCounts, ModuleType } from "../Types";
+import { Settings } from "../../Settings/Settings";
 
 // TODO-fico: change these after testing to slower cooldowns
 export const netrunningTraceDecayMs = 5e4; //5e5
@@ -70,3 +71,9 @@ export function getModuleDescription(moduleType: ModuleType): string {
 export const netrunFlavorText = "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEbreakers you brought pierce the digital defense, revealing the treasure you came here for.";
 
 export const corruptedNetrunFlavorText = "You step beyond the Blackwall, the last line of defense that maintains cyberspace from the old net that fell long ago. Outside of that firewall, beyond its protection, the deep ICE holds... something. You grab what you can before the connection collapses.";
+
+export const getSocketColor = (index: number) => {
+  const t = Settings.theme;
+  const colors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
+  return colors[index];
+};

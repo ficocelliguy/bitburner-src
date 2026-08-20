@@ -28,6 +28,7 @@ import { Exploit } from "./Exploits/Exploit";
 import { useRerender } from "./ui/React/hooks";
 import { DarknetDev } from "./DevMenu/ui/DarknetDev";
 import { AutoExpandContext, getAutoExpandData, setAutoExpandData } from "./ui/AutoExpand/AutoExpandContext";
+import { CyberdeckDev } from "./DevMenu/ui/CyberdeckDev";
 
 export function DevMenuRoot(): React.ReactElement {
   const autoExpandContextValue = useRef({
@@ -74,6 +75,7 @@ export function DevMenuRoot(): React.ReactElement {
       <AchievementsDev />
       <EntropyDev />
       <DarknetDev />
+      <CyberdeckDev />
     </AutoExpandContext.Provider>
   );
 }

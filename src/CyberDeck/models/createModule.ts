@@ -179,8 +179,6 @@ export function createInitialModules(force = false) {
   CyberdeckState.components.neurodes = 25;
   CyberdeckState.components.ICE = 4;
   CyberdeckState.components.cores = 4;
-
-  addCyberdeckServer();
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>) {

@@ -1,8 +1,8 @@
-import { Settings } from "../../Settings/Settings";
 import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
-import { createInitialModules, DeckConnection } from "./createModule";
+import { DeckConnection } from "./createModule";
 import { WHRNG } from "../../Casino/RNG";
+import { Player } from "@player";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
 export const CyberdeckEvents = new EventEmitter<[]>();
@@ -65,9 +65,9 @@ export const CyberdeckState = {
   craftingWHRNG: null as WHRNG | null,
 };
 
-const t = Settings.theme;
-
-export const socketColors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
+export function hasCyberdeck(): boolean {
+  return CyberdeckState.hasCyberdeck || !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
+}
 
 export function getChargedModuleIDs() : string[] {
   const chargedModules = [DeckConnection.id];

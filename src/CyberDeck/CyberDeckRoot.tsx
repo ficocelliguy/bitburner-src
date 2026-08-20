@@ -11,7 +11,7 @@ import { useRerender } from "../ui/React/hooks";
 import { CraftingPage } from "./ui/CraftingPage";
 import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
-import { createInitialModules } from "./models/createModule";
+import { gainCyberdeck } from "./effects";
 
 export function CyberDeckRoot(): React.ReactElement {
   useRerender(1000);
@@ -20,7 +20,7 @@ export function CyberDeckRoot(): React.ReactElement {
 
   useEffect(() => {
     // TODO-fico: this is temporary setup
-    createInitialModules();
+    gainCyberdeck();
   }, []);
 
 

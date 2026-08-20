@@ -3,6 +3,8 @@ import { mergeMultipliers } from "../PersonObjects/Multipliers";
 import { CyberdeckState } from "./models/CyberdeckState";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
+import { addCyberdeckServer } from "./models/cyberdeckServer";
+import { createInitialModules } from "./models/createModule";
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses(1).playerMults;
@@ -62,4 +64,10 @@ export function gainCyberdeckRomFromCache(showToast = true) {
   CyberdeckState.componentStats.ROM.caches += romGained;
   if (showToast) { gainComponentMessage({ ROM: romGained }) }
   return romGained;
+}
+
+export function gainCyberdeck() {
+  CyberdeckState.hasCyberdeck = true;
+  addCyberdeckServer();
+  createInitialModules();
 }

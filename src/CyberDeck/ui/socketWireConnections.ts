@@ -1,6 +1,7 @@
-import { CyberdeckState, socketColors } from "../models/CyberdeckState";
+import { CyberdeckState } from "../models/CyberdeckState";
 import { getSocketId } from "../utils/moduleUtilities";
 import { Socket } from "../Types";
+import { getSocketColor } from "../models/constants";
 
 const mostRecentMouseLocation = {x: 0, y: 0};
 
@@ -55,7 +56,7 @@ export function DrawWiresOnCanvas(
 }
 
 function drawLine(socketIndex: number, ctx:CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number) {
-  ctx.strokeStyle = socketColors[socketIndex];
+  ctx.strokeStyle = getSocketColor(socketIndex);
   ctx.lineWidth = 20;
   ctx.beginPath();
   ctx.moveTo(startX, startY);

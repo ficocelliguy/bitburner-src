@@ -61,11 +61,7 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
 
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost();
   const rng = getNextNetrunningWHRNG();
-  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.level - m2.level);
-  if (!rewards.some(m => m.level >= 3)) {
-    rewards[2] = createModule(rng, undefined, 3);
-  }
-  CyberdeckState.storedModules.unshift(...rewards);
+  const rewards = getNetrunningRewards(rng);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
 
   const chipsGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
@@ -94,6 +90,15 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
   };
 }
 
+export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
+  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.level - m2.level);
+  if (!rewards.some((m) => m.level >= 3)) {
+    rewards[2] = createModule(rng, undefined, 3);
+  }
+  CyberdeckState.storedModules.unshift(...rewards);
+  return rewards;
+}
+
 async function corruptedNetrun(): Promise<NetrunningRewards> {
   if (!canNetrun(true)) {
     return { success: false, modules: [], components: {} };
@@ -106,7 +111,6 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
   const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)]
     .sort((m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level));
 
-  CyberdeckState.storedModules.unshift(...rewards);
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
 
   const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 2.5));
@@ -121,4 +125,16 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
       cores: coresGained,
     },
   };
+}
+
+export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWHRNG()) {
+  const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
+
+  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
+    (m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level),
+  );
+
+  CyberdeckState.storedModules.unshift(...rewards);
+  return rewards;
+
 }
