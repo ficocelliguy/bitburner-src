@@ -26,6 +26,20 @@ export function handleModuleMoved(result: DropResult) {
     return;
   }
 
+  if (
+    sourceIsStorage &&
+    !destinationIsStorage &&
+    moduleToMove.type === ModuleType.RackExtension &&
+    getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions
+  ) {
+    SnackbarEvents.emit(
+      `Cannot install more than ${CyberdeckState.maxInstalledRackExtensions} Rack Extension modules.`,
+      ToastVariant.ERROR,
+      2000,
+    );
+    return;
+  }
+
   moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
 
   // Undo the move if it causes invalid wiring
@@ -207,4 +221,8 @@ function consumeSkillChips() {
   }
   CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
   CyberdeckEvents.emit();
+}
+
+function getInstalledRackExtensionCount() {
+  return CyberdeckState.installedModules.filter((m) => m.type === ModuleType.RackExtension).length;
 }

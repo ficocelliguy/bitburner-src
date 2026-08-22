@@ -55,3 +55,10 @@ export function getSocketLocation(id: string) {
     y: rect.top + rect.height/2
   }
 }
+
+export function getModuleById(modId: string) {
+  return (
+    CyberdeckState.installedModules.find((m) => m.id === modId) ||
+    CyberdeckState.storedModules.find((m) => m.id === modId)
+  );
+}

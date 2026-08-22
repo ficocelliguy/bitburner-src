@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { Button } from "@mui/material";
-import { craftICE, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
+import { craftICEbreaker, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
 import { ComponentCost, ComponentSymbol } from "./ComponentCost";
 import {
   componentSymbols,
@@ -60,7 +60,7 @@ export function CraftingPage(): React.ReactElement {
         onClose={() => setShowRewardsModal(false)}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
-        <Button onClick={() => craftICE()}>
+        <Button onClick={() => craftICEbreaker()}>
           <div
             style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
           >

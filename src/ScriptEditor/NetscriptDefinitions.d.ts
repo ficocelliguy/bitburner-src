@@ -4379,12 +4379,45 @@ type DeckModule = {
   stats: ModuleStats;
 };
 
+type CyberdeckStats = {
+  playerMults: Multipliers;
+  otherMults: MiscMults;
+  extraRackSlots: number;
+  consumableStats: ConsumableStats;
+  endgameStats: EndgameMults;
+};
+
 type ModuleStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
   consumableStats?: Partial<ConsumableStats>;
   endgameStats?: Partial<EndgameMults>;
+};
+
+type ComponentStats = {
+  ROM: {
+    backdoors: number;
+    caches: number;
+    pettyCrime: number;
+    programs: number;
+    netrunning: number;
+  };
+  chips: {
+    hacknet: number;
+    companyWork: number;
+    IPvGO: number;
+    netrunning: number;
+  };
+  neurodes: {
+    kills: number;
+    class: number;
+    codingContracts: number;
+    netrunning: number;
+  };
+  cores: {
+    netrunning: number;
+  };
 };
 
 type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
@@ -4440,8 +4473,28 @@ export interface Cyberdeck {
   getStoredMods(): DeckModule[];
   getInstalledMods(): DeckModule[];
   getConnections(): Connection[];
-  recycleMod(modId: string): ComponentCounts;
   favoriteMod(modId: string, favorite?: boolean): void;
+  installMod(modId: string, socketIndex?: number): Promise<boolean>;
+  storeMod(modId: string, storageIndex?: number)
+  stats: {
+    getStatBonuses(): CyberdeckStats;
+    getLevels(): {
+      netrunningLevel: number;
+      craftingLevel: number;
+      netrunningCooldownLevel: number;
+      modStorageSize: number;
+      cyberdeckServerRamUpgrades: number;
+      cyberdeckServerCoreUpgrades: number;
+    };
+    getComponentStats(): ComponentStats;
+  };
+  crafting: {
+    craftICEbreaker(count?: number): boolean;
+    craftPowerSupplyMod(): DeckModule | null;
+    craftProcessingMod(): DeckModule | null;
+    craftUplinkMod(): DeckModule | null;
+    recycleMod(modId: string): ComponentCounts;
+  };
 }
 
 /**

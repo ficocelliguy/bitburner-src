@@ -239,8 +239,23 @@ const cyberdeck = {
   getStoredMods: 0.05,
   getInstalledMods: 0.05,
   getConnections: 0.05,
-  recycleMod: 0.05,
   favoriteMod: 0.05,
+  installMod: 1,
+  storeMod: 0.5,
+  // netrun
+  stats: {
+    getStatBonuses: 0,
+    getLevels: 0,
+    getComponentStats: 0,
+  },
+  crafting: {
+    craftICEbreaker: 1,
+    craftPowerSupplyMod: 1,
+    craftProcessingMod: 1,
+    craftUplinkMod: 1,
+    recycleMod: 1,
+  },
+  // corrupted netrun
 };
 
 // Darknet API

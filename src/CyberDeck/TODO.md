@@ -4,8 +4,6 @@ REQUIRED FOR MVP
 
 - Add WiFUs
 
-- dev menu
-
 - api
 
 - basic doc page
@@ -14,7 +12,7 @@ REQUIRED FOR MVP
 TODO:
 
 - 0x6C1 Easter egg
-  - get module via api?
+  - get module via api
 
 - modal showing netrunning result
   - sparkles!

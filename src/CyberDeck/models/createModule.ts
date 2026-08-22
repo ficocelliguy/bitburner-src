@@ -181,27 +181,27 @@ export function createInitialModules(force = false) {
   CyberdeckState.components.cores = 4;
 }
 
-export function canAffordComponentCost(cost: Partial<ComponentCounts>) {
-  if (CyberdeckState.components.chips < (cost.chips ?? 0)) return false;
-  if (CyberdeckState.components.ROM < (cost.ROM ?? 0)) return false;
-  if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0)) return false;
-  if (CyberdeckState.components.ICE < (cost.ICE ?? 0)) return false;
+export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
+  if (CyberdeckState.components.chips < (cost.chips ?? 0) * count) return false;
+  if (CyberdeckState.components.ROM < (cost.ROM ?? 0) * count) return false;
+  if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0) * count) return false;
+  if (CyberdeckState.components.ICE < (cost.ICE ?? 0) * count) return false;
   return true;
 }
 
-export function payComponentCost(cost: Partial<ComponentCounts>) {
-  CyberdeckState.components.chips -= (cost.chips ?? 0);
-  CyberdeckState.components.ROM -= (cost.ROM ?? 0);
-  CyberdeckState.components.neurodes -= (cost.neurodes ?? 0);
-  CyberdeckState.components.ICE -= (cost.ICE ?? 0);
+export function payComponentCost(cost: Partial<ComponentCounts>, count = 1) {
+  CyberdeckState.components.chips -= (cost.chips ?? 0) * count;
+  CyberdeckState.components.ROM -= (cost.ROM ?? 0) * count;
+  CyberdeckState.components.neurodes -= (cost.neurodes ?? 0) * count;
+  CyberdeckState.components.ICE -= (cost.ICE ?? 0) * count;
 }
 
-export function craftICE() {
-  if (!canAffordComponentCost(ICEbreakerCraftingCost)) {
+export function craftICEbreaker(count = 1) {
+  if (!canAffordComponentCost(ICEbreakerCraftingCost, count)) {
     return false;
   }
-  payComponentCost(ICEbreakerCraftingCost);
-  CyberdeckState.components.ICE += 1;
+  payComponentCost(ICEbreakerCraftingCost, count);
+  CyberdeckState.components.ICE += count;
   CyberdeckEvents.emit();
   return true;
 }

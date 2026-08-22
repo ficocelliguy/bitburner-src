@@ -5,6 +5,7 @@ import { Multipliers } from "@nsdefs";
 import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
 import { getStatRollRange } from "./modStatsUtils";
+import { getModuleById } from "./moduleUtilities";
 
 export function getNextNetrunningWHRNG() {
   const ID = Player.identifier;
@@ -216,9 +217,19 @@ export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel
 }
 
 export function getID(rng: WHRNG) {
-  const subnet1 = Math.floor(rng.random() * 256).toString(16);
-  const subnet2 = Math.floor(rng.random() * 256).toString(16);
-  const subnet3 = Math.floor(rng.random() * 256).toString(16);
-  const subnet4 = Math.floor(rng.random() * 256).toString(16);
-  return `${subnet1}:${subnet2}:${subnet3}:${subnet4}`.toUpperCase();
+  let ID = "";
+  do {
+    const base = baseOptions[Math.floor(rng.random() * baseOptions.length)];
+    const idNumberString = Math.floor(rng.random() * base ** 5).toString(base).toUpperCase()
+    ID = `${basePrefixes[base]}${idNumberString}`;
+  } while (getModuleById(ID));
+  return ID;
 }
+
+const baseOptions: number[] = [2, 8, 12, 16] as const;
+const basePrefixes:  Record<typeof baseOptions[number], string> = {
+  2: "0b",
+  8: "0o",
+  12: "0z",
+  16: "0x",
+} as const;

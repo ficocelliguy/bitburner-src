@@ -12,6 +12,7 @@ export const CyberdeckState = {
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,
+  maxInstalledRackExtensions: 2,
   netrunningCooldownLevel: 0,
   netrunningLevel: 0,
   craftingLevel: 0,
