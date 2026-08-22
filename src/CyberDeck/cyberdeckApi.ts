@@ -7,7 +7,7 @@ import {
   craftPowerSupply,
   craftProcessingModule,
   craftUplink,
-  disassembleModule,
+  disassembleModule, getEasterEggModule,
 } from "./models/createModule";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
@@ -19,7 +19,8 @@ import {
 } from "./models/constants";
 import { logger } from "../DarkNet/effects/offlineServerHandling";
 import { moveModule } from "./models/moduleMutation";
-import { getCurrentRackSize } from "./utils/moduleUtilities";
+import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
+import { LocationName } from "@enums";
 
 
 function getModOrThrow(modId: string): DeckModule {
@@ -55,6 +56,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     installMod: (ctx: NetscriptContext, moduleId: unknown, index: unknown = 1e10): Promise<boolean> => {
       const modId = helpers.string(ctx, "modId", moduleId);
+      if (modId === LocationName.IshimaGlitch && !getModuleById(modId)) {
+        CyberdeckState.storedModules.unshift(getEasterEggModule());
+      }
       const mod = getModOrThrow(modId);
       const locationIndex = helpers.integer(ctx, "index", index);
       if (locationIndex < 0) {

@@ -1,5 +1,5 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
-import { getRandomSockets } from "../utils/moduleUtilities";
+import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckModule, ModuleType } from "../Types";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import {
@@ -25,10 +25,8 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 
 import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
-import { ToastVariant } from "@enums";
+import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs, mergeOtherMults } from "../utils/modStatsUtils";
-
-import { addCyberdeckServer } from "./cyberdeckServer";
 
 
 export const DeckConnection: DeckModule = {
@@ -247,11 +245,14 @@ export function craftUplink() {
 
 export function disassembleModule(module: DeckModule, showToast: boolean = false): ComponentCounts {
   if (module.favorite) {
-    if (showToast) {
-      SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000);
-    }
+    if (showToast) { SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000); }
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
+  if (module.id == LocationName.IshimaGlitch) {
+    if (showToast) { SnackbarEvents.emit("Mod recycled.", ToastVariant.SUCCESS, 2000); }
+    return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
+  }
+
   const chipsGained = module.type !== ModuleType.Uplink ? 2 : 0;
   const ROMGained = 2;
   const neurodesGained = module.type !== ModuleType.ProcessingModule ? 2 : 0;
@@ -268,4 +269,28 @@ export function disassembleModule(module: DeckModule, showToast: boolean = false
   if (showToast) { gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained }); }
   CyberdeckEvents.emit();
   return { chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained, cores: 0, ICE: 0 };
+}
+
+
+export function getEasterEggModule(): DeckModule {
+  const existingModule = getModuleById(LocationName.IshimaGlitch);
+  if (existingModule) {
+    return existingModule;
+  }
+
+  return {
+    type: ModuleType.ProcessingModule,
+    id: LocationName.IshimaGlitch,
+    level: 2,
+    sockets: [false, false, false, false, false, false, false, true],
+    stats: {
+      playerMults: {
+        hacknet_node_money: 0.1729,
+      },
+      otherMults: {
+        neurodeProduction: 0.1729,
+      },
+    },
+  };
+
 }

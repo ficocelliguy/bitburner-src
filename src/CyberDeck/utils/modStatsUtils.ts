@@ -11,7 +11,6 @@ import {
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { getRecordKeys } from "../../Types/Record";
-import { defaultMultipliers } from "../../PersonObjects/Multipliers";
 import { Multipliers } from "@nsdefs";
 
 

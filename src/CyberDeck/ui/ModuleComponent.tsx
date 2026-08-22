@@ -82,7 +82,7 @@ export function ModuleComponent({
               <Typography
                 sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
               >
-                {module.id}
+               ID: {module.id}
               </Typography>
               <div style={{ margin: "10px 0" }}>
                 <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
