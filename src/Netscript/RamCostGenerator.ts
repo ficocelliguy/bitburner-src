@@ -242,7 +242,10 @@ const cyberdeck = {
   favoriteMod: 0.05,
   installMod: 1,
   storeMod: 0.5,
-  // netrun
+  connectMod: 0.5,
+  removeConnection: 0.05,
+  netrun: 3,
+  getNetrunningIceCost: 0.05,
   stats: {
     getStatBonuses: 0,
     getLevels: 0,

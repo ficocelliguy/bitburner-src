@@ -18,6 +18,8 @@ import { createInitialModules, DeckConnection } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
+import { ToastVariant } from "@enums";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -71,7 +73,10 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   function draggingWireEnded(moduleId: string) {
     if (!draggingWire) return;
     setDraggingWire(null);
-    createConnection(draggingWire, { moduleId, socketIndex: draggingWire.socketIndex });
+    const results = createConnection(draggingWire, { moduleId, socketIndex: draggingWire.socketIndex });
+    if (results?.error) {
+      SnackbarEvents.emit(results?.error, ToastVariant.ERROR, 2000);
+    }
     ejectOverloadedModules();
     updateDisplay();
   }

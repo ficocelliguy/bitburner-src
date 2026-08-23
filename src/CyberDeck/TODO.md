@@ -1,13 +1,10 @@
 REQUIRED FOR MVP
 
- why do some mods have a bunch of 0s in stats?
-
-- Add WiFUs
-
 - api
 
 - basic doc page
 
+- Add WiFUs
 
 TODO:
 

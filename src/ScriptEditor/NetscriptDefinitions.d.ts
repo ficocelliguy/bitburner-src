@@ -4463,6 +4463,12 @@ type EndgameMults = {
   equipment_cost: number;
 };
 
+type NetrunningRewards = {
+  success: boolean;
+  modules: DeckModule[];
+  components: Partial<ComponentCounts>;
+};
+
 /**
  * Cyberdeck API
  * @public
@@ -4475,7 +4481,11 @@ export interface Cyberdeck {
   getConnections(): Connection[];
   favoriteMod(modId: string, favorite?: boolean): void;
   installMod(modId: string, socketIndex?: number): Promise<boolean>;
-  storeMod(modId: string, storageIndex?: number)
+  storeMod(modId: string, storageIndex?: number): void;
+  connectMod(modId1: string, modId2: string, socketIndex: number): void;
+  removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
+  netrun(): Promise<NetrunningRewards>;
+  getNetrunningIceCost(): number;
   stats: {
     getStatBonuses(): CyberdeckStats;
     getLevels(): {

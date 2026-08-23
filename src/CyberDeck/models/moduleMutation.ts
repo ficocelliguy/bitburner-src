@@ -70,20 +70,37 @@ export function ejectOverloadedModules() {
 }
 
 export function createConnection(source: Socket, destination: Socket) {
-  // TODO-fico: validation
-  // TODO: what happens when you go over a socket but not connect to it?
-  // TODO-fico: prevent overlap of unconnected socket. Or maybe hide it?
-
   const sourceModule = getInstalledModule(source.moduleId);
   const destinationModule = getInstalledModule(destination.moduleId);
-  if (sourceModule == destinationModule) return;
+  if (!sourceModule) {
+    return {
+      success: false,
+      error: `Cannot create connection: mod ${source.moduleId} is not installed on the deck rack.`,
+    };
+  }
+  if (!destinationModule) {
+    return {
+      success: false,
+      error: `Cannot create connection: mod ${destination.moduleId} is not installed on the deck rack.`,
+    };
+  }
+  if (sourceModule == destinationModule) {
+    return {
+      success: false,
+      error: "Modules cannot be connected to themselves."
+    };
+  }
   if (!destinationModule?.sockets[destination.socketIndex]) {
-    SnackbarEvents.emit(`Target module does not have a socket of that color.`, ToastVariant.ERROR, 2000);
-    return;
+    return {
+      success: false,
+      error: `Target module does not have a socket of that color.`
+    };
   }
   if (source.socketIndex !== destination.socketIndex || !sourceModule?.sockets[source.socketIndex]) {
-    SnackbarEvents.emit(`Socket colors do not match.`, ToastVariant.ERROR, 2000);
-    return;
+    return {
+      success: false,
+      error: `Socket colors do not match.`,
+    };
   }
   disconnectSocket(source);
   disconnectSocket(destination);
@@ -91,12 +108,18 @@ export function createConnection(source: Socket, destination: Socket) {
   const overlapSocket = wireOverlapsSocket(source) || wireOverlapsSocket(destination);
 
   if (overlapSocket) {
-    SnackbarEvents.emit(`Wires cannot overlap.`, ToastVariant.ERROR, 2000);
-    return;
+    return {
+      success: false,
+      error: `Wires cannot overlap. There is a wire in between those connection points connecting ${overlapSocket[0].moduleId} and ${overlapSocket[1].moduleId}`,
+    };
   }
 
   CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
+  return {
+    success: true,
+    error: "",
+  };
 }
 
 function updateConnectedModules() {
@@ -171,15 +194,29 @@ export function getModuleIndex(moduleId: string) {
 
 export function disconnectSocket(source: Socket | undefined) {
   if (!source) return;
-  const sourceConnection = CyberdeckState.connections.findIndex(
+  const sourceConnectionIndex = CyberdeckState.connections.findIndex(
     ([s, d]) =>
       (s.socketIndex === source.socketIndex && s.moduleId === source.moduleId) ||
       (d.socketIndex === source.socketIndex && d.moduleId === source.moduleId),
   );
-  if (sourceConnection !== -1) {
-    CyberdeckState.connections.splice(sourceConnection, 1);
+  if (sourceConnectionIndex !== -1) {
+    CyberdeckState.connections.splice(sourceConnectionIndex, 1);
     updateConnectedModules();
   }
+}
+
+export function disconnectConnection(moduleId1: string, moduleId2: string, socketIndex: number) {
+  const connectionIndex = CyberdeckState.connections.findIndex(
+    ([s, d]) =>
+      (s.socketIndex === socketIndex && s.moduleId === moduleId1 && d.moduleId === moduleId2) ||
+      (s.socketIndex === socketIndex && s.moduleId === moduleId2 && d.moduleId === moduleId1),
+  );
+  if (connectionIndex !== -1) {
+    CyberdeckState.connections.splice(connectionIndex, 1);
+    updateConnectedModules();
+    return true;
+  }
+  return false;
 }
 
 export function disconnectModule(module: DeckModule) {
