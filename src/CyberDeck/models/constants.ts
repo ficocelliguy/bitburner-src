@@ -77,3 +77,9 @@ export const getSocketColor = (index: number) => {
   const colors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
   return colors[index];
 };
+
+export const corruptedNetrunHintTexts = [
+  `There is a place, somewhere out there, where the barrier is thin...`,
+  `Your world has not yet been turned upside down.`,
+  `Is more than a simple glitch?`
+];

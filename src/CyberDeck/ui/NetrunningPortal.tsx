@@ -32,6 +32,9 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
     setEntering(true);
     const rewards = await netRun(corrupted);
     if (!rewards.success) return;
+    if (corrupted) {
+      CyberdeckState.hasDiscoveredGlitch = true;
+    }
     setNetrunningModRewards(rewards);
     setTimeout(() => { if (!entering) { setShowPortal(false); setShowRewardsModal(true); }}, 1200);
   }

@@ -259,7 +259,10 @@ const cyberdeck = {
     craftUplinkMod: 1,
     recycleMod: 1,
   },
-  // corrupted netrun
+  legacy: {
+    getCost: 0,
+    delve: 8,
+  }
 };
 
 // Darknet API

@@ -20,6 +20,7 @@ export const CyberdeckState = {
   serverCoreUpgrades: 0,
   lastNetrunningTimestamp: 0,
   lastCorruptedNetrunningTimestamp: 0,
+  hasDiscoveredGlitch: false,
   installedModules: [] as DeckModule[],
   storedModules: [] as DeckModule[],
   connections: [] as Connection[],

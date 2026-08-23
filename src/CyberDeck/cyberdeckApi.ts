@@ -21,6 +21,7 @@ import { logger } from "../DarkNet/effects/offlineServerHandling";
 import { createConnection, disconnectConnection, moveModule } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
+import { getCorruptedHint } from "./ui/gainComponentToast";
 
 
 function getModOrThrow(modId: string): DeckModule {
@@ -322,6 +323,45 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           throw new Error(`Cannot recycle favorited module ${modId}!`);
         }
         return disassembleModule(mod);
+      },
+    },
+    legacy: {
+      getCost: (ctx: NetscriptContext) => {
+        if (!CyberdeckState.hasDiscoveredGlitch) {
+          ctx.workerScript.print(getCorruptedHint("The cost is far too great"));
+          return Infinity;
+        }
+        return getCurrentNetrunningIceCost(true);
+      },
+      delve: async (ctx: NetscriptContext) => {
+        if (!CyberdeckState.hasDiscoveredGlitch) {
+          ctx.workerScript.print(getCorruptedHint());
+          return { success: false, modules: [], components: {} };
+        }
+        if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost(true)) {
+          logger(ctx)(
+            `Not enough ICEbreakers to breach the Blackwall. ${
+              CyberdeckState.components.ICE
+            }/${getCurrentNetrunningIceCost()}`,
+          );
+          return { success: false, modules: [], components: {} };
+        }
+        if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+          logger(ctx)(
+            `Not enough module storage space to delve. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
+          );
+          return { success: false, modules: [], components: {} };
+        }
+
+        ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
+        await helpers.netscriptDelay(ctx, 5000);
+        const results = await netRun(true);
+        if (results.success) {
+          logger(ctx)(`Returned successfully? ${results.modules.length} new modules found.`);
+        } else {
+          logger(ctx)(`Old net delve attempt failed.`);
+        }
+        return results;
       },
     },
   };

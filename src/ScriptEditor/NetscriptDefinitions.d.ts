@@ -4580,11 +4580,56 @@ export interface Cyberdeck {
    * @param socketIndex - the socket to connect them on. This corresponds to he socket colors in the UI.
    */
   addConnection(modId1: string, modId2: string, socketIndex: number): void;
+
+  /**
+   * Removes the connection between the two specified servers, if present.
+   *
+   * @remarks
+   * RAM cost: 0.05 GB
+   *
+   * @param modId1 - the ID of the mod to disconnect
+   * @param modId2 - the ID of the second mod to disconnect
+   * @param socketIndex - the socket to remove a connection from
+   */
   removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
+
+  /**
+   * Delve into the cybernet to look for new mods. Costs ICEBreakers to pierce through the ICE defenses that try to
+   * keep netrunners out.
+   *
+   * This function must be awaited - netrunning takes some time.
+   *
+   * @remarks
+   * RAM cost: 3 GB
+   */
   netrun(): Promise<NetrunningRewards>;
+
+  /**
+   * Get the number of ICEBreakers required to netrun currently.
+   *
+   * ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security
+   * networks that were breached), and the cost slowly goes back down afterwards.
+   *
+   * @remarks
+   * RAM cost: 0.05 GB
+   */
   getNetrunningIceCost(): number;
   stats: {
+    /**
+     * Returns all of the bonuses from mods that are installed and charged.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
     getStatBonuses(): CyberdeckStats;
+    /**
+     * Returns all of the current cyberdeck skill levels, and the cyberdeck server's stats.
+     *
+     * Cyberdeck skill levels are raised by finding and consuming SkillChip mods.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
     getLevels(): {
       netrunningLevel: number;
       craftingLevel: number;
@@ -4593,6 +4638,12 @@ export interface Cyberdeck {
       cyberdeckServerRamUpgrades: number;
       cyberdeckServerCoreUpgrades: number;
     };
+    /**
+     * Gets info on which activities have produced crafting components.
+     *
+     * remarks
+     * RAM cost: 0 GB
+     */
     getComponentStats(): ComponentStats;
   };
   crafting: {
@@ -4601,6 +4652,10 @@ export interface Cyberdeck {
     craftProcessingMod(): DeckModule | null;
     craftUplinkMod(): DeckModule | null;
     recycleMod(modId: string): ComponentCounts;
+  };
+  legacy: {
+    getCost(): number;
+    delve(): Promise<NetrunningRewards>;
   };
 }
 
