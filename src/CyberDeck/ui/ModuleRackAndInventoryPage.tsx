@@ -14,7 +14,7 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { createInitialModules, DeckConnection } from "../models/createModule";
+import { createInitialModules, CyberdeckIOPanel } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
@@ -141,11 +141,11 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                 overflowX: "scroll",
               }}
             >
-              <Droppable droppableId={DeckConnection.id} direction="vertical" isDropDisabled>
+              <Droppable droppableId={CyberdeckIOPanel.id} direction="vertical" isDropDisabled>
                 {(provided) => (
                   <span ref={provided.innerRef}>
                     <ModuleComponent
-                      module={DeckConnection}
+                      module={CyberdeckIOPanel}
                       index={-1}
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}

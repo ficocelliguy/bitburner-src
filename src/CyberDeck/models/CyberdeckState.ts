@@ -1,6 +1,6 @@
 import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
-import { DeckConnection } from "./createModule";
+import { CyberdeckIOPanel } from "./createModule";
 import { WHRNG } from "../../Casino/RNG";
 import { Player } from "@player";
 
@@ -71,7 +71,7 @@ export function hasCyberdeck(): boolean {
 }
 
 export function getChargedModuleIDs() : string[] {
-  const chargedModules = [DeckConnection.id];
+  const chargedModules = [CyberdeckIOPanel.id];
   if (!CyberdeckState.installedModules.length) return chargedModules;
 
   for (const moduleId of chargedModules) {

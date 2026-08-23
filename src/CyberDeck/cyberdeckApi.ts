@@ -1,12 +1,12 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
-import { Cyberdeck } from "@nsdefs";
-import { CyberdeckState } from "./models/CyberdeckState";
-import { DeckModule } from "./Types";
+import { Cyberdeck, DeckModule } from "@nsdefs";
+import { LocationName } from "@enums";
+import { CyberdeckState, getChargedModules } from "./models/CyberdeckState";
 import {
   craftICEbreaker,
   craftPowerSupply,
   craftProcessingModule,
-  craftUplink,
+  craftUplink, CyberdeckIOPanel,
   disassembleModule, getEasterEggModule,
 } from "./models/createModule";
 import { helpers } from "../Netscript/NetscriptHelpers";
@@ -20,7 +20,6 @@ import {
 import { logger } from "../DarkNet/effects/offlineServerHandling";
 import { createConnection, disconnectConnection, moveModule } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
-import { LocationName } from "@enums";
 import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
 
 
@@ -43,8 +42,15 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     getStoredMods: (): DeckModule[] => {
       return CyberdeckState.storedModules.map((mod) => structuredClone(mod));
     },
-    getInstalledMods: (): DeckModule[] => {
-      return CyberdeckState.installedModules.map((mod) => structuredClone(mod));
+    getInstalledMods: (): (DeckModule & { charged: boolean })[] => {
+      const chargedMods = getChargedModules();
+      return CyberdeckState.installedModules.map((mod) => ({
+        ...structuredClone(mod),
+        charged: chargedMods.includes(mod),
+      }));
+    },
+    getCyberdeckIOPanel: (): DeckModule => {
+      return structuredClone(CyberdeckIOPanel);
     },
     getConnections: () => {
       return CyberdeckState.connections.map((conn) => structuredClone(conn));
@@ -97,18 +103,18 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       logger(ctx)(`Mod ${modId} moved to storage slot #${newIndex}`);
       moveModule(mod, sourceIsStorage, true, sourceIsStorage ? storageIndex : rackIndex, newIndex);
     },
-    connectMod(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
+    addConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
       const modId1 = helpers.string(ctx, "modId", moduleId1);
       getModOrThrow(modId1);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
       getModOrThrow(modId2);
       const socketIndex = helpers.number(ctx, "socket", socket);
       if (socketIndex < 0 || socketIndex > 7) {
-        throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`)
+        throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
       const result = createConnection({ moduleId: modId1, socketIndex }, { moduleId: modId2, socketIndex });
       if (result.error) {
-        logger(ctx)(result.error)
+        logger(ctx)(result.error);
       } else {
         logger(ctx)(`Connection added between mods ${modId1} and ${modId2} on socket ${socketIndex}`);
       }
@@ -141,7 +147,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return success;
     },
     async netrun(ctx: NetscriptContext) {
-      if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost()){
+      if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost()) {
         logger(ctx)(
           `Not enough ICEbreakers to netrun. ${CyberdeckState.components.ICE}/${getCurrentNetrunningIceCost()}`,
         );
@@ -156,7 +162,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
       logger(ctx)(`Starting netrun...`);
       await helpers.netscriptDelay(ctx, 1000);
-      const results = await  netRun();
+      const results = await netRun();
       if (results.success) {
         logger(ctx)(`Netrun successfully. ${results.modules.length} new modules found.`);
       } else {

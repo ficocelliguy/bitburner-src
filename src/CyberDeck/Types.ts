@@ -16,11 +16,11 @@ export type Socket = {
 };
 
 export enum ModuleType {
-  DeckConnection = "Deck Connection",
+  CyberdeckIOPanel = "Deck I/O Panel",
   PowerSupply = "Power Supply",
-  ProcessingModule = "Processing Module",
-  Uplink="Uplink",
-  RackExtension="Rack Extension",
+  ProcessingModule = "Processing Mod",
+  Uplink = "Uplink",
+  RackExtension = "Rack Extension",
   SkillChip = "SkillChip",
 }
 

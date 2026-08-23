@@ -74,7 +74,7 @@ export function ModuleComponent({
           title={
             <div>
               <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                {module.type} ${getRarityText(module.level)}
+                {module.type} {getRarityText(module.level)}
               </Typography>
               <div style={{ color: Settings.theme.warning }}>
                 {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
@@ -109,7 +109,7 @@ export function ModuleComponent({
               position: "relative",
               ...provided.draggableProps.style,
               border: `2px solid ${
-                module.type === ModuleType.DeckConnection
+                module.type === ModuleType.CyberdeckIOPanel
                   ? Settings.theme.button
                   : getChargedModuleIDs().includes(module.id)
                   ? getRarityColor(module)
@@ -124,7 +124,7 @@ export function ModuleComponent({
             onMouseDown={openTooltipOnRightClick}
             onContextMenu={(e) => e.preventDefault()}
           >
-            {module.type !== ModuleType.DeckConnection ? (
+            {module.type !== ModuleType.CyberdeckIOPanel ? (
               <>
                 <div>{getModuleIcon(module)}</div>
                 {module.favorite &&

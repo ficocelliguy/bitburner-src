@@ -4428,9 +4428,9 @@ type Socket = {
 };
 
 enum ModuleType {
-  DeckConnection = "Deck Connection",
+  CyberdeckIOPanel = "Deck I/O Panel",
   PowerSupply = "Power Supply",
-  ProcessingModule = "Processing Module",
+  ProcessingModule = "Processing Mod",
   Uplink = "Uplink",
   RackExtension = "Rack Extension",
   SkillChip = "SkillChip",
@@ -4475,14 +4475,111 @@ type NetrunningRewards = {
  */
 export interface Cyberdeck {
   // TODO-fico: API documentation
+
+  /**
+   * Get the number of each type of cyberdeck crafting component you have.
+   * @remarks
+   * RAM cost: 0.05 GB
+   */
   getComponentCounts(): ComponentCounts;
+  /**
+   * Gets a list of all cyberdeck mods in storage.
+   * (Does not included installed mods)
+   * @remarks
+   * RAM cost: 0.05 GB
+   */
   getStoredMods(): DeckModule[];
-  getInstalledMods(): DeckModule[];
+  /**
+   * Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
+   *
+   * Also indicates if the mod is currently charged (e.g. active, has a connection to the
+   * cyberdeck IO panel itself or another charged module through socket connections)
+   *
+   * @remarks
+   * RAM cost: 0.05 GB
+   */
+  getInstalledMods(): (DeckModule & { charged: boolean })[];
+
+  /**
+   * Gets information about the base connection point of the cyberdeck itself. All mods need to be connected
+   * to this deck I/O panel, either directly to one of its sockets or through another module, in order
+   * to be charged and have their stats take effect.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   */
+  getCyberdeckIOPanel(): DeckModule;
+
+  /**
+   * Gets a list of all of the current socket connections between cyberdeck mods.
+   *
+   * Mods require a connection to another charged module, or to the cyberdeck IO panel itself,
+   * in order for their stats to take effect.
+   *
+   * @remarks
+   * RAM cost: 0.05 GB
+   */
   getConnections(): Connection[];
+
+  /**
+   * Sets a mod to be marked as "favorite" (or removes the favorite status from a mod, if specified.)
+   *
+   * Favorited mods cannot be recycled.
+   *
+   * @remarks
+   * RAM cost: 0.05 GB
+   *
+   * @param modId - the ID of the mod to favorite or un-favorite
+   * @param favorite - Optional. If false, favorite is removed from the mod.
+   */
   favoriteMod(modId: string, favorite?: boolean): void;
+
+  /**
+   * Move a mod to the cyberdeck mod rack. This method must be awaited - installing mods is not instant.
+   * This method can also be used to shift a mod to another location on the mod rack.
+   *
+   * Mods must be both installed and charged (have a connection to another charged mod, or to the cyberdeck IO panel
+   * itself) for their buffs to apply.
+   *
+   * @remarks
+   * RAM cost: 1 GB
+   *
+   * @param modId - the ID of the mod to move to the mod rack
+   * @param socketIndex - Optional. The index to place the mod at. If omitted, the mod is placed at the last open slot.
+   */
   installMod(modId: string, socketIndex?: number): Promise<boolean>;
+
+  /**
+   * Move a mod to storage, or shifts a mod's location in storage.
+   *
+   * @remarks
+   * RAM cost: 0.5 GB
+   *
+   * @param modId - the ID of the mod to move to storage
+   * @param storageIndex -  Optional. The index to place the mod at. If omitted, the mod is placed at the top of storage
+   */
   storeMod(modId: string, storageIndex?: number): void;
-  connectMod(modId1: string, modId2: string, socketIndex: number): void;
+
+  /**
+   * Connects the indicated sockets between two mods.
+   *
+   * If one of the mods is already charged, or if one of the connection points is the deck I/O panel, the other mod
+   * will become charged too.
+   *
+   * @remarks
+   * RAM cost: 0.5 GB
+   *
+   * Both mods need a socket on socketIndex in order to be able to connect.
+   *
+   * Connections cannot overlap. For example, if there is a connection on index 0 from the mod in slot #1 and the
+   * mod in slot #3, no connections on index 0 can be made to a mod on slot 2, because the wire from slot 1 to 3
+   * covers it. This can generally be resolved by re-ordering the installed mods.
+   *
+   * @param modId1 - The ID of a mod to connect
+   * @param modId2 - The ID of another mod to connect to modId1
+   * @param socketIndex - the socket to connect them on. This corresponds to he socket colors in the UI.
+   */
+  addConnection(modId1: string, modId2: string, socketIndex: number): void;
   removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
   netrun(): Promise<NetrunningRewards>;
   getNetrunningIceCost(): number;

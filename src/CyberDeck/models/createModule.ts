@@ -29,8 +29,8 @@ import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
 
-export const DeckConnection: DeckModule = {
-  type: ModuleType.DeckConnection,
+export const CyberdeckIOPanel: DeckModule = {
+  type: ModuleType.CyberdeckIOPanel,
   id: "Hosaka Mk 1 Cyberdeck",
   sockets: [false, true, false, true, false, true, false, false],
   level: 10,

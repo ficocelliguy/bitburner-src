@@ -50,7 +50,7 @@ export const uplinkCraftingCost: ComponentCounts = {
 
 export function getModuleDescription(moduleType: ModuleType): string {
   switch (moduleType) {
-    case ModuleType.DeckConnection:
+    case ModuleType.CyberdeckIOPanel:
       return "Hosaka Cyberdecks: The finest that money can buy. This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.";
     case ModuleType.PowerSupply:
       return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, it just distributes it.";
