@@ -26,7 +26,7 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
-import { mergeBuffs, mergeOtherMults } from "../utils/modStatsUtils";
+import { mergeBuffs } from "../utils/modStatsUtils";
 
 
 export const DeckConnection: DeckModule = {
@@ -78,7 +78,7 @@ export function createProcessingModule(level: number, rng: WHRNG, addDebuff = tr
   const applyStandardDebuff = rng.random() < 0.5;
   const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
-  const effects = mergeOtherMults([otherMultDebuff, { [statToAdd]: value }]);
+  const effects = mergeBuffs(otherMultDebuff, { [statToAdd]: value });
 
   return {
     type: ModuleType.ProcessingModule,
@@ -98,7 +98,7 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
   const applyStandardDebuff = rng.random() < 0.8;
   const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
-  const mergedStats = mergeBuffs([debuff, buff]);
+  const mergedStats = mergeBuffs(debuff, buff);
 
   return {
     type: ModuleType.Uplink,

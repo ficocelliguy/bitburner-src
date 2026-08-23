@@ -5,7 +5,7 @@ import { getRandomSockets } from "../utils/moduleUtilities";
 import { createProcessingModule, createUplink } from "./createModule";
 import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
-import { mergeBuffs, mergeConsumableStats, mergeEndgameMults } from "../utils/modStatsUtils";
+import { mergeBuffs } from "../utils/modStatsUtils";
 
 export function createCorruptedModule(rng: WHRNG): DeckModule {
 
@@ -31,14 +31,14 @@ export function createCorruptedModule(rng: WHRNG): DeckModule {
 
   if (roll < 0.27) {
     const module = createProcessingModule(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs([getDebuff(8, rng), module.stats?.playerMults ?? {}]);
+    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.level = -1;
     return module;
   }
 
   if (roll < 0.33) {
     const module = createUplink(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs([getDebuff(8, rng), module.stats?.playerMults ?? {}]);
+    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.level = -1;
     return module;
   }
@@ -98,7 +98,7 @@ const getJunkModule = (rng: WHRNG) => {
 }
 
 const getCorruptedRackExtension = (rng: WHRNG): DeckModule => {
-  const debuffs = mergeBuffs([getDebuff(8, rng), getDebuff(8, rng)]);
+  const debuffs = mergeBuffs(getDebuff(8, rng), getDebuff(8, rng));
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
     type: ModuleType.RackExtension,
@@ -113,10 +113,7 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckModule => {
 }
 
 const getCorruptedSkillChip = (rng: WHRNG): DeckModule => {
-  const buffs = mergeConsumableStats(
-    getConsumableBuff(8, rng),
-    getConsumableBuff(8, rng),
-  );
+  const buffs = mergeBuffs(getConsumableBuff(8, rng), getConsumableBuff(8, rng));
   return {
     type: ModuleType.SkillChip,
     id: getID(rng),
@@ -133,7 +130,7 @@ const getEndgameStatModule = (rng: WHRNG): DeckModule => {
   const buff = getEndgameBuff(level, rng);
   const standardDebuff = getDebuff(CyberdeckState.netrunningLevel, rng);
   const endgameDebuff = getEndgameStatDebuff(CyberdeckState.netrunningLevel / 2, rng);
-  const effects = mergeEndgameMults([buff, endgameDebuff]);
+  const effects = mergeBuffs(buff, endgameDebuff);
 
   return {
     type: ModuleType.ProcessingModule,
