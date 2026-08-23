@@ -1,10 +1,14 @@
 REQUIRED FOR MVP
 
 - api
+- api docs
 
 - basic doc page
 
 - Add WiFUs
+
+- test max-level mod ranges
+- test rarities of mods at high netrunning levels
 
 TODO:
 
