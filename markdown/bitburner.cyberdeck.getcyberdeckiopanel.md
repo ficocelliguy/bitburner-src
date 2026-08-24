@@ -4,16 +4,16 @@
 
 ## Cyberdeck.getCyberdeckIOPanel() method
 
-Gets information about the base connection point of the cyberdeck itself. All mods need to be connected to this deck I/O panel, either directly to one of its sockets or through another module, in order to be charged and have their stats take effect.
+Gets information about the base connection point of the cyberdeck itself. All mods need to be connected to this deck I/O panel, either directly to one of its sockets or through another mod, in order to be charged and have their stats take effect.
 
 **Signature:**
 
 ```typescript
-getCyberdeckIOPanel(): DeckModule;
+getCyberdeckIOPanel(): DeckMod;
 ```
 **Returns:**
 
-[DeckModule](./bitburner.deckmodule.md)
+[DeckMod](./bitburner.deckmod.md)
 
 ## Remarks
 

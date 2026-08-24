@@ -32,13 +32,13 @@ export function SocketIOPanel({
   }
 
   function isConnected(index: number): boolean {
-    if (currentDragSource?.moduleId === moduleId && currentDragSource?.socketIndex === index) {
+    if (currentDragSource?.modId === moduleId && currentDragSource?.socketIndex === index) {
       return true;
     }
     return CyberdeckState.connections.some(([source, destination]) => {
       return (
-        (source.moduleId === moduleId && source.socketIndex === index) ||
-        (destination.moduleId === moduleId && destination.socketIndex === index)
+        (source.modId === moduleId && source.socketIndex === index) ||
+        (destination.modId === moduleId && destination.socketIndex === index)
       );
     });
   }
@@ -47,10 +47,10 @@ export function SocketIOPanel({
     <Box sx={styles.socketIOPanel}>
       {sockets.map((isSocket, index) => (
         <div key={index} style={{ width: "24px", height: "24px", margin: "auto 5px" }}>
-          {isSocket && (!socketIsCovered({ socketIndex: index, moduleId }) || draggingInstalledModule) ? (
+          {isSocket && (!socketIsCovered({ socketIndex: index, modId: moduleId }) || draggingInstalledModule) ? (
             <Box
               component="button"
-              id={getSocketId({ moduleId, socketIndex: index })}
+              id={getSocketId({ modId: moduleId, socketIndex: index })}
               sx={styles.socket}
               onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => socketDragStart(e, index)}
               style={{

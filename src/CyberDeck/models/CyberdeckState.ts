@@ -1,4 +1,4 @@
-import { ComponentCounts, ComponentStats, Connection, DeckModule, Socket } from "../Types";
+import { ComponentCounts, ComponentStats, Connection, DeckMod, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { CyberdeckIOPanel } from "./createModule";
 import { WHRNG } from "../../Casino/RNG";
@@ -21,8 +21,8 @@ export const CyberdeckState = {
   lastNetrunningTimestamp: 0,
   lastCorruptedNetrunningTimestamp: 0,
   hasDiscoveredGlitch: false,
-  installedModules: [] as DeckModule[],
-  storedModules: [] as DeckModule[],
+  installedModules: [] as DeckMod[],
+  storedModules: [] as DeckMod[],
   connections: [] as Connection[],
   coveredSockets: [] as Socket[],
   components: {
@@ -77,21 +77,21 @@ export function getChargedModuleIDs() : string[] {
 
   for (const moduleId of chargedModules) {
     const connections = CyberdeckState.connections.filter(
-      ([source, destination]) => source.moduleId === moduleId || destination.moduleId === moduleId,
+      ([source, destination]) => source.modId === moduleId || destination.modId === moduleId,
     );
     for (const [source, destination] of connections) {
-      if (!chargedModules.includes(source.moduleId)) {
-        chargedModules.push(source.moduleId);
+      if (!chargedModules.includes(source.modId)) {
+        chargedModules.push(source.modId);
       }
-      if (!chargedModules.includes(destination.moduleId)) {
-        chargedModules.push(destination.moduleId);
+      if (!chargedModules.includes(destination.modId)) {
+        chargedModules.push(destination.modId);
       }
     }
   }
   return chargedModules;
 }
 
-export function getChargedModules() : DeckModule[] {
+export function getChargedModules() : DeckMod[] {
   const chargedModuleIDs = getChargedModuleIDs();
   return CyberdeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }

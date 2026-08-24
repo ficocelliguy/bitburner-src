@@ -1,24 +1,24 @@
 import { Multipliers } from "../PersonObjects/Multipliers";
 
-export type DeckModule = {
+export type DeckMod = {
   id: string;
   level: number;
   sockets: SocketList;
-  type: ModuleType;
+  type: ModType;
   favorite?: boolean;
-  stats: ModuleStats;
+  stats: ModStats;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];
 export type Socket = {
-  moduleId: string;
+  modId: string;
   socketIndex: number;
 };
 
-export enum ModuleType {
+export enum ModType {
   CyberdeckIOPanel = "Deck I/O Panel",
   PowerSupply = "Power Supply",
-  ProcessingModule = "Processing Mod",
+  ProcessingMod = "Processing Mod",
   Uplink = "Uplink",
   RackExtension = "Rack Extension",
   SkillChip = "SkillChip",
@@ -30,7 +30,7 @@ export type ConsumableStats = {
   mod_storage: number;
   crafting_lvl: number;
 };
-export type ModuleStats = {
+export type ModStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
@@ -101,7 +101,7 @@ export type ComponentStats = {
 
 export type NetrunningRewards = {
   success: boolean;
-  modules: DeckModule[];
+  mods: DeckMod[];
   components: Partial<ComponentCounts>;
 };
 

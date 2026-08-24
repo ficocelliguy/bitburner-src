@@ -19,7 +19,7 @@ Description
 </th></tr></thead>
 <tbody><tr><td>
 
-[ModuleType](./bitburner.moduletype.md)
+[ModType](./bitburner.modtype.md)
 
 
 </td><td>
@@ -2086,7 +2086,7 @@ Errors:
 </td></tr>
 <tr><td>
 
-[DeckModule](./bitburner.deckmodule.md)
+[DeckMod](./bitburner.deckmod.md)
 
 
 </td><td>
@@ -2338,7 +2338,7 @@ Names of all locations
 </td></tr>
 <tr><td>
 
-[ModuleStats](./bitburner.modulestats.md)
+[ModStats](./bitburner.modstats.md)
 
 
 </td><td>

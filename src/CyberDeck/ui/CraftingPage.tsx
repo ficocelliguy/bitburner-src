@@ -11,7 +11,7 @@ import {
   uplinkCraftingCost,
 } from "../models/constants";
 import { getModIconComponent } from "./Icons";
-import { DeckModule, ModuleType } from "../Types";
+import { DeckMod, ModType } from "../Types";
 import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
 import {
@@ -26,7 +26,7 @@ import { useRerender } from "../../ui/React/hooks";
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [craftingRewards, setCraftingRewards] = React.useState<DeckModule[]>([]);
+  const [craftingRewards, setCraftingRewards] = React.useState<DeckMod[]>([]);
 
   useEffect(() => {
     const clearSubscription = CyberdeckEvents.subscribe(() => render());
@@ -45,7 +45,7 @@ export function CraftingPage(): React.ReactElement {
     craft(craftProcessingModule());
   }
 
-  function craft(results: DeckModule | null) {
+  function craft(results: DeckMod | null) {
     if (!results) { return; }
     setCraftingRewards([results]);
     setShowRewardsModal(true);
@@ -56,7 +56,7 @@ export function CraftingPage(): React.ReactElement {
       <RewardsModal
         title={"Crafting successful!"}
         open={showRewardsModal}
-        rewards={{ success: true, modules: craftingRewards, components: {} }}
+        rewards={{ success: true, mods: craftingRewards, components: {} }}
         onClose={() => setShowRewardsModal(false)}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
@@ -74,7 +74,7 @@ export function CraftingPage(): React.ReactElement {
           <div
             style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
           >
-            <span>Craft {getModIconComponent(ModuleType.PowerSupply, 16)} Power Supply Mod</span>
+            <span>Craft {getModIconComponent(ModType.PowerSupply, 16)} Power Supply Mod</span>
             <ComponentCost cost={powerSupplyCraftingCost} />
           </div>
         </Button>
@@ -82,7 +82,7 @@ export function CraftingPage(): React.ReactElement {
           <div
             style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
           >
-            <span>Craft {getModIconComponent(ModuleType.Uplink, 16)} Uplink Mod</span>
+            <span>Craft {getModIconComponent(ModType.Uplink, 16)} Uplink Mod</span>
             <ComponentCost cost={uplinkCraftingCost} />
           </div>
         </Button>
@@ -90,7 +90,7 @@ export function CraftingPage(): React.ReactElement {
           <div
             style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
           >
-            <span>Craft {getModIconComponent(ModuleType.ProcessingModule, 16)} Processing Mod</span>
+            <span>Craft {getModIconComponent(ModType.ProcessingMod, 16)} Processing Mod</span>
             <ComponentCost cost={processingModuleCraftingCost} />
           </div>
         </Button>

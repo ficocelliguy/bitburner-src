@@ -65,15 +65,15 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
     setTimeout(() => clearInterval(interval), 600);
   }
 
-  function draggingWireStarted(moduleId: string, socketIndex: number) {
-    disconnectSocket({ moduleId, socketIndex });
-    setDraggingWire({ moduleId, socketIndex });
+  function draggingWireStarted(modId: string, socketIndex: number) {
+    disconnectSocket({ modId, socketIndex });
+    setDraggingWire({ modId, socketIndex });
   }
 
   function draggingWireEnded(moduleId: string) {
     if (!draggingWire) return;
     setDraggingWire(null);
-    const results = createConnection(draggingWire, { moduleId, socketIndex: draggingWire.socketIndex });
+    const results = createConnection(draggingWire, { modId: moduleId, socketIndex: draggingWire.socketIndex });
     if (results?.error) {
       SnackbarEvents.emit(results?.error, ToastVariant.ERROR, 2000);
     }

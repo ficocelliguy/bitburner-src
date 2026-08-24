@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
-import { ComponentCounts, DeckModule, NetrunningRewards } from "../Types";
+import { ComponentCounts, DeckMod, NetrunningRewards } from "../Types";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { ModuleLootCover } from "./ModuleLootCover";
 import { ComponentSymbol } from "./ComponentCost";
@@ -19,10 +19,10 @@ type RewardsModalProps = {
 };
 
 export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "", title }: RewardsModalProps) {
-  const [displayedModules, setDisplayedModules] = React.useState<DeckModule[]>(rewards.modules);
+  const [displayedModules, setDisplayedModules] = React.useState<DeckMod[]>(rewards.mods);
 
   React.useEffect(() => {
-    setDisplayedModules(rewards.modules);
+    setDisplayedModules(rewards.mods);
   }, [rewards]);
 
   function rewardsHaveComponents(componentRewards: Partial<ComponentCounts>): boolean {

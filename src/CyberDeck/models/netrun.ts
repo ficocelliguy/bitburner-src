@@ -53,7 +53,7 @@ export function canNetrun(corrupted = false): boolean {
 
 export async function netRun(corrupted = false): Promise<NetrunningRewards> {
   if (!canNetrun(corrupted)) {
-    return { success: false, modules: [], components: {} };
+    return { success: false, mods: [], components: {} };
   }
   if (corrupted) {
     return corruptedNetrun();
@@ -80,7 +80,7 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
 
   return {
     success: true,
-    modules: rewards,
+    mods: rewards,
     components: {
       chips: chipsGained,
       neurodes: neurodesGained,
@@ -101,7 +101,7 @@ export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
 
 async function corruptedNetrun(): Promise<NetrunningRewards> {
   if (!canNetrun(true)) {
-    return { success: false, modules: [], components: {} };
+    return { success: false, mods: [], components: {} };
   }
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
@@ -120,7 +120,7 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
 
   return {
     success: true,
-    modules: rewards,
+    mods: rewards,
     components: {
       cores: coresGained,
     },

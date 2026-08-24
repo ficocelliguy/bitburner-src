@@ -1,6 +1,6 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckModule, ModuleType } from "../Types";
+import { ComponentCounts, DeckMod, ModType } from "../Types";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEbreakerCraftingCost,
@@ -29,36 +29,36 @@ import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
 
-export const CyberdeckIOPanel: DeckModule = {
-  type: ModuleType.CyberdeckIOPanel,
+export const CyberdeckIOPanel: DeckMod = {
+  type: ModType.CyberdeckIOPanel,
   id: "Hosaka Mk 1 Cyberdeck",
   sockets: [false, true, false, true, false, true, false, false],
   level: 10,
   stats: {},
 };
 
-export function createModule(rng: WHRNG, type: ModuleType = getRandomModuleType(rng), level: number = getLevel(rng)) {
-  if (type == ModuleType.PowerSupply) {
+export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng), level: number = getLevel(rng)) {
+  if (type == ModType.PowerSupply) {
     return createPowerSupply(level, rng);
   }
-  if (type == ModuleType.RackExtension) {
+  if (type == ModType.RackExtension) {
     return createRackExtension(level, rng);
   }
-  if (type == ModuleType.SkillChip) {
+  if (type == ModType.SkillChip) {
     return createSkillChip(level, rng);
   }
-  if (type == ModuleType.Uplink) {
+  if (type == ModType.Uplink) {
     return createUplink(level, rng);
   }
   return createProcessingModule(level, rng);
 }
 
-function createPowerSupply(level: number, rng: WHRNG): DeckModule {
+function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng); // TODO: higher levels don't have debuff
   // TODO: debuff in exchange for more slots
 
   return {
-    type: ModuleType.PowerSupply,
+    type: ModType.PowerSupply,
     id: getID(rng),
     sockets: getRandomSockets(rng, 2 + level / 2, 2),
     level,
@@ -68,7 +68,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckModule {
   };
 }
 
-export function createProcessingModule(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckModule {
+export function createProcessingModule(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckMod {
   const fullStats = getAllStatRanges(Math.max(level, 1));
   const otherStatKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
@@ -81,7 +81,7 @@ export function createProcessingModule(level: number, rng: WHRNG, addDebuff = tr
   const effects = mergeBuffs(otherMultDebuff, { [statToAdd]: value });
 
   return {
-    type: ModuleType.ProcessingModule,
+    type: ModType.ProcessingMod,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
@@ -92,7 +92,7 @@ export function createProcessingModule(level: number, rng: WHRNG, addDebuff = tr
   };
 }
 
-export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckModule {
+export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckMod {
   const buff = getPlayerStatBuff(level, rng, scalar);
 
   const applyStandardDebuff = rng.random() < 0.8;
@@ -101,7 +101,7 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
   const mergedStats = mergeBuffs(debuff, buff);
 
   return {
-    type: ModuleType.Uplink,
+    type: ModType.Uplink,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
@@ -113,23 +113,23 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
 }
 
 
-function createRackExtension(level: number, rng: WHRNG): DeckModule {
+function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
   return {
     stats: {
       playerMults: debuff,
       extraRackSlots: clampNumber(Math.floor(1 + level / 4), 1, 3),
     },
-    type: ModuleType.RackExtension,
+    type: ModType.RackExtension,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
     level,
   };
 }
 
-function createSkillChip(level: number, rng: WHRNG): DeckModule {
+function createSkillChip(level: number, rng: WHRNG): DeckMod {
   return {
-    type: ModuleType.SkillChip,
+    type: ModType.SkillChip,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
     level,
@@ -142,18 +142,18 @@ function createSkillChip(level: number, rng: WHRNG): DeckModule {
 function getRandomModuleType(rng: WHRNG) {
   const roll = rng.random();
   if (roll < 0.2) {
-    return ModuleType.PowerSupply;
+    return ModType.PowerSupply;
   }
   if (roll < 0.3) {
-    return ModuleType.RackExtension;
+    return ModType.RackExtension;
   }
   if (roll < 0.6) {
-    return ModuleType.ProcessingModule;
+    return ModType.ProcessingMod;
   }
   if (roll < 0.9) {
-    return ModuleType.Uplink;
+    return ModType.Uplink;
   }
-  return ModuleType.SkillChip;
+  return ModType.SkillChip;
 }
 
 // TODO-fico: replace with better module set on prestige / first time purchase
@@ -243,7 +243,7 @@ export function craftUplink() {
   return newComponent;
 }
 
-export function disassembleModule(module: DeckModule, showToast: boolean = false): ComponentCounts {
+export function disassembleModule(module: DeckMod, showToast: boolean = false): ComponentCounts {
   if (module.favorite) {
     if (showToast) { SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000); }
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
@@ -253,9 +253,9 @@ export function disassembleModule(module: DeckModule, showToast: boolean = false
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
 
-  const chipsGained = module.type !== ModuleType.Uplink ? 2 : 0;
+  const chipsGained = module.type !== ModType.Uplink ? 2 : 0;
   const ROMGained = 2;
-  const neurodesGained = module.type !== ModuleType.ProcessingModule ? 2 : 0;
+  const neurodesGained = module.type !== ModType.ProcessingMod ? 2 : 0;
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.components.ROM += ROMGained;
   CyberdeckState.components.neurodes += neurodesGained;
@@ -272,14 +272,14 @@ export function disassembleModule(module: DeckModule, showToast: boolean = false
 }
 
 
-export function getEasterEggModule(): DeckModule {
+export function getEasterEggModule(): DeckMod {
   const existingModule = getModuleById(LocationName.IshimaGlitch);
   if (existingModule) {
     return existingModule;
   }
 
   return {
-    type: ModuleType.ProcessingModule,
+    type: ModType.ProcessingMod,
     id: LocationName.IshimaGlitch,
     level: 2,
     sockets: [false, false, false, false, false, false, false, true],

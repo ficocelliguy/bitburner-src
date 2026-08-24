@@ -45,7 +45,7 @@ Description
 
 </td><td>
 
-{ craftICEbreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckModule](./bitburner.deckmodule.md) \| null; craftProcessingMod(): [DeckModule](./bitburner.deckmodule.md) \| null; craftUplinkMod(): [DeckModule](./bitburner.deckmodule.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; }
+{ craftICEbreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftProcessingMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftUplinkMod(): [DeckMod](./bitburner.deckmod.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; }
 
 
 </td><td>
@@ -155,7 +155,7 @@ Get the number of each type of cyberdeck crafting component you have.
 
 Gets a list of all of the current socket connections between cyberdeck mods.
 
-Mods require a connection to another charged module, or to the cyberdeck IO panel itself, in order for their stats to take effect.
+Mods require a connection to another charged mod, or to the cyberdeck IO panel itself, in order for their stats to take effect.
 
 
 </td></tr>
@@ -166,7 +166,7 @@ Mods require a connection to another charged module, or to the cyberdeck IO pane
 
 </td><td>
 
-Gets information about the base connection point of the cyberdeck itself. All mods need to be connected to this deck I/O panel, either directly to one of its sockets or through another module, in order to be charged and have their stats take effect.
+Gets information about the base connection point of the cyberdeck itself. All mods need to be connected to this deck I/O panel, either directly to one of its sockets or through another mod, in order to be charged and have their stats take effect.
 
 
 </td></tr>
@@ -179,7 +179,7 @@ Gets information about the base connection point of the cyberdeck itself. All mo
 
 Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
 
-Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged module through socket connections)
+Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged mod through socket connections)
 
 
 </td></tr>

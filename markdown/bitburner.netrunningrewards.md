@@ -9,9 +9,9 @@
 ```typescript
 type NetrunningRewards = {
   success: boolean;
-  modules: DeckModule[];
+  mods: DeckMod[];
   components: Partial<ComponentCounts>;
 };
 ```
-**References:** [DeckModule](./bitburner.deckmodule.md)<!-- -->, [ComponentCounts](./bitburner.componentcounts.md)
+**References:** [DeckMod](./bitburner.deckmod.md)<!-- -->, [ComponentCounts](./bitburner.componentcounts.md)
 

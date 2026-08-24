@@ -1,4 +1,4 @@
-import { ComponentCounts, ComponentStats, Connection, DeckModule } from "../Types";
+import { ComponentCounts, ComponentStats, Connection, DeckMod } from "../Types";
 import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
@@ -11,8 +11,8 @@ type CyberdeckSaveData = {
   netrunningLevel: number;
   craftingLevel: number;
   netrunningCooldownLevel: number;
-  installedModules: DeckModule[];
-  storedModules: DeckModule[];
+  installedModules: DeckMod[];
+  storedModules: DeckMod[];
   connections: Connection[];
   lastNetrunningTimestamp: number;
   lastCorruptedNetrunningTimestamp: number;
@@ -134,7 +134,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
   }
 }
 
-function isModuleArray(modules: unknown): modules is DeckModule[] {
+function isModuleArray(modules: unknown): modules is DeckMod[] {
   return Array.isArray(modules) && modules.every((m) => typeof m === "object" && m !== null);
 }
 

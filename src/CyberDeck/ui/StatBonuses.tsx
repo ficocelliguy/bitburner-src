@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { ModKey, ModuleStats } from "../Types";
+import { ModKey, ModStats } from "../Types";
 import { Settings } from "../../Settings/Settings";
 import { ComponentSymbol } from "./ComponentCost";
 import { componentSymbols } from "../models/constants";
@@ -13,7 +13,7 @@ export function StatBonus({
   fontSize = 10,
   useShortStatNames = true,
 }: {
-  stats?: ModuleStats;
+  stats?: ModStats;
   emptyMessage?: string;
   fontSize?: number;
   useShortStatNames?: boolean;

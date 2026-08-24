@@ -4370,13 +4370,13 @@ type ComponentCounts = {
   ICE: number;
 };
 
-type DeckModule = {
+type DeckMod = {
   id: string;
   level: number;
   sockets: SocketList;
-  type: ModuleType;
+  type: ModType;
   favorite?: boolean;
-  stats: ModuleStats;
+  stats: ModStats;
 };
 
 type CyberdeckStats = {
@@ -4387,7 +4387,7 @@ type CyberdeckStats = {
   endgameStats: EndgameMults;
 };
 
-type ModuleStats = {
+type ModStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
@@ -4423,14 +4423,14 @@ type ComponentStats = {
 type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 type Connection = [Socket, Socket];
 type Socket = {
-  moduleId: string;
+  modId: string;
   socketIndex: number;
 };
 
-enum ModuleType {
+enum ModType {
   CyberdeckIOPanel = "Deck I/O Panel",
   PowerSupply = "Power Supply",
-  ProcessingModule = "Processing Mod",
+  ProcessingMod = "Processing Mod",
   Uplink = "Uplink",
   RackExtension = "Rack Extension",
   SkillChip = "SkillChip",
@@ -4465,7 +4465,7 @@ type EndgameMults = {
 
 type NetrunningRewards = {
   success: boolean;
-  modules: DeckModule[];
+  mods: DeckMod[];
   components: Partial<ComponentCounts>;
 };
 
@@ -4474,8 +4474,6 @@ type NetrunningRewards = {
  * @public
  */
 export interface Cyberdeck {
-  // TODO-fico: API documentation
-
   /**
    * Get the number of each type of cyberdeck crafting component you have.
    * @remarks
@@ -4488,32 +4486,32 @@ export interface Cyberdeck {
    * @remarks
    * RAM cost: 0.05 GB
    */
-  getStoredMods(): DeckModule[];
+  getStoredMods(): DeckMod[];
   /**
    * Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
    *
    * Also indicates if the mod is currently charged (e.g. active, has a connection to the
-   * cyberdeck IO panel itself or another charged module through socket connections)
+   * cyberdeck IO panel itself or another charged mod through socket connections)
    *
    * @remarks
    * RAM cost: 0.05 GB
    */
-  getInstalledMods(): (DeckModule & { charged: boolean })[];
+  getInstalledMods(): (DeckMod & { charged: boolean })[];
 
   /**
    * Gets information about the base connection point of the cyberdeck itself. All mods need to be connected
-   * to this deck I/O panel, either directly to one of its sockets or through another module, in order
+   * to this deck I/O panel, either directly to one of its sockets or through another mod, in order
    * to be charged and have their stats take effect.
    *
    * @remarks
    * RAM cost: 0 GB
    */
-  getCyberdeckIOPanel(): DeckModule;
+  getCyberdeckIOPanel(): DeckMod;
 
   /**
    * Gets a list of all of the current socket connections between cyberdeck mods.
    *
-   * Mods require a connection to another charged module, or to the cyberdeck IO panel itself,
+   * Mods require a connection to another charged mod, or to the cyberdeck IO panel itself,
    * in order for their stats to take effect.
    *
    * @remarks
@@ -4676,7 +4674,7 @@ export interface Cyberdeck {
      * @remarks
      * RAM cost: 1 GB
      */
-    craftPowerSupplyMod(): DeckModule | null;
+    craftPowerSupplyMod(): DeckMod | null;
     /**
      * Creates a new processing mod using crafting components.
      *
@@ -4685,7 +4683,7 @@ export interface Cyberdeck {
      * @remarks
      * RAM cost: 1 GB
      */
-    craftProcessingMod(): DeckModule | null;
+    craftProcessingMod(): DeckMod | null;
 
     /**
      * Creates a new uplink mod using crafting components.
@@ -4695,7 +4693,7 @@ export interface Cyberdeck {
      * @remarks
      * RAM cost: 1 GB
      */
-    craftUplinkMod(): DeckModule | null;
+    craftUplinkMod(): DeckMod | null;
 
     /**
      * Destroys a mod in exchange for a few crafting components.

@@ -23,7 +23,7 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, modules: [], components: {} });
+  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, mods: [], components: {} });
 
   const disabled = !entering && !canNetrun(corrupted);
 

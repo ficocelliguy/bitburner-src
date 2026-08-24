@@ -8,7 +8,7 @@
 
 ```typescript
 type Socket = {
-  moduleId: string;
+  modId: string;
   socketIndex: number;
 };
 ```

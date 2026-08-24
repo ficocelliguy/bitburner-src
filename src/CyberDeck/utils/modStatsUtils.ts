@@ -1,11 +1,11 @@
 import {
   ConsumableStats,
   CyberdeckStats,
-  DeckModule,
+  DeckMod,
   EndgameMults,
   MiscMults,
   ModKey,
-  ModuleStats,
+  ModStats,
   statBonusLongNames,
   statBonusShortNames,
 } from "../Types";
@@ -31,7 +31,7 @@ export function getFormattedStatBonus(keyName: ModKey, value: number, useShortNa
   };
 }
 
-export function getStatBonusList(stats: ModuleStats = {}) {
+export function getStatBonusList(stats: ModStats = {}) {
   const statList = [
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
@@ -134,7 +134,7 @@ export function formatAsPercent(value: number): string {
   return `${(value * 100).toFixed(2)}%`;
 }
 
-function getModStatString(module: DeckModule) {
+function getModStatString(module: DeckMod) {
   const statString = getStatBonusList(module.stats).map(([key, value]) => {
     const shortNames = getFormattedStatBonus(key, value, true);
     const longNames = getFormattedStatBonus(key, value, false);

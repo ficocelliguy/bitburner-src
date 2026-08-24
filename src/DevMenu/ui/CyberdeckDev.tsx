@@ -18,7 +18,7 @@ export function CyberdeckDev(): React.ReactElement {
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
     success: false,
-    modules: [],
+    mods: [],
     components: {},
   });
 
@@ -51,14 +51,14 @@ export function CyberdeckDev(): React.ReactElement {
   function getNetrunRewards() {
     const rewards = getNetrunningRewards();
     setCorrupted(false);
-    setNetrunningModRewards({success: true, modules: rewards, components: {}});
+    setNetrunningModRewards({success: true, mods: rewards, components: {}});
     setShowRewardsModal(true);
   }
 
   function getCorruptedNetrunRewards() {
     const rewards = getCorruptedNetrunningRewards();
     setCorrupted(true);
-    setNetrunningModRewards({success: true, modules: rewards, components: {}});
+    setNetrunningModRewards({success: true, mods: rewards, components: {}});
     setShowRewardsModal(true);
   }
 

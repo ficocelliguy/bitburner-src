@@ -1,5 +1,5 @@
 import { WHRNG } from "../../Casino/RNG";
-import { DeckModule, ModuleType } from "../Types";
+import { DeckMod, ModType } from "../Types";
 import { getConsumableBuff, getDebuff, getEndgameBuff, getEndgameStatDebuff, getID, getLevel } from "../utils/statRng";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { createProcessingModule, createUplink } from "./createModule";
@@ -7,7 +7,7 @@ import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
-export function createCorruptedModule(rng: WHRNG): DeckModule {
+export function createCorruptedModule(rng: WHRNG): DeckMod {
 
   if (Player.sourceFiles.get(1) && rng.random() < 0.05) {
     return getEndgameStatModule(rng);
@@ -57,9 +57,9 @@ export function createCorruptedModule(rng: WHRNG): DeckModule {
 const getJunkModule = (rng: WHRNG) => {
   const oneSocket = getRandomSockets(rng, 1 );
   const twoSocket = getRandomSockets(rng, 2 );
-  const modules: DeckModule[] = [
+  const modules: DeckMod[] = [
     {
-      type: ModuleType.RackExtension,
+      type: ModType.RackExtension,
       id: getID(rng),
       sockets: oneSocket,
       level: 0,
@@ -68,7 +68,7 @@ const getJunkModule = (rng: WHRNG) => {
       },
     },
     {
-      type: ModuleType.ProcessingModule,
+      type: ModType.ProcessingMod,
       id: getID(rng),
       sockets: twoSocket,
       level: 0,
@@ -77,7 +77,7 @@ const getJunkModule = (rng: WHRNG) => {
       },
     },
     {
-      type: ModuleType.Uplink,
+      type: ModType.Uplink,
       id: getID(rng),
       sockets: twoSocket,
       level: 0,
@@ -86,7 +86,7 @@ const getJunkModule = (rng: WHRNG) => {
       },
     },
     {
-      type: ModuleType.PowerSupply,
+      type: ModType.PowerSupply,
       id: getID(rng),
       sockets: twoSocket,
       level: 0,
@@ -97,11 +97,11 @@ const getJunkModule = (rng: WHRNG) => {
   return modules[Math.floor(rng.random() * modules.length)];
 }
 
-const getCorruptedRackExtension = (rng: WHRNG): DeckModule => {
+const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   const debuffs = mergeBuffs(getDebuff(8, rng), getDebuff(8, rng));
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
-    type: ModuleType.RackExtension,
+    type: ModType.RackExtension,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
     level: -1,
@@ -112,10 +112,10 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckModule => {
   };
 }
 
-const getCorruptedSkillChip = (rng: WHRNG): DeckModule => {
+const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
   const buffs = mergeBuffs(getConsumableBuff(8, rng), getConsumableBuff(8, rng));
   return {
-    type: ModuleType.SkillChip,
+    type: ModType.SkillChip,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
     level: -1,
@@ -125,7 +125,7 @@ const getCorruptedSkillChip = (rng: WHRNG): DeckModule => {
   };
 }
 
-const getEndgameStatModule = (rng: WHRNG): DeckModule => {
+const getEndgameStatModule = (rng: WHRNG): DeckMod => {
   const level = getLevel(rng, CyberdeckState.netrunningLevel + 2);
   const buff = getEndgameBuff(level, rng);
   const standardDebuff = getDebuff(CyberdeckState.netrunningLevel, rng);
@@ -133,7 +133,7 @@ const getEndgameStatModule = (rng: WHRNG): DeckModule => {
   const effects = mergeBuffs(buff, endgameDebuff);
 
   return {
-    type: ModuleType.ProcessingModule,
+    type: ModType.ProcessingMod,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
     level: level,

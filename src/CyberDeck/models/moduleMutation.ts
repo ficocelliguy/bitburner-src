@@ -4,7 +4,7 @@ import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "./Cyberdec
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { DeckModule, ModuleType, Socket } from "../Types";
+import { DeckMod, ModType, Socket } from "../Types";
 import { CyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";
@@ -29,7 +29,7 @@ export function handleModuleMoved(result: DropResult) {
   if (
     sourceIsStorage &&
     !destinationIsStorage &&
-    moduleToMove.type === ModuleType.RackExtension &&
+    moduleToMove.type === ModType.RackExtension &&
     getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions
   ) {
     SnackbarEvents.emit(
@@ -49,7 +49,7 @@ export function handleModuleMoved(result: DropResult) {
   }
 }
 
-export function moveModule(moduleToMove: DeckModule, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
+export function moveModule(moduleToMove: DeckMod, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
 
@@ -70,18 +70,18 @@ export function ejectOverloadedModules() {
 }
 
 export function createConnection(source: Socket, destination: Socket) {
-  const sourceModule = getInstalledModule(source.moduleId);
-  const destinationModule = getInstalledModule(destination.moduleId);
+  const sourceModule = getInstalledModule(source.modId);
+  const destinationModule = getInstalledModule(destination.modId);
   if (!sourceModule) {
     return {
       success: false,
-      error: `Cannot create connection: mod ${source.moduleId} is not installed on the deck rack.`,
+      error: `Cannot create connection: mod ${source.modId} is not installed on the deck rack.`,
     };
   }
   if (!destinationModule) {
     return {
       success: false,
-      error: `Cannot create connection: mod ${destination.moduleId} is not installed on the deck rack.`,
+      error: `Cannot create connection: mod ${destination.modId} is not installed on the deck rack.`,
     };
   }
   if (sourceModule == destinationModule) {
@@ -110,7 +110,7 @@ export function createConnection(source: Socket, destination: Socket) {
   if (overlapSocket) {
     return {
       success: false,
-      error: `Wires cannot overlap. There is a wire in between those connection points connecting ${overlapSocket[0].moduleId} and ${overlapSocket[1].moduleId}`,
+      error: `Wires cannot overlap. There is a wire in between those connection points connecting ${overlapSocket[0].modId} and ${overlapSocket[1].modId}`,
     };
   }
 
@@ -144,11 +144,11 @@ function getInstalledModule(moduleId: string) {
 }
 
 export function wireOverlapsSocket(socket: Socket) {
-  const socketModuleIndex = getModuleIndex(socket.moduleId);
+  const socketModuleIndex = getModuleIndex(socket.modId);
   return CyberdeckState.connections.find(([s, d]) => {
-    if (s.moduleId === socket.moduleId || d.moduleId === socket.moduleId) return false;
-    const sModuleIndex = getModuleIndex(s.moduleId);
-    const dModuleIndex = getModuleIndex(d.moduleId);
+    if (s.modId === socket.modId || d.modId === socket.modId) return false;
+    const sModuleIndex = getModuleIndex(s.modId);
+    const dModuleIndex = getModuleIndex(d.modId);
     return (
       s.socketIndex == socket.socketIndex &&
       sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
@@ -157,7 +157,7 @@ export function wireOverlapsSocket(socket: Socket) {
 }
 
 export function socketIsCovered(socket: Socket) {
-  return CyberdeckState.coveredSockets.find((s) => s.moduleId === socket.moduleId && s.socketIndex === socket.socketIndex);
+  return CyberdeckState.coveredSockets.find((s) => s.modId === socket.modId && s.socketIndex === socket.socketIndex);
 }
 
 export function updateCoveredSockets() {
@@ -165,7 +165,7 @@ export function updateCoveredSockets() {
   for (const module of CyberdeckState.installedModules) {
     for (const [index, isSocket] of module.sockets.entries()) {
       if (!isSocket) continue;
-      const socket = { moduleId: module.id, socketIndex: index };
+      const socket = { modId: module.id, socketIndex: index };
       if (determineIfSocketIsCovered(socket)) {
         CyberdeckState.coveredSockets.push(socket);
       }
@@ -176,11 +176,11 @@ export function updateCoveredSockets() {
 function determineIfSocketIsCovered(socket: Socket) {
   return CyberdeckState.connections.find(([s, d]) => {
     const isUniqueSocket =
-      s.socketIndex === socket.socketIndex && s.moduleId !== socket.moduleId && d.moduleId !== socket.moduleId;
+      s.socketIndex === socket.socketIndex && s.modId !== socket.modId && d.modId !== socket.modId;
     if (!isUniqueSocket) return false;
-    const socketModuleIndex = getModuleIndex(socket.moduleId);
-    const sModuleIndex = getModuleIndex(s.moduleId);
-    const dModuleIndex = getModuleIndex(d.moduleId);
+    const socketModuleIndex = getModuleIndex(socket.modId);
+    const sModuleIndex = getModuleIndex(s.modId);
+    const dModuleIndex = getModuleIndex(d.modId);
     return (
       s.socketIndex == socket.socketIndex &&
       sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
@@ -196,8 +196,8 @@ export function disconnectSocket(source: Socket | undefined) {
   if (!source) return;
   const sourceConnectionIndex = CyberdeckState.connections.findIndex(
     ([s, d]) =>
-      (s.socketIndex === source.socketIndex && s.moduleId === source.moduleId) ||
-      (d.socketIndex === source.socketIndex && d.moduleId === source.moduleId),
+      (s.socketIndex === source.socketIndex && s.modId === source.modId) ||
+      (d.socketIndex === source.socketIndex && d.modId === source.modId),
   );
   if (sourceConnectionIndex !== -1) {
     CyberdeckState.connections.splice(sourceConnectionIndex, 1);
@@ -208,8 +208,8 @@ export function disconnectSocket(source: Socket | undefined) {
 export function disconnectConnection(moduleId1: string, moduleId2: string, socketIndex: number) {
   const connectionIndex = CyberdeckState.connections.findIndex(
     ([s, d]) =>
-      (s.socketIndex === socketIndex && s.moduleId === moduleId1 && d.moduleId === moduleId2) ||
-      (s.socketIndex === socketIndex && s.moduleId === moduleId2 && d.moduleId === moduleId1),
+      (s.socketIndex === socketIndex && s.modId === moduleId1 && d.modId === moduleId2) ||
+      (s.socketIndex === socketIndex && s.modId === moduleId2 && d.modId === moduleId1),
   );
   if (connectionIndex !== -1) {
     CyberdeckState.connections.splice(connectionIndex, 1);
@@ -219,17 +219,17 @@ export function disconnectConnection(moduleId1: string, moduleId2: string, socke
   return false;
 }
 
-export function disconnectModule(module: DeckModule) {
+export function disconnectModule(module: DeckMod) {
   for (let i = 0; i < module.sockets.length; i++) {
     if (!module.sockets[i]) continue;
-    disconnectSocket({ moduleId: module.id, socketIndex: i });
+    disconnectSocket({ modId: module.id, socketIndex: i });
   }
 }
 
 function consumeSkillChips() {
   const chargedModuleIDs = getChargedModuleIDs();
   const chargedSkillModules = CyberdeckState.installedModules.filter(
-    (m) => m.type === ModuleType.SkillChip && chargedModuleIDs.includes(m.id),
+    (m) => m.type === ModType.SkillChip && chargedModuleIDs.includes(m.id),
   );
   for (const module of chargedSkillModules) {
     const stats = module.stats?.consumableStats ?? {};
@@ -261,5 +261,5 @@ function consumeSkillChips() {
 }
 
 function getInstalledRackExtensionCount() {
-  return CyberdeckState.installedModules.filter((m) => m.type === ModuleType.RackExtension).length;
+  return CyberdeckState.installedModules.filter((m) => m.type === ModType.RackExtension).length;
 }

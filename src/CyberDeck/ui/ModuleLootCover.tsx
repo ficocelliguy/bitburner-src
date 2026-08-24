@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { DeckModule } from "../Types";
+import { DeckMod } from "../Types";
 import { ModuleComponent } from "./ModuleComponent";
 import { Settings } from "../../Settings/Settings";
 
 
-export function ModuleLootCover({ module, index }: { module: DeckModule, index: number }) {
+export function ModuleLootCover({ module, index }: { module: DeckMod, index: number }) {
   const [open, setOpen] = React.useState(false);
 
   return (

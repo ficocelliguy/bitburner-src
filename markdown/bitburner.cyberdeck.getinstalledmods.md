@@ -6,16 +6,16 @@
 
 Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
 
-Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged module through socket connections)
+Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged mod through socket connections)
 
 **Signature:**
 
 ```typescript
-getInstalledMods(): (DeckModule & { charged: boolean })[];
+getInstalledMods(): (DeckMod & { charged: boolean })[];
 ```
 **Returns:**
 
-([DeckModule](./bitburner.deckmodule.md) &amp; { charged: boolean })\[\]
+([DeckMod](./bitburner.deckmod.md) &amp; { charged: boolean })\[\]
 
 ## Remarks
 

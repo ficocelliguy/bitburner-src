@@ -1,5 +1,5 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
-import { Cyberdeck, DeckModule } from "@nsdefs";
+import { Cyberdeck, DeckMod } from "@nsdefs";
 import { LocationName } from "@enums";
 import { CyberdeckState, getChargedModules } from "./models/CyberdeckState";
 import {
@@ -24,7 +24,7 @@ import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
 import { getCorruptedHint } from "./ui/gainComponentToast";
 
 
-function getModOrThrow(modId: string): DeckModule {
+function getModOrThrow(modId: string): DeckMod {
   const mod =
     CyberdeckState.storedModules.find((mod) => mod.id === modId) ||
     CyberdeckState.installedModules.find((mod) => mod.id === modId);
@@ -40,17 +40,17 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     getComponentCounts: () => {
       return { ...CyberdeckState.components };
     },
-    getStoredMods: (): DeckModule[] => {
+    getStoredMods: (): DeckMod[] => {
       return CyberdeckState.storedModules.map((mod) => structuredClone(mod));
     },
-    getInstalledMods: (): (DeckModule & { charged: boolean })[] => {
+    getInstalledMods: (): (DeckMod & { charged: boolean })[] => {
       const chargedMods = getChargedModules();
       return CyberdeckState.installedModules.map((mod) => ({
         ...structuredClone(mod),
         charged: chargedMods.includes(mod),
       }));
     },
-    getCyberdeckIOPanel: (): DeckModule => {
+    getCyberdeckIOPanel: (): DeckMod => {
       return structuredClone(CyberdeckIOPanel);
     },
     getConnections: () => {
@@ -113,7 +113,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
-      const result = createConnection({ moduleId: modId1, socketIndex }, { moduleId: modId2, socketIndex });
+      const result = createConnection({ modId: modId1, socketIndex }, { modId: modId2, socketIndex });
       if (result.error) {
         logger(ctx)(result.error);
       } else {
@@ -152,20 +152,20 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         logger(ctx)(
           `Not enough ICEbreakers to netrun. ${CyberdeckState.components.ICE}/${getCurrentNetrunningIceCost()}`,
         );
-        return { success: false, modules: [], components: {} };
+        return { success: false, mods: [], components: {} };
       }
       if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
         logger(ctx)(
           `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
         );
-        return { success: false, modules: [], components: {} };
+        return { success: false, mods: [], components: {} };
       }
 
       logger(ctx)(`Starting netrun...`);
       await helpers.netscriptDelay(ctx, 1000);
       const results = await netRun();
       if (results.success) {
-        logger(ctx)(`Netrun successfully. ${results.modules.length} new modules found.`);
+        logger(ctx)(`Netrun successfully. ${results.mods.length} new modules found.`);
       } else {
         logger(ctx)(`Netrun attempt failed.`);
       }
@@ -282,7 +282,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return craftProcessingModule();
       },
 
-      craftUplinkMod(ctx: NetscriptContext): DeckModule | null {
+      craftUplinkMod(ctx: NetscriptContext): DeckMod | null {
         if (CyberdeckState.components.ROM < uplinkCraftingCost.ROM) {
           logger(ctx)(
             `Not enough ROM to craft Uplink Mod. Need ${uplinkCraftingCost.ROM}, have ${CyberdeckState.components.ROM}`,
@@ -336,7 +336,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       delve: async (ctx: NetscriptContext) => {
         if (!CyberdeckState.hasDiscoveredGlitch) {
           ctx.workerScript.print(getCorruptedHint());
-          return { success: false, modules: [], components: {} };
+          return { success: false, mods: [], components: {} };
         }
         if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost(true)) {
           logger(ctx)(
@@ -344,20 +344,20 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
               CyberdeckState.components.ICE
             }/${getCurrentNetrunningIceCost()}`,
           );
-          return { success: false, modules: [], components: {} };
+          return { success: false, mods: [], components: {} };
         }
         if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
           logger(ctx)(
             `Not enough module storage space to delve. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
           );
-          return { success: false, modules: [], components: {} };
+          return { success: false, mods: [], components: {} };
         }
 
         ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
         await helpers.netscriptDelay(ctx, 5000);
         const results = await netRun(true);
         if (results.success) {
-          logger(ctx)(`Returned successfully? ${results.modules.length} new modules found.`);
+          logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
         } else {
           logger(ctx)(`Old net delve attempt failed.`);
         }

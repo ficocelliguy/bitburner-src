@@ -493,7 +493,7 @@ import nsDoc_bitburner_darknetserverdetails_passwordformat_md from "../../markdo
 import nsDoc_bitburner_darknetserverdetails_passwordhint_md from "../../markdown/bitburner.darknetserverdetails.passwordhint.md?raw";
 import nsDoc_bitburner_darknetserverdetails_passwordlength_md from "../../markdown/bitburner.darknetserverdetails.passwordlength.md?raw";
 import nsDoc_bitburner_darknetserverdetails_requiredcharismaskill_md from "../../markdown/bitburner.darknetserverdetails.requiredcharismaskill.md?raw";
-import nsDoc_bitburner_deckmodule_md from "../../markdown/bitburner.deckmodule.md?raw";
+import nsDoc_bitburner_deckmod_md from "../../markdown/bitburner.deckmod.md?raw";
 import nsDoc_bitburner_division_awareness_md from "../../markdown/bitburner.division.awareness.md?raw";
 import nsDoc_bitburner_division_cities_md from "../../markdown/bitburner.division.cities.md?raw";
 import nsDoc_bitburner_division_industry_md from "../../markdown/bitburner.division.industry.md?raw";
@@ -933,8 +933,8 @@ import nsDoc_bitburner_material_quality_md from "../../markdown/bitburner.materi
 import nsDoc_bitburner_material_stored_md from "../../markdown/bitburner.material.stored.md?raw";
 import nsDoc_bitburner_md from "../../markdown/bitburner.md?raw";
 import nsDoc_bitburner_miscmults_md from "../../markdown/bitburner.miscmults.md?raw";
-import nsDoc_bitburner_modulestats_md from "../../markdown/bitburner.modulestats.md?raw";
-import nsDoc_bitburner_moduletype_md from "../../markdown/bitburner.moduletype.md?raw";
+import nsDoc_bitburner_modstats_md from "../../markdown/bitburner.modstats.md?raw";
+import nsDoc_bitburner_modtype_md from "../../markdown/bitburner.modtype.md?raw";
 import nsDoc_bitburner_moneyrequirement_md from "../../markdown/bitburner.moneyrequirement.md?raw";
 import nsDoc_bitburner_moneyrequirement_money_md from "../../markdown/bitburner.moneyrequirement.money.md?raw";
 import nsDoc_bitburner_moneyrequirement_type_md from "../../markdown/bitburner.moneyrequirement.type.md?raw";
@@ -2154,7 +2154,7 @@ AllPages["nsDoc/bitburner.darknetserverdetails.passwordformat.md"] = nsDoc_bitbu
 AllPages["nsDoc/bitburner.darknetserverdetails.passwordhint.md"] = nsDoc_bitburner_darknetserverdetails_passwordhint_md;
 AllPages["nsDoc/bitburner.darknetserverdetails.passwordlength.md"] = nsDoc_bitburner_darknetserverdetails_passwordlength_md;
 AllPages["nsDoc/bitburner.darknetserverdetails.requiredcharismaskill.md"] = nsDoc_bitburner_darknetserverdetails_requiredcharismaskill_md;
-AllPages["nsDoc/bitburner.deckmodule.md"] = nsDoc_bitburner_deckmodule_md;
+AllPages["nsDoc/bitburner.deckmod.md"] = nsDoc_bitburner_deckmod_md;
 AllPages["nsDoc/bitburner.division.awareness.md"] = nsDoc_bitburner_division_awareness_md;
 AllPages["nsDoc/bitburner.division.cities.md"] = nsDoc_bitburner_division_cities_md;
 AllPages["nsDoc/bitburner.division.industry.md"] = nsDoc_bitburner_division_industry_md;
@@ -2594,8 +2594,8 @@ AllPages["nsDoc/bitburner.material.quality.md"] = nsDoc_bitburner_material_quali
 AllPages["nsDoc/bitburner.material.stored.md"] = nsDoc_bitburner_material_stored_md;
 AllPages["nsDoc/bitburner.md"] = nsDoc_bitburner_md;
 AllPages["nsDoc/bitburner.miscmults.md"] = nsDoc_bitburner_miscmults_md;
-AllPages["nsDoc/bitburner.modulestats.md"] = nsDoc_bitburner_modulestats_md;
-AllPages["nsDoc/bitburner.moduletype.md"] = nsDoc_bitburner_moduletype_md;
+AllPages["nsDoc/bitburner.modstats.md"] = nsDoc_bitburner_modstats_md;
+AllPages["nsDoc/bitburner.modtype.md"] = nsDoc_bitburner_modtype_md;
 AllPages["nsDoc/bitburner.moneyrequirement.md"] = nsDoc_bitburner_moneyrequirement_md;
 AllPages["nsDoc/bitburner.moneyrequirement.money.md"] = nsDoc_bitburner_moneyrequirement_money_md;
 AllPages["nsDoc/bitburner.moneyrequirement.type.md"] = nsDoc_bitburner_moneyrequirement_type_md;

@@ -1,5 +1,5 @@
 import React from "react";
-import { DeckModule, ModuleType } from "../Types";
+import { DeckMod, ModType } from "../Types";
 import MemoryIcon from "@mui/icons-material/Memory";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import AllInboxSharpIcon from "@mui/icons-material/AllInboxSharp";
@@ -10,7 +10,7 @@ import hunter from "../assets/hunter.png";
 import yogi from "../assets/yogi.png";
 import idol from "../assets/idol.png";
 
-export function getModuleIcon(module: DeckModule) {
+export function getModuleIcon(module: DeckMod) {
   const size = Settings.CyberdeckWiFU ? 50 : 40;
   return (
     <div style={{ padding: "8px 2px", width: `40px`, height: `${size}px`, color: getRarityColor(module) }}>
@@ -19,26 +19,26 @@ export function getModuleIcon(module: DeckModule) {
   );
 }
 
-export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
+export function getModIconComponent(moduleType: ModType, size: number = 50) {
   const style = { width: `${size}px`, height: `${size}px` };
-  if (moduleType === ModuleType.ProcessingModule) {
+  if (moduleType === ModType.ProcessingMod) {
     return <MemoryIcon style={style} />;
   }
-  if (moduleType === ModuleType.PowerSupply) {
+  if (moduleType === ModType.PowerSupply) {
     return <LanOutlinedIcon style={style} />;
   }
-  if (moduleType === ModuleType.RackExtension) {
+  if (moduleType === ModType.RackExtension) {
     return <AllInboxSharpIcon style={style} />;
   }
-  if (moduleType === ModuleType.Uplink) {
+  if (moduleType === ModType.Uplink) {
     return <SimCardOutlinedIcon style={style} />;
   }
-  if (moduleType === ModuleType.SkillChip) {
+  if (moduleType === ModType.SkillChip) {
     return <MedicalInformationSharpIcon style={style}/>;
   }
 }
 
-export function getCustomModIcon(module: DeckModule, size: number) {
+export function getCustomModIcon(module: DeckMod, size: number) {
   return (
     <img
       src={getCustomModIMage(module)}
@@ -49,18 +49,18 @@ export function getCustomModIcon(module: DeckModule, size: number) {
   );
 }
 
-function getCustomModIMage(module: DeckModule) {
+function getCustomModIMage(module: DeckMod) {
   // TODO-fico
-  if (module.type === ModuleType.Uplink) {
+  if (module.type === ModType.Uplink) {
     return hunter;
   }
-  if (module.type === ModuleType.ProcessingModule) {
+  if (module.type === ModType.ProcessingMod) {
     return yogi;
   }
   return idol;
 }
 
-export function getRarityColor(module: DeckModule) {
+export function getRarityColor(module: DeckMod) {
   const t = Settings.theme;
   if (module.level < 0) {
     return t.errordark;

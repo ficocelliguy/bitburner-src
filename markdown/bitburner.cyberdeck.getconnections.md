@@ -6,7 +6,7 @@
 
 Gets a list of all of the current socket connections between cyberdeck mods.
 
-Mods require a connection to another charged module, or to the cyberdeck IO panel itself, in order for their stats to take effect.
+Mods require a connection to another charged mod, or to the cyberdeck IO panel itself, in order for their stats to take effect.
 
 **Signature:**
 

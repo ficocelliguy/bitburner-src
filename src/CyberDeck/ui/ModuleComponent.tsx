@@ -3,7 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
 import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
-import { DeckModule, ModuleType, Socket } from "../Types";
+import { DeckMod, ModType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
@@ -13,7 +13,7 @@ import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { getModuleDescription } from "../models/constants";
 
 export type DeckModuleProps = {
-  module: DeckModule;
+  module: DeckMod;
   index: number;
   draggingWireStarted?: ((moduleId: string, socketId: number) => void) | null;
   draggingWireEnded?: ((moduleId: string) => void) | null;
@@ -109,7 +109,7 @@ export function ModuleComponent({
               position: "relative",
               ...provided.draggableProps.style,
               border: `2px solid ${
-                module.type === ModuleType.CyberdeckIOPanel
+                module.type === ModType.CyberdeckIOPanel
                   ? Settings.theme.button
                   : getChargedModuleIDs().includes(module.id)
                   ? getRarityColor(module)
@@ -124,7 +124,7 @@ export function ModuleComponent({
             onMouseDown={openTooltipOnRightClick}
             onContextMenu={(e) => e.preventDefault()}
           >
-            {module.type !== ModuleType.CyberdeckIOPanel ? (
+            {module.type !== ModType.CyberdeckIOPanel ? (
               <>
                 <div>{getModuleIcon(module)}</div>
                 {module.favorite &&

@@ -3,8 +3,6 @@ REQUIRED FOR MVP
 - api
 - api docs
 
-- limit crafting based on storage capacity
-
 - basic doc page
 
 - Add WiFUs
@@ -87,8 +85,8 @@ CYBERDECK: IDEA SCRATCH SPACE
 
 Gated by components, which can be gained from various other mechanics
 
-Netrunning is module gacha - cooldown time "Trace Decay", costs resources (ICEbreakers that get slagged). Gives random modules, sometimes components, sometimes icebreakers
-Some module types can be crafted - takes money and components - power supply, processing unit, not consumables
+Netrunning is mod gacha - cooldown time "Trace Decay", costs resources (ICEbreakers that get slagged). Gives random mods, sometimes components, sometimes icebreakers
+Some mod types can be crafted - takes money and components - power supply, processing unit, not consumables
 Netrunning and crafting can be leveled via consumables or spending lots of money + components
 
 
@@ -100,14 +98,14 @@ crafting tab shows percent of current craft
 components always shown in the top corner
 
 
-Module types:
+mod types:
 Power supply - few stats (or only debuffs), but many power connection sockets
-Processing module - buffs only scripts running on the deck itself
+Processing mod - buffs only scripts running on the deck itself
 Uplink unit -  global buffs, but much lower buffs than processing unit
 Skillchip - consumable - single use, destroyed on connection to power. Gives permanent buff and some components. storage increase fraction? rack extension limit?
 Rack expansion - more slots!
-Heatsink for heat management? some modules give off heat, and cause debuffs for hgh heat? low temps increase other chips' boosts?
-some modules get buffs for high heat instead?
+Heatsink for heat management? some mods give off heat, and cause debuffs for hgh heat? low temps increase other chips' boosts?
+some mods get buffs for high heat instead?
 
 Module buff ideas:
 - boost share with cores

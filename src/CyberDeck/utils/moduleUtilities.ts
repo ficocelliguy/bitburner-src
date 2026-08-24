@@ -42,7 +42,7 @@ export function isSocketList(value: unknown): value is SocketList {
 
 export function getSocketId(socket: Socket | null) {
   if (!socket) return "";
-  return `socket-${socket.moduleId}-${socket.socketIndex}`;
+  return `socket-${socket.modId}-${socket.socketIndex}`;
 }
 
 export function getSocketLocation(id: string) {

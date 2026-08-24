@@ -1,4 +1,4 @@
-import { ComponentCounts, ModuleType } from "../Types";
+import { ComponentCounts, ModType } from "../Types";
 import { Settings } from "../../Settings/Settings";
 
 // TODO-fico: change these after testing to slower cooldowns
@@ -48,19 +48,19 @@ export const uplinkCraftingCost: ComponentCounts = {
 };
 
 
-export function getModuleDescription(moduleType: ModuleType): string {
+export function getModuleDescription(moduleType: ModType): string {
   switch (moduleType) {
-    case ModuleType.CyberdeckIOPanel:
+    case ModType.CyberdeckIOPanel:
       return "Hosaka Cyberdecks: The finest that money can buy. This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.";
-    case ModuleType.PowerSupply:
+    case ModType.PowerSupply:
       return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, but it excels at distributing power to other mods.";
-    case ModuleType.ProcessingModule:
+    case ModType.ProcessingMod:
       return "Processing mods generally provide boosts to the cyberdeck itself, or to activities that a wearable computer can boost.";
-    case ModuleType.Uplink:
+    case ModType.Uplink:
       return "Uplink mods provide boosts through your augment system, improving various stats related to the player.";
-    case ModuleType.RackExtension:
+    case ModType.RackExtension:
       return "Rack extensions rarely have useful stat boosts, but they increase the number of mod slots on the cyberdeck.";
-    case ModuleType.SkillChip:
+    case ModType.SkillChip:
       return "Skill chips are a special type of mod that are consumed once they are powered. They provide permanent boosts to various Cyberdeck levels";
     default:
       return "Unknown module type.";

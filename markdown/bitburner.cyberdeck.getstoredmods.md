@@ -9,11 +9,11 @@ Gets a list of all cyberdeck mods in storage. (Does not included installed mods)
 **Signature:**
 
 ```typescript
-getStoredMods(): DeckModule[];
+getStoredMods(): DeckMod[];
 ```
 **Returns:**
 
-[DeckModule](./bitburner.deckmodule.md)<!-- -->\[\]
+[DeckMod](./bitburner.deckmod.md)<!-- -->\[\]
 
 ## Remarks
 
