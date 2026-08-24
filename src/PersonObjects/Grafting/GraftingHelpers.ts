@@ -4,6 +4,7 @@ import { Augmentations } from "../../Augmentation/Augmentations";
 import { calculateIntelligenceBonus } from "../formulas/intelligence";
 import { GraftableAugmentation } from "./GraftableAugmentation";
 import { getRecordEntries } from "../../Types/Record";
+import { getCyberdeckStatBonuses } from "../../CyberDeck/utils/modStatsUtils";
 
 export const getGraftingAvailableAugs = (): AugmentationName[] => {
   const augs: AugmentationName[] = [];
@@ -26,5 +27,5 @@ export const graftingIntBonus = (): number => {
 
 export const calculateGraftingTimeWithBonus = (aug: GraftableAugmentation): number => {
   const baseTime = aug.time;
-  return baseTime / graftingIntBonus();
+  return (baseTime / graftingIntBonus()) / getCyberdeckStatBonuses(1).endgameStats.graft_speed;
 };

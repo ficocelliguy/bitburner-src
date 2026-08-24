@@ -14,14 +14,9 @@ REQUIRED FOR MVP
   - sparkles!
 
 - hook up all stats
-  - cct_money
-  - IPvGO_power
-  - class_cost
   - stamina_gain
-  - graft_speed
   - sleeve_sync
   - stanek_charge
-  - equipment_cost
 
 TODO:
 

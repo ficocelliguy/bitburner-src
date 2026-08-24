@@ -60,6 +60,7 @@ import { Player } from "@player";
 import { getRandomIntInclusive } from "../../utils/helpers/getRandomIntInclusive";
 import { getRecordKeys } from "../../Types/Record";
 import { gainCyberdeckComponentsFromCCT } from "../../CyberDeck/effects";
+import { getCyberdeckStatBonuses } from "../../CyberDeck/utils/modStatsUtils";
 
 export function init(this: PlayerObject): void {
   /* Initialize Player's home computer */
@@ -560,7 +561,7 @@ export function gainCodingContractReward(
     }
     case CodingContractRewardType.Money: {
       const moneyGain =
-        CONSTANTS.CodingContractBaseMoneyGain * difficulty * currentNodeMults.CodingContractMoney * adjustedScaling;
+        CONSTANTS.CodingContractBaseMoneyGain * difficulty * currentNodeMults.CodingContractMoney * adjustedScaling * getCyberdeckStatBonuses(1).otherMults.cct_money;
       this.gainMoney(moneyGain, "codingcontract");
       return `Gained ${formatMoney(moneyGain)}`;
     }

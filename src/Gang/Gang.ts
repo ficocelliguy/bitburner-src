@@ -26,6 +26,7 @@ import { Player } from "@player";
 import { PowerMultiplier } from "./data/power";
 import { FactionName } from "@enums";
 import { CONSTANTS } from "../Constants";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 export enum RecruitmentResult {
   Success = "Success",
@@ -430,7 +431,8 @@ export class Gang {
     if (upg == null) {
       return Infinity;
     }
-    return upg.cost / this.getDiscount();
+    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.equipment_cost;
+    return (upg.cost * cyberdeckBonus) / this.getDiscount();
   }
 
   /** Serialize the current object to a JSON save state. */

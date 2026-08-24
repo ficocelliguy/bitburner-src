@@ -20,6 +20,8 @@ import { Company } from "../Company/Company";
 import { CompanyPosition } from "../Company/CompanyPosition";
 import { isMember } from "../utils/EnumHelper";
 import { getMultiplierFromCharisma } from "../DarkNet/effects/effects";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
+import { roundToTwo } from "../utils/helpers/roundToTwo";
 
 export function processWorkStats(person: IPerson, workStats: WorkStats): WorkStats {
   // "person" can be a normal object that the player passes to NS APIs, so we cannot use `person instanceof Sleeve`.
@@ -101,7 +103,8 @@ export function calculateCost(classInfo: Class, location: Location): number {
   const serverMeta = serverMetadata.find((s) => s.specialName === location.name);
   const server = GetServer(serverMeta ? serverMeta.hostname : "");
   const discount = (server as Server)?.backdoorInstalled ? 0.9 : 1;
-  return classInfo.earnings.money * location.costMult * discount;
+  const cyberdeckBonus = getCyberdeckStatBonuses(1).otherMults.class_cost;
+  return roundToTwo(classInfo.earnings.money * location.costMult * discount * cyberdeckBonus);
 }
 
 /** @returns per-cycle WorkStats */

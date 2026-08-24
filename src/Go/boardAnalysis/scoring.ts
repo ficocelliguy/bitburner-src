@@ -12,6 +12,7 @@ import { getEnumHelper } from "../../utils/EnumHelper";
 import { Go, GoEvents } from "../Go";
 import { addRepToFavor } from "../../Faction/formulas/favor";
 import { gainCyberdeckChipsFromIPvGO } from "../../CyberDeck/effects";
+import { getCyberdeckStatBonuses } from "../../CyberDeck/utils/modStatsUtils";
 
 /**
  * Returns the score of the current board.
@@ -87,7 +88,8 @@ export function endGoGame(boardState: BoardState) {
   statusToUpdate.nodePower +=
     score[GoColor.black].sum *
     getDifficultyMultiplier(score[GoColor.white].komi, boardState.board[0].length) *
-    getWinstreakMultiplier(statusToUpdate.winStreak, statusToUpdate.oldWinStreak);
+    getWinstreakMultiplier(statusToUpdate.winStreak, statusToUpdate.oldWinStreak) *
+    getCyberdeckStatBonuses(1).otherMults.IPvGO_power;
 
   statusToUpdate.nodes += score[GoColor.black].sum;
   Go.currentGame = boardState;

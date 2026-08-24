@@ -12,6 +12,7 @@ import { PlayerBaseWork, WorkType } from "./Work";
 import { applyWorkStats, newWorkStats, sumWorkStats, WorkStats } from "./WorkStats";
 import { findEnumMember } from "../utils/helpers/enum";
 import { isMember } from "../utils/EnumHelper";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 export interface Class {
   type: ClassType;
