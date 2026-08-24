@@ -20,6 +20,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import CheckIcon from "@mui/icons-material/Check";
 import { StaticModal } from "../../ui/React/StaticModal";
 import { FactionName } from "@enums";
+import { getCommissionFee } from "../StockMarketHelpers";
 
 interface IProps {
   rerender: () => void;
@@ -244,8 +245,8 @@ export function InfoAndPurchases(props: IProps): React.ReactElement {
       <Purchase4SMarketDataButton {...props} />
 
       <Typography>
-        Commission Fees: Every transaction you make has a{" "}
-        <Money money={StockMarketConstants.StockMarketCommission} forPurchase={true} /> commission fee.
+        Commission Fees: Every transaction you make has a <Money money={getCommissionFee()} forPurchase={true} />{" "}
+        commission fee.
       </Typography>
       <br />
       <Typography>

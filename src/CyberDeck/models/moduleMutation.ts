@@ -40,18 +40,19 @@ export function handleModuleMoved(result: DropResult) {
     return;
   }
 
-  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.source.index, result.destination.index);
+  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index);
 
   // Undo the move if it causes invalid wiring
   if (CyberdeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
-    moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.destination.index, result.source.index);
+    moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.source.index);
     SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
   }
 }
 
-export function moveModule(moduleToMove: DeckMod, sourceIsStorage: boolean, destinationIsStorage: boolean, sourceIndex: number, destinationIndex = 0) {
+export function moveModule(moduleToMove: DeckMod, sourceIsStorage: boolean, destinationIsStorage: boolean, destinationIndex = 0) {
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
+  const sourceIndex = sourceLocation.indexOf(moduleToMove);
 
   sourceLocation.splice(sourceIndex, 1);
   destinationLocation.splice(destinationIndex, 0, moduleToMove);
@@ -65,7 +66,7 @@ export function moveModule(moduleToMove: DeckMod, sourceIsStorage: boolean, dest
 export function ejectOverloadedModules() {
   for (const module of CyberdeckState.installedModules.slice(getCurrentRackSize())) {
     disconnectModule(module);
-    moveModule(module, false, true, CyberdeckState.installedModules.indexOf(module));
+    moveModule(module, false, true);
   }
 }
 

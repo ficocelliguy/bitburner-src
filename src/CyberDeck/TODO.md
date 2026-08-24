@@ -10,15 +10,10 @@ REQUIRED FOR MVP
 - test max-level mod ranges
 - test rarities of mods at high netrunning levels
 
-TODO:
-
 - modal showing netrunning result
   - sparkles!
 
 - hook up all stats
-  - program_creation_speed
-  - crime_speed
-  - stock_fees
   - cct_money
   - IPvGO_power
   - class_cost
@@ -27,6 +22,9 @@ TODO:
   - sleeve_sync
   - stanek_charge
   - equipment_cost
+
+TODO:
+
 
 - netrunning
   - animated background
@@ -57,8 +55,8 @@ Cyberdeck Expansion
 
 Project goals:
 - Let the player slowly assemble custom augment-like persistent buffs that reward long nodes
-- Ask the player to weigh tradeoffs / debuffs in exchange for buffs via randomized loot gacha
-- Add secondary bonuses to underutilized or niche mechanics (job work, hacknet money, manual program creation, crime, classes)
+- Ask the player to weigh tradeoffs / debuffs in exchange for buffs via randomized loot / gacha
+- Add secondary benefits to under-utilized or niche mechanics (job work, hacknet money, manual program creation, crime, classes)
 - Add the potential for rarely finding small (<10%) boosts to some mechanics that otherwise cannot be boosted 
 - Avoid boosting very strong mechanics like faction rep or batching
 

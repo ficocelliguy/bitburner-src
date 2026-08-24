@@ -77,14 +77,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return helpers.netscriptDelay(ctx, 1000).then(() => {
         getModOrThrow(modId);
         const storageIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
-        const rackIndex = CyberdeckState.installedModules.findIndex((mod) => mod.id === modId);
         const sourceIsStorage = storageIndex !== -1;
         const newIndex = Math.min(locationIndex, CyberdeckState.installedModules.length);
         if (sourceIsStorage && CyberdeckState.installedModules.length >= getCurrentRackSize()) {
           logger(ctx)(`Failed to move mod ${modId}: cyberdeck mod rack is already full.`);
           return false;
         }
-        moveModule(mod, sourceIsStorage, false, sourceIsStorage ? storageIndex : rackIndex, newIndex);
+        moveModule(mod, sourceIsStorage, false, newIndex);
 
         logger(ctx)(`Mod ${modId} installed on rack #${newIndex}`);
         return true;
@@ -98,11 +97,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         throw new Error(`index must be a non-negative integer, was ${locationIndex}`);
       }
       const storageIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
-      const rackIndex = CyberdeckState.installedModules.findIndex((mod) => mod.id === modId);
       const sourceIsStorage = storageIndex !== -1;
       const newIndex = Math.min(locationIndex, CyberdeckState.storedModules.length);
       logger(ctx)(`Mod ${modId} moved to storage slot #${newIndex}`);
-      moveModule(mod, sourceIsStorage, true, sourceIsStorage ? storageIndex : rackIndex, newIndex);
+      moveModule(mod, sourceIsStorage, true, newIndex);
     },
     addConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
       const modId1 = helpers.string(ctx, "modId", moduleId1);

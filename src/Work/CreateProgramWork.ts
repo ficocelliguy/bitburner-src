@@ -8,6 +8,7 @@ import { PlayerBaseWork, WorkType } from "./Work";
 import { Program } from "../Programs/Program";
 import { calculateIntelligenceBonus } from "../PersonObjects/formulas/intelligence";
 import { asProgramFilePath } from "../Paths/ProgramFilePath";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 export const isCreateProgramWork = (w: PlayerBaseWork | null): w is CreateProgramWork =>
   w !== null && w.type === WorkType.CREATE_PROGRAM;
@@ -48,7 +49,7 @@ export class CreateProgramWork extends PlayerBaseWork {
   }
 
   unitNeeded(): number {
-    return this.getProgram().create?.time ?? 0;
+    return (this.getProgram().create?.time ?? 0) / getCyberdeckStatBonuses(1).otherMults.program_creation_speed;
   }
 
   getProgram(): Program {

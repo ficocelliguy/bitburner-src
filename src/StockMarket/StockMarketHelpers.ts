@@ -1,6 +1,8 @@
 import { Stock } from "./Stock";
 import { PositionType } from "@enums";
 import { StockMarketConstants } from "./data/Constants";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
+import { roundToTwo } from "../utils/helpers/roundToTwo";
 
 // Amount by which a stock's forecast changes during each price movement
 export const forecastChangePerPriceMovement = 0.006;
@@ -23,12 +25,16 @@ export function getBuyTransactionCost(stock: Stock, shares: number, posType: Pos
 
   const isLong = posType === PositionType.Long;
 
-  // If the number of shares doesn't trigger a price movement, its a simple calculation
+  // If the number of shares doesn't trigger a price movement, it's a simple calculation
   if (isLong) {
-    return shares * stock.getAskPrice() + StockMarketConstants.StockMarketCommission;
+    return shares * stock.getAskPrice() + getCommissionFee();
   } else {
-    return shares * stock.getBidPrice() + StockMarketConstants.StockMarketCommission;
+    return shares * stock.getBidPrice() + getCommissionFee();
   }
+}
+
+export function getCommissionFee() {
+  return roundToTwo(StockMarketConstants.StockMarketCommission * getCyberdeckStatBonuses(1).otherMults.stock_fees);
 }
 
 /**
@@ -50,11 +56,11 @@ export function getSellTransactionGain(stock: Stock, shares: number, posType: Po
 
   const isLong = posType === PositionType.Long;
   if (isLong) {
-    return shares * stock.getBidPrice() - StockMarketConstants.StockMarketCommission;
+    return shares * stock.getBidPrice() - getCommissionFee();
   } else {
     // Calculating gains for a short position requires calculating the profit made
     const origCost = shares * stock.playerAvgShortPx;
-    const profit = (stock.playerAvgShortPx - stock.getAskPrice()) * shares - StockMarketConstants.StockMarketCommission;
+    const profit = (stock.playerAvgShortPx - stock.getAskPrice()) * shares - getCommissionFee();
 
     return origCost + profit;
   }
@@ -124,7 +130,7 @@ export function calculateBuyMaxAmount(stock: Stock, posType: PositionType, money
 
   const isLong = posType === PositionType.Long;
 
-  const remainingMoney = money - StockMarketConstants.StockMarketCommission;
+  const remainingMoney = money - getCommissionFee();
   const currPrice = isLong ? stock.getAskPrice() : stock.getBidPrice();
 
   return Math.floor(remainingMoney / currPrice);

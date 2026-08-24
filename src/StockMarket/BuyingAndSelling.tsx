@@ -4,7 +4,7 @@
  */
 import { Stock } from "./Stock";
 import {
-  getBuyTransactionCost,
+  getBuyTransactionCost, getCommissionFee,
   getSellTransactionGain,
   processTransactionForecastMovement,
 } from "./StockMarketHelpers";
@@ -103,7 +103,7 @@ export function buyStock(
 
   const origTotal = stock.playerShares * stock.playerAvgPx;
   Player.loseMoney(totalPrice, "stock");
-  const newTotal = origTotal + totalPrice - StockMarketConstants.StockMarketCommission;
+  const newTotal = origTotal + totalPrice - getCommissionFee();
   stock.playerShares = Math.round(stock.playerShares + shares);
   stock.playerAvgPx = newTotal / stock.playerShares;
   processTransactionForecastMovement(stock, shares);
@@ -114,13 +114,13 @@ export function buyStock(
   if (ctx) {
     const resultTxt = `Bought ${formatShares(shares)} shares of ${stock.symbol} for ${formatMoney(
       totalPrice,
-    )}. Paid ${formatMoney(StockMarketConstants.StockMarketCommission)} in commission fees.`;
+    )}. Paid ${formatMoney(getCommissionFee())} in commission fees.`;
     helpers.log(ctx, () => resultTxt);
   } else if (opts.suppressDialog !== true) {
     dialogBoxCreate(
       <>
         Bought {formatShares(shares)} shares of {stock.symbol} for <Money money={totalPrice} />. Paid{" "}
-        <Money money={StockMarketConstants.StockMarketCommission} /> in commission fees.
+        <Money money={getCommissionFee()} /> in commission fees.
       </>,
     );
   }
@@ -278,7 +278,7 @@ export function shortStock(
 
   const origTotal = stock.playerShortShares * stock.playerAvgShortPx;
   Player.loseMoney(totalPrice, "stock");
-  const newTotal = origTotal + totalPrice - StockMarketConstants.StockMarketCommission;
+  const newTotal = origTotal + totalPrice - getCommissionFee();
   stock.playerShortShares = Math.round(stock.playerShortShares + shares);
   stock.playerAvgShortPx = newTotal / stock.playerShortShares;
   processTransactionForecastMovement(stock, shares);
@@ -290,14 +290,14 @@ export function shortStock(
   if (ctx) {
     const resultTxt =
       `Bought a short position of ${formatShares(shares)} shares of ${stock.symbol} ` +
-      `for ${formatMoney(totalPrice)}. Paid ${formatMoney(StockMarketConstants.StockMarketCommission)} ` +
+      `for ${formatMoney(totalPrice)}. Paid ${formatMoney(getCommissionFee())} ` +
       `in commission fees.`;
     helpers.log(ctx, () => resultTxt);
   } else if (!opts.suppressDialog) {
     dialogBoxCreate(
       <>
         Bought a short position of {formatShares(shares)} shares of {stock.symbol} for <Money money={totalPrice} />.
-        Paid <Money money={StockMarketConstants.StockMarketCommission} /> in commission fees.
+        Paid <Money money={getCommissionFee()} /> in commission fees.
       </>,
     );
   }

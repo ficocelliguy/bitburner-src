@@ -262,7 +262,7 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
 
   disconnectModule(module);
   if (CyberdeckState.installedModules.includes(module)) {
-    moveModule(module, false, true, 0);
+    moveModule(module, false, true);
   }
   CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
 

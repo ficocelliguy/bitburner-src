@@ -10,6 +10,7 @@ import { PlayerBaseWork, WorkType } from "./Work";
 import { scaleWorkStats, WorkStats } from "./WorkStats";
 import { calculateCrimeWorkStats } from "./Formulas";
 import { getEnumHelper } from "../utils/EnumHelper";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 interface CrimeWorkParams {
   crimeType: CrimeType;
@@ -40,7 +41,7 @@ export class CrimeWork extends PlayerBaseWork {
      */
     cycles = Math.min(cycles, 12960000);
     this.cyclesWorked += cycles;
-    const time = Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0;
+    const time = (Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0) / getCyberdeckStatBonuses(1).otherMults.crime_speed;
     this.unitCompleted += CONSTANTS.MilliPerCycle * cycles;
     while (this.unitCompleted >= time) {
       this.commit();
