@@ -3,6 +3,8 @@ REQUIRED FOR MVP
 - api
 - api docs
 
+- limit crafting based on storage capacity
+
 - basic doc page
 
 - Add WiFUs

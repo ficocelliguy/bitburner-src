@@ -4,6 +4,30 @@
 
 ## bitburner package
 
+## Enumerations
+
+<table><thead><tr><th>
+
+Enumeration
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[ModuleType](./bitburner.moduletype.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
+
 ## Interfaces
 
 <table><thead><tr><th>
@@ -344,6 +368,17 @@ Data representing the internal values of a crime.
 </td><td>
 
 Crime
+
+
+</td></tr>
+<tr><td>
+
+[Cyberdeck](./bitburner.cyberdeck.md)
+
+
+</td><td>
+
+Cyberdeck API
 
 
 </td></tr>
@@ -1843,6 +1878,44 @@ Names of all companies
 </td></tr>
 <tr><td>
 
+[ComponentCounts](./bitburner.componentcounts.md)
+
+
+</td><td>
+
+Count of various cyberdeck component types.
+
+
+</td></tr>
+<tr><td>
+
+[ComponentStats](./bitburner.componentstats.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[Connection](./bitburner.connection.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ConsumableStats](./bitburner.consumablestats.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [CorpEmployeePosition](./bitburner.corpemployeeposition.md)
 
 
@@ -1963,6 +2036,15 @@ Names of all companies
 </td></tr>
 <tr><td>
 
+[CyberdeckStats](./bitburner.cyberdeckstats.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [DarknetResponseCode](./bitburner.darknetresponsecode.md)
 
 
@@ -1999,6 +2081,24 @@ Errors:
 
 </td><td>
 
+
+
+</td></tr>
+<tr><td>
+
+[DeckModule](./bitburner.deckmodule.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[EndgameMults](./bitburner.endgamemults.md)
+
+
+</td><td>
 
 
 </td></tr>
@@ -2229,6 +2329,33 @@ Names of all locations
 </td></tr>
 <tr><td>
 
+[MiscMults](./bitburner.miscmults.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModuleStats](./bitburner.modulestats.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[NetrunningRewards](./bitburner.netrunningrewards.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
 [NSEnums](./bitburner.nsenums.md)
 
 
@@ -2349,6 +2476,24 @@ Use React.createElement to make the ReactElement type, see [creating an element 
 </td><td>
 
 Object representing a sleeve current task.
+
+
+</td></tr>
+<tr><td>
+
+[Socket](./bitburner.socket.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[SocketList](./bitburner.socketlist.md)
+
+
+</td><td>
 
 
 </td></tr>

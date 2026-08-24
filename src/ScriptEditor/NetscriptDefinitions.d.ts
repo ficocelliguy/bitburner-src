@@ -4614,6 +4614,10 @@ export interface Cyberdeck {
    * RAM cost: 0.05 GB
    */
   getNetrunningIceCost(): number;
+
+  /**
+   * Namespace for API that give statistics on mod effects, components, and levels
+   */
   stats: {
     /**
      * Returns all of the bonuses from mods that are installed and charged.
@@ -4641,20 +4645,89 @@ export interface Cyberdeck {
     /**
      * Gets info on which activities have produced crafting components.
      *
-     * remarks
+     * @remarks
      * RAM cost: 0 GB
      */
     getComponentStats(): ComponentStats;
   };
+  /**
+   * Namespace for API methods that create or destroy mods and ICEbreakers.
+   */
   crafting: {
+    /**
+     * Crafts ICEbreakers from crafting components.
+     *
+     * ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace.
+     * Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas to search
+     * for new, more powerful mods.
+     *
+     * @remarks
+     * RAM cost: 1 GB
+     *
+     * @param count - the number of ICEbreakers to craft
+     */
     craftICEbreaker(count?: number): boolean;
+    /**
+     * Creates a new power supply mod using crafting components.
+     *
+     * A power supply is a key component of a computer. It is not a generator - it needs to be charged to function -
+     * but it excels at distributing power to other mods that need it.
+     *
+     * @remarks
+     * RAM cost: 1 GB
+     */
     craftPowerSupplyMod(): DeckModule | null;
+    /**
+     * Creates a new processing mod using crafting components.
+     *
+     * Processing mods generally provide boosts to the cyberdeck itself, or to activities that a wearable computer can boost.
+     *
+     * @remarks
+     * RAM cost: 1 GB
+     */
     craftProcessingMod(): DeckModule | null;
+
+    /**
+     * Creates a new uplink mod using crafting components.
+     *
+     * Uplink mods provide boosts through your augment system, improving various stats related to the player.
+     *
+     * @remarks
+     * RAM cost: 1 GB
+     */
     craftUplinkMod(): DeckModule | null;
+
+    /**
+     * Destroys a mod in exchange for a few crafting components.
+     *
+     * Mods marked as "favorite" cannot be recycled.
+     *
+     * @remarks
+     * RAM cost: 0.5 GB
+     */
     recycleMod(modId: string): ComponentCounts;
   };
+
+  /**
+   * The old net is a wasteland. Rampant corporate greed and unrestricted AI gradually turned it into
+   * a death trap. A great firewall was erected around the remaining clean systems in a few small areas,
+   * and the old net was abandoned.
+   *
+   * May the Blackwall continue to shield us all.
+   */
   legacy: {
+    /**
+     * Are you willing to pay the price?
+     */
     getCost(): number;
+
+    /**
+     * The Blackwall shields us from the horrors of the old net.
+     * There's no way though it, is there?
+     *
+     * @remarks
+     * RAM cost: 8 GB
+     */
     delve(): Promise<NetrunningRewards>;
   };
 }

@@ -257,7 +257,7 @@ const cyberdeck = {
     craftPowerSupplyMod: 1,
     craftProcessingMod: 1,
     craftUplinkMod: 1,
-    recycleMod: 1,
+    recycleMod: 0.5,
   },
   legacy: {
     getCost: 0,

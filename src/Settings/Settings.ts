@@ -144,4 +144,6 @@ export const Settings = {
   KeyBindings: {} as PlayerDefinedKeyBindingsType,
   /** Whether to sync Steam achievements */
   SyncSteamAchievements: true,
+  /** Whether to use custom art icons for cyberdeck mods */
+  CyberdeckWiFU: true,
 };

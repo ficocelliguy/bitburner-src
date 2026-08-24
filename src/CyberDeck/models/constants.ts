@@ -53,9 +53,9 @@ export function getModuleDescription(moduleType: ModuleType): string {
     case ModuleType.CyberdeckIOPanel:
       return "Hosaka Cyberdecks: The finest that money can buy. This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.";
     case ModuleType.PowerSupply:
-      return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, it just distributes it.";
+      return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, but it excels at distributing power to other mods.";
     case ModuleType.ProcessingModule:
-      return "Processing mods generally provide boosts to the cyberdeck itself, improving stats related to it.";
+      return "Processing mods generally provide boosts to the cyberdeck itself, or to activities that a wearable computer can boost.";
     case ModuleType.Uplink:
       return "Uplink mods provide boosts through your augment system, improving various stats related to the player.";
     case ModuleType.RackExtension:

@@ -158,6 +158,27 @@ Namespace for [corporation](./bitburner.corporation.md) functions. Contains spoi
 </td></tr>
 <tr><td>
 
+[cyberdeck](./bitburner.ns.cyberdeck.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[Cyberdeck](./bitburner.cyberdeck.md)
+
+
+</td><td>
+
+Namespace for [cyberdeck](./bitburner.cyberdeck.md) functions.
+
+
+</td></tr>
+<tr><td>
+
 [dnet](./bitburner.ns.dnet.md)
 
 

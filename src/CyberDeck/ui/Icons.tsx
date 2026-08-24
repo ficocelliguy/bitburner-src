@@ -6,9 +6,17 @@ import AllInboxSharpIcon from "@mui/icons-material/AllInboxSharp";
 import MedicalInformationSharpIcon from "@mui/icons-material/MedicalInformationSharp";
 import SimCardOutlinedIcon from "@mui/icons-material/SimCardOutlined";
 import { Settings } from "../../Settings/Settings";
+import hunter from "../assets/hunter.png";
+import yogi from "../assets/yogi.png";
+import idol from "../assets/idol.png";
 
 export function getModuleIcon(module: DeckModule) {
-  return <div style={{padding: "8px 2px", width: "40px", height: "40px", color:getRarityColor(module)}}>{getModIconComponent(module.type, 40)}</div>
+  const size = Settings.CyberdeckWiFU ? 50 : 40;
+  return (
+    <div style={{ padding: "8px 2px", width: `40px`, height: `${size}px`, color: getRarityColor(module) }}>
+      {Settings.CyberdeckWiFU ? getCustomModIcon(module, size) : getModIconComponent(module.type, size)}
+    </div>
+  );
 }
 
 export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
@@ -28,6 +36,28 @@ export function getModIconComponent(moduleType: ModuleType, size: number = 50) {
   if (moduleType === ModuleType.SkillChip) {
     return <MedicalInformationSharpIcon style={style}/>;
   }
+}
+
+export function getCustomModIcon(module: DeckModule, size: number) {
+  return (
+    <img
+      src={getCustomModIMage(module)}
+      style={{ position: "relative", top: "-4px", left: "-2px" }}
+      width={size}
+      height={size}
+    />
+  );
+}
+
+function getCustomModIMage(module: DeckModule) {
+  // TODO-fico
+  if (module.type === ModuleType.Uplink) {
+    return hunter;
+  }
+  if (module.type === ModuleType.ProcessingModule) {
+    return yogi;
+  }
+  return idol;
 }
 
 export function getRarityColor(module: DeckModule) {
