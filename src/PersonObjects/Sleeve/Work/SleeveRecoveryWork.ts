@@ -2,6 +2,7 @@ import { Generic_fromJSON, Generic_toJSON, IReviverValue, constructorsForReviver
 import { Sleeve } from "../Sleeve";
 import { SleeveBaseWork, SleeveWorkType } from "./Work";
 import { calculateIntelligenceBonus } from "../../formulas/intelligence";
+import { getCyberdeckStatBonuses } from "../../../CyberDeck/utils/modStatsUtils";
 
 export const isSleeveRecoveryWork = (w: SleeveBaseWork | null): w is SleeveRecoveryWork =>
   w !== null && w.type === SleeveWorkType.RECOVERY;
@@ -10,9 +11,10 @@ export class SleeveRecoveryWork extends SleeveBaseWork {
   type: SleeveWorkType.RECOVERY = SleeveWorkType.RECOVERY;
 
   process(sleeve: Sleeve, cycles: number) {
+    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.sleeve_sync;
     sleeve.shock = Math.max(
       0,
-      sleeve.shock - 0.0002 * calculateIntelligenceBonus(sleeve.skills.intelligence, 0.75) * cycles,
+      sleeve.shock - 0.0002 * calculateIntelligenceBonus(sleeve.skills.intelligence, 0.75) * cycles * cyberdeckBonus,
     );
     if (sleeve.shock <= 0) sleeve.stopWork();
   }

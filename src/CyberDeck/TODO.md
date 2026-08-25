@@ -13,12 +13,7 @@ REQUIRED FOR MVP
 - modal showing netrunning result
   - sparkles!
 
-- hook up all stats
-  - stamina_gain
-  - sleeve_sync
-
 TODO:
-
 
 - netrunning
   - animated background

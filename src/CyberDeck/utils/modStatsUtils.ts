@@ -164,6 +164,8 @@ export function getCyberdeckStatBonuses(basis = 0): CyberdeckStats {
   const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
   const endgameStats = mergeBuffs(getDefaultEndgameMults(basis), ...endgameMultsFromModules);
 
+  playerMults.bladeburner_stamina_gain = endgameStats.stamina_gain;
+
   return {
     playerMults,
     otherMults,
