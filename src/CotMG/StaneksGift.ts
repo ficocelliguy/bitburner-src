@@ -13,6 +13,7 @@ import { currentNodeMults } from "../BitNode/BitNodeMultipliers";
 import { defaultMultipliers, mergeMultipliers, Multipliers, scaleMultipliers } from "../PersonObjects/Multipliers";
 import { Augmentations } from "../Augmentation/Augmentations";
 import { getKeyList } from "../utils/helpers/getKeyList";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 export class StaneksGift extends BaseGift {
   isBonusCharging = false;
@@ -35,7 +36,8 @@ export class StaneksGift extends BaseGift {
       af.numCharge = (af.highestCharge * af.numCharge) / threads + 1;
       af.highestCharge = threads;
     } else {
-      af.numCharge += threads / af.highestCharge;
+      const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.stanek_charge;
+      af.numCharge += (threads * cyberdeckBonus) / af.highestCharge;
     }
 
     const cotmg = Factions[FactionName.ChurchOfTheMachineGod];

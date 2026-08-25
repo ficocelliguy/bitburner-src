@@ -16,7 +16,6 @@ REQUIRED FOR MVP
 - hook up all stats
   - stamina_gain
   - sleeve_sync
-  - stanek_charge
 
 TODO:
 
