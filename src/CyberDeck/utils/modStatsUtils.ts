@@ -11,6 +11,7 @@ import {
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
+import { roundToFour } from "../../utils/helpers/roundToTwo";
 
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
@@ -117,12 +118,12 @@ export function getDefaultConsumableStats(): ConsumableStats {
   };
 }
 
-// At the max of level 12, the min is 0.7% and the max is 3%.
-// At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.2% per level.
+// At the max of level 12, the min is 0.7% and the max is 10%.
+// At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.8% per level.
 export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1): [number, number] {
   return [
-    0.001 * minScaling + 0.0005 * level * growthScaling,
-    0.006 * maxScaling + 0.002 * level * growthScaling,
+    roundToFour(0.001 * minScaling + 0.002 * level * growthScaling),
+    roundToFour(0.006 * maxScaling + 0.008 * level * growthScaling),
   ];
 }
 

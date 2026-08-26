@@ -12,11 +12,17 @@ import { CraftingPage } from "./ui/CraftingPage";
 import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
 import { gainCyberdeck } from "./effects";
+import { CyberdeckEvents } from "./models/CyberdeckState";
 
 export function CyberDeckRoot(): React.ReactElement {
-  useRerender(1000);
+  const rerender = useRerender(1000);
   const [value, setValue] = React.useState(0);
   const styles = useCyberdeckStyles();
+
+  useEffect(() => {
+    const clearSubscription = CyberdeckEvents.subscribe(() => rerender());
+    return () => clearSubscription();
+  }, [rerender]);
 
   useEffect(() => {
     // TODO-fico: this is temporary setup for testers

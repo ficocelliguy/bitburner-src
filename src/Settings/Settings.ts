@@ -145,5 +145,5 @@ export const Settings = {
   /** Whether to sync Steam achievements */
   SyncSteamAchievements: true,
   /** Whether to use custom art icons for cyberdeck mods */
-  CyberdeckWiFU: true,
+  CyberdeckWiFU: false,
 };

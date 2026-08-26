@@ -8,7 +8,7 @@ import { Player } from "@player";
 export const CyberdeckEvents = new EventEmitter<[]>();
 
 export const CyberdeckState = {
-  hasCyberdeck: false,
+  hasCyberdeck: true, // TODO-fico: change this to false after testing is done
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,

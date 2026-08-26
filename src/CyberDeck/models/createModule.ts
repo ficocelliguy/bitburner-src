@@ -1,6 +1,6 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckMod, ModType } from "../Types";
+import { ComponentCounts, DeckMod, ModKey, ModType } from "../Types";
 import { disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEbreakerCraftingCost,
@@ -26,7 +26,7 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
-import { mergeBuffs } from "../utils/modStatsUtils";
+import { getFormattedStatBonus, mergeBuffs } from "../utils/modStatsUtils";
 
 
 export const CyberdeckIOPanel: DeckMod = {
@@ -167,7 +167,7 @@ export function createInitialModules(force = false) {
   CyberdeckState.installedModules = [];
   CyberdeckState.storedModules = [];
   CyberdeckState.connections = [];
-  CyberdeckState.netrunningLevel = 8;
+  CyberdeckState.netrunningLevel = 12;
   for (let i = 0; i < 4; i++) {
     CyberdeckState.installedModules.push(createModule(getNextCraftingWHRNG()));
   }
@@ -180,6 +180,18 @@ export function createInitialModules(force = false) {
   CyberdeckState.components.neurodes = 25;
   CyberdeckState.components.ICE = 4;
   CyberdeckState.components.cores = 4;
+
+  // TODO-fico: remove later after testing
+  const maxBonuses = getAllStatRanges(12);
+  const statList = [
+    ...Object.entries(maxBonuses.playerMults ?? {}),
+    ...Object.entries(maxBonuses.otherMults ?? {}),
+    ...Object.entries(maxBonuses.consumableStats ?? {}),
+    ...Object.entries(maxBonuses.endgameStats ?? {}),
+  ] as [ModKey, [number, number]][];
+
+  const stats = statList.map(([k, [v1, v2]]) => `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`).join("\n");
+  console.log(stats);
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {

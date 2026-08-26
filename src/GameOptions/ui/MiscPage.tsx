@@ -55,6 +55,17 @@ export const MiscPage = (): React.ReactElement => {
         }
       />
       <OptionSwitch
+        checked={Settings.CyberdeckWiFU}
+        onChange={(newValue) => (Settings.CyberdeckWiFU = newValue)}
+        text="Enable WiFU Cyberdeck Theme"
+        tooltip={
+          <>
+            If enabled, changes the default cyberdeck mod icons to instead be WiFU as a nod to
+            Molly, Trinity, Rachael, Judy, Lucy, and other characters in cyberpunk media.
+          </>
+        }
+      />
+      <OptionSwitch
         checked={Settings.SyncSteamAchievements}
         onChange={(newValue) => (Settings.SyncSteamAchievements = newValue)}
         text="Sync Steam achievements"

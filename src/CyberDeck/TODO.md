@@ -3,6 +3,8 @@ REQUIRED FOR MVP
 - api
   - @returns
 
+- tune debuffs better - multiplier below 1?
+
 - test left-hand menu w/o cyberdeck
 - set up handling for glitch location w/o cyberdeck
 
@@ -15,9 +17,12 @@ REQUIRED FOR MVP
 - make hand-chosen starting module setup
 
 - Add WiFUs
+  - setting toggle
+  - Wired Firmware Unit
 
 - test max-level mod ranges
-- test rarities of mods at high netrunning levels
+
+- cap on stock fee reduction
 
 - modal showing netrunning result
   - sparkles!

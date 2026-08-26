@@ -70,9 +70,9 @@ export function getAllStatRanges(level: number) {
     crime_money: getStatRollRange(level, 1.5, 3, 1.5),
   };
   const otherMults: { [K in keyof MiscMults]: [number, number] } = {
-    romProduction: getStatRollRange(level, 10, 30, 8),
-    chipProduction: getStatRollRange(level, 10, 30, 8),
-    neurodeProduction: getStatRollRange(level, 10, 30, 8),
+    romProduction: getStatRollRange(level, 10, 30, 40),
+    chipProduction: getStatRollRange(level, 10, 30, 40),
+    neurodeProduction: getStatRollRange(level, 10, 30, 40),
     program_creation_speed: getStatRollRange(level, 1.5, 3, 1.5),
     crime_speed: getStatRollRange(level, 1.5, 3, 1.5),
     stock_fees: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
@@ -81,9 +81,9 @@ export function getAllStatRanges(level: number) {
     class_cost: getStatRollRange(level, -2, -4, -3),
   };
   const consumableStats: { [K in keyof ConsumableStats]: [number, number] } = {
-    netrunning_lvl: getStatRollRange(level, 10, 30, 8),
-    crafting_lvl: getStatRollRange(level, 10, 30, 8),
-    netrun_cooldown_lvl: getStatRollRange(level, 10, 30, 8),
+    netrunning_lvl: getStatRollRange(level, 10, 30, 20),
+    crafting_lvl: getStatRollRange(level, 10, 30, 20),
+    netrun_cooldown_lvl: getStatRollRange(level, 10, 30, 20),
     mod_storage: getStatRollRange(level, 20, 40, 10),
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
@@ -207,13 +207,14 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
   const levelUpAttempts = (levelBoost / (levelBoost + 1)) * 16 + 4;
+  const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;
   for (let i = 0; i < levelUpAttempts; i++) {
-    if (rng.random() < 0.5 - i / 20) {
+    if (rng.random() < startingValue - i / 20) {
       level++;
     }
   }
-  return level;
+  return Math.min(level, 12);
 }
 
 export function getID(rng: WHRNG) {
