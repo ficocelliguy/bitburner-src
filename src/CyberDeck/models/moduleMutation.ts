@@ -32,6 +32,7 @@ export function handleModuleMoved(result: DropResult) {
     moduleToMove.type === ModType.RackExtension &&
     getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions
   ) {
+    // TODO-fico: rack extension count is a SF reward?
     SnackbarEvents.emit(
       `Cannot install more than ${CyberdeckState.maxInstalledRackExtensions} Rack Extension modules.`,
       ToastVariant.ERROR,

@@ -19,7 +19,7 @@ export function CyberDeckRoot(): React.ReactElement {
   const styles = useCyberdeckStyles();
 
   useEffect(() => {
-    // TODO-fico: this is temporary setup
+    // TODO-fico: this is temporary setup for testers
     gainCyberdeck();
   }, []);
 

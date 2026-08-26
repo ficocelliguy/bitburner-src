@@ -54,16 +54,19 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
 }
 
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
-  const debuff = getDebuff(level, rng); // TODO: higher levels don't have debuff
-  // TODO: debuff in exchange for more slots
+  const debuff = getDebuff(level, rng);
+  const extraSlotVariant = rng.random() < 0.1;
+  const debuff2 = extraSlotVariant? getOtherStatDebuff(level,rng) : {};
+  const bonus = extraSlotVariant ? 3 : 2;
 
   return {
     type: ModType.PowerSupply,
     id: getID(rng),
-    sockets: getRandomSockets(rng, 2 + level / 2, 2),
+    sockets: getRandomSockets(rng, 2 + level / 3, bonus),
     level,
     stats: {
       playerMults: debuff,
+      otherMults: debuff2,
     },
   };
 }

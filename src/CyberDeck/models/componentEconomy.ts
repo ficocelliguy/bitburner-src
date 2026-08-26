@@ -38,7 +38,6 @@ export function gainCyberdeckComponents(cycles: number) {
   CyberdeckState.components.ROM += stats.otherMults.romProduction;
 
   // Violent crime gives neurodes
-  // TODO-fico: ccts should give neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
     const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * 3;
     CyberdeckState.components.neurodes += newNeurodes;
@@ -47,7 +46,6 @@ export function gainCyberdeckComponents(cycles: number) {
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
   // Petty crime gives ROM
-  // TODO-fico: nuke/backdoor, caches should also give ROM
   else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
     const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
     const newROM = 0.1 + (10 * newMoney + 1e7) / (newMoney + 1e7);
@@ -71,7 +69,6 @@ export function gainCyberdeckComponents(cycles: number) {
 
   // Company job gives chips
   if (getAllWorkRep() > lastStatsSnapshot.totalWorkRep) {
-    // TODO-fico: IPvGO should also give chips
     const newRep = getAllWorkRep() - lastStatsSnapshot.totalWorkRep;
     const newChips = 0.1 + (10 * newRep + 1000) / (newRep + 1000);
     CyberdeckState.components.chips += newChips;

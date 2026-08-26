@@ -1,9 +1,14 @@
 REQUIRED FOR MVP
 
 - api
-- api docs
 
-- basic doc page
+- basic doc page - rewrite
+
+- add tech store button to buy cyberdeck in New Tokyo
+
+- remove testing button that adds components
+
+- make hand-chosen starting module setup
 
 - Add WiFUs
 
@@ -12,6 +17,10 @@ REQUIRED FOR MVP
 
 - modal showing netrunning result
   - sparkles!
+
+- code review
+
+- make testing script
 
 TODO:
 
