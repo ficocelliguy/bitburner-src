@@ -54,7 +54,9 @@ import { Crimes } from "../Crime/Crimes";
 import { DarknetServer } from "../Server/DarknetServer";
 import { populateDarknet } from "../DarkNet/controllers/NetworkGenerator";
 import { deprecationWarning } from "../utils/DeprecationHelper";
-import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
+import { gainCyberdeck, gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
+import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
+import { CyberdeckPurchasePrice } from "../CyberDeck/models/constants";
 
 export function NetscriptSingularity(): InternalAPI<ISingularity> {
   const runAfterReset = function (cbScript: ScriptFilePath) {
@@ -412,6 +414,25 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
       getTorRouter();
       Player.gainIntelligenceExp(CONSTANTS.IntelligenceSingFnBaseExpGain / 500);
       helpers.log(ctx, () => "You have purchased a Tor router!");
+      return true;
+    },
+    purchaseCyberdeck: (ctx) => {
+      helpers.checkSingularityAccess(ctx);
+
+      if (CyberdeckState.hasCyberdeck) {
+        helpers.log(ctx, () => "You already have a cyberdeck!");
+        return true;
+      }
+
+      if (Player.money < CyberdeckPurchasePrice) {
+        helpers.log(ctx, () => "You cannot afford to purchase a cyberdeck.");
+        return false;
+      }
+      Player.loseMoney(CyberdeckPurchasePrice, "other");
+
+      gainCyberdeck();
+      Player.gainIntelligenceExp(CONSTANTS.IntelligenceSingFnBaseExpGain / 500);
+      helpers.log(ctx, () => "You have purchased a cyberdeck!");
       return true;
     },
     purchaseProgram: (ctx, _programName) => {

@@ -7,6 +7,8 @@ export const netrunningInitialTraceDecayWindowMs = 8000; // 20000
 export const corruptedNetrunningHardCooldownMs = 1000 * 30 // 1000 * 90
 export const minCyclesToProcess = 20;
 
+export const CyberdeckPurchasePrice = 600_000_000;
+
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   ROM: "⛃",
   neurodes: "⌬",

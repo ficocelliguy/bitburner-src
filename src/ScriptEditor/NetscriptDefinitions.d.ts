@@ -2068,6 +2068,19 @@ export interface Singularity {
   purchaseTor(): boolean;
 
   /**
+   * Purchases a Cyberdeck.
+   *
+   * @remarks
+   * RAM cost: 2 GB * 16/4/1
+   *
+   * This function allows you to purchase a cyberdeck. The cost is the same as manually
+   * buying one from New Tokyo.
+   *
+   * @returns True if purchase is successful or if you already have a cyberdeck, false otherwise.
+   */
+  purchaseCyberdeck(): boolean;
+
+  /**
    * Purchase a program from the dark web.
    * @remarks
    * RAM cost: 2 GB * 16/4/1
@@ -9972,6 +9985,7 @@ type LocationNameEnumType = {
   NewTokyoNoodleBar: "Noodle Bar";
   NewTokyoVitaLife: "VitaLife";
   NewTokyoArcade: "Arcade";
+  NewTokyoTaiyangDigital: "Taiyang Digital";
 
   IshimaNovaMedical: "Nova Medical";
   IshimaOmegaSoftware: "Omega Software";

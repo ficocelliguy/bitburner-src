@@ -52,6 +52,7 @@ type LocationNameEnumType = {
   NewTokyoNoodleBar: "Noodle Bar";
   NewTokyoVitaLife: "VitaLife";
   NewTokyoArcade: "Arcade";
+  NewTokyoTaiyangDigital: "Taiyang Digital";
 
   IshimaNovaMedical: "Nova Medical";
   IshimaOmegaSoftware: "Omega Software";

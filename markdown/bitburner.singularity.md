@@ -616,6 +616,17 @@ Purchase an augmentation
 </td></tr>
 <tr><td>
 
+[purchaseCyberdeck()](./bitburner.singularity.purchasecyberdeck.md)
+
+
+</td><td>
+
+Purchases a Cyberdeck.
+
+
+</td></tr>
+<tr><td>
+
 [purchaseProgram(programName)](./bitburner.singularity.purchaseprogram.md)
 
 

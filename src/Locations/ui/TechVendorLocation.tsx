@@ -20,6 +20,8 @@ import { PurchaseServerModal } from "./PurchaseServerModal";
 import { formatRam } from "../../ui/formatNumber";
 import { Box } from "@mui/material";
 import { useCycleRerender } from "../../ui/React/hooks";
+import { CyberdeckPurchaseButton } from "../../CyberDeck/ui/CyberdeckPurchaseButton";
+import { CityName } from "@enums";
 
 function ServerButton(props: { ram: number }): React.ReactElement {
   const [open, setOpen] = useState(false);
@@ -56,7 +58,14 @@ export function TechVendorLocation(props: { loc: Location }): React.ReactElement
         <i>"You can order bigger cloud servers via scripts. We don't take custom orders in person."</i>
       </Typography>
       <br />
-      <TorButton rerender={rerender} />
+      <Box sx={{ display: "grid", width: "fit-content" }}>
+        <TorButton rerender={rerender} />
+        {props.loc.city === CityName.NewTokyo && (
+          <>
+            <CyberdeckPurchaseButton rerender={rerender} />
+          </>
+        )}
+      </Box>
       <br />
       <RamButton rerender={rerender} />
       <br />

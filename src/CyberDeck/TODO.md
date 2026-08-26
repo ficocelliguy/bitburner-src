@@ -1,6 +1,10 @@
 REQUIRED FOR MVP
 
 - api
+  - @returns
+
+- test left-hand menu w/o cyberdeck
+- set up handling for glitch location w/o cyberdeck
 
 - basic doc page - rewrite
 
@@ -18,7 +22,9 @@ REQUIRED FOR MVP
 - modal showing netrunning result
   - sparkles!
 
-- code review
+- code review 
+- unit tests
+- lint
 
 - make testing script
 

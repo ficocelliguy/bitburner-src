@@ -459,6 +459,13 @@ export const LocationsMetadata: IConstructorParams[] = [
     types: [LocationType.Special],
   },
   {
+    city: CityName.NewTokyo,
+    name: LocationName.NewTokyoTaiyangDigital,
+    types: [LocationType.TechVendor],
+    techVendorMaxRam: 1024,
+    techVendorMinRam: 128,
+  },
+  {
     city: null,
     name: LocationName.Void,
     types: [LocationType.Special],

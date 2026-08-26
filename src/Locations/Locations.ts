@@ -131,9 +131,9 @@ Cities[CityName.NewTokyo].asciiArt = `
                                           \\                                    
                     [hospital]             o 15 [world stock exchange]          
                                            |                                    
-                  o--x--F--x-----x-----x---+---x----x--I--x-o                   
+                  o--x--F----x-----J---x---+---x----x--I--x-o
                                            |                                    
-                                           |                                    
+                         [taiyang digital] |                                    
                                            o 17                                 
                                                                                 
                                                                                 

@@ -160,6 +160,7 @@ const singularity = {
   travelToCity: SF4Cost(RamCostConstants.SingularityFn1),
   goToLocation: SF4Cost(RamCostConstants.SingularityFn3),
   purchaseTor: SF4Cost(RamCostConstants.SingularityFn1),
+  purchaseCyberdeck: SF4Cost(RamCostConstants.SingularityFn1),
   purchaseProgram: SF4Cost(RamCostConstants.SingularityFn1),
   getCurrentServer: SF4Cost(RamCostConstants.SingularityFn1),
   getCompanyPositionInfo: SF4Cost(RamCostConstants.SingularityFn1),

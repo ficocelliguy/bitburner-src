@@ -8,7 +8,7 @@ import { Player } from "@player";
 export const CyberdeckEvents = new EventEmitter<[]>();
 
 export const CyberdeckState = {
-  hasCyberdeck: true,
+  hasCyberdeck: false,
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,
