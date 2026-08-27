@@ -84,6 +84,8 @@ the socket to remove a connection from
 
 boolean
 
+true if the connection was made successfuly; false if it is invalid
+
 ## Remarks
 
 RAM cost: 0.05 GB

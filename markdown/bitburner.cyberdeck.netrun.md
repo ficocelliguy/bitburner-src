@@ -17,6 +17,8 @@ netrun(): Promise<NetrunningRewards>;
 
 Promise&lt;[NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->&gt;
 
+an indication if netrunning was successful, and the rewards from netrunning (if any)
+
 ## Remarks
 
 RAM cost: 3 GB

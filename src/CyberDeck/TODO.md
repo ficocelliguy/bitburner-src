@@ -1,7 +1,6 @@
 REQUIRED FOR MVP
 
 - api
-  - @returns
 
 - tune debuffs better - multiplier below 1?
 

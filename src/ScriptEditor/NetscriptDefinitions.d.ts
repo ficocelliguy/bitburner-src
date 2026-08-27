@@ -4601,6 +4601,7 @@ export interface Cyberdeck {
    * @param modId1 - the ID of the mod to disconnect
    * @param modId2 - the ID of the second mod to disconnect
    * @param socketIndex - the socket to remove a connection from
+   * @returns true if the connection was made successfuly; false if it is invalid
    */
   removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 
@@ -4612,6 +4613,8 @@ export interface Cyberdeck {
    *
    * @remarks
    * RAM cost: 3 GB
+   *
+   * @returns an indication if netrunning was successful, and the rewards from netrunning (if any)
    */
   netrun(): Promise<NetrunningRewards>;
 
@@ -4623,6 +4626,8 @@ export interface Cyberdeck {
    *
    * @remarks
    * RAM cost: 0.05 GB
+   *
+   * @returns the current ICEbreaker cost of netrunning
    */
   getNetrunningIceCost(): number;
 
@@ -4635,6 +4640,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 0 GB
+     *
+     * @returns the stat buffs and debuffs from all currently-charged modules
      */
     getStatBonuses(): CyberdeckStats;
     /**
@@ -4644,6 +4651,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 0 GB
+     *
+     * @returns the current skill levels and upgrade levels for cyberdeck mechanics
      */
     getLevels(): {
       netrunningLevel: number;
@@ -4658,6 +4667,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 0 GB
+     *
+     * @returns a record of where component stats have been generated since the last install
      */
     getComponentStats(): ComponentStats;
   };
@@ -4676,6 +4687,7 @@ export interface Cyberdeck {
      * RAM cost: 1 GB
      *
      * @param count - the number of ICEbreakers to craft
+     * @returns true if the crafting was successful, false if it failed due to a lack of components
      */
     craftICEbreaker(count?: number): boolean;
     /**
@@ -4686,6 +4698,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 1 GB
+     *
+     * @returns the newly-crafted mod, or null if it failed due to a lack of components
      */
     craftPowerSupplyMod(): DeckMod | null;
     /**
@@ -4695,6 +4709,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 1 GB
+     *
+     * @returns the newly-crafted mod, or null if it failed due to a lack of components
      */
     craftProcessingMod(): DeckMod | null;
 
@@ -4705,6 +4721,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 1 GB
+     *
+     * @returns the newly-crafted mod, or null if it failed due to a lack of components
      */
     craftUplinkMod(): DeckMod | null;
 
@@ -4715,6 +4733,8 @@ export interface Cyberdeck {
      *
      * @remarks
      * RAM cost: 0.5 GB
+     *
+     * @returns the count of each type of component gained from recycling the mod
      */
     recycleMod(modId: string): ComponentCounts;
   };
