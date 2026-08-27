@@ -10,14 +10,11 @@ REQUIRED FOR MVP
 
 - basic doc page - rewrite
 
-- add tech store button to buy cyberdeck in New Tokyo
-
 - remove testing button that adds components
 
 - make hand-chosen starting module setup
 
 - Add WiFUs
-  - setting toggle
   - Wired Firmware Unit
 
 - test max-level mod ranges

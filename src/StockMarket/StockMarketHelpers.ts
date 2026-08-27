@@ -34,7 +34,8 @@ export function getBuyTransactionCost(stock: Stock, shares: number, posType: Pos
 }
 
 export function getCommissionFee() {
-  return roundToTwo(StockMarketConstants.StockMarketCommission * getCyberdeckStatBonuses(1).otherMults.stock_fees);
+  const cyberdeckMult = Math.max(getCyberdeckStatBonuses(1).otherMults.stock_fees, 0.1);
+  return roundToTwo(StockMarketConstants.StockMarketCommission * cyberdeckMult);
 }
 
 /**
