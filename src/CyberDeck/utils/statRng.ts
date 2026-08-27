@@ -131,7 +131,8 @@ export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partia
   const rng1 = rng.random();
   const rng2 = rng.random();
 
-  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  const fullStats = getAllStatRanges(debuffLevel);
 
   const playerMultKeys = getRecordKeys(fullStats.playerMults);
   const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
@@ -177,7 +178,8 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
   const rng1 = rng.random();
   const rng2 = rng.random();
 
-  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  const fullStats = getAllStatRanges(debuffLevel);
 
   const otherMultKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
@@ -193,7 +195,8 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
   const rng1 = rng.random();
   const rng2 = rng.random();
 
-  const fullStats = getAllStatRanges(Math.max(4 - level / 2, 1));
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level/3, 0);
+  const fullStats = getAllStatRanges(debuffLevel);
 
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
   const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];

@@ -4,7 +4,7 @@ import { CyberdeckState } from "./models/CyberdeckState";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 import { addCyberdeckServer } from "./models/cyberdeckServer";
-import { createInitialModules } from "./models/createModule";
+import { createInitialModules, createInitialModules2 } from "./models/createModule";
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses(1).playerMults;
@@ -69,5 +69,5 @@ export function gainCyberdeckRomFromCache(showToast = true) {
 export function gainCyberdeck() {
   CyberdeckState.hasCyberdeck = true;
   addCyberdeckServer();
-  createInitialModules();
+  createInitialModules2();
 }

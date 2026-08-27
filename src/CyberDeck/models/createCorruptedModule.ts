@@ -54,7 +54,7 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
 }
 
 
-const getJunkModule = (rng: WHRNG) => {
+export const getJunkModule = (rng: WHRNG) => {
   const oneSocket = getRandomSockets(rng, 1 );
   const twoSocket = getRandomSockets(rng, 2 );
   const modules: DeckMod[] = [

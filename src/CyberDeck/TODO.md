@@ -3,6 +3,7 @@ REQUIRED FOR MVP
 - api
 
 - tune debuffs better - multiplier below 1?
+  - test!
 
 - test left-hand menu w/o cyberdeck
 - set up handling for glitch location w/o cyberdeck
@@ -12,13 +13,12 @@ REQUIRED FOR MVP
 - remove testing button that adds components
 
 - make hand-chosen starting module setup
+  - test!
 
 - Add WiFUs
   - Wired Firmware Unit
 
 - test max-level mod ranges
-
-- cap on stock fee reduction
 
 - modal showing netrunning result
   - sparkles!
@@ -78,6 +78,13 @@ Open questions:
 - What parts of this should be limited to endgame? higher rarity mods? Specific stats? specific mod types e.g. rack extensions? caps on storage size or levels? ALl of it?
 - What other under-utilized mechanics could also have component gains associated with it?
 - What other currently fixed game stats could work with rare minor buffs?
+
+
+Implementation notes:
+- RNG is seeded based on the players' ID and current source-files, and unique to each roll type. This means that savescumming doesn't change anything, and doing other activities doesn't change the "queued" outcome of future rolls of a particular type.
+- There is a soft-cap to how often the player can roll for new loot, since the price to roll immediately after a prior roll is prohibitively expensive. This cooldown is configurable to ensure slow, steady progress.
+- The potential roll range for each stat (and which stats can be rolled) is hand-chosen, and can be tuned stat-by-stat.
+- Component gains from many sources are soft-capped. Further investment DOES increase component gains, but by diminishing returns.
 
 
 CYBERDECK: IDEA SCRATCH SPACE

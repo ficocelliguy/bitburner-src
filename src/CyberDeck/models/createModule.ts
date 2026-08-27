@@ -1,7 +1,7 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModKey, ModType } from "../Types";
-import { disconnectModule, moveModule } from "./moduleMutation";
+import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEbreakerCraftingCost,
   powerSupplyCraftingCost,
@@ -17,6 +17,7 @@ import {
   getID,
   getLevel,
   getNextCraftingWHRNG,
+  getNextNetrunningWHRNG,
   getOtherStatDebuff,
   getPlayerStatBuff,
 } from "../utils/statRng";
@@ -27,7 +28,7 @@ import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
 import { getFormattedStatBonus, mergeBuffs } from "../utils/modStatsUtils";
-
+import { getJunkModule } from "./createCorruptedModule";
 
 export const CyberdeckIOPanel: DeckMod = {
   type: ModType.CyberdeckIOPanel,
@@ -192,6 +193,66 @@ export function createInitialModules(force = false) {
 
   const stats = statList.map(([k, [v1, v2]]) => `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`).join("\n");
   console.log(stats);
+}
+
+export function createInitialModules2() {
+  const rng = getNextNetrunningWHRNG();
+  const powerSupply: DeckMod = {
+    type: ModType.PowerSupply,
+    id: getID(rng),
+    level: 1,
+    sockets: [true, false, false, true, false, false, true, false],
+    stats: {
+      playerMults: {
+        charisma: 0.97,
+      },
+    },
+  };
+  const processingModule: DeckMod = {
+    type: ModType.ProcessingMod,
+    id: getID(rng),
+    level: 2,
+    sockets: [true, false, false, false, false, false, false, false],
+    stats: {
+      playerMults: getDebuff(2, rng),
+      otherMults: {
+        neurodeProduction: 0.15,
+      }
+    }
+  };
+  const uplinkModule: DeckMod = {
+    type: ModType.Uplink,
+    id: getID(rng),
+    level: 0,
+    sockets: [false, false, false, false, false, false, true, false],
+    stats: {
+      playerMults: {
+        hacknet_node_money: 0.05,
+      },
+      otherMults: getOtherStatDebuff(0, rng, 0.5),
+    }
+  };
+  const skillChip: DeckMod = {
+    type: ModType.SkillChip,
+    id: getID(rng),
+    level: 2,
+    sockets: [false, true, false, false, false, false, false, false],
+    stats: {
+      consumableStats: {
+        netrunning_lvl: 0.13,
+      },
+    },
+  };
+  const uplinkModule2 = createUplink(1, rng);
+  uplinkModule2.sockets = [false,  false, false, false, false, true, false, false];
+
+  const junkMod1 = getJunkModule(rng);
+  const junkMod2 = getJunkModule(rng);
+  CyberdeckState.storedModules = [junkMod1, skillChip, junkMod2];
+  CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule2, uplinkModule];
+  createConnection({ modId: powerSupply.id, socketIndex: 3 }, { modId: CyberdeckIOPanel.id, socketIndex: 3 });
+  createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
+  createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
