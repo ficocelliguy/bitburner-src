@@ -20,9 +20,6 @@ REQUIRED FOR MVP
 
 - test max-level mod ranges
 
-- modal showing netrunning result
-  - sparkles!
-
 - code review 
 - unit tests
 - lint

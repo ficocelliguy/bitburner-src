@@ -14,8 +14,8 @@ export const CyberdeckState = {
   modStorageSize: 8,
   maxInstalledRackExtensions: 2,
   netrunningCooldownLevel: 0,
-  netrunningLevel: 0,
-  craftingLevel: 0,
+  netrunningLevel: 8, // TODO-fico: change this to 0 after testing is done
+  craftingLevel: 8, // TODO-fico: change this to 0 after testing is done
   serverRamUpgrades: 0,
   serverCoreUpgrades: 0,
   lastNetrunningTimestamp: 0,
