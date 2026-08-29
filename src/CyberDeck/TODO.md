@@ -1,12 +1,7 @@
 REQUIRED FOR MVP
 
 - api
-
-- tune debuffs better - multiplier below 1?
-  - test!
-
-- test left-hand menu w/o cyberdeck
-- set up handling for glitch location w/o cyberdeck
+- cyberdeck work - building custom deck manually 
 
 - basic doc page - rewrite
 

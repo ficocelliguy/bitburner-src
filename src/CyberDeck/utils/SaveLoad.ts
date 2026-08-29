@@ -1,5 +1,5 @@
 import { ComponentCounts, ComponentStats, Connection, DeckMod } from "../Types";
-import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
 import { updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
 import { WHRNG } from "../../Casino/RNG";
@@ -28,7 +28,7 @@ type CyberdeckSaveData = {
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
-    hasCyberdeck: CyberdeckState.hasCyberdeck,
+    hasCyberdeck: hasCyberdeck(),
     baseRackSize: CyberdeckState.baseRackSize,
     modStorageSize: CyberdeckState.modStorageSize,
     netrunningCooldownLevel: CyberdeckState.netrunningCooldownLevel,

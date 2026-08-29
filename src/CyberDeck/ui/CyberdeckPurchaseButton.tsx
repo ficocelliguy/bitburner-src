@@ -6,13 +6,13 @@ import { dialogBoxCreate } from "../../ui/React/DialogBox";
 import { Player } from "@player";
 
 import { Money } from "../../ui/React/Money";
-import { CyberdeckState } from "../models/CyberdeckState";
+import { hasCyberdeck } from "../models/CyberdeckState";
 import { CyberdeckPurchasePrice } from "../models/constants";
 import { gainCyberdeck } from "../effects";
 
 /** Attempt to purchase a Cyberdeck using the button. */
 export function purchaseCyberdeck(): void {
-  if (CyberdeckState.hasCyberdeck) {
+  if (hasCyberdeck()) {
     dialogBoxCreate(`You already have a cyberdeck!`);
     return;
   }
@@ -39,12 +39,10 @@ export function CyberdeckPurchaseButton(props: IProps): React.ReactElement {
     props.rerender();
   }
 
-  const hasCyberdeck = CyberdeckState.hasCyberdeck;
-
   return (
-    <Button disabled={!Player.canAfford(CyberdeckPurchasePrice) || hasCyberdeck} onClick={buy}>
+    <Button disabled={!Player.canAfford(CyberdeckPurchasePrice) || hasCyberdeck()} onClick={buy}>
       Purchase Cyberdeck -&nbsp;
-      {hasCyberdeck ? "Purchased" : <Money money={CyberdeckPurchasePrice} forPurchase={true} />}
+      {hasCyberdeck() ? "Purchased" : <Money money={CyberdeckPurchasePrice} forPurchase={true} />}
     </Button>
   );
 }

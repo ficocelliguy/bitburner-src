@@ -55,7 +55,7 @@ import { DarknetServer } from "../Server/DarknetServer";
 import { populateDarknet } from "../DarkNet/controllers/NetworkGenerator";
 import { deprecationWarning } from "../utils/DeprecationHelper";
 import { gainCyberdeck, gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
-import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
+import { CyberdeckState, hasCyberdeck } from "../CyberDeck/models/CyberdeckState";
 import { CyberdeckPurchasePrice } from "../CyberDeck/models/constants";
 
 export function NetscriptSingularity(): InternalAPI<ISingularity> {
@@ -419,7 +419,7 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
     purchaseCyberdeck: (ctx) => {
       helpers.checkSingularityAccess(ctx);
 
-      if (CyberdeckState.hasCyberdeck) {
+      if (hasCyberdeck()) {
         helpers.log(ctx, () => "You already have a cyberdeck!");
         return true;
       }

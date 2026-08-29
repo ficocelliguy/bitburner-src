@@ -1,6 +1,6 @@
 import { Player } from "@player";
 import { mergeMultipliers } from "../PersonObjects/Multipliers";
-import { CyberdeckState } from "./models/CyberdeckState";
+import { CyberdeckState, hasCyberdeck } from "./models/CyberdeckState";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 import { addCyberdeckServer } from "./models/cyberdeckServer";
@@ -13,7 +13,7 @@ export function applyCyberdeckStatBonuses() {
 }
 
 export function gainCyberdeckComponentsFromSaveBackup() {
-  if (!CyberdeckState.hasCyberdeck) {
+  if (!hasCyberdeck()) {
     return;
   }
   CyberdeckState.components.chips += 100;
@@ -23,7 +23,7 @@ export function gainCyberdeckComponentsFromSaveBackup() {
 }
 
 export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number, showToast = true, backdoor = false) {
-  if (!CyberdeckState.hasCyberdeck) {
+  if (!hasCyberdeck()) {
     return;
   }
   const romGained = backdoor ? Math.floor(requiredLevel / 5 + 30) : 25;
@@ -34,7 +34,7 @@ export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number,
 }
 
 export function gainCyberdeckComponentsFromCCT(difficulty: number, showToast = true) {
-  if (!CyberdeckState.hasCyberdeck) {
+  if (!hasCyberdeck()) {
     return;
   }
   const neurodesGained = Math.floor(difficulty * 2 + 20);
@@ -45,7 +45,7 @@ export function gainCyberdeckComponentsFromCCT(difficulty: number, showToast = t
 }
 
 export function gainCyberdeckChipsFromIPvGO(nodesCaptured: number, showToast = true) {
-  if (!CyberdeckState.hasCyberdeck) {
+  if (!hasCyberdeck()) {
     return;
   }
   const chipsGained = nodesCaptured * 2 + 2;
@@ -56,7 +56,7 @@ export function gainCyberdeckChipsFromIPvGO(nodesCaptured: number, showToast = t
 }
 
 export function gainCyberdeckRomFromCache(showToast = true) {
-  if (!CyberdeckState.hasCyberdeck) {
+  if (!hasCyberdeck()) {
     return;
   }
   const romGained = 20;

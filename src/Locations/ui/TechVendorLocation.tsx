@@ -60,7 +60,7 @@ export function TechVendorLocation(props: { loc: Location }): React.ReactElement
       <br />
       <Box sx={{ display: "grid", width: "fit-content" }}>
         <TorButton rerender={rerender} />
-        {props.loc.city === CityName.NewTokyo && (
+        {(props.loc.city === CityName.NewTokyo || props.loc.city === CityName.Ishima) && (
           <>
             <CyberdeckPurchaseButton rerender={rerender} />
           </>

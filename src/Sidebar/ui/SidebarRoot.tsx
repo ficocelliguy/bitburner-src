@@ -73,6 +73,7 @@ import { throwIfReachable } from "../../utils/helpers/throwIfReachable";
 import { ErrorState } from "../../ErrorHandling/ErrorState";
 
 import { hasDarknetAccess } from "../../DarkNet/utils/darknetAuthUtils";
+import { hasCyberdeck } from "../../CyberDeck/models/CyberdeckState";
 
 const RotatedDoubleArrowIcon = React.forwardRef(function RotatedDoubleArrowIcon(
   props: { color: "primary" | "secondary" | "error" },
@@ -180,7 +181,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
   const canStaneksGift = Player.augmentations.some((aug) => aug.name === AugmentationName.StaneksGift1);
   const canIPvGO = playerHasDiscoveredGo();
   const canDarkNet = hasDarknetAccess();
-  const canCyberDeck = true; // TODO-fico
+  const canCyberDeck = hasCyberdeck();
 
   const clickPage = useCallback(
     (page: Page) => {
