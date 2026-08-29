@@ -1899,6 +1899,18 @@ interface GraftingTask extends PlayerBaseTask {
 }
 
 /**
+ * Cyberdeck Creation Work
+ *
+ * @remarks
+ * An object representing the current work building a custom cyberdeck
+ *
+ * @public
+ */
+interface CyberdeckTask extends PlayerBaseTask {
+  type: "CREATE_CYBERDECK"
+}
+
+/**
  * Task
  *
  * @remarks
@@ -1906,7 +1918,14 @@ interface GraftingTask extends PlayerBaseTask {
  *
  * @public
  */
-export type Task = StudyTask | CompanyWorkTask | CreateProgramWorkTask | CrimeTask | FactionWorkTask | GraftingTask;
+export type Task =
+  | StudyTask
+  | CompanyWorkTask
+  | CreateProgramWorkTask
+  | CrimeTask
+  | FactionWorkTask
+  | GraftingTask
+  | CyberdeckTask;
 
 /**
  * Default value:

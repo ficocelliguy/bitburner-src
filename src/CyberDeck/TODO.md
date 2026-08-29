@@ -1,7 +1,11 @@
 REQUIRED FOR MVP
 
 - api
+
 - cyberdeck work - building custom deck manually 
+  - button in create program page w/percent
+  - different description and name for custom cyberdeck
+  - functional work activity
 
 - basic doc page - rewrite
 
