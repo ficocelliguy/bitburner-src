@@ -14,7 +14,7 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { createInitialModules, CyberdeckIOPanel } from "../models/createModule";
+import { createInitialModules, getCyberdeckIOPanel } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
@@ -71,8 +71,9 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   }
 
   function draggingWireEnded(moduleId: string) {
-    if (!draggingWire) return;
+    if (!draggingWire) {return;}
     setDraggingWire(null);
+    if (draggingWire.modId == moduleId) { return; }
     const results = createConnection(draggingWire, { modId: moduleId, socketIndex: draggingWire.socketIndex });
     if (results?.error) {
       SnackbarEvents.emit(results?.error, ToastVariant.ERROR, 2000);
@@ -141,11 +142,11 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                 overflowX: "scroll",
               }}
             >
-              <Droppable droppableId={CyberdeckIOPanel.id} direction="vertical" isDropDisabled>
+              <Droppable droppableId={getCyberdeckIOPanel().id} direction="vertical" isDropDisabled>
                 {(provided) => (
                   <span ref={provided.innerRef}>
                     <ModuleComponent
-                      module={CyberdeckIOPanel}
+                      module={getCyberdeckIOPanel()}
                       index={-1}
                       draggingWireStarted={draggingWireStarted}
                       draggingWireEnded={draggingWireEnded}

@@ -4,6 +4,8 @@ import { Player } from "@player";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
 import { gainCyberdeck } from "../CyberDeck/effects";
 import { constructorsForReviver, Generic_fromJSON, Generic_toJSON, IReviverValue } from "../utils/JSONReviver";
+import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
+import { CyberdeckRequiredWorkUnits } from "../CyberDeck/models/constants";
 
 
 export const isCreateCyberdeckWork = (w: PlayerBaseWork | null): w is CreateCyberdeckWork =>
@@ -16,24 +18,22 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
 
   constructor() {
     super(WorkType.CREATE_CYBERDECK, false);
-    this.unitCompleted = 0;
+    this.unitCompleted = CyberdeckState.unitCompleted;
     this.unitRate = 1;
   }
 
   unitNeeded(): number {
-    return CONSTANTS.MillisecondsPerHour;
+    return CyberdeckRequiredWorkUnits;
   }
 
   process(cycles: number): boolean {
     const focusBonus = Player.focusPenalty();
 
     this.cyclesWorked += cycles;
-    this.unitCompleted += this.unitRate * cycles;
+    this.unitCompleted += this.unitRate * cycles * focusBonus;
+    CyberdeckState.unitCompleted = this.unitCompleted;
 
-    if (this.unitCompleted >= this.unitNeeded()) {
-      return true;
-    }
-    return false;
+    return this.unitCompleted >= this.unitNeeded();
   }
 
   finish(cancelled: boolean, suppressDialog?: boolean): void {
@@ -67,6 +67,10 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
   /** Initializes a CreateProgramWork object from a JSON save state. */
   static fromJSON(value: IReviverValue): CreateCyberdeckWork {
     return Generic_fromJSON(CreateCyberdeckWork, value.data);
+  }
+
+  getStatusText() {
+    return ""
   }
 }
 

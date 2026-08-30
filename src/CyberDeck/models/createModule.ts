@@ -3,7 +3,7 @@ import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModKey, ModType } from "../Types";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
-  ICEbreakerCraftingCost,
+  ICEbreakerCraftingCost, isCustomBuild,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -28,15 +28,17 @@ import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
 import { getFormattedStatBonus, mergeBuffs } from "../utils/modStatsUtils";
-import { getJunkModule } from "./createCorruptedModule";
 
-export const CyberdeckIOPanel: DeckMod = {
-  type: ModType.CyberdeckIOPanel,
-  id: "Hosaka Mk 1 Cyberdeck",
-  sockets: [false, true, false, true, false, true, false, false],
-  level: 10,
-  stats: {},
-};
+export const getCyberdeckIOPanel = (): DeckMod => {
+  const id = isCustomBuild() ? "Ono-Sendai Mk7 Cyberdeck" : "Hosaka Mk 1 Cyberdeck";
+  return {
+    type: ModType.CyberdeckIOPanel,
+    id,
+    sockets: [false, true, false, true, false, true, false, false],
+    level: 10,
+    stats: {},
+  };
+}
 
 export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng), level: number = getLevel(rng)) {
   if (type == ModType.PowerSupply) {
@@ -160,7 +162,6 @@ function getRandomModuleType(rng: WHRNG) {
   return ModType.SkillChip;
 }
 
-// TODO-fico: replace with better module set on prestige / first time purchase
 export function createInitialModules(force = false) {
   if (CyberdeckState.storedModules.length > 0 && !force) {
     return;
@@ -211,7 +212,7 @@ export function createInitialModules2() {
   const processingModule: DeckMod = {
     type: ModType.ProcessingMod,
     id: getID(rng),
-    level: 2,
+    level: 3,
     sockets: [true, false, false, false, false, false, false, false],
     stats: {
       playerMults: getDebuff(2, rng),
@@ -235,7 +236,7 @@ export function createInitialModules2() {
   const skillChip: DeckMod = {
     type: ModType.SkillChip,
     id: getID(rng),
-    level: 2,
+    level: 3,
     sockets: [false, true, false, false, false, false, false, false],
     stats: {
       consumableStats: {
@@ -246,11 +247,11 @@ export function createInitialModules2() {
   const uplinkModule2 = createUplink(1, rng);
   uplinkModule2.sockets = [false,  false, false, false, false, true, false, false];
 
-  const junkMod1 = getJunkModule(rng);
-  const junkMod2 = getJunkModule(rng);
-  CyberdeckState.storedModules = [junkMod1, skillChip, junkMod2];
+  const randomMod1 = createProcessingModule(0, rng);
+  const randomMod2 = createRackExtension(0, rng);
+  CyberdeckState.storedModules = [randomMod1, skillChip, randomMod2];
   CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule2, uplinkModule];
-  createConnection({ modId: powerSupply.id, socketIndex: 3 }, { modId: CyberdeckIOPanel.id, socketIndex: 3 });
+  createConnection({ modId: powerSupply.id, socketIndex: 3 }, { modId: getCyberdeckIOPanel().id, socketIndex: 3 });
   createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
   createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
 }

@@ -1,5 +1,7 @@
 import { ComponentCounts, ModType } from "../Types";
 import { Settings } from "../../Settings/Settings";
+import { CyberdeckState } from "./CyberdeckState";
+import { CONSTANTS } from "../../Constants";
 
 // TODO-fico: change these after testing to slower cooldowns
 export const netrunningTraceDecayMs = 5e4; //5e5
@@ -7,7 +9,9 @@ export const netrunningInitialTraceDecayWindowMs = 8000; // 20000
 export const corruptedNetrunningHardCooldownMs = 1000 * 30 // 1000 * 90
 export const minCyclesToProcess = 20;
 
-export const CyberdeckPurchasePrice = 600_000_000;
+export const CyberdeckPurchasePrice = 1_000_000_000;
+export const CyberdeckManualCreationHackLevel = 1000;
+export const CyberdeckRequiredWorkUnits =CONSTANTS.MillisecondsPerHour;
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   ROM: "⛃",
@@ -51,9 +55,10 @@ export const uplinkCraftingCost: ComponentCounts = {
 
 
 export function getModuleDescription(moduleType: ModType): string {
+  const tagline = isCustomBuild() ? "Ono-Sendai Mk7, custom build." : "Hosaka Cyberdecks: The finest that money can buy.";
   switch (moduleType) {
     case ModType.CyberdeckIOPanel:
-      return "Hosaka Cyberdecks: The finest that money can buy. This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.";
+      return `${tagline} This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.`;
     case ModType.PowerSupply:
       return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, but it excels at distributing power to other mods.";
     case ModType.ProcessingMod:
@@ -85,3 +90,7 @@ export const corruptedNetrunHintTexts = [
   `Your world has not yet been turned upside down.`,
   `Is more than a simple glitch?`
 ];
+
+export function isCustomBuild() {
+  return CyberdeckState.unitCompleted >= CyberdeckRequiredWorkUnits;
+}

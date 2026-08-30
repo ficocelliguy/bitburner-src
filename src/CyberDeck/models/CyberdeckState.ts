@@ -1,6 +1,6 @@
 import { ComponentCounts, ComponentStats, Connection, DeckMod, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
-import { CyberdeckIOPanel } from "./createModule";
+import { getCyberdeckIOPanel } from "./createModule";
 import { WHRNG } from "../../Casino/RNG";
 import { Player } from "@player";
 
@@ -8,7 +8,8 @@ import { Player } from "@player";
 export const CyberdeckEvents = new EventEmitter<[]>();
 
 export const CyberdeckState = {
-  hasCyberdeck: true, // TODO-fico: change this to false after testing is done
+  hasCyberdeck: false, //true, // TODO-fico: change this to false after testing is done
+  unitCompleted: 0,
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,
@@ -72,7 +73,7 @@ export function hasCyberdeck(): boolean {
 }
 
 export function getChargedModuleIDs() : string[] {
-  const chargedModules = [CyberdeckIOPanel.id];
+  const chargedModules = [getCyberdeckIOPanel().id];
   if (!CyberdeckState.installedModules.length) return chargedModules;
 
   for (const moduleId of chargedModules) {

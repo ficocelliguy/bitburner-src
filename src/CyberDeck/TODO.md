@@ -2,10 +2,7 @@ REQUIRED FOR MVP
 
 - api
 
-- cyberdeck work - building custom deck manually 
-  - button in create program page w/percent
-  - different description and name for custom cyberdeck
-  - functional work activity
+- int xp as endgame stat?
 
 - basic doc page - rewrite
 
@@ -63,7 +60,7 @@ Project goals:
 
 
 Puzzles the player may want to solve:
-- Given a list of mods (that each have connection limitations), how many of them can I actually connect/wire up? which ones' buffs are worth the associated debuffs? How can I maximize stats I care about?
+- Given a list of mods (that each have connection limitations), how many of them can I actually daisy-chain together? which ones' buffs are worth the associated debuffs? How can I maximize stats I care about?
 - How much do I spend time doing meta things (e.g. faction rep work) vs side things that help build up my cyberdeck mods?
 - How much do I wait for netrunning to fully reset, vs spending more resources to get new random mods more often?
 - When do I swap out mods with other ones I have in storage to buff something else? (moving mods takes a short amount of time, so "flash mobbing" is possible but requires planning)
@@ -81,6 +78,7 @@ Implementation notes:
 - There is a soft-cap to how often the player can roll for new loot, since the price to roll immediately after a prior roll is prohibitively expensive. This cooldown is configurable to ensure slow, steady progress.
 - The potential roll range for each stat (and which stats can be rolled) is hand-chosen, and can be tuned stat-by-stat.
 - Component gains from many sources are soft-capped. Further investment DOES increase component gains, but by diminishing returns.
+- For testing, the cooldowns of netrunning are currently significantly reduced.
 
 
 CYBERDECK: IDEA SCRATCH SPACE

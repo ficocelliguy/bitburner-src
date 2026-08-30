@@ -29,6 +29,7 @@ import { isCompanyWork } from "../Work/CompanyWork";
 import { Router } from "./GameRoot";
 import { Page } from "./Router";
 import { formatExp, formatPercent } from "./formatNumber";
+import { isCreateCyberdeckWork } from "../Work/CreateCyberdeckWork";
 
 const CYCLES_PER_SEC = 1000 / CONSTANTS.MilliPerCycle;
 
@@ -466,6 +467,35 @@ export function WorkInProgressRoot(): React.ReactElement {
       },
 
       stopText: "Stop working",
+    };
+  }
+
+  if (isCreateCyberdeckWork(Player.currentWork)) {
+    workInfo = {
+      buttons: {
+        cancel: () => {
+          Router.toPage(Page.Location, { location: Locations[LocationName.Slums] });
+          Player.finishWork(true);
+        },
+        unfocus: () => {
+          Router.toPage(Page.City);
+        },
+      },
+      title: `Building a custom cyberdeck...`,
+
+      gains: [
+        <tr key="header">
+          <td>
+            <Typography>{Player.currentWork.getStatusText()}</Typography>
+          </td>
+        </tr>,
+      ],
+      progress: {
+        remaining: (Player.currentWork.unitNeeded() - Player.currentWork.unitCompleted) * CONSTANTS.MilliPerCycle,
+        percentage: (Player.currentWork.unitCompleted / Player.currentWork.unitNeeded()) * 100,
+      },
+
+      stopText: "Stop building cyberdeck",
     };
   }
 

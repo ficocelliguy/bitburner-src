@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { DeckMod, ModType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
@@ -10,7 +10,7 @@ import { SocketIOPanel } from "./SocketIOPanel";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
-import { getModuleDescription } from "../models/constants";
+import { getModuleDescription, isCustomBuild } from "../models/constants";
 
 export type DeckModuleProps = {
   module: DeckMod;
@@ -82,7 +82,7 @@ export function ModuleComponent({
               <Typography
                 sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
               >
-               ID: {module.id}
+                ID: {module.id}
               </Typography>
               <div style={{ margin: "10px 0" }}>
                 <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
@@ -127,28 +127,60 @@ export function ModuleComponent({
             {module.type !== ModType.CyberdeckIOPanel ? (
               <>
                 <div>{getModuleIcon(module)}</div>
-                {module.favorite &&
-                  <div style={{position: "absolute", top: 0, left: "30px", color: Settings.theme.warning}}>
-                    <StarBorderOutlinedIcon style={{width: "20px", height: "20px"}} />
-                  </div>}
+                {module.favorite && (
+                  <div style={{ position: "absolute", top: 0, left: "30px", color: Settings.theme.warning }}>
+                    <StarBorderOutlinedIcon style={{ width: "20px", height: "20px" }} />
+                  </div>
+                )}
                 <Box sx={styles.statsPanel}>
                   <StatBonus stats={module.stats} />
                 </Box>
               </>
             ) : (
               <div>
-                <Typography
-                  style={{
-                    width: "179px",
-                    marginTop: "6px",
-                    fontSize: "13px",
-                    textAlign: "center",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Hosaka Mark I
-                </Typography>
-                <Typography style={{ width: "179px", marginTop: "4px", textAlign: "center" }}>保坂 マークI</Typography>
+                {isCustomBuild() ? (
+                  <>
+                    <Typography
+                      style={{
+                        width: "179px",
+                        marginTop: "8px",
+                        fontSize: "13px",
+                        textAlign: "center",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Ono-Sendai Mk7
+                    </Typography>
+                    <Typography
+                      style={{
+                        width: "179px",
+                        textAlign: "center",
+                        marginTop: "3px",
+                        fontSize: "11px",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Custom Build
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Typography
+                      style={{
+                        width: "179px",
+                        marginTop: "6px",
+                        fontSize: "13px",
+                        textAlign: "center",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Hosaka Mark I
+                    </Typography>
+                    <Typography style={{ width: "179px", marginTop: "4px", textAlign: "center" }}>
+                      保坂 マークI
+                    </Typography>
+                  </>
+                )}
               </div>
             )}
             <SocketIOPanel

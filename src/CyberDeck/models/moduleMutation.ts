@@ -5,7 +5,7 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { DeckMod, ModType, Socket } from "../Types";
-import { CyberdeckIOPanel, disassembleModule } from "./createModule";
+import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";
 
@@ -136,8 +136,8 @@ function updateConnectedModules() {
 }
 
 function getInstalledModule(moduleId: string) {
-  if (moduleId == CyberdeckIOPanel.id) {
-    return CyberdeckIOPanel;
+  if (moduleId == getCyberdeckIOPanel().id) {
+    return getCyberdeckIOPanel();
   }
   return (
     CyberdeckState.installedModules.find((m) => m.id === moduleId) ||

@@ -6,8 +6,10 @@ import {
   craftICEbreaker,
   craftPowerSupply,
   craftProcessingModule,
-  craftUplink, CyberdeckIOPanel,
-  disassembleModule, getEasterEggModule,
+  craftUplink,
+  getCyberdeckIOPanel,
+  disassembleModule,
+  getEasterEggModule,
 } from "./models/createModule";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
@@ -51,7 +53,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       }));
     },
     getCyberdeckIOPanel: (): DeckMod => {
-      return structuredClone(CyberdeckIOPanel);
+      return structuredClone(getCyberdeckIOPanel());
     },
     getConnections: () => {
       return CyberdeckState.connections.map((conn) => structuredClone(conn));

@@ -6,6 +6,7 @@ import { WHRNG } from "../../Casino/RNG";
 
 type CyberdeckSaveData = {
   hasCyberdeck: boolean;
+  unitCompleted: number;
   baseRackSize: number;
   modStorageSize: number;
   netrunningLevel: number;
@@ -29,6 +30,7 @@ type CyberdeckSaveData = {
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
     hasCyberdeck: hasCyberdeck(),
+    unitCompleted: CyberdeckState.unitCompleted,
     baseRackSize: CyberdeckState.baseRackSize,
     modStorageSize: CyberdeckState.modStorageSize,
     netrunningCooldownLevel: CyberdeckState.netrunningCooldownLevel,
@@ -60,6 +62,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     assertObject(parsedData);
     const {
       hasCyberdeck,
+      unitCompleted,
       baseRackSize,
       modStorageSize,
       netrunningLevel,
@@ -82,6 +85,8 @@ export function loadCyberdeckSaveData(saveString: unknown) {
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
     CyberdeckState.hasCyberdeck = hasCyberdeck;
+    if (typeof unitCompleted !== "number") throw new Error("Invalid cyberdeck savestring value: unitCompleted");
+    CyberdeckState.unitCompleted = unitCompleted;
     if (typeof baseRackSize !== "number") throw new Error("Invalid cyberdeck savestring value: baseRackSize");
     CyberdeckState.baseRackSize = baseRackSize;
     if (typeof modStorageSize !== "number") throw new Error("Invalid cyberdeck savestring value: modStorageSize");

@@ -12,6 +12,9 @@ import { Settings } from "../../Settings/Settings";
 import { Programs } from "../Programs";
 import { CreateProgramWork, isCreateProgramWork } from "../../Work/CreateProgramWork";
 import { useCycleRerender } from "../../ui/React/hooks";
+import { hasCyberdeck } from "../../CyberDeck/models/CyberdeckState";
+import { CreateCyberdeckWork, isCreateCyberdeckWork } from "../../Work/CreateCyberdeckWork";
+import { CyberdeckManualCreationHackLevel } from "../../CyberDeck/models/constants";
 
 export const ProgramsSeen = new Set<string>();
 
@@ -141,6 +144,56 @@ export function ProgramsRoot(): React.ReactElement {
             </Box>
           );
         })}
+      </Box>
+      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", mt: 5 }}>
+        <div></div>
+        <Box component={Paper} sx={{ p: 1, opacity: hasCyberdeck() ? 0.75 : 1 }} key={"cyberdeck"}>
+          <Typography variant="h6" sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+            {hasCyberdeck() && <Check sx={{ mr: 1 }} />}
+            {Player.skills.hacking < CyberdeckManualCreationHackLevel && <Lock sx={{ mr: 1 }} />}
+            Custom Cyberdeck
+          </Typography>
+          {Player.skills.hacking < CyberdeckManualCreationHackLevel && (
+            <Typography color={Settings.theme.hack}>
+              <b>Unlocks at hacking level:</b> {CyberdeckManualCreationHackLevel}
+            </Typography>
+          )}
+          {hasCyberdeck() || Player.skills.hacking < CyberdeckManualCreationHackLevel ? (
+            <></>
+          ) : isCreateCyberdeckWork(Player.currentWork) ? (
+            <Button
+              sx={{ my: 1, width: "100%" }}
+              onClick={(event) => {
+                if (!event.isTrusted) return;
+                Player.startFocusing();
+                Router.toPage(Page.Work);
+              }}
+            >
+              Resume focus
+            </Button>
+          ) : (
+            <Button
+              sx={{ my: 1, width: "100%" }}
+              onClick={(event) => {
+                if (!event.isTrusted) return;
+                Player.startWork(new CreateCyberdeckWork());
+                Player.startFocusing();
+                Router.toPage(Page.Work);
+              }}
+            >
+              Start Build
+            </Button>
+          )}
+          {isCreateCyberdeckWork(Player.currentWork) && (
+            <Typography color={Settings.theme.infolight}>
+              <b>Current completion:</b>{" "}
+              {((100 * Player.currentWork.unitCompleted) / Player.currentWork.unitNeeded()).toFixed(2)}%
+            </Typography>
+          )}
+          <Typography>
+            A custom-built portable computer system and server. Unlocks netrunning and cyberdeck customization.
+          </Typography>
+        </Box>
       </Box>
     </Container>
   );
