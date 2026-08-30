@@ -561,7 +561,11 @@ export function gainCodingContractReward(
     }
     case CodingContractRewardType.Money: {
       const moneyGain =
-        CONSTANTS.CodingContractBaseMoneyGain * difficulty * currentNodeMults.CodingContractMoney * adjustedScaling * getCyberdeckStatBonuses(1).otherMults.cct_money;
+        CONSTANTS.CodingContractBaseMoneyGain *
+        difficulty *
+        currentNodeMults.CodingContractMoney *
+        adjustedScaling *
+        getCyberdeckStatBonuses(1).otherMults.cct_money;
       this.gainMoney(moneyGain, "codingcontract");
       return `Gained ${formatMoney(moneyGain)}`;
     }

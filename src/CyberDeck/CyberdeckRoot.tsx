@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Container, Tabs, Tab} from "@mui/material";
+import { Box, Container, Tabs, Tab } from "@mui/material";
 import { NetrunningPortal } from "./ui/NetrunningPortal";
 import MemoryIcon from "@mui/icons-material/Memory";
 import ConstructionSharpIcon from "@mui/icons-material/ConstructionSharp";
@@ -31,7 +31,6 @@ export function CyberdeckRoot(): React.ReactElement {
     }
   }, []);
 
-
   function handleChange(event: React.SyntheticEvent, newValue: number) {
     setValue(newValue);
   }
@@ -45,12 +44,7 @@ export function CyberdeckRoot(): React.ReactElement {
           sx={{ minWidth: "fit-content", maxWidth: "45%" }}
         >
           <Tab label="Manage Mods" icon={<MemoryIcon />} iconPosition={"start"} sx={styles.tab} />
-          <Tab
-            label="Netrun"
-            icon={<SettingsInputComponentSharpIcon />}
-            iconPosition={"start"}
-            sx={styles.tab}
-          />
+          <Tab label="Netrun" icon={<SettingsInputComponentSharpIcon />} iconPosition={"start"} sx={styles.tab} />
           <Tab label="Craft" icon={<ConstructionSharpIcon />} iconPosition={"start"} sx={styles.tab} />
           <Tab label="Stats" icon={<StackedBarChartOutlinedIcon />} iconPosition={"start"} sx={styles.tab} />
         </Tabs>

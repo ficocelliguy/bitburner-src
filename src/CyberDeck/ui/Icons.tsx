@@ -34,7 +34,7 @@ export function getModIconComponent(moduleType: ModType, size: number = 50) {
     return <SimCardOutlinedIcon style={style} />;
   }
   if (moduleType === ModType.SkillChip) {
-    return <MedicalInformationSharpIcon style={style}/>;
+    return <MedicalInformationSharpIcon style={style} />;
   }
 }
 

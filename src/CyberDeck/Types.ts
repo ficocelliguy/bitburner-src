@@ -44,7 +44,7 @@ export type ComponentCounts = {
   chips: number;
   cores: number;
   ICE: number;
-}
+};
 
 export type CyberdeckStats = {
   playerMults: Multipliers;
@@ -97,7 +97,7 @@ export type ComponentStats = {
   };
   cores: {
     netrunning: number;
-  }
+  };
 };
 
 export type NetrunningRewards = {

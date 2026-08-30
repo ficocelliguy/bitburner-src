@@ -5,7 +5,6 @@ import { Droppable } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { TRASH_CAN } from "./ModuleRackAndInventoryPage";
 
-
 export function TrashCan() {
   return (
     <Droppable droppableId={TRASH_CAN} direction="vertical">

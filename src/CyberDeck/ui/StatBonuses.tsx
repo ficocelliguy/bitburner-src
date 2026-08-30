@@ -6,7 +6,6 @@ import { ComponentSymbol } from "./ComponentCost";
 import { componentSymbols } from "../models/constants";
 import { getFormattedStatBonus, getStatBonusList, isBuff } from "../utils/modStatsUtils";
 
-
 export function StatBonus({
   stats = {},
   emptyMessage = "",
@@ -51,7 +50,7 @@ function FormatStat({
         fontSize: `${fontSize}px`,
         display: "flex",
         justifyContent: "space-between",
-        padding: `${Math.ceil(fontSize/10)}px 3px`,
+        padding: `${Math.ceil(fontSize / 10)}px 3px`,
         color: Settings.theme.rep,
         lineHeight: "11px",
       }}
@@ -59,9 +58,7 @@ function FormatStat({
       <span>
         <FormattedKeyElement formattedKey={formattedKey} />:
       </span>
-      <span
-        style={{ color: isBuff(keyName, value) ? Settings.theme.primary : Settings.theme.hp, paddingLeft: "3px" }}
-      >
+      <span style={{ color: isBuff(keyName, value) ? Settings.theme.primary : Settings.theme.hp, paddingLeft: "3px" }}>
         {value > 0 ? "+" : ""}
         {valueStr}
       </span>

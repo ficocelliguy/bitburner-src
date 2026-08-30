@@ -23,9 +23,11 @@ export function purchaseCyberdeck(): void {
   Player.loseMoney(CyberdeckPurchasePrice, "other");
 
   gainCyberdeck();
-  dialogBoxCreate("Hosaka cyberdecks: The finest that money can buy.\n"
-    +"Congratulations the purchase of your new rig!\n" +
-    "You can access it via the link in the left-hand panel.\n\n" + "Good luck out there, Netrunner."
+  dialogBoxCreate(
+    "Hosaka cyberdecks: The finest that money can buy.\n" +
+      "Congratulations the purchase of your new rig!\n" +
+      "You can access it via the link in the left-hand panel.\n\n" +
+      "Good luck out there, Netrunner.",
   );
 }
 

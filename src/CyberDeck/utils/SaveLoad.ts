@@ -2,7 +2,6 @@ import { ComponentCounts, ComponentStats, Connection, DeckMod } from "../Types";
 import { CyberdeckEvents, CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
 import { updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
-import { WHRNG } from "../../Casino/RNG";
 
 type CyberdeckSaveData = {
   hasCyberdeck: boolean;
@@ -93,16 +92,17 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberdeckState.modStorageSize = modStorageSize;
     if (typeof craftingLevel !== "number") throw new Error("Invalid cyberdeck savestring value: craftingLevel");
     CyberdeckState.craftingLevel = craftingLevel;
-    if (typeof netrunningCooldownLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCooldownLevel");
+    if (typeof netrunningCooldownLevel !== "number")
+      throw new Error("Invalid cyberdeck savestring value: netrunningCooldownLevel");
     CyberdeckState.netrunningCooldownLevel = netrunningCooldownLevel;
-    if (typeof lastNetrunningTimestamp !== "number") throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
+    if (typeof lastNetrunningTimestamp !== "number")
+      throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof lastCorruptedNetrunningTimestamp !== "number")
       throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastCorruptedNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
     CyberdeckState.netrunningLevel = netrunningLevel;
-
 
     if (!isModuleArray(installedModules)) throw new Error("Invalid cyberdeck savestring value: installedModules");
     CyberdeckState.installedModules = installedModules;
@@ -120,15 +120,19 @@ export function loadCyberdeckSaveData(saveString: unknown) {
 
     if (typeof netrunningSeed !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningSeed");
     CyberdeckState.netrunningSeed = netrunningSeed;
-    if (typeof netrunningSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningSeedUsages");
+    if (typeof netrunningSeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: netrunningSeedUsages");
     CyberdeckState.netrunningSeedUsages = netrunningSeedUsages;
-    if (typeof netrunningCorruptedSeed !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeed");
+    if (typeof netrunningCorruptedSeed !== "number")
+      throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeed");
     CyberdeckState.netrunningCorruptedSeed = netrunningCorruptedSeed;
-    if (typeof netrunningCorruptedSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeedUsages");
+    if (typeof netrunningCorruptedSeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeedUsages");
     CyberdeckState.netrunningCorruptedSeedUsages = netrunningCorruptedSeedUsages;
     if (typeof craftingSeed !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeed");
     CyberdeckState.craftingSeed = craftingSeed;
-    if (typeof craftingSeedUsages !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeedUsages");
+    if (typeof craftingSeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: craftingSeedUsages");
     CyberdeckState.craftingSeedUsages = craftingSeedUsages;
 
     // Emit an event to notify that the state has changed

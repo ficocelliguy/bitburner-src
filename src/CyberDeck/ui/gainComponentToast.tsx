@@ -37,8 +37,11 @@ export function gainComponentMessage(result: Partial<ComponentCounts>) {
   );
 }
 
-
-export function getCorruptedHint(message : string = "") {
+export function getCorruptedHint(message: string = "") {
   const hint = message || corruptedNetrunHintTexts[Math.floor(Math.random() * corruptedNetrunHintTexts.length)];
-  return <Typography><CorruptibleText content={hint} spoiler={false}></CorruptibleText></Typography>
+  return (
+    <Typography>
+      <CorruptibleText content={hint} spoiler={false}></CorruptibleText>
+    </Typography>
+  );
 }

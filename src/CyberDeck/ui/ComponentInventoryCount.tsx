@@ -7,7 +7,6 @@ import { CyberdeckState } from "../models/CyberdeckState";
 import { formatNumber } from "../../ui/formatNumber";
 
 export function ComponentInventoryCount() {
-  
   return (
     <div
       style={{
@@ -52,13 +51,7 @@ export function ComponentInventoryCount() {
   );
 }
 
-export function ComponentTooltip({
-  symbol,
-  children,
-}: {
-  symbol: string;
-  children: React.ReactElement;
-}) {
+export function ComponentTooltip({ symbol, children }: { symbol: string; children: React.ReactElement }) {
   const details = getComponentDetails(symbol);
 
   return (
@@ -87,7 +80,6 @@ export function ComponentTooltip({
   );
 }
 
-
 function getComponentDetails(symbol: string) {
   switch (symbol) {
     case componentSymbols.ROM:
@@ -95,40 +87,35 @@ function getComponentDetails(symbol: string) {
         name: "ROM Components",
         description: "A component used for making cyberdeck mods.",
         source: "Obtained from some crime, backdooring servers, darknet caches, and creating programs.",
-        lore:
-          "Read-Only Memory cards have their contents flashed once and cannot be changed afterwards. This makes the software on them durable and resistant to tampering or data corruption.",
+        lore: "Read-Only Memory cards have their contents flashed once and cannot be changed afterwards. This makes the software on them durable and resistant to tampering or data corruption.",
       };
     case componentSymbols.neurodes:
       return {
         name: "Neurodes",
         description: "A component used for making cyberdeck mods.",
         source: "Obtained from crime kills, attending classes, and completing coding contracts.",
-        lore:
-          "Neurodes are specialized neural interface components that allow a netrunner to receive and transmit data directly to and from their nervous system, enabling deep-dive interaction with the digital world.",
+        lore: "Neurodes are specialized neural interface components that allow a netrunner to receive and transmit data directly to and from their nervous system, enabling deep-dive interaction with the digital world.",
       };
     case componentSymbols.chips:
       return {
         name: "Chips",
         description: "A component used for making cyberdeck mods.",
         source: "Obtained from company work, IPvGO game completions, and hacknet profits.",
-        lore:
-          "A staple of cyberdeck mod construction. Chips are general-purpose programmable circuitboards used in a wide variety of digital applications.",
+        lore: "A staple of cyberdeck mod construction. Chips are general-purpose programmable circuitboards used in a wide variety of digital applications.",
       };
     case componentSymbols.cores:
       return {
         name: "Cores",
         description: "Required for the construction of cyberdeck mods.",
         source: "Obtained from netrunning.",
-        lore:
-          "The core is the most integral part of a cyberdeck mod, handling both central processing as well as uplink data transfer.",
+        lore: "The core is the most integral part of a cyberdeck mod, handling both central processing as well as uplink data transfer.",
       };
     case componentSymbols.ICE:
       return {
         name: "ICEbreakers",
         description: "Digital defense-breakers used for netrunning.",
         source: "Crafted from ROM, neurodes, and chips.",
-        lore:
-          "ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace. Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas, risking their minds and decks in the search for new mods.",
+        lore: "ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace. Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas, risking their minds and decks in the search for new mods.",
       };
     default:
       return {

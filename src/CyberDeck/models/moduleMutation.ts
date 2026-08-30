@@ -18,8 +18,7 @@ export function handleModuleMoved(result: DropResult) {
   const destinationIsStorage = result.destination.droppableId === MODULE_STORAGE;
 
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
-  const moduleToMove = sourceLocation[result.source.index]
-
+  const moduleToMove = sourceLocation[result.source.index];
 
   if (result.destination.droppableId == TRASH_CAN) {
     disassembleModule(moduleToMove, true);
@@ -44,13 +43,18 @@ export function handleModuleMoved(result: DropResult) {
   moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index);
 
   // Undo the move if it causes invalid wiring
-  if (CyberdeckState.connections.find(([s,d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
+  if (CyberdeckState.connections.find(([s, d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
     moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.source.index);
     SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
   }
 }
 
-export function moveModule(moduleToMove: DeckMod, sourceIsStorage: boolean, destinationIsStorage: boolean, destinationIndex = 0) {
+export function moveModule(
+  moduleToMove: DeckMod,
+  sourceIsStorage: boolean,
+  destinationIsStorage: boolean,
+  destinationIndex = 0,
+) {
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const sourceIndex = sourceLocation.indexOf(moduleToMove);
@@ -89,13 +93,13 @@ export function createConnection(source: Socket, destination: Socket) {
   if (sourceModule == destinationModule) {
     return {
       success: false,
-      error: "Modules cannot be connected to themselves."
+      error: "Modules cannot be connected to themselves.",
     };
   }
   if (!destinationModule?.sockets[destination.socketIndex]) {
     return {
       success: false,
-      error: `Target module does not have a socket of that color.`
+      error: `Target module does not have a socket of that color.`,
     };
   }
   if (source.socketIndex !== destination.socketIndex || !sourceModule?.sockets[source.socketIndex]) {
@@ -177,8 +181,7 @@ export function updateCoveredSockets() {
 
 function determineIfSocketIsCovered(socket: Socket) {
   return CyberdeckState.connections.find(([s, d]) => {
-    const isUniqueSocket =
-      s.socketIndex === socket.socketIndex && s.modId !== socket.modId && d.modId !== socket.modId;
+    const isUniqueSocket = s.socketIndex === socket.socketIndex && s.modId !== socket.modId && d.modId !== socket.modId;
     if (!isUniqueSocket) return false;
     const socketModuleIndex = getModuleIndex(socket.modId);
     const sModuleIndex = getModuleIndex(s.modId);
@@ -237,11 +240,19 @@ function consumeSkillChips() {
     const stats = module.stats?.consumableStats ?? {};
     if (stats.netrunning_lvl) {
       CyberdeckState.netrunningLevel += stats.netrunning_lvl;
-      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`, ToastVariant.SUCCESS, 4000);
+      SnackbarEvents.emit(
+        `Consumed SkillChip. Gained ${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`,
+        ToastVariant.SUCCESS,
+        4000,
+      );
     }
     if (stats.crafting_lvl) {
       CyberdeckState.craftingLevel += stats.crafting_lvl;
-      SnackbarEvents.emit(`Consumed SkillChip. Gained ${formatNumber(stats.crafting_lvl, 2)} crafting boost.`, ToastVariant.SUCCESS, 4000);
+      SnackbarEvents.emit(
+        `Consumed SkillChip. Gained ${formatNumber(stats.crafting_lvl, 2)} crafting boost.`,
+        ToastVariant.SUCCESS,
+        4000,
+      );
     }
     if (stats.netrun_cooldown_lvl) {
       CyberdeckState.netrunningCooldownLevel += stats.netrun_cooldown_lvl;
@@ -253,7 +264,11 @@ function consumeSkillChips() {
     }
     if (stats.mod_storage) {
       CyberdeckState.modStorageSize += stats.mod_storage;
-      SnackbarEvents.emit(`Consumed SkillChip. Increased mod storage by ${formatNumber(stats.mod_storage, 2)} slots.`, ToastVariant.SUCCESS, 4000);
+      SnackbarEvents.emit(
+        `Consumed SkillChip. Increased mod storage by ${formatNumber(stats.mod_storage, 2)} slots.`,
+        ToastVariant.SUCCESS,
+        4000,
+      );
     }
 
     disconnectModule(module);

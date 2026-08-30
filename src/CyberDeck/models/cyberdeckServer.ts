@@ -119,6 +119,6 @@ export function upgradeCyberdeckServerCores() {
   const server = GetServerOrThrow(SpecialServers.Cyberdeck);
   server.cpuCores = CyberdeckState.serverCoreUpgrades;
 
-  CyberdeckEvents.emit()
+  CyberdeckEvents.emit();
   return true;
 }

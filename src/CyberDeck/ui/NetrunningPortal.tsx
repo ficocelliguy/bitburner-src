@@ -18,19 +18,30 @@ import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
 
-export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
+export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
   useRerender(200);
   const styles = usePortalStyles();
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({ success: false, mods: [], components: {} });
+  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
+    success: false,
+    mods: [],
+    components: {},
+  });
 
   const disabled = !entering && !canNetrun(corrupted);
 
   async function handlePortalClick() {
     if (!hasCyberdeck()) {
-      dialogBoxCreate(<Box><CorruptibleText content={"Netrunning without a cyberdeck? Are you trying to get yourself killed?"} spoiler={false}/></Box>)
+      dialogBoxCreate(
+        <Box>
+          <CorruptibleText
+            content={"Netrunning without a cyberdeck? Are you trying to get yourself killed?"}
+            spoiler={false}
+          />
+        </Box>,
+      );
     }
     if (!canNetrun(corrupted)) return;
     setEntering(true);
@@ -40,7 +51,12 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
       CyberdeckState.hasDiscoveredGlitch = true;
     }
     setNetrunningModRewards(rewards);
-    setTimeout(() => { if (!entering) { setShowPortal(false); setShowRewardsModal(true); }}, 1200);
+    setTimeout(() => {
+      if (!entering) {
+        setShowPortal(false);
+        setShowRewardsModal(true);
+      }
+    }, 1200);
   }
 
   function resetPortal() {
@@ -77,32 +93,31 @@ export function NetrunningPortal({corrupted = false}: {corrupted?: boolean}): Re
             <Box sx={styles.orbiter} />
             <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
           </Box>
-          {!entering &&
-            hasCyberdeck() && (
-              <>
-                {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length ? (
-                  <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
-                    Module storage full!
-                  </Typography>
-                ) : (
-                  <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
-                    {corrupted ? (
-                      <CorruptibleText
-                        content={`ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
-                        spoiler={false}
-                      />
-                    ) : (
-                      `ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
-                    )}
-                  </Typography>
-                )}
-                {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
-                  <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
-                    Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 100, 2)}%
-                  </Typography>
-                )}
-              </>
-            )}
+          {!entering && hasCyberdeck() && (
+            <>
+              {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length ? (
+                <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
+                  Module storage full!
+                </Typography>
+              ) : (
+                <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
+                  {corrupted ? (
+                    <CorruptibleText
+                      content={`ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
+                      spoiler={false}
+                    />
+                  ) : (
+                    `ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
+                  )}
+                </Typography>
+              )}
+              {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
+                <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
+                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 100, 2)}%
+                </Typography>
+              )}
+            </>
+          )}
         </>
       )}
     </Container>

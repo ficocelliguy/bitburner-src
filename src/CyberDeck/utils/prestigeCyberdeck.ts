@@ -45,7 +45,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     },
     cores: {
       netrunning: 0,
-    }
+    },
   };
   CyberdeckState.lastNetrunningTimestamp = 0;
   CyberdeckState.lastCorruptedNetrunningTimestamp = 0;

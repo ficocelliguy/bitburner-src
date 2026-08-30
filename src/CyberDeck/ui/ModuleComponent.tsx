@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "../models/CyberdeckState";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { DeckMod, ModType, Socket } from "../Types";
 import { useRerender } from "../../ui/React/hooks";
@@ -46,7 +46,7 @@ export function ModuleComponent({
     return () => clearSubscription();
   }, [updateDisplay]);
 
-    const chargedModuleIDs = getChargedModuleIDs();
+  const chargedModuleIDs = getChargedModuleIDs();
 
   function socketDragEnd() {
     draggingWireEnded?.(module.id);

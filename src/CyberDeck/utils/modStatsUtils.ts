@@ -5,15 +5,14 @@ import {
   EndgameMults,
   MiscMults,
   ModKey,
-  ModStats, ModType,
+  ModStats,
   statBonusLongNames,
   statBonusShortNames,
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
 import { roundToFour } from "../../utils/helpers/roundToTwo";
-import { getAllStatRanges, getDebuff, getID, getNextNetrunningWHRNG } from "./statRng";
-
+import { getAllStatRanges } from "./statRng";
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
   const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
@@ -21,9 +20,7 @@ export function getFormattedStatBonus(keyName: ModKey, value: number, useShortNa
 
   const valueStr = keyName.includes("RackSlots")
     ? Math.floor(value)
-    : keyName.includes("Production") ||
-      keyName.includes("lvl") ||
-      keyName.includes("storage")
+    : keyName.includes("Production") || keyName.includes("lvl") || keyName.includes("storage")
     ? value.toFixed(2)
     : formatAsPercent(value);
 
@@ -122,7 +119,12 @@ export function getDefaultConsumableStats(): ConsumableStats {
 
 // At the max of level 12, the min is 0.7% and the max is 10%.
 // At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.8% per level.
-export function getStatRollRange(level: number, minScaling: number = 1, maxScaling: number = 1, growthScaling: number = 1): [number, number] {
+export function getStatRollRange(
+  level: number,
+  minScaling: number = 1,
+  maxScaling: number = 1,
+  growthScaling: number = 1,
+): [number, number] {
   return [
     roundToFour(0.001 * minScaling + 0.002 * level * growthScaling),
     roundToFour(0.006 * maxScaling + 0.008 * level * growthScaling),
@@ -138,13 +140,15 @@ export function formatAsPercent(value: number): string {
 }
 
 function getModStatString(module: DeckMod) {
-  const statString = getStatBonusList(module.stats).map(([key, value]) => {
-    const shortNames = getFormattedStatBonus(key, value, true);
-    const longNames = getFormattedStatBonus(key, value, false);
-    return `${shortNames.formattedKey} : ${shortNames.valueStr} , ${longNames.formattedKey} : ${longNames.valueStr}`;
-  }).join(" ");
+  const statString = getStatBonusList(module.stats)
+    .map(([key, value]) => {
+      const shortNames = getFormattedStatBonus(key, value, true);
+      const longNames = getFormattedStatBonus(key, value, false);
+      return `${shortNames.formattedKey} : ${shortNames.valueStr} , ${longNames.formattedKey} : ${longNames.valueStr}`;
+    })
+    .join(" ");
 
-  return `rarity:${module.level} ${module.type} ${statString}`.toLowerCase()
+  return `rarity:${module.level} ${module.type} ${statString}`.toLowerCase();
 }
 
 export function getFilteredStoredModules(modFilter: string) {
@@ -152,7 +156,9 @@ export function getFilteredStoredModules(modFilter: string) {
   const isPositiveFilter = !modFilter.startsWith("-");
   const filterLower = (isPositiveFilter ? modFilter : modFilter.slice(1)).toLowerCase();
 
-  return CyberdeckState.storedModules.filter((module) => getModStatString(module).includes(filterLower) == isPositiveFilter);
+  return CyberdeckState.storedModules.filter(
+    (module) => getModStatString(module).includes(filterLower) == isPositiveFilter,
+  );
 }
 
 export function getCyberdeckStatBonuses(basis = 0): CyberdeckStats {
@@ -199,7 +205,6 @@ export function mergeBuffs<T extends { [K in keyof T]: number }>(
   return merged;
 }
 
-
 // TODO-fico: remove later after testing
 export function logStatRanges() {
   const maxBonuses = getAllStatRanges(12);
@@ -210,6 +215,11 @@ export function logStatRanges() {
     ...Object.entries(maxBonuses.endgameStats ?? {}),
   ] as [ModKey, [number, number]][];
 
-  const stats = statList.map(([k, [v1, v2]]) => `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`).join("\n");
+  const stats = statList
+    .map(
+      ([k, [v1, v2]]) =>
+        `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`,
+    )
+    .join("\n");
   console.log(stats);
 }

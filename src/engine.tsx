@@ -363,7 +363,7 @@ const Engine = {
 
       Player.lastUpdate = Engine._lastUpdate;
       Engine.start(); // Run main game loop and Scripts loop
-      // TODO-fico
+      // TODO-fico - revert before testing
       // const timeOfflineString = convertTimeMsToTimeElapsedString(time);
       // setTimeout(
       //   () =>

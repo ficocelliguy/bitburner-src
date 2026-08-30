@@ -154,7 +154,7 @@ function determineStartPage(): PageWithContext {
     return { page: Page.Recovery };
   }
   // TODO-fico
-  if ((new URLSearchParams(window.location.search)).has("dev")) {
+  if (new URLSearchParams(window.location.search).has("dev")) {
     return { page: Page.CyberDeck };
   }
   /**

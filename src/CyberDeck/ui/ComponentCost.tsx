@@ -6,7 +6,6 @@ import { componentSymbols } from "../models/constants";
 import { Player } from "@player";
 import { formatMoney } from "../../ui/formatNumber";
 
-
 export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; moneyCost?: number }) {
   return (
     <>
@@ -44,9 +43,11 @@ export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; 
   );
 }
 
-export function ComponentSymbol({symbol}: {symbol: string}) {
+export function ComponentSymbol({ symbol }: { symbol: string }) {
   const isROM = symbol === componentSymbols.ROM;
-  return <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-2px" : "0" }}> {symbol}</span>;
+  return (
+    <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-2px" : "0" }}> {symbol}</span>
+  );
 }
 
 export function ComponentCostRow({ available, cost, symbol }: { available: number; cost: number; symbol: string }) {
@@ -54,7 +55,10 @@ export function ComponentCostRow({ available, cost, symbol }: { available: numbe
   return (
     <span style={{ color: available >= cost ? Settings.theme.maplocation : Settings.theme.error, marginRight: "5px" }}>
       <ComponentSymbol symbol={symbol} />
-      <span style={{marginLeft: "3px"}}>{available >= cost ? "" : `${Math.floor(available)}/`}{cost}</span>
+      <span style={{ marginLeft: "3px" }}>
+        {available >= cost ? "" : `${Math.floor(available)}/`}
+        {cost}
+      </span>
     </span>
   );
 }
@@ -75,4 +79,3 @@ function getSymbolColor(symbol: string): string {
       return Settings.theme.error;
   }
 }
-

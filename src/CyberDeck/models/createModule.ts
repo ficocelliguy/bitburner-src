@@ -3,7 +3,8 @@ import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModType } from "../Types";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
-  ICEbreakerCraftingCost, isCustomBuild,
+  ICEbreakerCraftingCost,
+  isCustomBuild,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -27,7 +28,7 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
-import { getFormattedStatBonus, mergeBuffs } from "../utils/modStatsUtils";
+import { mergeBuffs } from "../utils/modStatsUtils";
 
 export const getCyberdeckIOPanel = (): DeckMod => {
   const id = isCustomBuild() ? "Ono-Sendai Mk7 Cyberdeck" : "Hosaka Mk 1 Cyberdeck";
@@ -38,7 +39,7 @@ export const getCyberdeckIOPanel = (): DeckMod => {
     level: 10,
     stats: {},
   };
-}
+};
 
 export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng), level: number = getLevel(rng)) {
   if (type == ModType.PowerSupply) {
@@ -59,7 +60,7 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
   const extraSlotVariant = rng.random() < 0.1;
-  const debuff2 = extraSlotVariant? getOtherStatDebuff(level,rng) : {};
+  const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng) : {};
   const bonus = extraSlotVariant ? 3 : 2;
 
   return {
@@ -74,7 +75,13 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   };
 }
 
-export function createProcessingModule(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckMod {
+export function createProcessingModule(
+  level: number,
+  rng: WHRNG,
+  addDebuff = true,
+  scalar = 1,
+  debuffScalar = 1,
+): DeckMod {
   const fullStats = getAllStatRanges(Math.max(level, 1));
   const otherStatKeys = getRecordKeys(fullStats.otherMults);
   const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
@@ -117,7 +124,6 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
     },
   };
 }
-
 
 function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
@@ -187,8 +193,8 @@ export function createInitialModules() {
       playerMults: getDebuff(2, rng),
       otherMults: {
         neurodeProduction: 0.15,
-      }
-    }
+      },
+    },
   };
   const uplinkModule: DeckMod = {
     type: ModType.Uplink,
@@ -200,7 +206,7 @@ export function createInitialModules() {
         hacknet_node_money: 0.05,
       },
       otherMults: getOtherStatDebuff(0, rng, 0.5),
-    }
+    },
   };
   const skillChip: DeckMod = {
     type: ModType.SkillChip,
@@ -214,7 +220,7 @@ export function createInitialModules() {
     },
   };
   const uplinkModule2 = createUplink(1, rng);
-  uplinkModule2.sockets = [false,  false, false, false, false, true, false, false];
+  uplinkModule2.sockets = [false, false, false, false, false, true, false, false];
 
   const randomMod1 = createProcessingModule(0, rng);
   const randomMod2 = createRackExtension(0, rng);
@@ -291,11 +297,15 @@ export function craftUplink() {
 
 export function disassembleModule(module: DeckMod, showToast: boolean = false): ComponentCounts {
   if (module.favorite) {
-    if (showToast) { SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000); }
+    if (showToast) {
+      SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000);
+    }
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
   if (module.id == LocationName.IshimaGlitch) {
-    if (showToast) { SnackbarEvents.emit("Mod recycled.", ToastVariant.SUCCESS, 2000); }
+    if (showToast) {
+      SnackbarEvents.emit("Mod recycled.", ToastVariant.SUCCESS, 2000);
+    }
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
 
@@ -312,11 +322,12 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
   }
   CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
 
-  if (showToast) { gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained }); }
+  if (showToast) {
+    gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained });
+  }
   CyberdeckEvents.emit();
   return { chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained, cores: 0, ICE: 0 };
 }
-
 
 export function getEasterEggModule(): DeckMod {
   const existingModule = getModuleById(LocationName.IshimaGlitch);
@@ -338,5 +349,4 @@ export function getEasterEggModule(): DeckMod {
       },
     },
   };
-
 }

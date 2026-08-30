@@ -271,6 +271,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
       canGang,
       canIPvGO,
       canDarkNet,
+      canCyberDeck,
     ],
   );
 

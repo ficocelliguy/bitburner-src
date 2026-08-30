@@ -8,8 +8,8 @@ import { Player } from "@player";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
 export function createCorruptedModule(rng: WHRNG): DeckMod {
-
-  if (Player.sourceFiles.get(1) && rng.random() < 0.1) { // TODO-fico: reduce this after testing
+  if (Player.sourceFiles.get(1) && rng.random() < 0.1) {
+    // TODO-fico: reduce this after testing
     return getEndgameStatModule(rng);
   }
 
@@ -53,10 +53,9 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
   return getJunkModule(rng);
 }
 
-
 export const getJunkModule = (rng: WHRNG) => {
-  const oneSocket = getRandomSockets(rng, 1 );
-  const twoSocket = getRandomSockets(rng, 2 );
+  const oneSocket = getRandomSockets(rng, 1);
+  const twoSocket = getRandomSockets(rng, 2);
   const modules: DeckMod[] = [
     {
       type: ModType.RackExtension,
@@ -95,7 +94,7 @@ export const getJunkModule = (rng: WHRNG) => {
   ];
 
   return modules[Math.floor(rng.random() * modules.length)];
-}
+};
 
 const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   const debuffs = mergeBuffs(getDebuff(8, rng), getDebuff(8, rng));
@@ -108,9 +107,9 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
     stats: {
       playerMults: debuffs,
       extraRackSlots: extraSlots,
-    }
+    },
   };
-}
+};
 
 const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
   const buffs = mergeBuffs(getConsumableBuff(8, rng), getConsumableBuff(8, rng));
@@ -123,7 +122,7 @@ const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
       consumableStats: buffs,
     },
   };
-}
+};
 
 const getEndgameStatModule = (rng: WHRNG): DeckMod => {
   const level = getLevel(rng, CyberdeckState.netrunningLevel + 2);
@@ -142,4 +141,4 @@ const getEndgameStatModule = (rng: WHRNG): DeckMod => {
       endgameStats: effects,
     },
   };
-}
+};

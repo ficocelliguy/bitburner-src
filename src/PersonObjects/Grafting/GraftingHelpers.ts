@@ -27,5 +27,5 @@ export const graftingIntBonus = (): number => {
 
 export const calculateGraftingTimeWithBonus = (aug: GraftableAugmentation): number => {
   const baseTime = aug.time;
-  return (baseTime / graftingIntBonus()) / getCyberdeckStatBonuses(1).endgameStats.graft_speed;
+  return baseTime / graftingIntBonus() / getCyberdeckStatBonuses(1).endgameStats.graft_speed;
 };

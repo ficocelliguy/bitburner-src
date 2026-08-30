@@ -72,7 +72,7 @@ export function hasCyberdeck(): boolean {
   return CyberdeckState.hasCyberdeck || !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
 }
 
-export function getChargedModuleIDs() : string[] {
+export function getChargedModuleIDs(): string[] {
   const chargedModules = [getCyberdeckIOPanel().id];
   if (!CyberdeckState.installedModules.length) return chargedModules;
 
@@ -92,7 +92,7 @@ export function getChargedModuleIDs() : string[] {
   return chargedModules;
 }
 
-export function getChargedModules() : DeckMod[] {
+export function getChargedModules(): DeckMod[] {
   const chargedModuleIDs = getChargedModuleIDs();
   return CyberdeckState.installedModules.filter((m) => chargedModuleIDs.includes(m.id));
 }

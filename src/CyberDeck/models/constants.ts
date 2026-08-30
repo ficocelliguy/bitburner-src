@@ -6,12 +6,12 @@ import { CONSTANTS } from "../../Constants";
 // TODO-fico: change these after testing to slower cooldowns
 export const netrunningTraceDecayMs = 5e4; //5e5
 export const netrunningInitialTraceDecayWindowMs = 8000; // 20000
-export const corruptedNetrunningHardCooldownMs = 1000 * 30 // 1000 * 90
+export const corruptedNetrunningHardCooldownMs = 1000 * 30; // 1000 * 90
 export const minCyclesToProcess = 20;
 
 export const CyberdeckPurchasePrice = 1_000_000_000;
 export const CyberdeckManualCreationHackLevel = 1000;
-export const CyberdeckRequiredWorkUnits =CONSTANTS.MillisecondsPerHour;
+export const CyberdeckRequiredWorkUnits = CONSTANTS.MillisecondsPerHour;
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   ROM: "⛃",
@@ -53,9 +53,10 @@ export const uplinkCraftingCost: ComponentCounts = {
   ICE: 0,
 };
 
-
 export function getModuleDescription(moduleType: ModType): string {
-  const tagline = isCustomBuild() ? "Ono-Sendai Mk7, custom build." : "Hosaka Cyberdecks: The finest that money can buy.";
+  const tagline = isCustomBuild()
+    ? "Ono-Sendai Mk7, custom build."
+    : "Hosaka Cyberdecks: The finest that money can buy.";
   switch (moduleType) {
     case ModType.CyberdeckIOPanel:
       return `${tagline} This is the external ports of the Cyberdeck itself. Provides power to any mod connected to it.`;
@@ -74,10 +75,11 @@ export function getModuleDescription(moduleType: ModType): string {
   }
 }
 
+export const netrunFlavorText =
+  "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEbreakers you brought pierce the digital defense, revealing the treasure you came here for.";
 
-export const netrunFlavorText = "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEbreakers you brought pierce the digital defense, revealing the treasure you came here for.";
-
-export const corruptedNetrunFlavorText = "You step beyond the Blackwall, the last line of defense that maintains cyberspace from the old net that fell long ago. Outside of that firewall, beyond its protection, the deep ICE holds... something. You grab what you can before the connection collapses.";
+export const corruptedNetrunFlavorText =
+  "You step beyond the Blackwall, the last line of defense that maintains cyberspace from the old net that fell long ago. Outside of that firewall, beyond its protection, the deep ICE holds... something. You grab what you can before the connection collapses.";
 
 export const getSocketColor = (index: number) => {
   const t = Settings.theme;
@@ -88,7 +90,7 @@ export const getSocketColor = (index: number) => {
 export const corruptedNetrunHintTexts = [
   `There is a place, somewhere out there, where the barrier is thin...`,
   `Your world has not yet been turned upside down.`,
-  `Is more than a simple glitch?`
+  `Is more than a simple glitch?`,
 ];
 
 export function isCustomBuild() {

@@ -10,7 +10,9 @@ import { getModuleById } from "./moduleUtilities";
 export function getNextNetrunningWHRNG() {
   const ID = Player.identifier;
   const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.netrunningSeed = stringToSeed(`${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningSeedUsages}-run`);
+  CyberdeckState.netrunningSeed = stringToSeed(
+    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningSeedUsages}-run`,
+  );
   CyberdeckState.netrunningSeedUsages++;
   CyberdeckState.netrunningWHRNG = new WHRNG(CyberdeckState.netrunningSeed);
   return CyberdeckState.netrunningWHRNG;
@@ -19,7 +21,9 @@ export function getNextNetrunningWHRNG() {
 export function getNextNetrunningCorruptedWHRNG() {
   const ID = Player.identifier;
   const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.netrunningCorruptedSeed = stringToSeed(`${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningCorruptedSeedUsages}-corrupted`);
+  CyberdeckState.netrunningCorruptedSeed = stringToSeed(
+    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningCorruptedSeedUsages}-corrupted`,
+  );
   CyberdeckState.netrunningCorruptedSeedUsages++;
   CyberdeckState.netrunningCorruptedWHRNG = new WHRNG(CyberdeckState.netrunningCorruptedSeed);
   return CyberdeckState.netrunningCorruptedWHRNG;
@@ -28,12 +32,13 @@ export function getNextNetrunningCorruptedWHRNG() {
 export function getNextCraftingWHRNG() {
   const ID = Player.identifier;
   const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.craftingSeed = stringToSeed(`${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.craftingSeedUsages}-crafting`);
+  CyberdeckState.craftingSeed = stringToSeed(
+    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.craftingSeedUsages}-crafting`,
+  );
   CyberdeckState.craftingSeedUsages++;
   CyberdeckState.craftingWHRNG = new WHRNG(CyberdeckState.craftingSeed);
   return CyberdeckState.craftingWHRNG;
 }
-
 
 function stringToSeed(str: string) {
   let hash = 0;
@@ -196,7 +201,7 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
   const rng1 = rng.random();
   const rng2 = rng.random();
 
-  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level/3, 0);
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
   const fullStats = getAllStatRanges(debuffLevel);
 
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
@@ -225,14 +230,16 @@ export function getID(rng: WHRNG) {
   let ID = "";
   do {
     const base = baseOptions[Math.floor(rng.random() * baseOptions.length)];
-    const idNumberString = Math.floor(rng.random() * base ** 5).toString(base).toUpperCase()
+    const idNumberString = Math.floor(rng.random() * base ** 5)
+      .toString(base)
+      .toUpperCase();
     ID = `${basePrefixes[base]}${idNumberString}`;
   } while (getModuleById(ID));
   return ID;
 }
 
 const baseOptions: number[] = [2, 8, 12, 16] as const;
-const basePrefixes:  Record<typeof baseOptions[number], string> = {
+const basePrefixes: Record<(typeof baseOptions)[number], string> = {
   2: "0b",
   8: "0o",
   12: "0z",

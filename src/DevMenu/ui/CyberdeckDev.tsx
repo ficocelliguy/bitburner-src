@@ -34,7 +34,7 @@ export function CyberdeckDev(): React.ReactElement {
       chips: 100,
       ROM: 100,
       neurodes: 100,
-      cores: 5
+      cores: 5,
     });
   }
 
@@ -54,14 +54,14 @@ export function CyberdeckDev(): React.ReactElement {
   function getNetrunRewards() {
     const rewards = getNetrunningRewards();
     setCorrupted(false);
-    setNetrunningModRewards({success: true, mods: rewards, components: {}});
+    setNetrunningModRewards({ success: true, mods: rewards, components: {} });
     setShowRewardsModal(true);
   }
 
   function getCorruptedNetrunRewards() {
     const rewards = getCorruptedNetrunningRewards();
     setCorrupted(true);
-    setNetrunningModRewards({success: true, mods: rewards, components: {}});
+    setNetrunningModRewards({ success: true, mods: rewards, components: {} });
     setShowRewardsModal(true);
   }
 
@@ -127,10 +127,7 @@ export function CyberdeckDev(): React.ReactElement {
           <br />
           <Tooltip title={<Typography>Remove and reset the cyberdeck.</Typography>}>
             <span>
-              <Button
-                disabled={!hasCyberdeck()}
-                onClick={resetCyberdeck}
-              >
+              <Button disabled={!hasCyberdeck()} onClick={resetCyberdeck}>
                 Remove Cyberdeck
               </Button>
             </span>
@@ -189,7 +186,13 @@ export function CyberdeckDev(): React.ReactElement {
           </Tooltip>
           <br />
           <br />
-          <Tooltip title={<Typography>Remove existing mods, set components to a base level, and generate a number of random mods</Typography>}>
+          <Tooltip
+            title={
+              <Typography>
+                Remove existing mods, set components to a base level, and generate a number of random mods
+              </Typography>
+            }
+          >
             <span>
               <Button
                 onClick={() => {
@@ -218,4 +221,3 @@ export function CyberdeckDev(): React.ReactElement {
     </>
   );
 }
-

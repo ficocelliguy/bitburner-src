@@ -31,17 +31,18 @@ function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corr
   const traceDecay = netrunningTraceDecayMs * (corrupted ? 2 : 1);
   const diminishingCosts = 1 + traceDecay / timeSinceLastRun;
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
-  const netrunningCooldownBoost = 1 - ((CyberdeckState.netrunningCooldownLevel) / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
+  const netrunningCooldownBoost =
+    1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
   return Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1);
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-  const lastTimestamp = corrupted ? CyberdeckState.lastCorruptedNetrunningTimestamp : CyberdeckState.lastNetrunningTimestamp;
+  const lastTimestamp = corrupted
+    ? CyberdeckState.lastCorruptedNetrunningTimestamp
+    : CyberdeckState.lastNetrunningTimestamp;
   const corruptionHardCooldown = corrupted ? corruptedNetrunningHardCooldownMs : 0;
   const timeSinceLastRun = Date.now() - lastTimestamp - corruptionHardCooldown;
-  return (
-    ((netrunningTraceDecayMs - timeSinceLastRun) / (netrunningTraceDecayMs)) ** 2
-  );
+  return ((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs) ** 2;
 }
 
 export function canNetrun(corrupted = false): boolean {
@@ -106,10 +107,11 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
-  const normalizeLevel = (level: number): number => level === -1 ? 99 : level;
+  const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
 
-  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)]
-    .sort((m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level));
+  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
+    (m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level),
+  );
 
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
 
@@ -136,5 +138,4 @@ export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWH
 
   CyberdeckState.storedModules.unshift(...rewards);
   return rewards;
-
 }

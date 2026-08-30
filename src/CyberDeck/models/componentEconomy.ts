@@ -6,7 +6,6 @@ import { minCyclesToProcess } from "./constants";
 import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 
-
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 
 const lastStatsSnapshot = {
@@ -15,7 +14,7 @@ const lastStatsSnapshot = {
 
   totalWorkRep: null as number | null,
   totalHacknetIncome: null as number | null,
-}
+};
 
 export function gainCyberdeckComponents(cycles: number) {
   CyberdeckState.storedCycles += cycles;
@@ -109,7 +108,6 @@ function getAllWorkRep() {
     if (!isMember("CompanyName", companyName)) continue;
     const company = Companies[companyName];
     total += company?.playerReputation ?? 0;
-
   }
   return total;
 }

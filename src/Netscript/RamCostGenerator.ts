@@ -263,7 +263,7 @@ const cyberdeck = {
   legacy: {
     getCost: 0,
     delve: 8,
-  }
+  },
 };
 
 // Darknet API

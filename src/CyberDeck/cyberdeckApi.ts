@@ -25,7 +25,6 @@ import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
 import { getCorruptedHint } from "./ui/gainComponentToast";
 
-
 function getModOrThrow(modId: string): DeckMod {
   const mod =
     CyberdeckState.storedModules.find((mod) => mod.id === modId) ||
@@ -35,7 +34,6 @@ function getModOrThrow(modId: string): DeckMod {
   }
   return mod;
 }
-
 
 export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
   return {

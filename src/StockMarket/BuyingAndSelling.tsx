@@ -4,14 +4,14 @@
  */
 import { Stock } from "./Stock";
 import {
-  getBuyTransactionCost, getCommissionFee,
+  getBuyTransactionCost,
+  getCommissionFee,
   getSellTransactionGain,
   processTransactionForecastMovement,
 } from "./StockMarketHelpers";
 
 import { PositionType } from "@enums";
 
-import { StockMarketConstants } from "./data/Constants";
 import { Player } from "@player";
 
 import { formatMoney, formatShares } from "../ui/formatNumber";

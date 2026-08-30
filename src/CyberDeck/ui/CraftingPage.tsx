@@ -16,12 +16,12 @@ import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
 import {
   getCyberdeckServerCoreUpgradeCost,
-  getCyberdeckServerRamUpgradeCost, upgradeCyberdeckServerCores,
+  getCyberdeckServerRamUpgradeCost,
+  upgradeCyberdeckServerCores,
   upgradeCyberdeckServerRam,
 } from "../models/cyberdeckServer";
 import { CyberdeckEvents } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
-
 
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
@@ -46,7 +46,9 @@ export function CraftingPage(): React.ReactElement {
   }
 
   function craft(results: DeckMod | null) {
-    if (!results) { return; }
+    if (!results) {
+      return;
+    }
     setCraftingRewards([results]);
     setShowRewardsModal(true);
   }
@@ -62,7 +64,13 @@ export function CraftingPage(): React.ReactElement {
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
         <Button onClick={() => craftICEbreaker()}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>
               Craft <ComponentSymbol symbol={componentSymbols.ICE} /> ICEbreaker
@@ -72,7 +80,13 @@ export function CraftingPage(): React.ReactElement {
         </Button>
         <Button onClick={tryCraftPowerSupply}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>Craft {getModIconComponent(ModType.PowerSupply, 16)} Power Supply Mod</span>
             <ComponentCost cost={powerSupplyCraftingCost} />
@@ -80,7 +94,13 @@ export function CraftingPage(): React.ReactElement {
         </Button>
         <Button onClick={tryCraftUplink}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>Craft {getModIconComponent(ModType.Uplink, 16)} Uplink Mod</span>
             <ComponentCost cost={uplinkCraftingCost} />
@@ -88,7 +108,13 @@ export function CraftingPage(): React.ReactElement {
         </Button>
         <Button onClick={tryCraftProcessingModule}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>Craft {getModIconComponent(ModType.ProcessingMod, 16)} Processing Mod</span>
             <ComponentCost cost={processingModuleCraftingCost} />
@@ -99,7 +125,13 @@ export function CraftingPage(): React.ReactElement {
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
         <Button onClick={upgradeCyberdeckServerRam}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>Upgrade cyberdeck Server RAM</span>
             <ComponentCost
@@ -110,7 +142,13 @@ export function CraftingPage(): React.ReactElement {
         </Button>
         <Button onClick={upgradeCyberdeckServerCores}>
           <div
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", color: Settings.theme.maplocation, margin: "5px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
           >
             <span>Upgrade cyberdeck Server Cores</span>
             <ComponentCost

@@ -72,9 +72,13 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   }
 
   function draggingWireEnded(moduleId: string) {
-    if (!draggingWire) {return;}
+    if (!draggingWire) {
+      return;
+    }
     setDraggingWire(null);
-    if (draggingWire.modId == moduleId) { return; }
+    if (draggingWire.modId == moduleId) {
+      return;
+    }
     const results = createConnection(draggingWire, { modId: moduleId, socketIndex: draggingWire.socketIndex });
     if (results?.error) {
       SnackbarEvents.emit(results?.error, ToastVariant.ERROR, 2000);

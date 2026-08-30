@@ -7,10 +7,8 @@ import { constructorsForReviver, Generic_fromJSON, Generic_toJSON, IReviverValue
 import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
 import { CyberdeckRequiredWorkUnits } from "../CyberDeck/models/constants";
 
-
 export const isCreateCyberdeckWork = (w: PlayerBaseWork | null): w is CreateCyberdeckWork =>
   w !== null && w.type === WorkType.CREATE_CYBERDECK;
-
 
 export class CreateCyberdeckWork extends PlayerBaseWork {
   unitCompleted: number;
@@ -70,9 +68,8 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
   }
 
   getStatusText() {
-    return ""
+    return "";
   }
 }
-
 
 constructorsForReviver.CreateCyberdeckWork = CreateCyberdeckWork;

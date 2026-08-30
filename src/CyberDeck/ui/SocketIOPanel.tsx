@@ -9,8 +9,8 @@ import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { getSocketColor } from "../models/constants";
 
 export type SocketIOPanelProps = {
-  moduleId: string,
-  sockets: SocketList,
+  moduleId: string;
+  sockets: SocketList;
   draggingWireStarted?: ((moduleId: string, socketIndex: number) => void) | null;
   draggingInstalledModule?: boolean;
   currentDragSource?: Socket | null;

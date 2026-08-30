@@ -1907,7 +1907,7 @@ interface GraftingTask extends PlayerBaseTask {
  * @public
  */
 interface CyberdeckTask extends PlayerBaseTask {
-  type: "CREATE_CYBERDECK"
+  type: "CREATE_CYBERDECK";
 }
 
 /**

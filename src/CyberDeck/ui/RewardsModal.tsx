@@ -89,7 +89,7 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
             {(provided) => (
               <div {...provided.droppableProps} style={{ height: "300px", width: "470px" }} ref={provided.innerRef}>
                 {displayedModules.map((module, index) => (
-                  <div key={module.id} style={{ height: "80px"}}>
+                  <div key={module.id} style={{ height: "80px" }}>
                     <ModuleLootCover module={module} index={index} />
                   </div>
                 ))}

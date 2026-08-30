@@ -171,7 +171,8 @@ export function usePortalStyles() {
         },
       },
       [`& .${PORTAL_CORE_CLASS}`]: {
-        background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(100,210,255,0) 100%)",
+        background:
+          "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(100,210,255,0) 100%)",
         animation: `${pulse} 5s ease-in-out infinite`,
       },
     },
