@@ -7,8 +7,6 @@ REQUIRED FOR MVP
 - Add WiFUs
   - Wired Firmware Unit
 
-- test max-level mod ranges
-
 - code review 
 - unit tests
 - lint

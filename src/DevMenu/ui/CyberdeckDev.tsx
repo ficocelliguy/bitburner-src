@@ -71,6 +71,12 @@ export function CyberdeckDev(): React.ReactElement {
     SnackbarEvents.emit("Cleared all mods from your cyberdeck.", ToastVariant.SUCCESS, 2000);
   }
 
+  function resetCyberdeck() {
+    // TODO-fico: remove SF?
+    prestigeCyberdeck(true);
+    SnackbarEvents.emit("Cyberdeck Lost!", ToastVariant.SUCCESS, 2000);
+  }
+
   function generateRandomMods() {
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
@@ -123,10 +129,7 @@ export function CyberdeckDev(): React.ReactElement {
             <span>
               <Button
                 disabled={!hasCyberdeck()}
-                onClick={() => {
-                  prestigeCyberdeck(true);
-                  SnackbarEvents.emit("Cyberdeck Lost!", ToastVariant.SUCCESS, 2000);
-                }}
+                onClick={resetCyberdeck}
               >
                 Remove Cyberdeck
               </Button>

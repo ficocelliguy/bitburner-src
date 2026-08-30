@@ -3,7 +3,7 @@ import { addCyberdeckServer } from "../models/cyberdeckServer";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
-    CyberdeckState.hasCyberdeck = true; // TODO-fico: look at source-files?
+    CyberdeckState.hasCyberdeck = false; // TODO-fico: look at source-files?
     CyberdeckState.storedCycles = 0;
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];

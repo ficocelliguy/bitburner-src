@@ -9,7 +9,7 @@ import { mergeBuffs } from "../utils/modStatsUtils";
 
 export function createCorruptedModule(rng: WHRNG): DeckMod {
 
-  if (Player.sourceFiles.get(1) && rng.random() < 0.05) {
+  if (Player.sourceFiles.get(1) && rng.random() < 0.1) { // TODO-fico: reduce this after testing
     return getEndgameStatModule(rng);
   }
 

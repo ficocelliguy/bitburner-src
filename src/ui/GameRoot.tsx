@@ -79,7 +79,7 @@ import { ErrorModal } from "../ErrorHandling/ErrorModal";
 import { DWRoot } from "../DarkNet/DWRoot";
 import { DocumentationPopUp } from "../Documentation/ui/DocumentationPopUp";
 import { CustomPage } from "./CustomPage";
-import { CyberDeckRoot } from "../CyberDeck/CyberDeckRoot";
+import { CyberdeckRoot } from "../CyberDeck/CyberdeckRoot";
 
 const htmlLocation = location;
 
@@ -485,7 +485,7 @@ export function GameRoot(): React.ReactElement {
       break;
     }
     case Page.CyberDeck: {
-      mainPage = <CyberDeckRoot />;
+      mainPage = <CyberdeckRoot />;
       break;
     }
     case Page.Achievements: {

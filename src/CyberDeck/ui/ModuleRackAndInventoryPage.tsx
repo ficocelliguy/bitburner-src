@@ -17,7 +17,7 @@ import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { getCyberdeckIOPanel } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
-import { getFilteredStoredModules } from "../utils/modStatsUtils";
+import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils";
 import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 
@@ -40,6 +40,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
 
   useEffect(() => {
     const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
+    logStatRanges();
     return () => clearSubscription();
   }, [updateDisplay]);
 

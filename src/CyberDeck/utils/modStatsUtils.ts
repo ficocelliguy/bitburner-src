@@ -5,13 +5,14 @@ import {
   EndgameMults,
   MiscMults,
   ModKey,
-  ModStats,
+  ModStats, ModType,
   statBonusLongNames,
   statBonusShortNames,
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
 import { roundToFour } from "../../utils/helpers/roundToTwo";
+import { getAllStatRanges, getDebuff, getID, getNextNetrunningWHRNG } from "./statRng";
 
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
@@ -196,4 +197,19 @@ export function mergeBuffs<T extends { [K in keyof T]: number }>(
   }
 
   return merged;
+}
+
+
+// TODO-fico: remove later after testing
+export function logStatRanges() {
+  const maxBonuses = getAllStatRanges(12);
+  const statList = [
+    ...Object.entries(maxBonuses.playerMults ?? {}),
+    ...Object.entries(maxBonuses.otherMults ?? {}),
+    ...Object.entries(maxBonuses.consumableStats ?? {}),
+    ...Object.entries(maxBonuses.endgameStats ?? {}),
+  ] as [ModKey, [number, number]][];
+
+  const stats = statList.map(([k, [v1, v2]]) => `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`).join("\n");
+  console.log(stats);
 }

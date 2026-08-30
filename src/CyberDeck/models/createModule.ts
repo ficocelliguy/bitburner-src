@@ -1,6 +1,6 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckMod, ModKey, ModType } from "../Types";
+import { ComponentCounts, DeckMod, ModType } from "../Types";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEbreakerCraftingCost, isCustomBuild,
@@ -162,22 +162,10 @@ function getRandomModuleType(rng: WHRNG) {
   return ModType.SkillChip;
 }
 
-
-// TODO-fico: remove later after testing
-export function logStatRanges() {
-  const maxBonuses = getAllStatRanges(12);
-  const statList = [
-    ...Object.entries(maxBonuses.playerMults ?? {}),
-    ...Object.entries(maxBonuses.otherMults ?? {}),
-    ...Object.entries(maxBonuses.consumableStats ?? {}),
-    ...Object.entries(maxBonuses.endgameStats ?? {}),
-  ] as [ModKey, [number, number]][];
-
-  const stats = statList.map(([k, [v1, v2]]) => `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`).join("\n");
-  console.log(stats);
-}
-
 export function createInitialModules() {
+  if (CyberdeckState.storedModules.length || CyberdeckState.installedModules.length) {
+    return; // TODO-fico: throw error here later
+  }
   const rng = getNextNetrunningWHRNG();
   const powerSupply: DeckMod = {
     type: ModType.PowerSupply,

@@ -49,16 +49,16 @@ function stringToSeed(str: string) {
 export function getAllStatRanges(level: number) {
   const playerMults: Partial<{ [K in keyof Multipliers]: [number, number] }> = {
     hacking_chance: getStatRollRange(level, 1.2, 1.5, 1.5),
-    hacking_exp: getStatRollRange(level, 0.8, 0.8, 1),
+    hacking_exp: getStatRollRange(level, 0.8, 1.2, 1.5),
     hacking: getStatRollRange(level, 0.5, 0.8, 1),
-    strength: getStatRollRange(level, 1.2, 1.2, 1.5),
-    strength_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    defense: getStatRollRange(level, 1.2, 1.2, 1.5),
-    defense_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    dexterity: getStatRollRange(level, 1.2, 1.2, 1.5),
-    dexterity_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
-    agility: getStatRollRange(level, 1.2, 1.2, 1.5),
-    agility_exp: getStatRollRange(level, 1.2, 1.2, 1.5),
+    strength: getStatRollRange(level, 1.6, 1.6, 1.8),
+    strength_exp: getStatRollRange(level, 1.6, 1.6, 1.8),
+    defense: getStatRollRange(level, 1.6, 1.6, 1.8),
+    defense_exp: getStatRollRange(level, 1.6, 1.6, 1.8),
+    dexterity: getStatRollRange(level, 1.6, 1.6, 1.8),
+    dexterity_exp: getStatRollRange(level, 1.6, 1.6, 1.8),
+    agility: getStatRollRange(level, 1.6, 1.6, 1.8),
+    agility_exp: getStatRollRange(level, 1.6, 1.6, 1.8),
     charisma: getStatRollRange(level, 1, 1, 1.5),
     charisma_exp: getStatRollRange(level, 1, 1, 1.5),
     hacknet_node_money: getStatRollRange(level, 1.2, 4, 2),
@@ -67,13 +67,13 @@ export function getAllStatRanges(level: number) {
     company_rep: getStatRollRange(level, 1, 1.5, 2),
     work_money: getStatRollRange(level, 1, 10, 5),
     crime_success: getStatRollRange(level, 2, 5, 2),
-    crime_money: getStatRollRange(level, 1.5, 3, 1.5),
+    crime_money: getStatRollRange(level, 2, 3, 1.5),
   };
   const otherMults: { [K in keyof MiscMults]: [number, number] } = {
     romProduction: getStatRollRange(level, 10, 30, 40),
     chipProduction: getStatRollRange(level, 10, 30, 40),
     neurodeProduction: getStatRollRange(level, 10, 30, 40),
-    program_creation_speed: getStatRollRange(level, 1.5, 3, 1.5),
+    program_creation_speed: getStatRollRange(level, 2, 3, 1.5),
     crime_speed: getStatRollRange(level, 1.5, 3, 1.5),
     stock_fees: getStatRollRange(level, -1.5, -3, -1.5), // getBuyTransactionCost
     cct_money: getStatRollRange(level, 3, 4, 2),
@@ -84,7 +84,7 @@ export function getAllStatRanges(level: number) {
     netrunning_lvl: getStatRollRange(level, 10, 30, 20),
     crafting_lvl: getStatRollRange(level, 10, 30, 20),
     netrun_cooldown_lvl: getStatRollRange(level, 10, 30, 20),
-    mod_storage: getStatRollRange(level, 20, 40, 10),
+    mod_storage: getStatRollRange(level, 20, 40, 15),
   };
   const endgameStats: { [K in keyof EndgameMults]: [number, number] } = {
     stamina_gain: getStatRollRange(level, 1, 1.5, 1.5),
@@ -92,7 +92,7 @@ export function getAllStatRanges(level: number) {
     sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
     stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
     equipment_cost: getStatRollRange(level, -1.5, -4, -1.5),
-    int_exp: getStatRollRange(level, 1.6, 1, 1.2),
+    int_exp: getStatRollRange(level, 1.2, 0.8, 0.8),
   };
 
   return {

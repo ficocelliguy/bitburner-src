@@ -12,9 +12,9 @@ import { CraftingPage } from "./ui/CraftingPage";
 import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
 import { gainCyberdeck } from "./effects";
-import { CyberdeckEvents } from "./models/CyberdeckState";
+import { CyberdeckEvents, hasCyberdeck } from "./models/CyberdeckState";
 
-export function CyberDeckRoot(): React.ReactElement {
+export function CyberdeckRoot(): React.ReactElement {
   const rerender = useRerender(1000);
   const [value, setValue] = React.useState(0);
   const styles = useCyberdeckStyles();
@@ -26,7 +26,9 @@ export function CyberDeckRoot(): React.ReactElement {
 
   useEffect(() => {
     // TODO-fico: this is temporary setup for testers
-    gainCyberdeck();
+    if (!hasCyberdeck()) {
+      gainCyberdeck();
+    }
   }, []);
 
 
