@@ -9,9 +9,16 @@ Task
 **Signature:**
 
 ```typescript
-export type Task = StudyTask | CompanyWorkTask | CreateProgramWorkTask | CrimeTask | FactionWorkTask | GraftingTask;
+export type Task =
+  | StudyTask
+  | CompanyWorkTask
+  | CreateProgramWorkTask
+  | CrimeTask
+  | FactionWorkTask
+  | GraftingTask
+  | CyberdeckTask;
 ```
-**References:** [StudyTask](./bitburner.studytask.md)<!-- -->, [CompanyWorkTask](./bitburner.companyworktask.md)<!-- -->, [CreateProgramWorkTask](./bitburner.createprogramworktask.md)<!-- -->, [CrimeTask](./bitburner.crimetask.md)<!-- -->, [FactionWorkTask](./bitburner.factionworktask.md)<!-- -->, [GraftingTask](./bitburner.graftingtask.md)
+**References:** [StudyTask](./bitburner.studytask.md)<!-- -->, [CompanyWorkTask](./bitburner.companyworktask.md)<!-- -->, [CreateProgramWorkTask](./bitburner.createprogramworktask.md)<!-- -->, [CrimeTask](./bitburner.crimetask.md)<!-- -->, [FactionWorkTask](./bitburner.factionworktask.md)<!-- -->, [GraftingTask](./bitburner.graftingtask.md)<!-- -->, [CyberdeckTask](./bitburner.cyberdecktask.md)
 
 ## Remarks
 

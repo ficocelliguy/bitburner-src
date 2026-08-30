@@ -5,6 +5,7 @@ import { assertObject } from "../../utils/TypeAssertion";
 
 type CyberdeckSaveData = {
   hasCyberdeck: boolean;
+  hasDiscoveredGlitch: boolean;
   unitCompleted: number;
   baseRackSize: number;
   modStorageSize: number;
@@ -29,6 +30,7 @@ type CyberdeckSaveData = {
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
     hasCyberdeck: hasCyberdeck(),
+    hasDiscoveredGlitch: CyberdeckState.hasDiscoveredGlitch,
     unitCompleted: CyberdeckState.unitCompleted,
     baseRackSize: CyberdeckState.baseRackSize,
     modStorageSize: CyberdeckState.modStorageSize,
@@ -61,6 +63,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     assertObject(parsedData);
     const {
       hasCyberdeck,
+      hasDiscoveredGlitch,
       unitCompleted,
       baseRackSize,
       modStorageSize,
@@ -84,6 +87,9 @@ export function loadCyberdeckSaveData(saveString: unknown) {
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
     CyberdeckState.hasCyberdeck = hasCyberdeck;
+    if (typeof hasDiscoveredGlitch !== "boolean")
+      throw new Error("Invalid cyberdeck savestring value: hasDiscoveredGlitch");
+    CyberdeckState.hasDiscoveredGlitch = hasDiscoveredGlitch;
     if (typeof unitCompleted !== "number") throw new Error("Invalid cyberdeck savestring value: unitCompleted");
     CyberdeckState.unitCompleted = unitCompleted;
     if (typeof baseRackSize !== "number") throw new Error("Invalid cyberdeck savestring value: baseRackSize");
@@ -99,8 +105,8 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
     if (typeof lastCorruptedNetrunningTimestamp !== "number")
-      throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
-    CyberdeckState.lastCorruptedNetrunningTimestamp = lastNetrunningTimestamp;
+      throw new Error("Invalid cyberdeck savestring value: lastCorruptedNetrunningTimestamp");
+    CyberdeckState.lastCorruptedNetrunningTimestamp = lastCorruptedNetrunningTimestamp;
     if (typeof netrunningLevel !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningLevel");
     CyberdeckState.netrunningLevel = netrunningLevel;
 

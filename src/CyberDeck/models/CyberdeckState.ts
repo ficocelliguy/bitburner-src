@@ -13,7 +13,7 @@ export const CyberdeckState = {
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,
-  maxInstalledRackExtensions: 2,
+  maxInstalledRackExtensions: getRackExtensionCap(),
   netrunningCooldownLevel: 0,
   netrunningLevel: 8, // TODO-fico: change this to 0 after testing is done
   craftingLevel: 8, // TODO-fico: change this to 0 after testing is done
@@ -70,6 +70,10 @@ export const CyberdeckState = {
 
 export function hasCyberdeck(): boolean {
   return CyberdeckState.hasCyberdeck || !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
+}
+
+export function getRackExtensionCap() {
+  return 2; // TODO-fico: sf reward?
 }
 
 export function getChargedModuleIDs(): string[] {

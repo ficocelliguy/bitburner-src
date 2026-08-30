@@ -446,6 +446,8 @@ import nsDoc_bitburner_cyberdeck_removeconnection_md from "../../markdown/bitbur
 import nsDoc_bitburner_cyberdeck_stats_md from "../../markdown/bitburner.cyberdeck.stats.md?raw";
 import nsDoc_bitburner_cyberdeck_storemod_md from "../../markdown/bitburner.cyberdeck.storemod.md?raw";
 import nsDoc_bitburner_cyberdeckstats_md from "../../markdown/bitburner.cyberdeckstats.md?raw";
+import nsDoc_bitburner_cyberdecktask_md from "../../markdown/bitburner.cyberdecktask.md?raw";
+import nsDoc_bitburner_cyberdecktask_type_md from "../../markdown/bitburner.cyberdecktask.type.md?raw";
 import nsDoc_bitburner_darknet_authenticate_md from "../../markdown/bitburner.darknet.authenticate.md?raw";
 import nsDoc_bitburner_darknet_connecttosession_md from "../../markdown/bitburner.darknet.connecttosession.md?raw";
 import nsDoc_bitburner_darknet_freezeserver_md from "../../markdown/bitburner.darknet.freezeserver.md?raw";
@@ -2109,6 +2111,8 @@ AllPages["nsDoc/bitburner.cyberdeck.removeconnection.md"] = nsDoc_bitburner_cybe
 AllPages["nsDoc/bitburner.cyberdeck.stats.md"] = nsDoc_bitburner_cyberdeck_stats_md;
 AllPages["nsDoc/bitburner.cyberdeck.storemod.md"] = nsDoc_bitburner_cyberdeck_storemod_md;
 AllPages["nsDoc/bitburner.cyberdeckstats.md"] = nsDoc_bitburner_cyberdeckstats_md;
+AllPages["nsDoc/bitburner.cyberdecktask.md"] = nsDoc_bitburner_cyberdecktask_md;
+AllPages["nsDoc/bitburner.cyberdecktask.type.md"] = nsDoc_bitburner_cyberdecktask_type_md;
 AllPages["nsDoc/bitburner.darknet.authenticate.md"] = nsDoc_bitburner_darknet_authenticate_md;
 AllPages["nsDoc/bitburner.darknet.connecttosession.md"] = nsDoc_bitburner_darknet_connecttosession_md;
 AllPages["nsDoc/bitburner.darknet.freezeserver.md"] = nsDoc_bitburner_darknet_freezeserver_md;

@@ -302,6 +302,13 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     }
     return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
   }
+
+  disconnectModule(module);
+  if (CyberdeckState.installedModules.includes(module)) {
+    moveModule(module, false, true);
+  }
+  CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
+
   if (module.id == LocationName.IshimaGlitch) {
     if (showToast) {
       SnackbarEvents.emit("Mod recycled.", ToastVariant.SUCCESS, 2000);
@@ -315,12 +322,6 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.components.ROM += ROMGained;
   CyberdeckState.components.neurodes += neurodesGained;
-
-  disconnectModule(module);
-  if (CyberdeckState.installedModules.includes(module)) {
-    moveModule(module, false, true);
-  }
-  CyberdeckState.storedModules = CyberdeckState.storedModules.filter((m) => m !== module);
 
   if (showToast) {
     gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained });

@@ -1,54 +1,30 @@
-import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
+import { CyberdeckState, getRackExtensionCap, hasCyberdeck } from "../models/CyberdeckState";
 import { addCyberdeckServer } from "../models/cyberdeckServer";
+import { prestigeCyberdeckComponents } from "../models/componentEconomy";
+import { Player } from "@player";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
-    CyberdeckState.hasCyberdeck = false; // TODO-fico: look at source-files?
+    CyberdeckState.hasCyberdeck = !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
     CyberdeckState.storedCycles = 0;
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
     CyberdeckState.connections = [];
     CyberdeckState.coveredSockets = [];
     CyberdeckState.netrunningLevel = 0;
+    CyberdeckState.craftingLevel = 0;
+    CyberdeckState.modStorageSize = 8;
+    CyberdeckState.maxInstalledRackExtensions = getRackExtensionCap();
     CyberdeckState.netrunningSeedUsages = 0;
     CyberdeckState.craftingSeedUsages = 0;
     CyberdeckState.netrunningCorruptedSeedUsages = 0;
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
   }
-  CyberdeckState.components = {
-    chips: 0,
-    ROM: 0,
-    neurodes: 0,
-    cores: 0,
-    ICE: 2,
-  };
-  CyberdeckState.componentStats = {
-    ROM: {
-      backdoors: 0,
-      caches: 0,
-      pettyCrime: 0,
-      programs: 0,
-      netrunning: 0,
-    },
-    chips: {
-      hacknet: 0,
-      companyWork: 0,
-      IPvGO: 0,
-      netrunning: 0,
-    },
-    neurodes: {
-      kills: 0,
-      class: 0,
-      codingContracts: 0,
-      netrunning: 0,
-    },
-    cores: {
-      netrunning: 0,
-    },
-  };
   CyberdeckState.lastNetrunningTimestamp = 0;
   CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
+
+  prestigeCyberdeckComponents();
 
   if (hasCyberdeck()) {
     addCyberdeckServer();

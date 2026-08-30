@@ -384,6 +384,17 @@ Cyberdeck API
 </td></tr>
 <tr><td>
 
+[CyberdeckTask](./bitburner.cyberdecktask.md)
+
+
+</td><td>
+
+Cyberdeck Creation Work
+
+
+</td></tr>
+<tr><td>
+
 [Darknet](./bitburner.darknet.md)
 
 

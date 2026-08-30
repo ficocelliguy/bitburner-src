@@ -15,6 +15,7 @@ import { DeckMod, ModType } from "../Types";
 import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
 import {
+  canUpgradeCyberdeckServerRam,
   getCyberdeckServerCoreUpgradeCost,
   getCyberdeckServerRamUpgradeCost,
   upgradeCyberdeckServerCores,
@@ -123,7 +124,7 @@ export function CraftingPage(): React.ReactElement {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
-        <Button onClick={upgradeCyberdeckServerRam}>
+        <Button onClick={upgradeCyberdeckServerRam} disabled={!canUpgradeCyberdeckServerRam()}>
           <div
             style={{
               display: "flex",
@@ -133,11 +134,13 @@ export function CraftingPage(): React.ReactElement {
               margin: "5px",
             }}
           >
-            <span>Upgrade cyberdeck Server RAM</span>
-            <ComponentCost
-              cost={getCyberdeckServerRamUpgradeCost().componentCost}
-              moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
-            />
+            <span>Upgrade cyberdeck Server RAM{!canUpgradeCyberdeckServerRam() && " (Maxed)"}</span>
+            {canUpgradeCyberdeckServerRam() && (
+              <ComponentCost
+                cost={getCyberdeckServerRamUpgradeCost().componentCost}
+                moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
+              />
+            )}
           </div>
         </Button>
         <Button onClick={upgradeCyberdeckServerCores}>

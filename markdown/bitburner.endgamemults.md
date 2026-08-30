@@ -13,5 +13,6 @@ type EndgameMults = {
   sleeve_sync: number;
   stanek_charge: number;
   equipment_cost: number;
+  int_exp: number;
 };
 ```

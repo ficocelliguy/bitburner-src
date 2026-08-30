@@ -4493,6 +4493,7 @@ type EndgameMults = {
   sleeve_sync: number;
   stanek_charge: number;
   equipment_cost: number;
+  int_exp: number;
 };
 
 type NetrunningRewards = {
@@ -4575,9 +4576,9 @@ export interface Cyberdeck {
    * RAM cost: 1 GB
    *
    * @param modId - the ID of the mod to move to the mod rack
-   * @param socketIndex - Optional. The index to place the mod at. If omitted, the mod is placed at the last open slot.
+   * @param modIndex - Optional. The index to place the mod at. If omitted, the mod is placed at the last open slot.
    */
-  installMod(modId: string, socketIndex?: number): Promise<boolean>;
+  installMod(modId: string, modIndex?: number): Promise<boolean>;
 
   /**
    * Move a mod to storage, or shifts a mod's location in storage.

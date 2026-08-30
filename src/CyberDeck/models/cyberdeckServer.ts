@@ -41,8 +41,12 @@ export function getCyberdeckServerRamUpgradeCap() {
   return 28; // TODO-fico: make this a SF reward or something
 }
 
+export function canUpgradeCyberdeckServerRam() {
+  return CyberdeckState.serverRamUpgrades < getCyberdeckServerRamUpgradeCap();
+}
+
 export function getCyberdeckServerRamUpgradeCost() {
-  if (CyberdeckState.serverRamUpgrades >= getCyberdeckServerRamUpgradeCap()) {
+  if (!canUpgradeCyberdeckServerRam()) {
     return {
       componentCost: { ROM: Infinity, neurodes: Infinity, chips: Infinity, cores: 0, ICE: 0 },
       moneyCost: Infinity,

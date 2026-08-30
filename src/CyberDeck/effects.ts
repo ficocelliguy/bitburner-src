@@ -7,8 +7,10 @@ import { addCyberdeckServer } from "./models/cyberdeckServer";
 import { createInitialModules } from "./models/createModule";
 
 export function applyCyberdeckStatBonuses() {
-  const mults = getCyberdeckStatBonuses(1).playerMults;
-  Player.mults = mergeMultipliers(Player.mults, mults);
+  const mults = getCyberdeckStatBonuses(1);
+  const playerMults = mults.playerMults;
+  mults.playerMults.bladeburner_stamina_gain = mults.endgameStats.stamina_gain;
+  Player.mults = mergeMultipliers(Player.mults, playerMults);
   Player.updateSkillLevels();
 }
 

@@ -11,7 +11,7 @@ Mods must be both installed and charged (have a connection to another charged mo
 **Signature:**
 
 ```typescript
-installMod(modId: string, socketIndex?: number): Promise<boolean>;
+installMod(modId: string, modIndex?: number): Promise<boolean>;
 ```
 
 ## Parameters
@@ -50,7 +50,7 @@ the ID of the mod to move to the mod rack
 </td></tr>
 <tr><td>
 
-socketIndex
+modIndex
 
 
 </td><td>

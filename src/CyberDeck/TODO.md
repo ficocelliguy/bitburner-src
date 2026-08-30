@@ -3,9 +3,12 @@ REQUIRED FOR MVP
 - api
 - re-enable offline summary & beta text
 
+- Droppable: unsupported nested scroll container detected on rewards panel in dev screen
+
 - basic doc page - rewrite
 
 - Add WiFUs
+
   - Wired Firmware Unit
 
 - code review

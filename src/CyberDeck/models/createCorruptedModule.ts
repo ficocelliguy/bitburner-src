@@ -8,8 +8,8 @@ import { Player } from "@player";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
 export function createCorruptedModule(rng: WHRNG): DeckMod {
+  // TODO-fico: reduce this probability after testing
   if (Player.sourceFiles.get(1) && rng.random() < 0.1) {
-    // TODO-fico: reduce this after testing
     return getEndgameStatModule(rng);
   }
 
@@ -48,6 +48,11 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
   }
   if (roll < 0.45) {
     return createUplink(getLevel(rng, 2), rng);
+  }
+
+  // TODO-fico: remove this after first rounds of testing
+  if (roll < 0.6) {
+    return createCorruptedModule(rng);
   }
 
   return getJunkModule(rng);

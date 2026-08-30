@@ -209,7 +209,7 @@ Gets a list of all cyberdeck mods in storage. (Does not included installed mods)
 </td></tr>
 <tr><td>
 
-[installMod(modId, socketIndex)](./bitburner.cyberdeck.installmod.md)
+[installMod(modId, modIndex)](./bitburner.cyberdeck.installmod.md)
 
 
 </td><td>
