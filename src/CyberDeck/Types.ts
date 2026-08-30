@@ -72,6 +72,7 @@ export type EndgameMults = {
   sleeve_sync: number;
   stanek_charge: number;
   equipment_cost: number;
+  int_exp: number;
 };
 
 export type ComponentStats = {
@@ -161,6 +162,7 @@ export const statBonusShortNames: {
   sleeve_sync: "Sleeve Sync",
   stanek_charge: "Stanek Charge",
   equipment_cost: "Equipment Cost",
+  int_exp: "Int XP",
 
   // Extra Rack Slots
   extraRackSlots: "Mod Rack Slots",
@@ -232,6 +234,7 @@ export const statBonusLongNames: {
   sleeve_sync: "Sleeve Sync Speed",
   stanek_charge: "Stanek Charge Boost",
   equipment_cost: "Gang Equipment Cost",
+  int_exp: "Intelligence Experience",
 
   // Extra Rack Slots
   extraRackSlots: "Extra Mod Rack Slots",

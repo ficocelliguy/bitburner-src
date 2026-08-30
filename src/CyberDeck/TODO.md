@@ -2,14 +2,7 @@ REQUIRED FOR MVP
 
 - api
 
-- int xp as endgame stat?
-
 - basic doc page - rewrite
-
-- remove testing button that adds components
-
-- make hand-chosen starting module setup
-  - test!
 
 - Add WiFUs
   - Wired Firmware Unit
@@ -31,6 +24,9 @@ TODO:
 TODO LATER:
 
 - BN
+  - rewards
+    - starting netrunning level?
+    - rack extension cap up?
 
 - Full docs
 

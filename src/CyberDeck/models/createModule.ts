@@ -162,28 +162,9 @@ function getRandomModuleType(rng: WHRNG) {
   return ModType.SkillChip;
 }
 
-export function createInitialModules(force = false) {
-  if (CyberdeckState.storedModules.length > 0 && !force) {
-    return;
-  }
-  CyberdeckState.installedModules = [];
-  CyberdeckState.storedModules = [];
-  CyberdeckState.connections = [];
-  CyberdeckState.netrunningLevel = 12;
-  for (let i = 0; i < 4; i++) {
-    CyberdeckState.installedModules.push(createModule(getNextCraftingWHRNG()));
-  }
-  for (let i = 0; i < 5; i++) {
-    CyberdeckState.storedModules.push(createModule(getNextCraftingWHRNG()));
-  }
-  CyberdeckState.netrunningLevel = 0;
-  CyberdeckState.components.ROM = 25;
-  CyberdeckState.components.chips = 25;
-  CyberdeckState.components.neurodes = 25;
-  CyberdeckState.components.ICE = 4;
-  CyberdeckState.components.cores = 4;
 
-  // TODO-fico: remove later after testing
+// TODO-fico: remove later after testing
+export function logStatRanges() {
   const maxBonuses = getAllStatRanges(12);
   const statList = [
     ...Object.entries(maxBonuses.playerMults ?? {}),
@@ -196,7 +177,7 @@ export function createInitialModules(force = false) {
   console.log(stats);
 }
 
-export function createInitialModules2() {
+export function createInitialModules() {
   const rng = getNextNetrunningWHRNG();
   const powerSupply: DeckMod = {
     type: ModType.PowerSupply,

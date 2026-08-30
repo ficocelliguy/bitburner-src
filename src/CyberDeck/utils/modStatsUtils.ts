@@ -81,8 +81,8 @@ export function getDefaultPlayerMults(basis = 0): Multipliers {
     hacking_speed: basis,
     hacking_money: basis,
     hacking_chance: basis,
-    hacking_grow: 0
-  }
+    hacking_grow: basis,
+  };
 }
 
 export function getDefaultMiscMults(basis = 0): MiscMults {
@@ -106,6 +106,7 @@ export function getDefaultEndgameMults(basis = 0): EndgameMults {
     sleeve_sync: basis,
     stanek_charge: basis,
     equipment_cost: basis,
+    int_exp: basis,
   };
 }
 

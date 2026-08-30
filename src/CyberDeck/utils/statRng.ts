@@ -92,6 +92,7 @@ export function getAllStatRanges(level: number) {
     sleeve_sync: getStatRollRange(level, 0.8, 1.5, 1.2),
     stanek_charge: getStatRollRange(level, 0.8, 1.5, 1.2),
     equipment_cost: getStatRollRange(level, -1.5, -4, -1.5),
+    int_exp: getStatRollRange(level, 1.6, 1, 1.2),
   };
 
   return {

@@ -11,6 +11,7 @@ import { CONSTANTS } from "../Constants";
 import { Player } from "../Player";
 import { defaultMultipliers } from "./Multipliers";
 import { calculateExp, calculateSkill } from "./formulas/skill";
+import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
 
 // Base class representing a person-like object
 export abstract class Person implements IPerson {
@@ -183,7 +184,7 @@ export abstract class Person implements IPerson {
      * a permanent benefit.
      */
     if (Player.sourceFileLvl(5) > 0 || Player.bitNodeN === 5) {
-      this.exp.intelligence += exp;
+      this.exp.intelligence += exp * getCyberdeckStatBonuses(1).endgameStats.int_exp;
       this.skills.intelligence = Math.floor(this.calculateSkill(this.exp.intelligence, 1));
       this.persistentIntelligenceData.exp += exp;
     }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { Container, Box, Button, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import { Container, Box, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
@@ -14,7 +14,7 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { createInitialModules, getCyberdeckIOPanel } from "../models/createModule";
+import { getCyberdeckIOPanel } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
@@ -111,15 +111,6 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <Button
-        onClick={() => {
-          createInitialModules(true);
-          CyberdeckEvents.emit();
-        }}
-      >
-        Testing tool: Generate new mods
-      </Button>
-
       <Container disableGutters maxWidth={false}>
         <canvas
           ref={canvas}

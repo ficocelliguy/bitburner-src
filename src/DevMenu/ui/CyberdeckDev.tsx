@@ -12,6 +12,9 @@ import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../Cyber
 import { NetrunningRewards } from "../../CyberDeck/Types";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
+import { prestigeCyberdeck } from "../../CyberDeck/utils/prestigeCyberdeck";
+import { getNextCraftingWHRNG } from "../../CyberDeck/utils/statRng";
+import { createModule } from "../../CyberDeck/models/createModule";
 
 export function CyberdeckDev(): React.ReactElement {
   const [corrupted, setCorrupted] = React.useState(false);
@@ -68,6 +71,25 @@ export function CyberdeckDev(): React.ReactElement {
     SnackbarEvents.emit("Cleared all mods from your cyberdeck.", ToastVariant.SUCCESS, 2000);
   }
 
+  function generateRandomMods() {
+    CyberdeckState.installedModules = [];
+    CyberdeckState.storedModules = [];
+    CyberdeckState.connections = [];
+    CyberdeckState.netrunningLevel += 12;
+    for (let i = 0; i < 4; i++) {
+      CyberdeckState.installedModules.push(createModule(getNextCraftingWHRNG()));
+    }
+    for (let i = 0; i < 5; i++) {
+      CyberdeckState.storedModules.push(createModule(getNextCraftingWHRNG()));
+    }
+    CyberdeckState.netrunningLevel -= 12;
+    CyberdeckState.components.ROM = 25;
+    CyberdeckState.components.chips = 25;
+    CyberdeckState.components.neurodes = 25;
+    CyberdeckState.components.ICE = 4;
+    CyberdeckState.components.cores = 4;
+  }
+
   return (
     <>
       <RewardsModal
@@ -92,6 +114,21 @@ export function CyberdeckDev(): React.ReactElement {
                 }}
               >
                 Get Cyberdeck
+              </Button>
+            </span>
+          </Tooltip>
+          <br />
+          <br />
+          <Tooltip title={<Typography>Remove and reset the cyberdeck.</Typography>}>
+            <span>
+              <Button
+                disabled={!hasCyberdeck()}
+                onClick={() => {
+                  prestigeCyberdeck(true);
+                  SnackbarEvents.emit("Cyberdeck Lost!", ToastVariant.SUCCESS, 2000);
+                }}
+              >
+                Remove Cyberdeck
               </Button>
             </span>
           </Tooltip>
@@ -144,6 +181,19 @@ export function CyberdeckDev(): React.ReactElement {
                 }}
               >
                 Get Corrupted Netrunning Rewards
+              </Button>
+            </span>
+          </Tooltip>
+          <br />
+          <br />
+          <Tooltip title={<Typography>Remove existing mods, set components to a base level, and generate a number of random mods</Typography>}>
+            <span>
+              <Button
+                onClick={() => {
+                  generateRandomMods();
+                }}
+              >
+                Reset And Get Random Mods
               </Button>
             </span>
           </Tooltip>
