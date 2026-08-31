@@ -19,7 +19,10 @@ REQUIRED FOR MVP
 
 TODO:
 
+- tooltips for stats page
+
 - filter box help text
+
   - more search options? > and < ?
 
 - netrunning

@@ -16,6 +16,6 @@ crafting: {
 
     craftUplinkMod(): DeckMod | null;
 
-    recycleMod(modId: string): ComponentCounts;
+    recycleMod(modId: string): ComponentCounts & { success: boolean };
   };
 ```

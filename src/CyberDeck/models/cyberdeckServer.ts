@@ -13,7 +13,6 @@ import { Player } from "@player";
 
 export function addCyberdeckServer() {
   if (GetServer(SpecialServers.Cyberdeck)) {
-    // TODO-fico: make this an error once testing is done
     return;
   }
   const server = new Server({

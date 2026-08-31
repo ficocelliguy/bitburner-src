@@ -236,6 +236,7 @@ const cloud = {
 } as const;
 
 const cyberdeck = {
+  hasCyberdeck: 0,
   getComponentCounts: 0.05,
   getStoredMods: 0.05,
   getInstalledMods: 0.05,
@@ -252,6 +253,12 @@ const cyberdeck = {
     getStatBonuses: 0,
     getLevels: 0,
     getComponentStats: 0,
+  },
+  server: {
+    getRamUpgradeCost: 0,
+    getCoreUpgradeCost: 0,
+    upgradeRam: 0.5,
+    upgradeCores: 0.5,
   },
   crafting: {
     craftICEbreaker: 1,

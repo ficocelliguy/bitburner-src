@@ -4508,6 +4508,12 @@ type NetrunningRewards = {
  */
 export interface Cyberdeck {
   /**
+   * Returns whether the player has a cyberdeck.
+   * @remarks
+   * RAM cost: 0 GB
+   */
+  hasCyberdeck(): boolean;
+  /**
    * Get the number of each type of cyberdeck crafting component you have.
    * @remarks
    * RAM cost: 0.05 GB
@@ -4693,6 +4699,37 @@ export interface Cyberdeck {
     getComponentStats(): ComponentStats;
   };
   /**
+   * Namespace for API methods for upgrading the cyberdeck server.
+   */
+  server: {
+    /**
+     * Returns the cost to upgrade the cyberdeck server's RAM.
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getRamUpgradeCost(): ComponentCounts & { money: number };
+    /**
+     * Returns the cost to upgrade the cyberdeck server's cores.
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getCoreUpgradeCost(): ComponentCounts & { money: number };
+    /**
+     * Upgrades the cyberdeck server's RAM.
+     * @remarks
+     * RAM cost: 0.5 GB
+     * @returns true if the upgrade was successful, false if it failed due to a lack of components or money
+     */
+    upgradeRam(): boolean;
+    /**
+     * Upgrades the cyberdeck server's cores.
+     * @remarks
+     * RAM cost: 0.5 GB
+     * @returns true if the upgrade was successful, false if it failed due to a lack of components or money
+     */
+    upgradeCores(): boolean;
+  };
+  /**
    * Namespace for API methods that create or destroy mods and ICEbreakers.
    */
   crafting: {
@@ -4756,7 +4793,7 @@ export interface Cyberdeck {
      *
      * @returns the count of each type of component gained from recycling the mod
      */
-    recycleMod(modId: string): ComponentCounts;
+    recycleMod(modId: string): ComponentCounts & { success: boolean };
   };
 
   /**

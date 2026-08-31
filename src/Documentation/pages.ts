@@ -438,11 +438,13 @@ import nsDoc_bitburner_cyberdeck_getcyberdeckiopanel_md from "../../markdown/bit
 import nsDoc_bitburner_cyberdeck_getinstalledmods_md from "../../markdown/bitburner.cyberdeck.getinstalledmods.md?raw";
 import nsDoc_bitburner_cyberdeck_getnetrunningicecost_md from "../../markdown/bitburner.cyberdeck.getnetrunningicecost.md?raw";
 import nsDoc_bitburner_cyberdeck_getstoredmods_md from "../../markdown/bitburner.cyberdeck.getstoredmods.md?raw";
+import nsDoc_bitburner_cyberdeck_hascyberdeck_md from "../../markdown/bitburner.cyberdeck.hascyberdeck.md?raw";
 import nsDoc_bitburner_cyberdeck_installmod_md from "../../markdown/bitburner.cyberdeck.installmod.md?raw";
 import nsDoc_bitburner_cyberdeck_legacy_md from "../../markdown/bitburner.cyberdeck.legacy.md?raw";
 import nsDoc_bitburner_cyberdeck_md from "../../markdown/bitburner.cyberdeck.md?raw";
 import nsDoc_bitburner_cyberdeck_netrun_md from "../../markdown/bitburner.cyberdeck.netrun.md?raw";
 import nsDoc_bitburner_cyberdeck_removeconnection_md from "../../markdown/bitburner.cyberdeck.removeconnection.md?raw";
+import nsDoc_bitburner_cyberdeck_server_md from "../../markdown/bitburner.cyberdeck.server.md?raw";
 import nsDoc_bitburner_cyberdeck_stats_md from "../../markdown/bitburner.cyberdeck.stats.md?raw";
 import nsDoc_bitburner_cyberdeck_storemod_md from "../../markdown/bitburner.cyberdeck.storemod.md?raw";
 import nsDoc_bitburner_cyberdeckstats_md from "../../markdown/bitburner.cyberdeckstats.md?raw";
@@ -2103,11 +2105,13 @@ AllPages["nsDoc/bitburner.cyberdeck.getcyberdeckiopanel.md"] = nsDoc_bitburner_c
 AllPages["nsDoc/bitburner.cyberdeck.getinstalledmods.md"] = nsDoc_bitburner_cyberdeck_getinstalledmods_md;
 AllPages["nsDoc/bitburner.cyberdeck.getnetrunningicecost.md"] = nsDoc_bitburner_cyberdeck_getnetrunningicecost_md;
 AllPages["nsDoc/bitburner.cyberdeck.getstoredmods.md"] = nsDoc_bitburner_cyberdeck_getstoredmods_md;
+AllPages["nsDoc/bitburner.cyberdeck.hascyberdeck.md"] = nsDoc_bitburner_cyberdeck_hascyberdeck_md;
 AllPages["nsDoc/bitburner.cyberdeck.installmod.md"] = nsDoc_bitburner_cyberdeck_installmod_md;
 AllPages["nsDoc/bitburner.cyberdeck.legacy.md"] = nsDoc_bitburner_cyberdeck_legacy_md;
 AllPages["nsDoc/bitburner.cyberdeck.md"] = nsDoc_bitburner_cyberdeck_md;
 AllPages["nsDoc/bitburner.cyberdeck.netrun.md"] = nsDoc_bitburner_cyberdeck_netrun_md;
 AllPages["nsDoc/bitburner.cyberdeck.removeconnection.md"] = nsDoc_bitburner_cyberdeck_removeconnection_md;
+AllPages["nsDoc/bitburner.cyberdeck.server.md"] = nsDoc_bitburner_cyberdeck_server_md;
 AllPages["nsDoc/bitburner.cyberdeck.stats.md"] = nsDoc_bitburner_cyberdeck_stats_md;
 AllPages["nsDoc/bitburner.cyberdeck.storemod.md"] = nsDoc_bitburner_cyberdeck_storemod_md;
 AllPages["nsDoc/bitburner.cyberdeckstats.md"] = nsDoc_bitburner_cyberdeckstats_md;

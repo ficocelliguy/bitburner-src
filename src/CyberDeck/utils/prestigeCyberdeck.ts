@@ -2,6 +2,7 @@ import { CyberdeckState, getRackExtensionCap, hasCyberdeck } from "../models/Cyb
 import { addCyberdeckServer } from "../models/cyberdeckServer";
 import { prestigeCyberdeckComponents } from "../models/componentEconomy";
 import { Player } from "@player";
+import { gainCyberdeck } from "../effects";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
@@ -22,6 +23,10 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.netrunningCorruptedSeedUsages = 0;
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
+
+    if (hasCyberdeck()) {
+      gainCyberdeck();
+    }
   }
   CyberdeckState.lastNetrunningTimestamp = 0;
   CyberdeckState.lastCorruptedNetrunningTimestamp = 0;

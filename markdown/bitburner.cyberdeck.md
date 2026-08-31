@@ -45,7 +45,7 @@ Description
 
 </td><td>
 
-{ craftICEbreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftProcessingMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftUplinkMod(): [DeckMod](./bitburner.deckmod.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; }
+{ craftICEbreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftProcessingMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftUplinkMod(): [DeckMod](./bitburner.deckmod.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md) &amp; { success: boolean }; }
 
 
 </td><td>
@@ -72,6 +72,25 @@ Namespace for API methods that create or destroy mods and ICEbreakers.
 The old net is a wasteland. Rampant corporate greed and unrestricted AI gradually turned it into a death trap. A great firewall was erected around the remaining clean systems in a few small areas, and the old net was abandoned.
 
 May the Blackwall continue to shield us all.
+
+
+</td></tr>
+<tr><td>
+
+[server](./bitburner.cyberdeck.server.md)
+
+
+</td><td>
+
+
+</td><td>
+
+{ getRamUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; getCoreUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; upgradeRam(): boolean; upgradeCores(): boolean; }
+
+
+</td><td>
+
+Namespace for API methods for upgrading the cyberdeck server.
 
 
 </td></tr>
@@ -204,6 +223,17 @@ ICEBreaker costs are greatly increased for a time after netrunning (due to distu
 </td><td>
 
 Gets a list of all cyberdeck mods in storage. (Does not included installed mods)
+
+
+</td></tr>
+<tr><td>
+
+[hasCyberdeck()](./bitburner.cyberdeck.hascyberdeck.md)
+
+
+</td><td>
+
+Returns whether the player has a cyberdeck.
 
 
 </td></tr>

@@ -33,7 +33,7 @@ export function StatsPage(): React.ReactElement {
         <Typography component="div" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
           <span>Netrunning level: {formatNumber(CyberdeckState.netrunningLevel, 2)}</span>
           <br />
-          <span>Trace decay reduction level: {formatNumber(CyberdeckState.netrunningCooldownLevel, 2)}</span>
+          <span>Netrun trace cooldown level: {formatNumber(CyberdeckState.netrunningCooldownLevel, 2)}</span>
           <br />
           <span>Crafting level: {formatNumber(CyberdeckState.craftingLevel, 2)}</span>
           <br />

@@ -168,16 +168,16 @@ export const statBonusShortNames: {
   extraRackSlots: "Mod Rack Slots",
 
   // unused
-  hacking_speed: "",
-  hacking_money: "",
-  hacking_grow: "",
-  hacknet_node_purchase_cost: "",
-  faction_rep: "",
-  dnet_money: "",
-  bladeburner_max_stamina: "",
-  bladeburner_stamina_gain: "",
-  bladeburner_analysis: "",
-  bladeburner_success_chance: "",
+  hacking_speed: "Hack Speed",
+  hacking_money: "Hack Money",
+  hacking_grow: "Hack Grow",
+  hacknet_node_purchase_cost: "Hacknet Node Purchase Cost",
+  faction_rep: "Faction Reputation",
+  dnet_money: "Darknet Money",
+  bladeburner_max_stamina: "Bladeburner Max Stamina",
+  bladeburner_stamina_gain: "Bladeburner Stamina Gain",
+  bladeburner_analysis: "Bladeburner Analysis",
+  bladeburner_success_chance: "Bladeburner Success Chance",
 } as const;
 
 export const statBonusLongNames: {
@@ -240,14 +240,14 @@ export const statBonusLongNames: {
   extraRackSlots: "Extra Mod Rack Slots",
 
   // unused
-  hacking_speed: "",
-  hacking_money: "",
-  hacking_grow: "",
-  hacknet_node_purchase_cost: "",
-  faction_rep: "",
-  dnet_money: "",
-  bladeburner_max_stamina: "",
-  bladeburner_stamina_gain: "",
-  bladeburner_analysis: "",
-  bladeburner_success_chance: "",
+  hacking_speed: "Hack Speed",
+  hacking_money: "Hack Money",
+  hacking_grow: "Hack Grow",
+  hacknet_node_purchase_cost: "Hacknet Node Purchase Cost",
+  faction_rep: "Faction Reputation",
+  dnet_money: "Darknet Money",
+  bladeburner_max_stamina: "Bladeburner Max Stamina",
+  bladeburner_stamina_gain: "Bladeburner Stamina Gain",
+  bladeburner_analysis: "Bladeburner Analysis",
+  bladeburner_success_chance: "Bladeburner Success Chance",
 } as const;

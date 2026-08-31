@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, DeckMod } from "@nsdefs";
 import { LocationName } from "@enums";
-import { CyberdeckState, getChargedModules } from "./models/CyberdeckState";
+import { CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
   craftICEbreaker,
   craftPowerSupply,
@@ -24,6 +24,14 @@ import { createConnection, disconnectConnection, moveModule } from "./models/mod
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
 import { getCorruptedHint } from "./ui/gainComponentToast";
+import { ComponentCounts } from "./Types";
+import {
+  getCyberdeckServerCoreUpgradeCost,
+  getCyberdeckServerRamUpgradeCost,
+  upgradeCyberdeckServerCores,
+  upgradeCyberdeckServerRam,
+} from "./models/cyberdeckServer";
+import { Player } from "@player";
 
 function getModOrThrow(modId: string): DeckMod {
   const mod =
@@ -37,6 +45,9 @@ function getModOrThrow(modId: string): DeckMod {
 
 export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
   return {
+    hasCyberdeck: () => {
+      return hasCyberdeck();
+    },
     getComponentCounts: () => {
       return { ...CyberdeckState.components };
     },
@@ -191,6 +202,74 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return structuredClone(CyberdeckState.componentStats);
       },
     },
+    server: {
+      getRamUpgradeCost(): ComponentCounts & { money: number } {
+        const cost = getCyberdeckServerRamUpgradeCost();
+        return {
+          ...cost.componentCost,
+          money: cost.moneyCost,
+        };
+      },
+      getCoreUpgradeCost(): ComponentCounts & { money: number } {
+        const cost = getCyberdeckServerCoreUpgradeCost();
+        return {
+          ...cost.componentCost,
+          money: cost.moneyCost,
+        };
+      },
+      upgradeRam(ctx: NetscriptContext): boolean {
+        const cost = getCyberdeckServerRamUpgradeCost();
+        if (CyberdeckState.components.ROM < cost.componentCost.ROM) {
+          logger(ctx)(
+            `Not enough ROM components to upgrade server RAM. Need ${cost.componentCost.ROM}, have ${CyberdeckState.components.ROM}`,
+          );
+          return false;
+        }
+        if (CyberdeckState.components.neurodes < cost.componentCost.neurodes) {
+          logger(ctx)(
+            `Not enough neurodes to upgrade server RAM. Need ${cost.componentCost.neurodes}, have ${CyberdeckState.components.neurodes}`,
+          );
+          return false;
+        }
+        if (CyberdeckState.components.chips < cost.componentCost.chips) {
+          logger(ctx)(
+            `Not enough chips to upgrade server RAM. Need ${cost.componentCost.chips}, have ${CyberdeckState.components.chips}`,
+          );
+          return false;
+        }
+        if (Player.money < cost.moneyCost) {
+          logger(ctx)(`Not enough money to upgrade server RAM. Need ${cost.moneyCost}, have ${Player.money}`);
+          return false;
+        }
+        return upgradeCyberdeckServerRam();
+      },
+      upgradeCores(ctx: NetscriptContext): boolean {
+        const cost = getCyberdeckServerCoreUpgradeCost();
+        if (CyberdeckState.components.ROM < cost.componentCost.ROM) {
+          logger(ctx)(
+            `Not enough ROM components to upgrade server cores. Need ${cost.componentCost.ROM}, have ${CyberdeckState.components.ROM}`,
+          );
+          return false;
+        }
+        if (CyberdeckState.components.neurodes < cost.componentCost.neurodes) {
+          logger(ctx)(
+            `Not enough neurodes to upgrade server cores. Need ${cost.componentCost.neurodes}, have ${CyberdeckState.components.neurodes}`,
+          );
+          return false;
+        }
+        if (CyberdeckState.components.chips < cost.componentCost.chips) {
+          logger(ctx)(
+            `Not enough chips to upgrade server cores. Need ${cost.componentCost.chips}, have ${CyberdeckState.components.chips}`,
+          );
+          return false;
+        }
+        if (Player.money < cost.moneyCost) {
+          logger(ctx)(`Not enough money to upgrade server cores. Need ${cost.moneyCost}, have ${Player.money}`);
+          return false;
+        }
+        return upgradeCyberdeckServerCores();
+      },
+    },
     crafting: {
       craftICEbreaker: (ctx: NetscriptContext, count: unknown = 1) => {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
@@ -318,9 +397,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           throw new Error(`Module with ID ${modId} not found`);
         }
         if (mod.favorite) {
-          throw new Error(`Cannot recycle favorited module ${modId}!`);
+          logger(ctx)(`Cannot recycle favorited module ${modId}!`);
+          return { success: false, chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
         }
-        return disassembleModule(mod);
+        return { success: true, ...disassembleModule(mod) };
       },
     },
     legacy: {
