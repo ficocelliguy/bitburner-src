@@ -241,7 +241,7 @@ function consumeSkillChips() {
     if (stats.netrunning_lvl) {
       CyberdeckState.netrunningLevel += stats.netrunning_lvl;
       SnackbarEvents.emit(
-        `Consumed SkillChip. Gained ${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`,
+        `Consumed SkillChip. Gained +${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`,
         ToastVariant.SUCCESS,
         4000,
       );
@@ -249,7 +249,7 @@ function consumeSkillChips() {
     if (stats.crafting_lvl) {
       CyberdeckState.craftingLevel += stats.crafting_lvl;
       SnackbarEvents.emit(
-        `Consumed SkillChip. Gained ${formatNumber(stats.crafting_lvl, 2)} crafting boost.`,
+        `Consumed SkillChip. Gained +${formatNumber(stats.crafting_lvl, 2)} crafting boost.`,
         ToastVariant.SUCCESS,
         4000,
       );
@@ -257,7 +257,7 @@ function consumeSkillChips() {
     if (stats.netrun_cooldown_lvl) {
       CyberdeckState.netrunningCooldownLevel += stats.netrun_cooldown_lvl;
       SnackbarEvents.emit(
-        `Consumed SkillChip. Gained ${formatNumber(stats.netrun_cooldown_lvl, 2)} trace decay reduction boost.`,
+        `Consumed SkillChip. Gained +${formatNumber(stats.netrun_cooldown_lvl, 2)} trace decay reduction boost.`,
         ToastVariant.SUCCESS,
         4000,
       );
@@ -265,7 +265,7 @@ function consumeSkillChips() {
     if (stats.mod_storage) {
       CyberdeckState.modStorageSize += stats.mod_storage;
       SnackbarEvents.emit(
-        `Consumed SkillChip. Increased mod storage by ${formatNumber(stats.mod_storage, 2)} slots.`,
+        `Consumed SkillChip. Increased mod storage by +${formatNumber(stats.mod_storage, 2)} slots.`,
         ToastVariant.SUCCESS,
         4000,
       );

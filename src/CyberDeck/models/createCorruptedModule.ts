@@ -32,14 +32,14 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
   if (roll < 0.27) {
     const module = createProcessingModule(getLevel(rng, 2), rng, true, 1.5, 2);
     module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
-    module.level = -1;
+    module.rarity = -1;
     return module;
   }
 
   if (roll < 0.33) {
     const module = createUplink(getLevel(rng, 2), rng, true, 1.5, 2);
     module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
-    module.level = -1;
+    module.rarity = -1;
     return module;
   }
 
@@ -66,7 +66,7 @@ export const getJunkModule = (rng: WHRNG) => {
       type: ModType.RackExtension,
       id: getID(rng),
       sockets: oneSocket,
-      level: 0,
+      rarity: 0,
       stats: {
         extraRackSlots: 1,
       },
@@ -75,7 +75,7 @@ export const getJunkModule = (rng: WHRNG) => {
       type: ModType.ProcessingMod,
       id: getID(rng),
       sockets: twoSocket,
-      level: 0,
+      rarity: 0,
       stats: {
         playerMults: getDebuff(1, rng),
       },
@@ -84,7 +84,7 @@ export const getJunkModule = (rng: WHRNG) => {
       type: ModType.Uplink,
       id: getID(rng),
       sockets: twoSocket,
-      level: 0,
+      rarity: 0,
       stats: {
         playerMults: getDebuff(1, rng),
       },
@@ -93,7 +93,7 @@ export const getJunkModule = (rng: WHRNG) => {
       type: ModType.PowerSupply,
       id: getID(rng),
       sockets: twoSocket,
-      level: 0,
+      rarity: 0,
       stats: {},
     },
   ];
@@ -108,7 +108,7 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
     type: ModType.RackExtension,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
-    level: -1,
+    rarity: -1,
     stats: {
       playerMults: debuffs,
       extraRackSlots: extraSlots,
@@ -122,7 +122,7 @@ const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
     type: ModType.SkillChip,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
-    level: -1,
+    rarity: -1,
     stats: {
       consumableStats: buffs,
     },
@@ -140,7 +140,7 @@ const getEndgameStatModule = (rng: WHRNG): DeckMod => {
     type: ModType.ProcessingMod,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
-    level: level,
+    rarity: level,
     stats: {
       playerMults: standardDebuff,
       endgameStats: effects,

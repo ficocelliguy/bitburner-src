@@ -74,7 +74,7 @@ export function ModuleComponent({
           title={
             <div>
               <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                {module.type} {getRarityText(module.level)}
+                {module.type} {getRarityText(module.rarity)}
               </Typography>
               <div style={{ color: Settings.theme.warning }}>
                 {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}

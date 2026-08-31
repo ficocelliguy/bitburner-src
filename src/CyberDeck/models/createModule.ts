@@ -4,7 +4,6 @@ import { ComponentCounts, DeckMod, ModType } from "../Types";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEbreakerCraftingCost,
-  isCustomBuild,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -31,12 +30,11 @@ import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
 export const getCyberdeckIOPanel = (): DeckMod => {
-  const id = isCustomBuild() ? "Ono-Sendai Mk7 Cyberdeck" : "Hosaka Mk 1 Cyberdeck";
   return {
     type: ModType.CyberdeckIOPanel,
-    id,
+    id: "cyberdeck-io-panel",
     sockets: [false, true, false, true, false, true, false, false],
-    level: 10,
+    rarity: 10,
     stats: {},
   };
 };
@@ -67,7 +65,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
     type: ModType.PowerSupply,
     id: getID(rng),
     sockets: getRandomSockets(rng, 2 + level / 3, bonus),
-    level,
+    rarity: level,
     stats: {
       playerMults: debuff,
       otherMults: debuff2,
@@ -97,7 +95,7 @@ export function createProcessingModule(
     type: ModType.ProcessingMod,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
-    level,
+    rarity: level,
     stats: {
       playerMults: debuff,
       otherMults: effects,
@@ -117,7 +115,7 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
     type: ModType.Uplink,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
-    level,
+    rarity: level,
     stats: {
       playerMults: mergedStats,
       otherMults: otherMultDebuff,
@@ -135,7 +133,7 @@ function createRackExtension(level: number, rng: WHRNG): DeckMod {
     type: ModType.RackExtension,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
-    level,
+    rarity: level,
   };
 }
 
@@ -144,7 +142,7 @@ function createSkillChip(level: number, rng: WHRNG): DeckMod {
     type: ModType.SkillChip,
     id: getID(rng),
     sockets: getRandomSockets(rng, 1),
-    level,
+    rarity: level,
     stats: {
       consumableStats: getConsumableBuff(level, rng),
     },
@@ -176,7 +174,7 @@ export function createInitialModules() {
   const powerSupply: DeckMod = {
     type: ModType.PowerSupply,
     id: getID(rng),
-    level: 1,
+    rarity: 1,
     sockets: [true, false, false, true, false, false, true, false],
     stats: {
       playerMults: {
@@ -187,7 +185,7 @@ export function createInitialModules() {
   const processingModule: DeckMod = {
     type: ModType.ProcessingMod,
     id: getID(rng),
-    level: 3,
+    rarity: 3,
     sockets: [true, false, false, false, false, false, false, false],
     stats: {
       playerMults: getDebuff(2, rng),
@@ -199,7 +197,7 @@ export function createInitialModules() {
   const uplinkModule: DeckMod = {
     type: ModType.Uplink,
     id: getID(rng),
-    level: 0,
+    rarity: 0,
     sockets: [false, false, false, false, false, false, true, false],
     stats: {
       playerMults: {
@@ -211,7 +209,7 @@ export function createInitialModules() {
   const skillChip: DeckMod = {
     type: ModType.SkillChip,
     id: getID(rng),
-    level: 3,
+    rarity: 3,
     sockets: [false, true, false, false, false, false, false, false],
     stats: {
       consumableStats: {
@@ -339,7 +337,7 @@ export function getEasterEggModule(): DeckMod {
   return {
     type: ModType.ProcessingMod,
     id: LocationName.IshimaGlitch,
-    level: 2,
+    rarity: 2,
     sockets: [false, false, false, false, false, false, false, true],
     stats: {
       playerMults: {

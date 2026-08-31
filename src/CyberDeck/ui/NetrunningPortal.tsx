@@ -42,6 +42,7 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
           />
         </Box>,
       );
+      return;
     }
     if (!canNetrun(corrupted)) return;
     setEntering(true);

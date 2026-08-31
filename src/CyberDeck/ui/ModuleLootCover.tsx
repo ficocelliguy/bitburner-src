@@ -16,7 +16,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
   }
 
   function celebrationSparkles() {
-    if ((module.level < 3 && module.level !== -1) || !cover?.current) {
+    if ((module.rarity < 3 && module.rarity !== -1) || !cover?.current) {
       return;
     }
     const color = getRarityColor(module);
@@ -27,7 +27,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
 
     createSparkles(randomX1, randomY1, color);
 
-    if (module.level < 5) {
+    if (module.rarity < 5) {
       return;
     }
 
@@ -36,7 +36,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
 
     setTimeout(() => createSparkles(randomX2, randomY2, color), 300);
 
-    if (module.level < 7) {
+    if (module.rarity < 7) {
       return;
     }
 

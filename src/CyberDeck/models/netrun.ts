@@ -92,8 +92,8 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
 }
 
 export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
-  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.level - m2.level);
-  if (!rewards.some((m) => m.level >= 3)) {
+  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.rarity - m2.rarity);
+  if (!rewards.some((m) => m.rarity >= 3)) {
     rewards[2] = createModule(rng, undefined, 3);
   }
   CyberdeckState.storedModules.unshift(...rewards);
@@ -110,7 +110,7 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
   const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
 
   const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
-    (m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level),
+    (m1, m2) => normalizeLevel(m1.rarity) - normalizeLevel(m2.rarity),
   );
 
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
@@ -133,7 +133,7 @@ export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWH
   const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
 
   const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
-    (m1, m2) => normalizeLevel(m1.level) - normalizeLevel(m2.level),
+    (m1, m2) => normalizeLevel(m1.rarity) - normalizeLevel(m2.rarity),
   );
 
   CyberdeckState.storedModules.unshift(...rewards);

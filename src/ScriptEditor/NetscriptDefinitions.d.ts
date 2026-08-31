@@ -4404,7 +4404,7 @@ type ComponentCounts = {
 
 type DeckMod = {
   id: string;
-  level: number;
+  rarity: number;
   sockets: SocketList;
   type: ModType;
   favorite?: boolean;

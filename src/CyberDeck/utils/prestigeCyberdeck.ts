@@ -7,12 +7,14 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {
     CyberdeckState.hasCyberdeck = !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
     CyberdeckState.storedCycles = 0;
+    CyberdeckState.unitCompleted = 0;
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
     CyberdeckState.connections = [];
     CyberdeckState.coveredSockets = [];
     CyberdeckState.netrunningLevel = 0;
     CyberdeckState.craftingLevel = 0;
+    CyberdeckState.netrunningCooldownLevel = 0;
     CyberdeckState.modStorageSize = 8;
     CyberdeckState.maxInstalledRackExtensions = getRackExtensionCap();
     CyberdeckState.netrunningSeedUsages = 0;

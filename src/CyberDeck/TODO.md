@@ -19,6 +19,9 @@ REQUIRED FOR MVP
 
 TODO:
 
+- filter box help text
+  - more search options? > and < ?
+
 - netrunning
   - animated background
 

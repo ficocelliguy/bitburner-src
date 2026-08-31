@@ -148,7 +148,7 @@ function getModStatString(module: DeckMod) {
     })
     .join(" ");
 
-  return `rarity:${module.level} ${module.type} ${statString}`.toLowerCase();
+  return `rarity:${module.rarity} ${module.type} ${statString}`.toLowerCase();
 }
 
 export function getFilteredStoredModules(modFilter: string) {

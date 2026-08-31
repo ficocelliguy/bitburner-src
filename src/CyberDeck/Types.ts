@@ -2,7 +2,7 @@ import { Multipliers } from "../PersonObjects/Multipliers";
 
 export type DeckMod = {
   id: string;
-  level: number;
+  rarity: number;
   sockets: SocketList;
   type: ModType;
   favorite?: boolean;
