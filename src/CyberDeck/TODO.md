@@ -8,7 +8,6 @@ REQUIRED FOR MVP
 - basic doc page - rewrite
 
 - Add WiFUs
-
   - Wired Firmware Unit
 
 - code review

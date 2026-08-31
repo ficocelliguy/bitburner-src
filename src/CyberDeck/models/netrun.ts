@@ -8,7 +8,8 @@ import { NetrunningRewards } from "../Types";
 import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
 import { saveGame } from "../../SaveObject";
-import { createCorruptedModule } from "./createCorruptedModule";
+import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
+import { Player } from "@player";
 
 export function getCurrentNetrunningIceCost(corrupted = false): number {
   if (corrupted) {
@@ -107,12 +108,7 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
   CyberdeckState.components.ICE -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
-  const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
-
-  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
-    (m1, m2) => normalizeLevel(m1.rarity) - normalizeLevel(m2.rarity),
-  );
-
+  const rewards = getCorruptedNetrunningRewards(rng);
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
 
   const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 2.5));
@@ -131,8 +127,16 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
 
 export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWHRNG()) {
   const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
+  const isFirstRun = CyberdeckState.netrunningCorruptedSeedUsages <= 1;
 
-  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), createCorruptedModule(rng)].sort(
+  const hasEndgame = !!Player.sourceFiles.get(1);
+  const specialReward = isFirstRun
+    ? hasEndgame
+      ? getEndgameStatModule(rng)
+      : getCorruptedSkillChip(rng)
+    : createCorruptedModule(rng);
+
+  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), specialReward].sort(
     (m1, m2) => normalizeLevel(m1.rarity) - normalizeLevel(m2.rarity),
   );
 

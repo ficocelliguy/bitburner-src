@@ -116,7 +116,7 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   };
 };
 
-const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
+export const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
   const buffs = mergeBuffs(getConsumableBuff(8, rng), getConsumableBuff(8, rng));
   return {
     type: ModType.SkillChip,
@@ -129,7 +129,7 @@ const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
   };
 };
 
-const getEndgameStatModule = (rng: WHRNG): DeckMod => {
+export const getEndgameStatModule = (rng: WHRNG): DeckMod => {
   const level = getLevel(rng, CyberdeckState.netrunningLevel + 2);
   const buff = getEndgameBuff(level, rng);
   const standardDebuff = getDebuff(CyberdeckState.netrunningLevel, rng);
