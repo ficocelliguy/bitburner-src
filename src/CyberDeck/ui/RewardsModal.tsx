@@ -40,7 +40,7 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", overflow: "visible" }}>
         {flavorText && (
           <Typography
             sx={{ fontStyle: "italic", fontSize: "13px", marginBottom: "12px", color: Settings.theme.maplocation }}

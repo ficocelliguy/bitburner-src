@@ -1,50 +1,48 @@
-# The Cyberdeck (WIP)
+# Cyberdeck (WIP docs)
 
-Everyone in the sprawl has a deck of some kind, but yours is different. It's a physical rack of chips and modules bolted to your rig, humming warm against your ribs. Slot the right mods together, wire power through them, and the deck starts giving you edges you can't buy off the shelf: faster crimes, richer contracts, a leg up in the market.
+The sky above is the color of television, tuned to a dead channel. Your deck hums at your side, a custom rack of mods hand-wired into a rugged keyboard and neural interface. Your augments spark as you prepare to dive. You've caught wind of a big score - forbidden new mod tech - protected only by some flimsy ICE security software.
 
-Nothing about it is stable, though. Stats roll great or awful, and corrupted mods bring debuffs along with their gains.
-
-You'll find the Cyberdeck as its own screen in the main sidebar, with four tabs: Manage Mods (the rack), Netrun, Craft, and Stats.
+Cyberspace is absolutely packed with the research space and storage of megacorporations, jockeying for influence and trying to stay one step ahead of the competition's experimental tech. Not all of those stores are protected as well as others. Some well-placed ICEBreakers is all it takes to get your hands on the mods within. A quick netrun, and it will all be yours.
 
 &nbsp;
 
-### The rack
+### The Rack
 
-The deck is a fixed set of slots. You drop mods into the rack and wire them up by dragging cables between the colored sockets on their edges. A cable only connects two sockets of the same color, and cables cannot overlap - running a wire past another mod's socket of the same color blocks the whole move.
+Any console jockey can buy an off-the-shelf setup, but the heart of a true netrunner's kit is their customized mod setup. Cyberdecks have a rack of slots to arrange mods on, up to a limit. Each custom module provides benefits: stat buffs and extra sockets to daisy-chain other mods. Most also typically come with stat debuff downsides. Mods can be dragged onto the rack and re-arranged, or placed in storage for later use.
 
-Power comes from the I/O panel at the top. A mod stays dark unless a chain of cables can trace back to it. Only powered mods give you their bonuses.
+Mods only take effect when charged. They need power either by being wired directly to the I/O panel at the top of the rack, or connected to another mod that is powered. Connections between mods link together two sockets of the same color. Note that connections of a color cannot overlap or intersect with other wires of that same color - arrange your mods carefully!
 
-Mods come in a few shapes:
+Mods vary wildly, but the different types typically have some features in common.
 
-- **Power Supply** - few stats of its own, but plenty of sockets. Its job is fanning power out to mods that would otherwise sit dark.
-- **Processing Mod** - bonuses that only apply to scripts running on the cyberdeck server itself.
-- **Uplink** - bonuses that apply to you through the Augmentation system: hacking, combat, crime, work.
-- **Rack Extension** - rarely rolls anything useful, but adds slots. There's a cap on how many you can install.
-- **Skill Chip** - one-shot. Powering a chip consumes it and permanently raises a deck-wide level (netrunning, crafting, mod storage, trace cooldown).
+- **Power Supply** - Provides multiple sockets to re-route power to other mods.
+- **Processing Mod** - Provides buffs to various mechanics and crafting component production.
+- **Uplink** - Provide player stat buffs.
+- **Rack Extension** - Has few stats or sockets, but raises the size of the mod rack when powered.
+- **Skill Chip** - Single-use mod, consumed when powered. Provides permanent bonuses to the cyberdeck's levels.
 
-Rarity scales how big the stat rolls are. Most mods roll one or two positive stats; some pair those with a debuff. Read a mod before you power it.
+Higher rarity mods gain access to higher potential stat rolls. On average, they have higher buffs and lower debuffs than lower-rarity mods, but a well-rolled mod of a lower rarity might still be better.
 
-Mods you don't want can be dragged into the trash can, which disassembles them into components. Right-click a mod to favorite it if you want it safe from that.
+Mods you don't want can be dragged into the trash can, which disassembles them into components. Right-click a mod to favorite it, to prevent it form being recycled.
 
 &nbsp;
 
 ### Netrunning
 
-The **Netrun** tab is where new mods come from. Each run burns some ICE (crafted separately on the Craft tab), drops three random mods into your storage, and gives you a handful of components. If your storage is already full you can't run.
+Netrunning is the primary way to get new mods. A quick dip into cyberspace, burn a few ICEBreakers, and walk away with the spoils. The rarity of the loot you find each netrun can be increased by raising your netrun level, if you can find the right skillchip mods.
 
-Between runs there's a "Trace Decay" cooldown. Running back-to-back costs a lot more ICE; waiting it out drops the price back down. The `netrun_cooldown_lvl` stat (from skill chips) lowers the floor.
+These raids, however, trigger tighter automated security. It's best to lie low for a while after a run - it will take many more ICEBreakers to get back in for a time. The time it takes for that trace to decay can be reduced by increasing your netrun cooldown level, which also is raised via skillchips.
 
-The second option, **Corrupted Netrunning**, reaches past the Blackwall. It has a hard cooldown, burns much more ICE, and hands back mods with stats you won't see anywhere else. Some of them come back so corrupted the good stats bring real debuffs with them.
+In addition to new mods, netrunning also provides some crafting components. Most importantly, it is the only source for cores, the key component to hand-crafting new cyberdeck mods.
 
 &nbsp;
 
-### Crafting
+### Crafting (todo)
 
 The **Craft** tab spends components to make ICEbreakers (each one produces the ICE that netrunning burns), Power Supply mods, Uplink mods, and Processing mods. Crafted mods use your Crafting level to roll instead of your Netrunning level, but the math is the same. This is also where you spend components to upgrade the cyberdeck server's RAM and cores.
 
 &nbsp;
 
-### Components
+### Components (todo)
 
 The deck runs on five things: **ROM**, **Chips**, **Neurodes**, **Cores**, and **ICE**. Every netrun drops a mix of the first four. Beyond that:
 
@@ -58,6 +56,15 @@ Whatever else you're doing in the game is quietly filling your bins. Specialize 
 
 &nbsp;
 
-### Playing the tradeoffs
+### Playing the tradeoffs (todo)
 
 A mod with two great stats and a debuff you don't care about is a steal. A rack extension is only worth the slot if you're already sitting on better mods than you can fit. Swapping mods in and out takes a few seconds, so you can plan around it: slot a crime-speed mod before a long run of contracts, then pull it back off when you're done.
+
+
+### Scripting Considerations (todo)
+
+- Given a list of mods (that each have connection limitations), how many of them can I actually daisy-chain together? which ones' buffs are worth the associated debuffs? How can I maximize stats I care about?
+- How much do I spend time doing meta things (e.g. faction rep work) vs side things that help build up my cyberdeck mods?
+- How much do I wait for netrunning to fully reset, vs spending more resources to get new random mods more often?
+- When do I swap out mods with other ones I have in storage to buff something else? (moving mods takes a short amount of time, so "flash mobbing" is possible but requires planning)
+- How much do I spend resources on standard netrunning (for more consistent rewards) vs the more expensive corrupted netrunning (which may give junk, or mods with bigger tradeoffs, or exclusive stat boost types)?
