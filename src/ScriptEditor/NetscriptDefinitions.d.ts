@@ -4407,8 +4407,9 @@ type DeckMod = {
   rarity: number;
   sockets: SocketList;
   type: ModType;
-  favorite?: boolean;
   stats: ModStats;
+  favorite?: boolean;
+  corrupted?: boolean;
 };
 
 type CyberdeckStats = {

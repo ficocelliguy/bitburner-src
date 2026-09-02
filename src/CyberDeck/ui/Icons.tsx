@@ -62,7 +62,7 @@ function getCustomModIMage(module: DeckMod) {
 
 export function getRarityColor(module: DeckMod) {
   const t = Settings.theme;
-  if (module.rarity < 0) {
+  if (module.corrupted) {
     return t.errordark;
   }
   const rarityColors = [

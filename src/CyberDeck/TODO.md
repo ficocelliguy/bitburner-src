@@ -4,7 +4,12 @@ REQUIRED FOR MVP
 - re-enable offline summary & beta text
 
 - basic doc page - rewrite
+  - add code snippets
+
 - link to docs on cyberdeck page
+  
+- split out crafting seed generation
+- look at seed storage again - can it be simplified?
 
 - Add WiFUs
   - Wired Firmware Unit

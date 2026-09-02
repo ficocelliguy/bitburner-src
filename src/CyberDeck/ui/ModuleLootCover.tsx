@@ -16,7 +16,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
   }
 
   function celebrationSparkles() {
-    if ((module.rarity < 3 && module.rarity !== -1) || !cover?.current) {
+    if (module.rarity < 3 || !cover?.current) {
       return;
     }
     const color = getRarityColor(module);

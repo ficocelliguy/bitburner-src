@@ -5,8 +5,9 @@ export type DeckMod = {
   rarity: number;
   sockets: SocketList;
   type: ModType;
-  favorite?: boolean;
   stats: ModStats;
+  favorite?: boolean;
+  corrupted?: boolean;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];

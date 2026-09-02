@@ -4,7 +4,7 @@ import {
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
-import { NetrunningRewards } from "../Types";
+import { DeckMod, ModType, NetrunningRewards } from "../Types";
 import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
 import { saveGame } from "../../SaveObject";
@@ -93,7 +93,11 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
 }
 
 export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
-  const rewards = [createModule(rng), createModule(rng), createModule(rng)].sort((m1, m2) => m1.rarity - m2.rarity);
+  const isFirstRun = CyberdeckState.netrunningSeedUsages <= 1;
+  const specialReward = isFirstRun ? createModule(rng, ModType.ProcessingMod, 5) : createModule(rng);
+  const rewards = [createModule(rng), createModule(rng), specialReward].sort((m1, m2) => m1.rarity - m2.rarity);
+
+  // guarantee at least one rarity 3+ mod
   if (!rewards.some((m) => m.rarity >= 3)) {
     rewards[2] = createModule(rng, undefined, 3);
   }
@@ -126,7 +130,6 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
 }
 
 export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWHRNG()) {
-  const normalizeLevel = (level: number): number => (level === -1 ? 99 : level);
   const isFirstRun = CyberdeckState.netrunningCorruptedSeedUsages <= 1;
 
   const hasEndgame = !!Player.sourceFiles.get(1);
@@ -137,7 +140,7 @@ export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWH
     : createCorruptedModule(rng);
 
   const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), specialReward].sort(
-    (m1, m2) => normalizeLevel(m1.rarity) - normalizeLevel(m2.rarity),
+    (m1, m2) => m1.rarity - m2.rarity,
   );
 
   CyberdeckState.storedModules.unshift(...rewards);

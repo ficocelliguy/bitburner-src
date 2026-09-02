@@ -60,11 +60,11 @@ export function ModuleComponent({
     }
   }
 
-  function getRarityText(rarity: number): string {
-    if (rarity < 0) {
+  function getRarityText(module: DeckMod): string {
+    if (module.corrupted) {
       return "[Corrupted]";
     }
-    return `[Rarity ${rarity}]`;
+    return `[Rarity ${module.rarity}]`;
   }
 
   return (
@@ -74,7 +74,7 @@ export function ModuleComponent({
           title={
             <div>
               <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                {module.type} {getRarityText(module.rarity)}
+                {module.type} {getRarityText(module)}
               </Typography>
               <div style={{ color: Settings.theme.warning }}>
                 {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}

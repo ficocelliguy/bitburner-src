@@ -8,9 +8,7 @@ Cyberspace is absolutely packed with the research space and storage of megacorpo
 
 ### The Rack
 
-Any console jockey can buy an off-the-shelf setup, but the heart of a true netrunner's kit is their customized mod setup. Cyberdecks have a rack of slots to arrange mods on, up to a limit. Each custom module provides benefits: stat buffs and extra sockets to daisy-chain other mods. Most also typically come with stat debuff downsides. Mods can be dragged onto the rack and re-arranged, or placed in storage for later use.
-
-Mods only take effect when charged. They need power either by being wired directly to the I/O panel at the top of the rack, or connected to another mod that is powered. Connections between mods link together two sockets of the same color. Note that connections of a color cannot overlap or intersect with other wires of that same color - arrange your mods carefully!
+Any console jockey can buy an off-the-shelf setup, but the heart of a true netrunner's kit is their customized mod setup. Cyberdecks have a rack of slots to arrange mods on, up to a limit. Each custom module provides benefits: stat buffs, and extra sockets to daisy-chain other mods. Most also typically come with stat debuff downsides. Mods can be dragged onto the rack and re-arranged, or placed in storage for later use.
 
 Mods vary wildly, but the different types typically have some features in common.
 
@@ -26,9 +24,17 @@ Mods you don't want can be dragged into the trash can, which disassembles them i
 
 &nbsp;
 
+### Connecting Mods
+
+Mods only take effect when charged. They need power either by being wired directly to the I/O panel at the top of the rack, or connected to another mod that is powered. Connections link together two sockets of the same color. Drag from one socket to another matching one to add a new connection, or click on a socket to remove its connection.
+
+Note that connections cannot overlap / intersect with other wires of that same color - arrange your mods carefully!
+
+&nbsp;
+
 ### Netrunning
 
-Netrunning is the primary way to get new mods. A quick dip into cyberspace, burn a few ICEBreakers, and walk away with the spoils. The rarity of the loot you find each netrun can be increased by raising your netrun level, if you can find the right skillchip mods.
+Netrunning is the primary way to get new mods. A quick dip into cyberspace, burn a few hand-crafted ICEBreakers, and you walk away with the spoils. The rarity of the loot you find each netrun can be increased by raising your netrun level, if you can find the right skillchip mods.
 
 These raids, however, trigger tighter automated security. It's best to lie low for a while after a run - it will take many more ICEBreakers to get back in for a time. The time it takes for that trace to decay can be reduced by increasing your netrun cooldown level, which also is raised via skillchips.
 
@@ -36,13 +42,7 @@ In addition to new mods, netrunning also provides some crafting components. Most
 
 &nbsp;
 
-### Crafting (todo)
-
-The **Craft** tab spends components to make ICEbreakers (each one produces the ICE that netrunning burns), Power Supply mods, Uplink mods, and Processing mods. Crafted mods use your Crafting level to roll instead of your Netrunning level, but the math is the same. This is also where you spend components to upgrade the cyberdeck server's RAM and cores.
-
-&nbsp;
-
-### Components (todo)
+### Crafting Components
 
 The deck runs on five things: **ROM**, **Chips**, **Neurodes**, **Cores**, and **ICE**. Every netrun drops a mix of the first four. Beyond that:
 
@@ -55,11 +55,6 @@ The deck runs on five things: **ROM**, **Chips**, **Neurodes**, **Cores**, and *
 Whatever else you're doing in the game is quietly filling your bins. Specialize hard in one activity and you'll run short on the components tied to everything else.
 
 &nbsp;
-
-### Playing the tradeoffs (todo)
-
-A mod with two great stats and a debuff you don't care about is a steal. A rack extension is only worth the slot if you're already sitting on better mods than you can fit. Swapping mods in and out takes a few seconds, so you can plan around it: slot a crime-speed mod before a long run of contracts, then pull it back off when you're done.
-
 
 ### Scripting Considerations (todo)
 
