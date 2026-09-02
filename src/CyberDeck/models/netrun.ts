@@ -4,10 +4,9 @@ import {
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
-import { DeckMod, ModType, NetrunningRewards } from "../Types";
+import { ModType, NetrunningRewards } from "../Types";
 import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
-import { saveGame } from "../../SaveObject";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 
@@ -48,12 +47,12 @@ export function getNetrunningTraceFraction(corrupted = false): number {
 
 export function canNetrun(corrupted = false): boolean {
   return (
-    CyberdeckState.components.ICE >= getCurrentNetrunningIceCost(corrupted) &&
+    CyberdeckState.components.ICEBreakers >= getCurrentNetrunningIceCost(corrupted) &&
     CyberdeckState.modStorageSize >= CyberdeckState.storedModules.length
   );
 }
 
-export async function netRun(corrupted = false): Promise<NetrunningRewards> {
+export function netRun(corrupted = false): NetrunningRewards {
   if (!canNetrun(corrupted)) {
     return { success: false, mods: [], components: {} };
   }
@@ -61,7 +60,7 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
     return corruptedNetrun();
   }
 
-  CyberdeckState.components.ICE -= getCurrentNetrunningIceCost();
+  CyberdeckState.components.ICEBreakers -= getCurrentNetrunningIceCost();
   const rng = getNextNetrunningWHRNG();
   const rewards = getNetrunningRewards(rng);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
@@ -78,7 +77,6 @@ export async function netRun(corrupted = false): Promise<NetrunningRewards> {
   const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 1.5));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
-  await saveGame();
 
   return {
     success: true,
@@ -105,11 +103,11 @@ export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
   return rewards;
 }
 
-async function corruptedNetrun(): Promise<NetrunningRewards> {
+function corruptedNetrun(): NetrunningRewards {
   if (!canNetrun(true)) {
     return { success: false, mods: [], components: {} };
   }
-  CyberdeckState.components.ICE -= getCurrentNetrunningIceCost(true);
+  CyberdeckState.components.ICEBreakers -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const rewards = getCorruptedNetrunningRewards(rng);
@@ -118,7 +116,6 @@ async function corruptedNetrun(): Promise<NetrunningRewards> {
   const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 2.5));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
-  await saveGame();
 
   return {
     success: true,

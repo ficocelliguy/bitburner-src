@@ -8,36 +8,34 @@ import { getStatRollRange } from "./modStatsUtils";
 import { getModuleById } from "./moduleUtilities";
 
 export function getNextNetrunningWHRNG() {
-  const ID = Player.identifier;
-  const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.netrunningSeed = stringToSeed(
-    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningSeedUsages}-run`,
-  );
   CyberdeckState.netrunningSeedUsages++;
-  CyberdeckState.netrunningWHRNG = new WHRNG(CyberdeckState.netrunningSeed);
-  return CyberdeckState.netrunningWHRNG;
+  return new WHRNG(getSeed(CyberdeckState.netrunningSeedUsages, "run"));
 }
 
 export function getNextNetrunningCorruptedWHRNG() {
-  const ID = Player.identifier;
-  const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.netrunningCorruptedSeed = stringToSeed(
-    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.netrunningCorruptedSeedUsages}-corrupted`,
-  );
   CyberdeckState.netrunningCorruptedSeedUsages++;
-  CyberdeckState.netrunningCorruptedWHRNG = new WHRNG(CyberdeckState.netrunningCorruptedSeed);
-  return CyberdeckState.netrunningCorruptedWHRNG;
+  return new WHRNG(getSeed(CyberdeckState.netrunningCorruptedSeedUsages, "corrupted"));
 }
 
-export function getNextCraftingWHRNG() {
+export function getNextCraftingPowerSupplyWHRNG() {
+  CyberdeckState.craftingPowerSupplySeedUsages++;
+  return new WHRNG(getSeed(CyberdeckState.craftingPowerSupplySeedUsages, "craftingPowerSupply"));
+}
+
+export function getNextCraftingProcessingModWHRNG() {
+  CyberdeckState.craftingProcessingModSeedUsages++;
+  return new WHRNG(getSeed(CyberdeckState.craftingProcessingModSeedUsages, "craftingProcessingMod"));
+}
+
+export function getNextCraftingUplinkWHRNG() {
+  CyberdeckState.craftingUplinkSeedUsages++;
+  return new WHRNG(getSeed(CyberdeckState.craftingUplinkSeedUsages, "craftingUplink"));
+}
+
+function getSeed(usages: number, type: string) {
   const ID = Player.identifier;
   const sourceFileCount = [...Player.sourceFiles].reduce((total, [__bn, lvl]) => (total += lvl), 0);
-  CyberdeckState.craftingSeed = stringToSeed(
-    `${ID}-${Player.bitNodeN}-${sourceFileCount}-${CyberdeckState.craftingSeedUsages}-crafting`,
-  );
-  CyberdeckState.craftingSeedUsages++;
-  CyberdeckState.craftingWHRNG = new WHRNG(CyberdeckState.craftingSeed);
-  return CyberdeckState.craftingWHRNG;
+  return stringToSeed(`${ID}-${Player.bitNodeN}-${sourceFileCount}-${usages}-${type}`);
 }
 
 function stringToSeed(str: string) {

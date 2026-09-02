@@ -19,12 +19,11 @@ type CyberdeckSaveData = {
   lastCorruptedNetrunningTimestamp: number;
   components: ComponentCounts;
   componentStats: ComponentStats;
-  netrunningSeed: number;
   netrunningSeedUsages: number;
-  netrunningCorruptedSeed: number;
   netrunningCorruptedSeedUsages: number;
-  craftingSeed: number;
-  craftingSeedUsages: number;
+  craftingPowerSupplySeedUsages: number;
+  craftingProcessingModSeedUsages: number;
+  craftingUplinkSeedUsages: number;
 };
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
@@ -44,11 +43,10 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     componentStats: CyberdeckState.componentStats,
     netrunningLevel: CyberdeckState.netrunningLevel,
     craftingLevel: CyberdeckState.craftingLevel,
-    craftingSeed: CyberdeckState.craftingSeed,
-    craftingSeedUsages: CyberdeckState.craftingSeedUsages,
-    netrunningSeed: CyberdeckState.netrunningSeed,
+    craftingPowerSupplySeedUsages: CyberdeckState.craftingPowerSupplySeedUsages,
+    craftingProcessingModSeedUsages: CyberdeckState.craftingProcessingModSeedUsages,
+    craftingUplinkSeedUsages: CyberdeckState.craftingUplinkSeedUsages,
     netrunningSeedUsages: CyberdeckState.netrunningSeedUsages,
-    netrunningCorruptedSeed: CyberdeckState.netrunningCorruptedSeed,
     netrunningCorruptedSeedUsages: CyberdeckState.netrunningCorruptedSeedUsages,
   };
 }
@@ -77,12 +75,11 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       lastCorruptedNetrunningTimestamp,
       components,
       componentStats,
-      netrunningSeed,
       netrunningSeedUsages,
-      netrunningCorruptedSeed,
       netrunningCorruptedSeedUsages,
-      craftingSeed,
-      craftingSeedUsages,
+      craftingPowerSupplySeedUsages,
+      craftingProcessingModSeedUsages,
+      craftingUplinkSeedUsages,
     } = parsedData;
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
@@ -124,22 +121,21 @@ export function loadCyberdeckSaveData(saveString: unknown) {
 
     updateCoveredSockets();
 
-    if (typeof netrunningSeed !== "number") throw new Error("Invalid cyberdeck savestring value: netrunningSeed");
-    CyberdeckState.netrunningSeed = netrunningSeed;
     if (typeof netrunningSeedUsages !== "number")
       throw new Error("Invalid cyberdeck savestring value: netrunningSeedUsages");
     CyberdeckState.netrunningSeedUsages = netrunningSeedUsages;
-    if (typeof netrunningCorruptedSeed !== "number")
-      throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeed");
-    CyberdeckState.netrunningCorruptedSeed = netrunningCorruptedSeed;
     if (typeof netrunningCorruptedSeedUsages !== "number")
       throw new Error("Invalid cyberdeck savestring value: netrunningCorruptedSeedUsages");
     CyberdeckState.netrunningCorruptedSeedUsages = netrunningCorruptedSeedUsages;
-    if (typeof craftingSeed !== "number") throw new Error("Invalid cyberdeck savestring value: craftingSeed");
-    CyberdeckState.craftingSeed = craftingSeed;
-    if (typeof craftingSeedUsages !== "number")
-      throw new Error("Invalid cyberdeck savestring value: craftingSeedUsages");
-    CyberdeckState.craftingSeedUsages = craftingSeedUsages;
+    if (typeof craftingPowerSupplySeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: craftingPowerSupplySeedUsages");
+    CyberdeckState.craftingPowerSupplySeedUsages = craftingPowerSupplySeedUsages;
+    if (typeof craftingProcessingModSeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: craftingProcessingModSeedUsages");
+    CyberdeckState.craftingProcessingModSeedUsages = craftingProcessingModSeedUsages;
+    if (typeof craftingUplinkSeedUsages !== "number")
+      throw new Error("Invalid cyberdeck savestring value: craftingUplinkSeedUsages");
+    CyberdeckState.craftingUplinkSeedUsages = craftingUplinkSeedUsages;
 
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();

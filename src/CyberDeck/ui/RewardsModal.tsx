@@ -83,7 +83,7 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
             </Typography>
           </>
         )}
-        <Typography variant="h6">Modules Found:</Typography>
+        <Typography variant="h6">Mods Gained:</Typography>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="modules">
             {(provided) => (

@@ -23,6 +23,7 @@ import {
 } from "../models/cyberdeckServer";
 import { CyberdeckEvents } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
+import { gainComponentMessage } from "./gainComponentToast";
 
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
@@ -46,6 +47,13 @@ export function CraftingPage(): React.ReactElement {
     craft(craftProcessingModule());
   }
 
+  function tryCraftICEbreaker() {
+    const success = craftICEbreaker();
+    if (success) {
+      gainComponentMessage({ ICEBreakers: 1 });
+    }
+  }
+
   function craft(results: DeckMod | null) {
     if (!results) {
       return;
@@ -63,7 +71,7 @@ export function CraftingPage(): React.ReactElement {
         onClose={() => setShowRewardsModal(false)}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
-        <Button onClick={() => craftICEbreaker()}>
+        <Button onClick={tryCraftICEbreaker}>
           <div
             style={{
               display: "flex",
@@ -74,7 +82,7 @@ export function CraftingPage(): React.ReactElement {
             }}
           >
             <span>
-              Craft <ComponentSymbol symbol={componentSymbols.ICE} /> ICEbreaker
+              Craft <ComponentSymbol symbol={componentSymbols.ICEBreakers} /> ICEbreaker
             </span>
             <ComponentCost cost={ICEbreakerCraftingCost} />
           </div>

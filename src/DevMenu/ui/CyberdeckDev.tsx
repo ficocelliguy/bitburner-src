@@ -13,7 +13,7 @@ import { NetrunningRewards } from "../../CyberDeck/Types";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
 import { prestigeCyberdeck } from "../../CyberDeck/utils/prestigeCyberdeck";
-import { getNextCraftingWHRNG } from "../../CyberDeck/utils/statRng";
+import { getNextNetrunningWHRNG } from "../../CyberDeck/utils/statRng";
 import { createModule } from "../../CyberDeck/models/createModule";
 
 export function CyberdeckDev(): React.ReactElement {
@@ -83,16 +83,16 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.connections = [];
     CyberdeckState.netrunningLevel += 12;
     for (let i = 0; i < 4; i++) {
-      CyberdeckState.installedModules.push(createModule(getNextCraftingWHRNG()));
+      CyberdeckState.installedModules.push(createModule(getNextNetrunningWHRNG()));
     }
     for (let i = 0; i < 5; i++) {
-      CyberdeckState.storedModules.push(createModule(getNextCraftingWHRNG()));
+      CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG()));
     }
     CyberdeckState.netrunningLevel -= 12;
     CyberdeckState.components.ROM = 25;
     CyberdeckState.components.chips = 25;
     CyberdeckState.components.neurodes = 25;
-    CyberdeckState.components.ICE = 4;
+    CyberdeckState.components.ICEBreakers = 4;
     CyberdeckState.components.cores = 4;
   }
 

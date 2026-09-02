@@ -18,7 +18,7 @@ export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   neurodes: "⌬",
   chips: "⌨ ",
   cores: "⛯",
-  ICE: "❅",
+  ICEBreakers: "❅",
 } as const;
 
 export const ICEbreakerCraftingCost: ComponentCounts = {
@@ -26,31 +26,31 @@ export const ICEbreakerCraftingCost: ComponentCounts = {
   neurodes: 20,
   chips: 20,
   cores: 0,
-  ICE: 0,
+  ICEBreakers: 0,
 };
 
 export const powerSupplyCraftingCost: ComponentCounts = {
-  ROM: 10,
-  neurodes: 0,
-  chips: 20,
-  cores: 1,
-  ICE: 0,
-};
-
-export const processingModuleCraftingCost: ComponentCounts = {
-  ROM: 20,
+  ROM: 5,
   neurodes: 0,
   chips: 10,
   cores: 1,
-  ICE: 0,
+  ICEBreakers: 0,
+};
+
+export const processingModuleCraftingCost: ComponentCounts = {
+  ROM: 10,
+  neurodes: 0,
+  chips: 5,
+  cores: 1,
+  ICEBreakers: 0,
 };
 
 export const uplinkCraftingCost: ComponentCounts = {
-  ROM: 10,
-  neurodes: 20,
+  ROM: 5,
+  neurodes: 10,
   chips: 0,
   cores: 1,
-  ICE: 0,
+  ICEBreakers: 0,
 };
 
 export function getModuleDescription(moduleType: ModType): string {

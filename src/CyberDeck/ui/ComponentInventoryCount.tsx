@@ -41,10 +41,10 @@ export function ComponentInventoryCount() {
           {formatNumber(Math.floor(CyberdeckState.components.cores), 0, 1000)}
         </Typography>
       </ComponentTooltip>
-      <ComponentTooltip symbol={componentSymbols.ICE}>
+      <ComponentTooltip symbol={componentSymbols.ICEBreakers}>
         <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.ICE} />:
-          {formatNumber(Math.floor(CyberdeckState.components.ICE), 0, 1000)}
+          <ComponentSymbol symbol={componentSymbols.ICEBreakers} />:
+          {formatNumber(Math.floor(CyberdeckState.components.ICEBreakers), 0, 1000)}
         </Typography>
       </ComponentTooltip>
     </div>
@@ -110,7 +110,7 @@ function getComponentDetails(symbol: string) {
         source: "Obtained from netrunning.",
         lore: "The core is the most integral part of a cyberdeck mod, handling both central processing as well as uplink data transfer.",
       };
-    case componentSymbols.ICE:
+    case componentSymbols.ICEBreakers:
       return {
         name: "ICEbreakers",
         description: "Digital defense-breakers used for netrunning.",

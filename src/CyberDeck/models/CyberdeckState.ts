@@ -1,7 +1,6 @@
 import { ComponentCounts, ComponentStats, Connection, DeckMod, Socket } from "../Types";
 import { EventEmitter } from "../../utils/EventEmitter";
 import { getCyberdeckIOPanel } from "./createModule";
-import { WHRNG } from "../../Casino/RNG";
 import { Player } from "@player";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
@@ -31,7 +30,7 @@ export const CyberdeckState = {
     neurodes: 25,
     chips: 25,
     cores: 4,
-    ICE: 3,
+    ICEBreakers: 3,
   } as ComponentCounts,
   componentStats: {
     ROM: {
@@ -57,15 +56,11 @@ export const CyberdeckState = {
       netrunning: 0,
     },
   } as ComponentStats,
-  netrunningSeed: 0,
   netrunningSeedUsages: 0,
-  netrunningCorruptedSeed: 0,
   netrunningCorruptedSeedUsages: 0,
-  craftingSeed: 0,
-  craftingSeedUsages: 0,
-  netrunningWHRNG: null as WHRNG | null,
-  netrunningCorruptedWHRNG: null as WHRNG | null,
-  craftingWHRNG: null as WHRNG | null,
+  craftingPowerSupplySeedUsages: 0,
+  craftingProcessingModSeedUsages: 0,
+  craftingUplinkSeedUsages: 0,
 };
 
 export function hasCyberdeck(): boolean {

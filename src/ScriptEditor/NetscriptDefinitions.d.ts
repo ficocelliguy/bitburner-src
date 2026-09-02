@@ -4399,7 +4399,7 @@ type ComponentCounts = {
   neurodes: number;
   chips: number;
   cores: number;
-  ICE: number;
+  ICEBreakers: number;
 };
 
 type DeckMod = {

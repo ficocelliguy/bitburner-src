@@ -1,18 +1,18 @@
 REQUIRED FOR MVP
 
 - api
+
 - re-enable offline summary & beta text
 
 - basic doc page - rewrite
   - add code snippets
 
 - link to docs on cyberdeck page
-  
 - split out crafting seed generation
 - look at seed storage again - can it be simplified?
 
-- Add WiFUs
-  - Wired Firmware Unit
+- Add WiFUs (Wired Firmware Unit)
+- add descriptions
 
 - code review
 - unit tests
@@ -91,7 +91,9 @@ Not yet implemented:
 
 - Endgame stuff (mults, rewards, gating parts of the feature)
 - Offline production / bonus time
-- Feedback about components gained in the work UI etc. 
+- Feedback about components gained in the work UI etc.
+- More tooltips for stat descriptions etc
+- Clean up styling/layout on stats page
 
 CYBERDECK: IDEA SCRATCH SPACE
 
@@ -100,7 +102,6 @@ flavor notes:
 A cyberdeck in William Gibson's Neuromancer is a portable computer terminal used to "jack in" and project a user's consciousness directly into the virtual reality of cyberspace.Key Features of a Gibson CyberdeckDirect Neural Interface: Instead of standard screens or mice for primary use, decks connect straight to the human nervous system via "dermatrodes" placed on the user's temples or forehead.The Ono-Sendai Series: The gold standard in the novel is the Ono-Sendai Cyberspace VII (and the elite Seventh Run), coveted by high-end console jockeys and street hackers.Physical Portability: Desks are compact enough to be carried around, often swinging or banging against a hacker's hip via improvised straps, resembling ruggedized, future-tech field gear.Sensory Deprivation: When active, the deck cuts off real-world sensory input, replacing it with a 3D, geometric matrix of data—the "consensual hallucination" experienced as pure disembodied vision and sound.
 
 Slot the right mods together, wire power through them, and the deck starts giving you edges you can't buy off the shelf: faster crimes, richer contracts, a leg up in the market.
-
 
 - Small, persistent cloud server, with upgradable cores, that gives buffs to scripts running on it
 - Small buffs for other mechanics - allows players to specialize

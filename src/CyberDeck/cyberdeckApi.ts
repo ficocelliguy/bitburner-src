@@ -157,9 +157,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return success;
     },
     async netrun(ctx: NetscriptContext) {
-      if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost()) {
+      if (CyberdeckState.components.ICEBreakers < getCurrentNetrunningIceCost()) {
         logger(ctx)(
-          `Not enough ICEbreakers to netrun. ${CyberdeckState.components.ICE}/${getCurrentNetrunningIceCost()}`,
+          `Not enough ICEbreakers to netrun. ${CyberdeckState.components.ICEBreakers}/${getCurrentNetrunningIceCost()}`,
         );
         return { success: false, mods: [], components: {} };
       }
@@ -398,7 +398,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         if (mod.favorite) {
           logger(ctx)(`Cannot recycle favorited module ${modId}!`);
-          return { success: false, chips: 0, ROM: 0, neurodes: 0, cores: 0, ICE: 0 };
+          return { success: false, chips: 0, ROM: 0, neurodes: 0, cores: 0, ICEBreakers: 0 };
         }
         return { success: true, ...disassembleModule(mod) };
       },
@@ -416,10 +416,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           ctx.workerScript.print(getCorruptedHint());
           return { success: false, mods: [], components: {} };
         }
-        if (CyberdeckState.components.ICE < getCurrentNetrunningIceCost(true)) {
+        if (CyberdeckState.components.ICEBreakers < getCurrentNetrunningIceCost(true)) {
           logger(ctx)(
             `Not enough ICEbreakers to breach the Blackwall. ${
-              CyberdeckState.components.ICE
+              CyberdeckState.components.ICEBreakers
             }/${getCurrentNetrunningIceCost()}`,
           );
           return { success: false, mods: [], components: {} };

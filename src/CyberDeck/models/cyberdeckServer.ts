@@ -47,7 +47,7 @@ export function canUpgradeCyberdeckServerRam() {
 export function getCyberdeckServerRamUpgradeCost() {
   if (!canUpgradeCyberdeckServerRam()) {
     return {
-      componentCost: { ROM: Infinity, neurodes: Infinity, chips: Infinity, cores: 0, ICE: 0 },
+      componentCost: { ROM: Infinity, neurodes: Infinity, chips: Infinity, cores: 0, ICEBreakers: 0 },
       moneyCost: Infinity,
     };
   }
@@ -56,7 +56,7 @@ export function getCyberdeckServerRamUpgradeCost() {
     neurodes: 25 * (CyberdeckState.serverRamUpgrades + 1),
     chips: 25 * (CyberdeckState.serverRamUpgrades + 1),
     cores: 0,
-    ICE: 0,
+    ICEBreakers: 0,
   };
   const moneyCost = 2e6 * 2 ** (CyberdeckState.serverRamUpgrades + 1);
   return { componentCost, moneyCost };
@@ -94,7 +94,7 @@ export function getCyberdeckServerCoreUpgradeCost() {
     neurodes: 20 * (CyberdeckState.serverCoreUpgrades + 1),
     chips: 20 * (CyberdeckState.serverCoreUpgrades + 1),
     cores: 0,
-    ICE: 0,
+    ICEBreakers: 0,
   };
   const moneyCost = 1e6 * 1.8 ** (CyberdeckState.serverCoreUpgrades + 1);
   return { componentCost, moneyCost };
