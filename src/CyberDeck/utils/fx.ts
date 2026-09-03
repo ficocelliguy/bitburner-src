@@ -7,7 +7,7 @@ function ensureSparkStyles() {
   style.id = SPARK_STYLE_ID;
   style.textContent = `
     .${SPARK_CLASS} {
-      position: absolute;
+      position: fixed;
       width: 8px;
       height: 8px;
       border-radius: 50%;

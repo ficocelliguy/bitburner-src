@@ -8,8 +8,6 @@ REQUIRED FOR MVP
   - add code snippets
 
 - link to docs on cyberdeck page
-- split out crafting seed generation
-- look at seed storage again - can it be simplified?
 
 - Add WiFUs (Wired Firmware Unit)
 - add descriptions
@@ -25,7 +23,6 @@ TODO:
 - tooltips for stats page
 
 - filter box help text
-
   - more search options? > and < ?
 
 - netrunning
