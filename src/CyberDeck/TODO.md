@@ -4,6 +4,8 @@ REQUIRED FOR MVP
 
 - re-enable offline summary & beta text
 
+- add variants of rack extension and power supply that have buffs
+
 - basic doc page - rewrite
   - add code snippets
 
