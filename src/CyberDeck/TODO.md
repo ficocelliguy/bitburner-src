@@ -62,6 +62,7 @@ Project goals:
 - Add the potential for rarely finding small (<10%) boosts to some mechanics that otherwise cannot be boosted
 - Limit boosts to very strong mechanics like faction rep or batching
 - Make a mechanic that is slower and weaker than darkweb (and less complex), but still interests players
+- Be in prod in Q3 2027
 
 Puzzles the player may want to solve:
 

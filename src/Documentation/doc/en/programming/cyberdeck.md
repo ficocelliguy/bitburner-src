@@ -72,10 +72,10 @@ While playing the game, you will produce various crafting components used in cra
 
 &nbsp;
 
-### Scripting Considerations (todo)
+### Scripting Considerations
 
-- Given a list of mods (that each have connection limitations), how many of them can I actually daisy-chain together? which ones' buffs are worth the associated debuffs? How can I maximize stats I care about?
-- How much do I spend time doing meta things (e.g. faction rep work) vs side things that help build up my cyberdeck mods?
-- How much do I wait for netrunning to fully reset, vs spending more resources to get new random mods more often?
-- When do I swap out mods with other ones I have in storage to buff something else? (moving mods takes a short amount of time, so "flash mobbing" is possible but requires planning)
-- How much do I spend resources on standard netrunning (for more consistent rewards) vs the more expensive corrupted netrunning (which may give junk, or mods with bigger tradeoffs, or exclusive stat boost types)?
+- Which stats are valuable to buff up? which ones are OK to debuff?
+- Which mods can you actually connect right now? Should you craft a power supply?
+- How often should you netrun? Wait until the price drops to minimum, or more often?
+- How much do prioritize work that produces crafting components vs other activities?
+- What mods are worth saving for later? Can you make a second set to swap between?
