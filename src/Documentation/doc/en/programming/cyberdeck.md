@@ -44,15 +44,31 @@ In addition to new mods, netrunning also provides some crafting components. Most
 
 ### Crafting Components
 
-The deck runs on five things: **ROM**, **Chips**, **Neurodes**, **Cores**, and **ICE**. Every netrun drops a mix of the first four. Beyond that:
+While playing the game, you will produce various crafting components used in crafting mods and ICEBreakers.
 
-- **ROM** - petty crime, writing programs by hand
-- **Chips** - hacknet income, company work reputation
-- **Neurodes** - kills from violent crime, taking classes
-- **Cores** - only from netrunning
-- **ICE** - only from crafting
+**ROM** are read-only memory cards, prized for their durability. ROM are gained from:
+- Backdooring or nuking servers
+- Crime (excluding homicide-type crime)
+- Creating .EXE programs manually
+- Opening darknet caches
+- Some mods, when powered
 
-Whatever else you're doing in the game is quietly filling your bins. Specialize hard in one activity and you'll run short on the components tied to everything else.
+
+**Chips** are general-purpose programmable circuitboards, or sometimes breadboards. Chips are gained from:
+- Working for a business or company job
+- Gaining money from hacknet
+- Completing IPvGO subnet games
+- Some mods, when powered
+
+
+**Neurodes** are organic neural interface components, used to communicate to the wearer's augments. Neurodes are harvested from:
+- Crime kills
+- Attending classes or gym training
+- Completing coding contracts
+- Some mods, when powered
+
+
+**Cores** are the key component used for hand-crafting mods. They are only found via netrunning.
 
 &nbsp;
 

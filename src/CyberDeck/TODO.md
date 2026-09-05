@@ -60,7 +60,8 @@ Project goals:
 - Ask the player to weigh tradeoffs / debuffs in exchange for buffs via randomized loot / gacha
 - Add secondary benefits to under-utilized or niche mechanics (job work, hacknet money, manual program creation, crime, classes)
 - Add the potential for rarely finding small (<10%) boosts to some mechanics that otherwise cannot be boosted
-- Avoid boosting very strong mechanics like faction rep or batching
+- Limit boosts to very strong mechanics like faction rep or batching
+- Make a mechanic that is slower and weaker than darkweb (and less complex), but still interests players
 
 Puzzles the player may want to solve:
 
@@ -83,6 +84,7 @@ Implementation notes:
 - The potential roll range for each stat (and which stats can be rolled) is hand-chosen, and can be tuned stat-by-stat.
 - Component gains from many sources are soft-capped. Further investment DOES increase component gains, but by diminishing returns.
 - For testing, the cooldowns of netrunning are currently significantly reduced.
+- The code all is of the bespoke artisan hand-written variety
 
 Not yet implemented:
 
