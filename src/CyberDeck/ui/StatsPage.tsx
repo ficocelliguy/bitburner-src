@@ -13,7 +13,7 @@ export function StatsPage(): React.ReactElement {
   const bonuses = getCyberdeckStatBonuses();
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <div style={{ width: "300px" }}>
+      <div style={{ width: "500px" }}>
         <Typography variant="h4" gutterBottom>
           Cyberdeck Bonuses
         </Typography>

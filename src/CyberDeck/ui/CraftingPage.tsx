@@ -87,6 +87,46 @@ export function CraftingPage(): React.ReactElement {
             <ComponentCost cost={ICEbreakerCraftingCost} />
           </div>
         </Button>
+
+        <Button onClick={upgradeCyberdeckServerRam} disabled={!canUpgradeCyberdeckServerRam()}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
+          >
+            <span>Upgrade cyberdeck Server RAM{!canUpgradeCyberdeckServerRam() && " (Maxed)"}</span>
+            {canUpgradeCyberdeckServerRam() && (
+              <ComponentCost
+                cost={getCyberdeckServerRamUpgradeCost().componentCost}
+                moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
+              />
+            )}
+          </div>
+        </Button>
+        <Button onClick={upgradeCyberdeckServerCores}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: Settings.theme.maplocation,
+              margin: "5px",
+            }}
+          >
+            <span>Upgrade cyberdeck Server Cores</span>
+            <ComponentCost
+              cost={getCyberdeckServerCoreUpgradeCost().componentCost}
+              moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
+            />
+          </div>
+        </Button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
         <Button onClick={tryCraftPowerSupply}>
           <div
             style={{
@@ -127,45 +167,6 @@ export function CraftingPage(): React.ReactElement {
           >
             <span>Craft {getModIconComponent(ModType.ProcessingMod, 16)} Processing Mod</span>
             <ComponentCost cost={processingModuleCraftingCost} />
-          </div>
-        </Button>
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
-        <Button onClick={upgradeCyberdeckServerRam} disabled={!canUpgradeCyberdeckServerRam()}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              color: Settings.theme.maplocation,
-              margin: "5px",
-            }}
-          >
-            <span>Upgrade cyberdeck Server RAM{!canUpgradeCyberdeckServerRam() && " (Maxed)"}</span>
-            {canUpgradeCyberdeckServerRam() && (
-              <ComponentCost
-                cost={getCyberdeckServerRamUpgradeCost().componentCost}
-                moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
-              />
-            )}
-          </div>
-        </Button>
-        <Button onClick={upgradeCyberdeckServerCores}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              color: Settings.theme.maplocation,
-              margin: "5px",
-            }}
-          >
-            <span>Upgrade cyberdeck Server Cores</span>
-            <ComponentCost
-              cost={getCyberdeckServerCoreUpgradeCost().componentCost}
-              moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
-            />
           </div>
         </Button>
       </div>

@@ -32,6 +32,7 @@ import {
   upgradeCyberdeckServerRam,
 } from "./models/cyberdeckServer";
 import { Player } from "@player";
+import { ShareBonusTime } from "../NetworkShare/Share";
 
 function getModOrThrow(modId: string): DeckMod {
   const mod =
@@ -172,7 +173,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
       logger(ctx)(`Starting netrun...`);
       await helpers.netscriptDelay(ctx, 1000);
-      const results = await netRun();
+      const results = netRun();
       if (results.success) {
         logger(ctx)(`Netrun successfully. ${results.mods.length} new modules found.`);
       } else {
@@ -270,6 +271,18 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return upgradeCyberdeckServerCores();
       },
     },
+
+    cortexShare: (ctx: NetscriptContext) => {
+      const threads = ctx.workerScript.scriptRef.threads;
+      const hostname = ctx.workerScript.hostname;
+      helpers.log(ctx, () => `Loaning neural activity with ${threads} threads on ${hostname}.`);
+      CyberdeckState.cortexSharedThreads += threads;
+      return helpers.netscriptDelay(ctx, ShareBonusTime).finally(function () {
+        helpers.log(ctx, () => `Finished loaning neural activity with ${threads} threads on ${hostname}.`);
+        CyberdeckState.cortexSharedThreads -= threads;
+      });
+    },
+
     crafting: {
       craftICEbreaker: (ctx: NetscriptContext, count: unknown = 1) => {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);

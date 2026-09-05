@@ -12,6 +12,7 @@ export const CyberdeckState = {
   storedCycles: 0,
   baseRackSize: 5,
   modStorageSize: 8,
+  cortexSharedThreads: 0,
   maxInstalledRackExtensions: getRackExtensionCap(),
   netrunningCooldownLevel: 0,
   netrunningLevel: 8, // TODO-fico: change this to 0 after testing is done
@@ -50,6 +51,7 @@ export const CyberdeckState = {
       kills: 0,
       class: 0,
       codingContracts: 0,
+      cortexShare: 0,
       netrunning: 0,
     },
     cores: {

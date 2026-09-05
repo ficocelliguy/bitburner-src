@@ -70,6 +70,7 @@ Playing the game normally produces crafting components used for mods and ICEBrea
 - Crime kills
 - Attending classes or gym training
 - Completing coding contracts
+- Using cortexShare()
 - Some mods, when powered
 
 **Cores** are the key ingredient for hand-crafting mods. Only found via netrunning.

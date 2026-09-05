@@ -4446,6 +4446,7 @@ type ComponentStats = {
     kills: number;
     class: number;
     codingContracts: number;
+    cortexShare: number;
     netrunning: number;
   };
   cores: {
@@ -4657,6 +4658,21 @@ export interface Cyberdeck {
    * @returns the current ICEbreaker cost of netrunning
    */
   getNetrunningIceCost(): number;
+
+  /**
+   * Loans neural bandwidth (and ram) to produce neurodes.
+   *
+   * @remarks
+   * RAM cost: 2.4 GB
+   *
+   * While active, this will slowly produce neurodes over time. Active for ten seconds.
+   * The more threads you loan, the faster the neurodes are produced.
+   * Increased thread count has diminishing returns.
+   *
+   * The neurode farms are always hungry for fresh cognitive activity. Though, there's a catch:
+   * some part of you is always half in the tank.
+   */
+  cortexShare(): Promise<void>;
 
   /**
    * Namespace for API that give statistics on mod effects, components, and levels

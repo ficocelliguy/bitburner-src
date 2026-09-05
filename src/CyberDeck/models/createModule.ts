@@ -179,7 +179,7 @@ export function createInitialModules() {
     sockets: [true, false, false, true, false, false, true, false],
     stats: {
       playerMults: {
-        charisma: 0.97,
+        charisma: -0.03,
       },
     },
   };

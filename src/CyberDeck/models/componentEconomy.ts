@@ -83,6 +83,13 @@ export function gainCyberdeckComponents(cycles: number) {
     CyberdeckState.componentStats.chips.hacknet += newChips;
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
   }
+
+  // cortexShare() gives neurodes
+  if (CyberdeckState.cortexSharedThreads > 0) {
+    const newNeurodes = 0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300);
+    CyberdeckState.components.neurodes += newNeurodes;
+    CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
+  }
 }
 
 function initStats() {
@@ -143,6 +150,7 @@ export function prestigeCyberdeckComponents() {
       kills: 0,
       class: 0,
       codingContracts: 0,
+      cortexShare: 0,
       netrunning: 0,
     },
     cores: {

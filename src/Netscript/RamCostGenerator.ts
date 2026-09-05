@@ -249,6 +249,7 @@ const cyberdeck = {
   removeConnection: 0.05,
   netrun: 3,
   getNetrunningIceCost: 0.05,
+  cortexShare: 2.4,
   stats: {
     getStatBonuses: 0,
     getLevels: 0,
