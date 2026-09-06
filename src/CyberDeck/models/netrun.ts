@@ -42,7 +42,7 @@ export function getNetrunningTraceFraction(corrupted = false): number {
     : CyberdeckState.lastNetrunningTimestamp;
   const corruptionHardCooldown = corrupted ? corruptedNetrunningHardCooldownMs : 0;
   const timeSinceLastRun = Date.now() - lastTimestamp - corruptionHardCooldown;
-  return ((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs) ** 2;
+  return Math.max((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs, 0) ** 2;
 }
 
 export function canNetrun(corrupted = false): boolean {

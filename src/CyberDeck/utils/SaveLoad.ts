@@ -12,6 +12,8 @@ type CyberdeckSaveData = {
   netrunningLevel: number;
   craftingLevel: number;
   netrunningCooldownLevel: number;
+  serverRamUpgrades: number;
+  serverCoreUpgrades: number;
   installedModules: DeckMod[];
   storedModules: DeckMod[];
   connections: Connection[];
@@ -34,6 +36,8 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     baseRackSize: CyberdeckState.baseRackSize,
     modStorageSize: CyberdeckState.modStorageSize,
     netrunningCooldownLevel: CyberdeckState.netrunningCooldownLevel,
+    serverCoreUpgrades: CyberdeckState.serverCoreUpgrades,
+    serverRamUpgrades: CyberdeckState.serverRamUpgrades,
     installedModules: CyberdeckState.installedModules,
     storedModules: CyberdeckState.storedModules,
     connections: CyberdeckState.connections,
@@ -68,6 +72,8 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       netrunningLevel,
       craftingLevel,
       netrunningCooldownLevel,
+      serverRamUpgrades,
+      serverCoreUpgrades,
       installedModules,
       storedModules,
       connections,
@@ -98,6 +104,10 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     if (typeof netrunningCooldownLevel !== "number")
       throw new Error("Invalid cyberdeck savestring value: netrunningCooldownLevel");
     CyberdeckState.netrunningCooldownLevel = netrunningCooldownLevel;
+    if (typeof serverRamUpgrades !== "number") throw new Error("Invalid cyberdeck savestring value: serverRamUpgrades");
+    CyberdeckState.serverRamUpgrades = serverRamUpgrades;
+    if (typeof serverCoreUpgrades !== "number")
+      throw new Error("Invalid cyberdeck savestring value: serverCoreUpgrades");
     if (typeof lastNetrunningTimestamp !== "number")
       throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;
@@ -160,11 +170,11 @@ function isComponentCounts(obj: unknown): obj is ComponentCounts {
     "chips" in obj &&
     "ROM" in obj &&
     "neurodes" in obj &&
-    "ICE" in obj &&
+    "ICEBreakers" in obj &&
     typeof obj.chips === "number" &&
     typeof obj.ROM === "number" &&
     typeof obj.neurodes === "number" &&
-    typeof obj.ICE === "number"
+    typeof obj.ICEBreakers === "number"
   );
 }
 
@@ -175,8 +185,10 @@ function isComponentStats(obj: unknown): obj is ComponentStats {
     "ROM" in obj &&
     "chips" in obj &&
     "neurodes" in obj &&
+    "cores" in obj &&
     typeof obj.ROM === "object" &&
     typeof obj.chips === "object" &&
-    typeof obj.neurodes === "object"
+    typeof obj.neurodes === "object" &&
+    typeof obj.cores === "object"
   );
 }

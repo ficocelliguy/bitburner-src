@@ -4617,8 +4617,9 @@ export interface Cyberdeck {
    * @param modId1 - The ID of a mod to connect
    * @param modId2 - The ID of another mod to connect to modId1
    * @param socketIndex - the socket to connect them on. This corresponds to he socket colors in the UI.
+   * @returns true if the connection was made successfully; false if it is invalid
    */
-  addConnection(modId1: string, modId2: string, socketIndex: number): void;
+  addConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 
   /**
    * Removes the connection between the two specified servers, if present.
@@ -4629,7 +4630,7 @@ export interface Cyberdeck {
    * @param modId1 - the ID of the mod to disconnect
    * @param modId2 - the ID of the second mod to disconnect
    * @param socketIndex - the socket to remove a connection from
-   * @returns true if the connection was made successfuly; false if it is invalid
+   * @returns true if the connection was removed successfully; false if it is invalid
    */
   removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 

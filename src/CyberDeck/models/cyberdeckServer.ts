@@ -30,7 +30,7 @@ export function addCyberdeckServer() {
     adminRights: true,
   });
   server.backdoorInstalled = true;
-  server.cpuCores = CyberdeckState.serverCoreUpgrades;
+  server.cpuCores = 1 + CyberdeckState.serverCoreUpgrades;
 
   AddToAllServers(server);
   connectServers(GetServerOrThrow(SpecialServers.Cyberdeck), GetServerOrThrow(SpecialServers.Home));
@@ -120,7 +120,7 @@ export function upgradeCyberdeckServerCores() {
   Player.loseMoney(moneyCost, "cyberdeck");
   CyberdeckState.serverCoreUpgrades++;
   const server = GetServerOrThrow(SpecialServers.Cyberdeck);
-  server.cpuCores = CyberdeckState.serverCoreUpgrades;
+  server.cpuCores = 1 + CyberdeckState.serverCoreUpgrades;
 
   CyberdeckEvents.emit();
   return true;

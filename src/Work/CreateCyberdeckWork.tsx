@@ -17,7 +17,7 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
   constructor() {
     super(WorkType.CREATE_CYBERDECK, false);
     this.unitCompleted = CyberdeckState.unitCompleted;
-    this.unitRate = 1;
+    this.unitRate = CONSTANTS.MilliPerCycle;
   }
 
   unitNeeded(): number {

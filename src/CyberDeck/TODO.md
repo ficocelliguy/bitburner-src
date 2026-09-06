@@ -2,6 +2,9 @@ REQUIRED FOR MVP
 
 - re-enable offline summary & beta text
 
+- expose getNetrunningTraceFraction
+- add getRackCapacity
+
 - add variants of rack extension and power supply that have buffs
 
 - Add WiFUs (Wired Firmware Unit)
@@ -18,6 +21,7 @@ TODO:
 - tooltips for stats page
 
 - filter box help text
+
   - more search options? > and < ?
 
 - netrunning
@@ -42,6 +46,7 @@ TODO LATER:
   - cleanup styling
 
 - Glitch netrunning
+
   - bonus corruption effects?
     - can't be removed
     - health loss?
@@ -49,10 +54,10 @@ TODO LATER:
 
 - ram sink: farm neurodes?
   - dermalease / cortex-share / braindance / trancecast name?
-  
+
 "Underground biotech shops in the sprawl run cortex farms: vats of cultured neural tissue grown from aggregated human signal patterns. The tissue is what neurodes are cut from, and the farms are always hungry for fresh cognitive noise to seed the cultures. So they lease bandwidth off jockeys willing to leave their dermatrodes hot while they're doing other things — your deck slips into a shallow trance, streams a low-fidelity copy of your cortical activity up the pipe, and in return the farmer kicks back a cut of every neurode harvest your pattern helps culture.
 
-The catch: your consciousness is only mostly your own while you're wetjacked. Some part of you is always half in the tank.  "
+The catch: your consciousness is only mostly your own while you're wetjacked. Some part of you is always half in the tank. "
 
 Cyberdeck Expansion
 

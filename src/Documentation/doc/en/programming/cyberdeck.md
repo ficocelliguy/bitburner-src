@@ -24,10 +24,9 @@ Higher rarity mods gain access to higher potential stat rolls. On average, they 
 
 Drag mods you don't want onto the trash can to disassemble them into components. Right-click a mod to favorite it and keep it from being recycled.
 
-
 ```js
 const mod = ns.cyberdeck.getStoredMods()[0];
-  
+
 await ns.cyberdeck.installMod(mod.id);
 ```
 
@@ -58,30 +57,30 @@ Each run trips automated security. For a while after, it takes many more ICEBrea
 
 You can make netrunning better over time by finding and consuming the right skill chips:
 
-- Raising your **netrun level** increases the rarity of the loot you find.
-- Raising your **netrun cooldown level** shortens the trace decay window.
+- Raising your **netrunning level** increases the rarity of the loot you find.
+- Raising your **netrunning cooldown level** shortens the trace decay window.
 
 ```js
-  const costIsBelowThreshold = ns.cyberdeck.getNetrunningCost() <= 2;
-  const canAffordNetrunning = ns.cyberdeck.getNetrunningCost() <= ns.cyberdeck.getComponentCounts().ICEBreakers
+const costIsBelowThreshold = ns.cyberdeck.getNetrunningCost() <= 2;
+const canAffordNetrunning = ns.cyberdeck.getNetrunningCost() <= ns.cyberdeck.getComponentCounts().ICEBreakers;
 
-  if ( costIsBelowThreshold && canAffordNetrunning ) {
-    const result = await ns.cyberdeck.netrun();
-    
-    // Recycle mods that don't have valuable stats to save storage space
-    const firstModReward = result.mods[0];
-    if ( !(firstModReward.stats.playerMults?.strength > 0) ) {
-      ns.cyberdeck.crafting.recycleMod(firstModReward);
-    }
+if (costIsBelowThreshold && canAffordNetrunning) {
+  const result = await ns.cyberdeck.netrun();
+
+  // Recycle mods that don't have valuable stats to save storage space
+  const firstModReward = result.mods[0];
+  if (!(firstModReward.stats.playerMults?.strength > 0)) {
+    ns.cyberdeck.crafting.recycleMod(firstModReward.id);
   }
+}
 ```
-
 
 &nbsp;
 
 ### Crafting Components
 
 **ROM** are read-only memory cards, prized for their durability. Sources:
+
 - Backdooring or nuking servers
 - Crime (excluding homicide-type crime)
 - Creating .exe programs manually
@@ -89,12 +88,14 @@ You can make netrunning better over time by finding and consuming the right skil
 - Some mods, when powered
 
 **Chips** are general-purpose programmable circuitboards, or sometimes breadboards. Sources:
+
 - Working a company or business job
 - Money gained from the hacknet
 - Completing IPvGO subnet games
 - Some mods, when powered
 
 **Neurodes** are organic neural interface parts, used to talk to the wearer's augments. Sources:
+
 - Crime kills
 - Attending classes or gym training
 - Completing coding contracts
@@ -104,12 +105,12 @@ You can make netrunning better over time by finding and consuming the right skil
 **Cores** are the key ingredient for hand-crafting mods. Only found via netrunning.
 
 ```js
-  const cost = ns.cyberdeck.crafting.getICEBreakerCraftingCost();
-  const {ROM, neurodes, chips} = ns.cyberdeck.getComponentCounts();
-  
-  if (cost.ROM <= ROM && cost.neurodes <= neurodes && cost.chips <= chips) {
-    ns.cyberdeck.crafting.craftICEBreaker(1);
-  }
+const cost = ns.cyberdeck.crafting.getICEBreakerCraftingCost();
+const { ROM, neurodes, chips } = ns.cyberdeck.getComponentCounts();
+
+if (cost.ROM <= ROM && cost.neurodes <= neurodes && cost.chips <= chips) {
+  ns.cyberdeck.crafting.craftICEBreaker(1);
+}
 ```
 
 &nbsp;

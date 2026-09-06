@@ -93,7 +93,7 @@ function getComponentDetails(symbol: string) {
       return {
         name: "Neurodes",
         description: "A component used for making cyberdeck mods.",
-        source: "Obtained from crime kills, attending classes, and completing coding contracts.",
+        source: "Obtained from crime kills, attending classes, cortexShare(), and completing coding contracts.",
         lore: "Neurodes are specialized neural interface components that allow a netrunner to receive and transmit data directly to and from their nervous system, enabling deep-dive interaction with the digital world.",
       };
     case componentSymbols.chips:
@@ -122,6 +122,7 @@ function getComponentDetails(symbol: string) {
         name: "Unknown Component",
         description: "No description available.",
         lore: "",
+        source: "",
       };
   }
 }

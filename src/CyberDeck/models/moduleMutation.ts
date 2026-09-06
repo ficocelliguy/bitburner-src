@@ -99,10 +99,16 @@ export function createConnection(source: Socket, destination: Socket) {
   if (!destinationModule?.sockets[destination.socketIndex]) {
     return {
       success: false,
-      error: `Target module does not have a socket of that color.`,
+      error: `Target module ${destination.modId} does not have a socket of that color (${destination.socketIndex}).`,
     };
   }
-  if (source.socketIndex !== destination.socketIndex || !sourceModule?.sockets[source.socketIndex]) {
+  if (!sourceModule?.sockets[source.socketIndex]) {
+    return {
+      success: false,
+      error: `Source module ${source.modId} does not have a socket of that color (${source.socketIndex}).`,
+    };
+  }
+  if (source.socketIndex !== destination.socketIndex) {
     return {
       success: false,
       error: `Socket colors do not match.`,

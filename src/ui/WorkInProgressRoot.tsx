@@ -491,7 +491,7 @@ export function WorkInProgressRoot(): React.ReactElement {
         </tr>,
       ],
       progress: {
-        remaining: (Player.currentWork.unitNeeded() - Player.currentWork.unitCompleted) * CONSTANTS.MilliPerCycle,
+        remaining: Player.currentWork.unitNeeded() - Player.currentWork.unitCompleted,
         percentage: (Player.currentWork.unitCompleted / Player.currentWork.unitNeeded()) * 100,
       },
 

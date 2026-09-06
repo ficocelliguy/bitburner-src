@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, DeckMod } from "@nsdefs";
 import { LocationName } from "@enums";
-import { CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
   craftICEbreaker,
   craftPowerSupply,
@@ -78,18 +78,20 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     favoriteMod: (ctx: NetscriptContext, moduleId: unknown, favorite: unknown = true) => {
       const modId = helpers.string(ctx, "modId", moduleId);
       const fav = helpers.boolean(ctx, "favorite", favorite);
-      const mod = getModOrThrow(modId);
+      const mod = getModOrThrow(modId, true);
       mod.favorite = fav;
+      CyberdeckEvents.emit();
+      logger(ctx)(`Mod ${modId} is now ${fav ? "favorited" : "unfavorited"}`);
     },
-    installMod: (ctx: NetscriptContext, moduleId: unknown, index: unknown = 1e10): Promise<boolean> => {
+    installMod: (ctx: NetscriptContext, moduleId: unknown, modIndex: unknown = 1e10): Promise<boolean> => {
       const modId = helpers.string(ctx, "modId", moduleId);
       if (modId === LocationName.IshimaGlitch && !getModuleById(modId)) {
         CyberdeckState.storedModules.unshift(getEasterEggModule());
       }
       const mod = getModOrThrow(modId);
-      const locationIndex = helpers.integer(ctx, "index", index);
+      const locationIndex = helpers.integer(ctx, "modIndex", modIndex);
       if (locationIndex < 0) {
-        throw new Error(`index must be a non-negative integer, was ${locationIndex}`);
+        throw new Error(`modIndex must be a non-negative integer, was ${locationIndex}`);
       }
       logger(ctx)(`Installing mod ${modId}...`);
 
@@ -108,12 +110,12 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return true;
       });
     },
-    storeMod(ctx: NetscriptContext, moduleId: unknown, index: unknown = 0) {
+    storeMod(ctx: NetscriptContext, moduleId: unknown, modIndex: unknown = 0) {
       const modId = helpers.string(ctx, "modId", moduleId);
       const mod = getModOrThrow(modId);
-      const locationIndex = helpers.integer(ctx, "index", index);
+      const locationIndex = helpers.integer(ctx, "modIndex", modIndex);
       if (locationIndex < 0) {
-        throw new Error(`index must be a non-negative integer, was ${locationIndex}`);
+        throw new Error(`modIndex must be a non-negative integer, was ${locationIndex}`);
       }
       const storageIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
       const sourceIsStorage = storageIndex !== -1;
@@ -126,7 +128,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
       getModOrThrow(modId2, true);
-      const socketIndex = helpers.number(ctx, "socket", socket);
+      const socketIndex = helpers.number(ctx, "socketIndex", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
@@ -143,7 +145,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       const mod1 = getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
       const mod2 = getModOrThrow(modId2, true);
-      const socketIndex = helpers.number(ctx, "socket", socket);
+      const socketIndex = helpers.number(ctx, "socketIndex", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
@@ -458,7 +460,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
         ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
         await helpers.netscriptDelay(ctx, 5000);
-        const results = await netRun(true);
+        const results = netRun(true);
         if (results.success) {
           logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
         } else {

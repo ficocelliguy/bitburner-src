@@ -57,6 +57,7 @@ export function ModuleComponent({
       e.preventDefault();
       e.stopPropagation();
       module.favorite = !module.favorite;
+      CyberdeckEvents.emit();
     }
   }
 

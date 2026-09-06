@@ -32,7 +32,7 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
 
   const disabled = !entering && !canNetrun(corrupted);
 
-  async function handlePortalClick() {
+  function handlePortalClick() {
     if (!hasCyberdeck()) {
       dialogBoxCreate(
         <Box>
@@ -46,7 +46,7 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
     }
     if (!canNetrun(corrupted)) return;
     setEntering(true);
-    const rewards = await netRun(corrupted);
+    const rewards = netRun(corrupted);
     if (!rewards.success) return;
     if (corrupted) {
       CyberdeckState.hasDiscoveredGlitch = true;

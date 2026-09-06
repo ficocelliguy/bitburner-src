@@ -31,7 +31,7 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
 
   if (roll < 0.27) {
     const module = createProcessingModule(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
+    module.stats.playerMults = mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.corrupted = true;
     module.rarity = Math.min(module.rarity, 7);
     return module;
@@ -39,7 +39,7 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
 
   if (roll < 0.33) {
     const module = createUplink(getLevel(rng, 2), rng, true, 1.5, 2);
-    module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
+    module.stats.playerMults = mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.corrupted = true;
     module.rarity = Math.min(module.rarity, 7);
     return module;

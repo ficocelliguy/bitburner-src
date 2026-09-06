@@ -86,7 +86,8 @@ export function gainCyberdeckComponents(cycles: number) {
 
   // cortexShare() gives neurodes
   if (CyberdeckState.cortexSharedThreads > 0) {
-    const newNeurodes = 0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300);
+    const newNeurodes =
+      0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300);
     CyberdeckState.components.neurodes += newNeurodes;
     CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
   }

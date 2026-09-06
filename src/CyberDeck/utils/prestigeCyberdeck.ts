@@ -19,8 +19,10 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.modStorageSize = 8;
     CyberdeckState.maxInstalledRackExtensions = getRackExtensionCap();
     CyberdeckState.netrunningSeedUsages = 0;
-    CyberdeckState.craftingPowerSupplySeedUsages = 0;
     CyberdeckState.netrunningCorruptedSeedUsages = 0;
+    CyberdeckState.craftingPowerSupplySeedUsages = 0;
+    CyberdeckState.craftingProcessingModSeedUsages = 0;
+    CyberdeckState.craftingUplinkSeedUsages = 0;
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
 
@@ -30,6 +32,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
   }
   CyberdeckState.lastNetrunningTimestamp = 0;
   CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
+  CyberdeckState.cortexSharedThreads = 0;
 
   prestigeCyberdeckComponents();
 
