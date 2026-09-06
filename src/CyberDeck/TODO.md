@@ -1,15 +1,8 @@
 REQUIRED FOR MVP
 
-- api
-
 - re-enable offline summary & beta text
 
 - add variants of rack extension and power supply that have buffs
-
-- basic doc page - rewrite
-  - add code snippets
-
-- link to docs on cyberdeck page
 
 - Add WiFUs (Wired Firmware Unit)
 - add descriptions

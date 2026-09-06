@@ -20,6 +20,7 @@ import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils";
 import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
+import { DocumentationLink } from "../../ui/React/DocumentationLink";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -119,6 +120,19 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
+      <DocumentationLink
+        page="programming/cyberdeck.md"
+        style={{
+          fontSize: "18px",
+          padding: "8px 15px",
+          backgroundColor: Settings.theme.well,
+          position: "fixed",
+          right: 10,
+          bottom: 10,
+        }}
+      >
+        Cyberdeck Docs
+      </DocumentationLink>
       <Container disableGutters maxWidth={false}>
         <canvas
           ref={canvas}
@@ -126,7 +140,15 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
           height={"800px"}
           style={{ position: "absolute", zIndex: 101, pointerEvents: "none" }}
         ></canvas>
-        <div style={{ display: "flex", flexDirection: "row", minWidth: "990px", maxWidth: "1100px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            minWidth: "990px",
+            maxWidth: "1100px",
+            maxHeight: "calc(100vh - 250px)",
+          }}
+        >
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
             <Box
               display="flex"
