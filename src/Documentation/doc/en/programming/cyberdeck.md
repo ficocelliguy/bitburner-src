@@ -24,6 +24,13 @@ Higher rarity mods gain access to higher potential stat rolls. On average, they 
 
 Drag mods you don't want onto the trash can to disassemble them into components. Right-click a mod to favorite it and keep it from being recycled.
 
+
+```js
+const mod = ns.cyberdeck.getStoredMods()[0];
+  
+await ns.cyberdeck.installMod(mod.id);
+```
+
 &nbsp;
 
 ### Wiring Up Mods
@@ -33,6 +40,13 @@ A mod only takes effect when it's powered. Power comes from the I/O panel at the
 - Drag from one socket to a matching-color socket to add a wire.
 - Click a socket to remove its wire.
 - Wires of the same color cannot cross other wires of that same color. Arrange your mods carefully!
+
+```js
+const IO = ns.cyberdeck.getCyberdeckIOPanel();
+const mod = ns.cyberdeck.getInstalledMods()[0];
+
+ns.cyberdeck.addConnection(IO.id, mod.id, 3);
+```
 
 &nbsp;
 
@@ -47,11 +61,25 @@ You can make netrunning better over time by finding and consuming the right skil
 - Raising your **netrun level** increases the rarity of the loot you find.
 - Raising your **netrun cooldown level** shortens the trace decay window.
 
+```js
+  const costIsBelowThreshold = ns.cyberdeck.getNetrunningCost() <= 2;
+  const canAffordNetrunning = ns.cyberdeck.getNetrunningCost() <= ns.cyberdeck.getComponentCounts().ICEBreakers
+
+  if ( costIsBelowThreshold && canAffordNetrunning ) {
+    const result = await ns.cyberdeck.netrun();
+    
+    // Recycle mods that don't have valuable stats to save storage space
+    const firstModReward = result.mods[0];
+    if ( !(firstModReward.stats.playerMults?.strength > 0) ) {
+      ns.cyberdeck.crafting.recycleMod(firstModReward);
+    }
+  }
+```
+
+
 &nbsp;
 
 ### Crafting Components
-
-Playing the game normally produces crafting components used for mods and ICEBreakers.
 
 **ROM** are read-only memory cards, prized for their durability. Sources:
 - Backdooring or nuking servers
@@ -74,6 +102,15 @@ Playing the game normally produces crafting components used for mods and ICEBrea
 - Some mods, when powered
 
 **Cores** are the key ingredient for hand-crafting mods. Only found via netrunning.
+
+```js
+  const cost = ns.cyberdeck.crafting.getICEBreakerCraftingCost();
+  const {ROM, neurodes, chips} = ns.cyberdeck.getComponentCounts();
+  
+  if (cost.ROM <= ROM && cost.neurodes <= neurodes && cost.chips <= chips) {
+    ns.cyberdeck.crafting.craftICEBreaker(1);
+  }
+```
 
 &nbsp;
 

@@ -248,7 +248,7 @@ const cyberdeck = {
   addConnection: 0.5,
   removeConnection: 0.05,
   netrun: 3,
-  getNetrunningIceCost: 0.05,
+  getNetrunningCost: 0.05,
   cortexShare: 2.4,
   stats: {
     getStatBonuses: 0,
@@ -262,7 +262,11 @@ const cyberdeck = {
     upgradeCores: 0.5,
   },
   crafting: {
-    craftICEbreaker: 1,
+    getICEBreakerCraftingCost: 0,
+    getPowerSupplyModCraftingCost: 0,
+    getProcessingModCraftingCost: 0,
+    getUplinkModCraftingCost: 0,
+    craftICEBreaker: 1,
     craftPowerSupplyMod: 1,
     craftProcessingMod: 1,
     craftUplinkMod: 1,

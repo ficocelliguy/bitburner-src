@@ -4657,7 +4657,7 @@ export interface Cyberdeck {
    *
    * @returns the current ICEbreaker cost of netrunning
    */
-  getNetrunningIceCost(): number;
+  getNetrunningCost(): number;
 
   /**
    * Loans neural bandwidth (and ram) to produce neurodes.
@@ -4751,6 +4751,34 @@ export interface Cyberdeck {
    */
   crafting: {
     /**
+     * @returns the crafting component cost to create an ICEbreaker.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getICEBreakerCraftingCost(): ComponentCounts;
+    /**
+     * @returns the crafting component cost to create a power supply mod.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getPowerSupplyModCraftingCost(): ComponentCounts;
+    /**
+     * @returns the crafting component cost to create a processing mod.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getProcessingModCraftingCost(): ComponentCounts;
+    /**
+     * @returns the crafting component cost to create an uplink mod.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getUplinkModCraftingCost(): ComponentCounts;
+    /**
      * Crafts ICEbreakers from crafting components.
      *
      * ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace.
@@ -4763,7 +4791,7 @@ export interface Cyberdeck {
      * @param count - the number of ICEbreakers to craft
      * @returns true if the crafting was successful, false if it failed due to a lack of components
      */
-    craftICEbreaker(count?: number): boolean;
+    craftICEBreaker(count?: number): boolean;
     /**
      * Creates a new power supply mod using crafting components.
      *

@@ -34,7 +34,14 @@ import {
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
 
-function getModOrThrow(modId: string): DeckMod {
+function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
+  const ioPanel = getCyberdeckIOPanel();
+  if (ioPanel.id === modId) {
+    if (!allowIoPanel) {
+      throw new Error(`Cannot modify the IO Panel`);
+    }
+    return ioPanel;
+  }
   const mod =
     CyberdeckState.storedModules.find((mod) => mod.id === modId) ||
     CyberdeckState.installedModules.find((mod) => mod.id === modId);
@@ -116,9 +123,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     addConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
       const modId1 = helpers.string(ctx, "modId", moduleId1);
-      getModOrThrow(modId1);
+      getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
-      getModOrThrow(modId2);
+      getModOrThrow(modId2, true);
       const socketIndex = helpers.number(ctx, "socket", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
@@ -127,15 +134,15 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       if (result.error) {
         logger(ctx)(result.error);
       } else {
-        logger(ctx)(`Connection added between mods ${modId1} and ${modId2} on socket ${socketIndex}`);
+        logger(ctx)(`Mods ${modId1} and ${modId2} connected on socket ${socketIndex}`);
       }
       return result.success;
     },
     removeConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
       const modId1 = helpers.string(ctx, "modId", moduleId1);
-      const mod1 = getModOrThrow(modId1);
+      const mod1 = getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
-      const mod2 = getModOrThrow(modId2);
+      const mod2 = getModOrThrow(modId2, true);
       const socketIndex = helpers.number(ctx, "socket", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
@@ -181,9 +188,21 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       }
       return results;
     },
-    getNetrunningIceCost() {
+    getNetrunningCost() {
       return getCurrentNetrunningIceCost();
     },
+
+    cortexShare: (ctx: NetscriptContext) => {
+      const threads = ctx.workerScript.scriptRef.threads;
+      const hostname = ctx.workerScript.hostname;
+      helpers.log(ctx, () => `Loaning neural activity with ${threads} threads on ${hostname}.`);
+      CyberdeckState.cortexSharedThreads += threads;
+      return helpers.netscriptDelay(ctx, ShareBonusTime).finally(function () {
+        helpers.log(ctx, () => `Finished loaning neural activity with ${threads} threads on ${hostname}.`);
+        CyberdeckState.cortexSharedThreads -= threads;
+      });
+    },
+
     stats: {
       getStatBonuses: () => {
         const state = getCyberdeckStatBonuses();
@@ -272,19 +291,12 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
     },
 
-    cortexShare: (ctx: NetscriptContext) => {
-      const threads = ctx.workerScript.scriptRef.threads;
-      const hostname = ctx.workerScript.hostname;
-      helpers.log(ctx, () => `Loaning neural activity with ${threads} threads on ${hostname}.`);
-      CyberdeckState.cortexSharedThreads += threads;
-      return helpers.netscriptDelay(ctx, ShareBonusTime).finally(function () {
-        helpers.log(ctx, () => `Finished loaning neural activity with ${threads} threads on ${hostname}.`);
-        CyberdeckState.cortexSharedThreads -= threads;
-      });
-    },
-
     crafting: {
-      craftICEbreaker: (ctx: NetscriptContext, count: unknown = 1) => {
+      getICEBreakerCraftingCost: () => structuredClone(ICEbreakerCraftingCost),
+      getPowerSupplyModCraftingCost: () => structuredClone(powerSupplyCraftingCost),
+      getProcessingModCraftingCost: () => structuredClone(processingModuleCraftingCost),
+      getUplinkModCraftingCost: () => structuredClone(uplinkCraftingCost),
+      craftICEBreaker: (ctx: NetscriptContext, count: unknown = 1) => {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
         if (CyberdeckState.components.ROM < ICEbreakerCraftingCost.ROM * numberToCraft) {
           logger(ctx)(

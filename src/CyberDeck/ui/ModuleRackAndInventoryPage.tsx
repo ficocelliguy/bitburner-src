@@ -46,6 +46,9 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
 
   useLayoutEffect(() => {
     DrawWiresOnCanvas(canvas.current, draggingWire);
+    if (canvas.current) {
+      canvas.current.style.zIndex = draggingInstalledModule || draggingWire ? "6000" : "101";
+    }
   });
 
   function onDragStart(result: DragStart) {
@@ -121,7 +124,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
           ref={canvas}
           width={"800px"}
           height={"800px"}
-          style={{ position: "absolute", zIndex: 5999, pointerEvents: "none" }}
+          style={{ position: "absolute", zIndex: 101, pointerEvents: "none" }}
         ></canvas>
         <div style={{ display: "flex", flexDirection: "row", minWidth: "990px", maxWidth: "1100px" }}>
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
