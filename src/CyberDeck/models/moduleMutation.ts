@@ -122,17 +122,17 @@ export function createConnection(source: Socket, destination: Socket) {
       error: `Socket colors do not match.`,
     };
   }
-  disconnectSocket(source);
-  disconnectSocket(destination);
 
   const overlapSocket = wireOverlapsSocket(source) || wireOverlapsSocket(destination);
-
   if (overlapSocket) {
     return {
       success: false,
       error: `Wires cannot overlap. There is a wire in between those connection points connecting ${overlapSocket[0].modId} and ${overlapSocket[1].modId}`,
     };
   }
+
+  disconnectSocket(source);
+  disconnectSocket(destination);
 
   CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
