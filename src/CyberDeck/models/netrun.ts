@@ -9,6 +9,7 @@ import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../util
 import { createModule } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
+import { completeNetrunTutorial } from "./tutorial";
 
 export function getCurrentNetrunningIceCost(corrupted = false): number {
   if (corrupted) {
@@ -59,6 +60,7 @@ export function netRun(corrupted = false): NetrunningRewards {
   if (corrupted) {
     return corruptedNetrun();
   }
+  completeNetrunTutorial();
 
   CyberdeckState.components.ICEBreakers -= getCurrentNetrunningIceCost();
   const rng = getNextNetrunningWHRNG();

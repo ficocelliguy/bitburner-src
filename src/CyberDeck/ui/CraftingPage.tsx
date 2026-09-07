@@ -24,6 +24,7 @@ import {
 import { CyberdeckEvents } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
 import { gainComponentMessage } from "./gainComponentToast";
+import { completeCraftedIcebreakerTutorial } from "../models/tutorial";
 
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
@@ -51,6 +52,7 @@ export function CraftingPage(): React.ReactElement {
     const success = craftICEbreaker();
     if (success) {
       gainComponentMessage({ ICEBreakers: 1 });
+      completeCraftedIcebreakerTutorial();
     }
   }
 

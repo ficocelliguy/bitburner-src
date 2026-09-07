@@ -21,7 +21,7 @@ export function getFormattedStatBonus(keyName: ModKey, value: number, useShortNa
   const valueStr = keyName.includes("RackSlots")
     ? Math.floor(value)
     : keyName.includes("Production") || keyName.includes("lvl") || keyName.includes("storage")
-    ? value.toFixed(2)
+    ? value.toPrecision(3)
     : formatAsPercent(value);
 
   return {
@@ -136,7 +136,7 @@ export function isBuff(key: ModKey, value: number): boolean {
 }
 
 export function formatAsPercent(value: number): string {
-  return `${(value * 100).toFixed(2)}%`;
+  return `${(value * 100).toPrecision(3)}%`;
 }
 
 function getModStatString(module: DeckMod) {

@@ -218,16 +218,24 @@ export function createInitialModules() {
       },
     },
   };
-  const uplinkModule2 = createUplink(1, rng);
-  uplinkModule2.sockets = [false, false, false, false, false, true, false, false];
+  const uplinkModule2: DeckMod = {
+    type: ModType.Uplink,
+    id: getID(rng),
+    rarity: 3,
+    sockets: [false, false, false, false, false, true, false, false],
+    stats: {
+      playerMults: {
+        crime_success: 0.1,
+      },
+      otherMults: getOtherStatDebuff(0, rng, 0.5),
+    },
+  };
 
-  const randomMod1 = createProcessingModule(0, rng);
-  const randomMod2 = createRackExtension(0, rng);
-  CyberdeckState.storedModules = [randomMod1, skillChip, randomMod2];
-  CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule2, uplinkModule];
+  CyberdeckState.storedModules = [skillChip, uplinkModule2];
+  CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule];
   createConnection({ modId: powerSupply.id, socketIndex: 3 }, { modId: getCyberdeckIOPanel().id, socketIndex: 3 });
   createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
-  createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
+  //createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
 
   CyberdeckState.components.ROM = 25;
   CyberdeckState.components.neurodes = 25;
@@ -348,7 +356,7 @@ export function getEasterEggModule(): DeckMod {
         hacknet_node_money: 0.1729,
       },
       otherMults: {
-        neurodeProduction: 0.1729,
+        neurodeProduction: 1.729,
       },
     },
   };

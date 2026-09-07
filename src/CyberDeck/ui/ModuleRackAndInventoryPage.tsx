@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { Container, Box, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
+import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp";
+import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
@@ -21,6 +23,7 @@ import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils"
 import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { DocumentationLink } from "../../ui/React/DocumentationLink";
+import { TutorialChecklist } from "./TutorialChecklist";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -146,7 +149,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
             flexDirection: "row",
             minWidth: "990px",
             maxWidth: "1100px",
-            maxHeight: "calc(100vh - 250px)",
+            maxHeight: "calc(100vh - 100px)",
           }}
         >
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
@@ -157,7 +160,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
-                height: "calc(100vh - 250px)",
+                height: "calc(100vh - 200px)",
                 width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
                 overflowX: "scroll",
@@ -245,6 +248,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                   </Box>
                 )}
               </Droppable>
+              {!CyberdeckState.hasCompletedTutorial && <TutorialChecklist />}
             </Box>
             <Box
               display="flex"
@@ -255,7 +259,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               style={{
                 margin: "6px",
                 width: "462px",
-                maxHeight: "calc(100vh - 250px)",
+                maxHeight: "calc(100vh - 100px)",
               }}
             >
               <Droppable droppableId={MODULE_STORAGE} direction="vertical">

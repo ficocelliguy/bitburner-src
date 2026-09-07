@@ -63,6 +63,15 @@ export const CyberdeckState = {
   craftingPowerSupplySeedUsages: 0,
   craftingProcessingModSeedUsages: 0,
   craftingUplinkSeedUsages: 0,
+  hasCompletedTutorial: false,
+  tutorialSteps: {
+    hasInstalledMod: false,
+    hasMadeConnection: false,
+    hasChargedModule: false,
+    hasConsumedSkillchip: false,
+    hasCraftedIcebreaker: false,
+    hasNetrun: false,
+  }
 };
 
 export function hasCyberdeck(): boolean {

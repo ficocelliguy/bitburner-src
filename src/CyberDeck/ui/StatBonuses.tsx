@@ -49,6 +49,7 @@ function FormatStat({
       style={{
         fontSize: `${fontSize}px`,
         display: "flex",
+        minWidth: 0,
         justifyContent: "space-between",
         padding: `${Math.ceil(fontSize / 10)}px 3px`,
         color: Settings.theme.rep,

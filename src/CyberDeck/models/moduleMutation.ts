@@ -1,6 +1,6 @@
 import { DropResult } from "react-beautiful-dnd";
 import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventoryPage";
-import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs } from "./CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, getChargedModules } from "./CyberdeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
@@ -8,6 +8,11 @@ import { DeckMod, ModType, Socket } from "../Types";
 import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";
+import {
+  completeChargedModuleTutorial,
+  completeInstalledModTutorial,
+  completeMadeConnectionTutorial, hasConsumedSkillchipTutorial,
+} from "./tutorial";
 
 export function handleModuleMoved(result: DropResult) {
   if (!result.destination) {
@@ -64,6 +69,9 @@ export function moveModule(
 
   if (destinationIsStorage) {
     disconnectModule(moduleToMove);
+  }
+  if (!destinationIsStorage && sourceIsStorage) {
+    completeInstalledModTutorial();
   }
   updateConnectedModules();
 }
@@ -128,6 +136,11 @@ export function createConnection(source: Socket, destination: Socket) {
 
   CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
+  completeMadeConnectionTutorial();
+  const chargedMods = getChargedModules();
+  if (chargedMods.some(m => m.id == sourceModule.id)) {
+    completeChargedModuleTutorial();
+  }
   return {
     success: true,
     error: "",
@@ -278,6 +291,7 @@ function consumeSkillChips() {
     }
 
     disconnectModule(module);
+    hasConsumedSkillchipTutorial();
   }
   CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
   CyberdeckEvents.emit();

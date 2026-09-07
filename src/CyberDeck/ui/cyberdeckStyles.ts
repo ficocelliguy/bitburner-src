@@ -90,6 +90,7 @@ export function useCyberdeckStyles() {
       background: theme.colors.button,
       margin: "6px 2px",
       width: "135px",
+      minWidth: 0,
       fontSize: "9px",
       alignContent: "center",
     },

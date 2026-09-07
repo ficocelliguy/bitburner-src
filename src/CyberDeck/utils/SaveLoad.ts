@@ -26,6 +26,7 @@ type CyberdeckSaveData = {
   craftingPowerSupplySeedUsages: number;
   craftingProcessingModSeedUsages: number;
   craftingUplinkSeedUsages: number;
+  hasCompletedTutorial: boolean;
 };
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
@@ -52,6 +53,7 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     craftingUplinkSeedUsages: CyberdeckState.craftingUplinkSeedUsages,
     netrunningSeedUsages: CyberdeckState.netrunningSeedUsages,
     netrunningCorruptedSeedUsages: CyberdeckState.netrunningCorruptedSeedUsages,
+    hasCompletedTutorial: CyberdeckState.hasCompletedTutorial,
   };
 }
 
@@ -86,6 +88,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       craftingPowerSupplySeedUsages,
       craftingProcessingModSeedUsages,
       craftingUplinkSeedUsages,
+      hasCompletedTutorial,
     } = parsedData;
 
     if (typeof hasCyberdeck !== "boolean") throw new Error("Invalid cyberdeck savestring value: hasCyberdeck");
@@ -146,6 +149,9 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     if (typeof craftingUplinkSeedUsages !== "number")
       throw new Error("Invalid cyberdeck savestring value: craftingUplinkSeedUsages");
     CyberdeckState.craftingUplinkSeedUsages = craftingUplinkSeedUsages;
+    if (typeof hasCompletedTutorial !== "boolean")
+      throw new Error("Invalid cyberdeck savestring value: hasCompletedTutorial");
+    CyberdeckState.hasCompletedTutorial = hasCompletedTutorial;
 
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();
