@@ -24,6 +24,7 @@ import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { DocumentationLink } from "../../ui/React/DocumentationLink";
 import { TutorialChecklist } from "./TutorialChecklist";
+import { gainCyberdeck } from "../effects";
 
 export const MODULE_STORAGE = "moduleStorage";
 export const INSTALLED_MODULES = "installedModules";
@@ -43,6 +44,12 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   }, [render]);
 
   useEffect(() => {
+    // TODO: remove after testing
+    if (CyberdeckState.installedModules.length == 0 && CyberdeckState.storedModules.length == 0) {
+      gainCyberdeck();
+      CyberdeckEvents.emit();
+    }
+
     const clearSubscription = CyberdeckEvents.subscribe(() => updateDisplay());
     logStatRanges();
     return () => clearSubscription();
