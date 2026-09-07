@@ -193,6 +193,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     getNetrunningCost() {
       return getCurrentNetrunningIceCost();
     },
+    getRackCapacity() {
+      return getCurrentRackSize();
+    },
 
     cortexShare: (ctx: NetscriptContext) => {
       const threads = ctx.workerScript.scriptRef.threads;

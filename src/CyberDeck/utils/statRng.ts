@@ -179,6 +179,21 @@ export function getEndgameBuff(level: number, rng: WHRNG): Partial<EndgameMults>
   };
 }
 
+export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
+  const rng1 = rng.random();
+  const rng2 = rng.random();
+  const fullStats = getAllStatRanges(level);
+
+  const otherMultKeys = getRecordKeys(fullStats.otherMults);
+  const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
+  const valueRange: [number, number] = fullStats.otherMults[statToAdd];
+  const value = (valueRange[1] - valueRange[0]) * rng2 * scalar + valueRange[0];
+
+  return {
+    [statToAdd]: value,
+  };
+}
+
 export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
   const rng1 = rng.random();
   const rng2 = rng.random();

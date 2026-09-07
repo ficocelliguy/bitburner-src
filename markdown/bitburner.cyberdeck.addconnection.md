@@ -11,7 +11,7 @@ If one of the mods is already charged, or if one of the connection points is the
 **Signature:**
 
 ```typescript
-addConnection(modId1: string, modId2: string, socketIndex: number): void;
+addConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 ```
 
 ## Parameters
@@ -84,7 +84,9 @@ the socket to connect them on. This corresponds to he socket colors in the UI.
 
 **Returns:**
 
-void
+boolean
+
+true if the connection was made successfully; false if it is invalid
 
 ## Remarks
 

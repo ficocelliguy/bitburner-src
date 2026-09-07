@@ -10,7 +10,11 @@ Namespace for API methods that create or destroy mods and ICEbreakers.
 
 ```typescript
 crafting: {
-    craftICEbreaker(count?: number): boolean;
+    getICEBreakerCraftingCost(): ComponentCounts;
+    getPowerSupplyModCraftingCost(): ComponentCounts;
+    getProcessingModCraftingCost(): ComponentCounts;
+    getUplinkModCraftingCost(): ComponentCounts;
+    craftICEBreaker(count?: number): boolean;
     craftPowerSupplyMod(): DeckMod | null;
     craftProcessingMod(): DeckMod | null;
 

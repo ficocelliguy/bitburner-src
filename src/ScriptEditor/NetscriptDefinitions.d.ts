@@ -4661,6 +4661,17 @@ export interface Cyberdeck {
   getNetrunningCost(): number;
 
   /**
+   * Get the max number of mod slots available in the cyberdeck mod rack. Includes any extra
+   * slots from charged rack extension mods.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   *
+   * @returns the maximum number of mods that currently can be installed at once
+   */
+  getRackCapacity(): number;
+
+  /**
    * Loans neural bandwidth (and ram) to produce neurodes.
    *
    * @remarks

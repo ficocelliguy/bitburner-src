@@ -1,18 +1,8 @@
 REQUIRED FOR MVP
 
-- tutorial
-
-- fix small vertical viewport styling
-
-- test importing existing save
-
-- re-enable offline summary & beta text
 
 - expose getNetrunningTraceFraction
 - add getRackCapacity
-- confirm netrunning returns success:false if there is no module storage space
-
-- add variants of rack extension and power supply that have buffs
 
 - Add WiFUs (Wired Firmware Unit)
 - add descriptions
@@ -22,6 +12,10 @@ REQUIRED FOR MVP
 - lint
 
 - make testing script
+
+- test importing existing save
+
+- re-enable offline summary & beta text
 
 TODO:
 

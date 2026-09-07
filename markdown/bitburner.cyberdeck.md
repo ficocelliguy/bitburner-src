@@ -45,7 +45,7 @@ Description
 
 </td><td>
 
-{ craftICEbreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftProcessingMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftUplinkMod(): [DeckMod](./bitburner.deckmod.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md) &amp; { success: boolean }; }
+{ getICEBreakerCraftingCost(): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; getPowerSupplyModCraftingCost(): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; getProcessingModCraftingCost(): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; getUplinkModCraftingCost(): [ComponentCounts](./bitburner.componentcounts.md)<!-- -->; craftICEBreaker(count?: number): boolean; craftPowerSupplyMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftProcessingMod(): [DeckMod](./bitburner.deckmod.md) \| null; craftUplinkMod(): [DeckMod](./bitburner.deckmod.md) \| null; recycleMod(modId: string): [ComponentCounts](./bitburner.componentcounts.md) &amp; { success: boolean }; }
 
 
 </td><td>
@@ -143,6 +143,17 @@ If one of the mods is already charged, or if one of the connection points is the
 </td></tr>
 <tr><td>
 
+[cortexShare()](./bitburner.cyberdeck.cortexshare.md)
+
+
+</td><td>
+
+Loans neural bandwidth (and ram) to produce neurodes.
+
+
+</td></tr>
+<tr><td>
+
 [favoriteMod(modId, favorite)](./bitburner.cyberdeck.favoritemod.md)
 
 
@@ -204,7 +215,7 @@ Also indicates if the mod is currently charged (e.g. active, has a connection to
 </td></tr>
 <tr><td>
 
-[getNetrunningIceCost()](./bitburner.cyberdeck.getnetrunningicecost.md)
+[getNetrunningCost()](./bitburner.cyberdeck.getnetrunningcost.md)
 
 
 </td><td>
@@ -212,6 +223,17 @@ Also indicates if the mod is currently charged (e.g. active, has a connection to
 Get the number of ICEBreakers required to netrun currently.
 
 ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security networks that were breached), and the cost slowly goes back down afterwards.
+
+
+</td></tr>
+<tr><td>
+
+[getRackCapacity()](./bitburner.cyberdeck.getrackcapacity.md)
+
+
+</td><td>
+
+Get the max number of mod slots available in the cyberdeck mod rack. Includes any extra slots from charged rack extension mods.
 
 
 </td></tr>

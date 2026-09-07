@@ -1,6 +1,14 @@
 import { WHRNG } from "../../Casino/RNG";
 import { DeckMod, ModType } from "../Types";
-import { getConsumableBuff, getDebuff, getEndgameBuff, getEndgameStatDebuff, getID, getLevel } from "../utils/statRng";
+import {
+  getConsumableBuff,
+  getDebuff,
+  getEndgameBuff,
+  getEndgameStatDebuff,
+  getID,
+  getLevel,
+  getOtherStatBuff,
+} from "../utils/statRng";
 import { getRandomSockets } from "../utils/moduleUtilities";
 import { createProcessingModule, createUplink } from "./createModule";
 import { CyberdeckState } from "./CyberdeckState";
@@ -104,7 +112,9 @@ export const getJunkModule = (rng: WHRNG) => {
 };
 
 const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
-  const debuffs = mergeBuffs(getDebuff(8, rng), getDebuff(8, rng));
+  const buffType = rng.random() < 0.1;
+  const debuffs = mergeBuffs(getDebuff(8, rng), buffType ? {} : getDebuff(getLevel(rng, 8), rng));
+  const buffs = buffType ? getOtherStatBuff(getLevel(rng, 0), rng, 0.5) : {};
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
     type: ModType.RackExtension,
@@ -114,6 +124,7 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
     corrupted: true,
     stats: {
       playerMults: debuffs,
+      otherMults: buffs,
       extraRackSlots: extraSlots,
     },
   };

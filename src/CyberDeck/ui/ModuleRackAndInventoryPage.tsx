@@ -149,7 +149,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
             flexDirection: "row",
             minWidth: "990px",
             maxWidth: "1100px",
-            maxHeight: "calc(100vh - 100px)",
+            maxHeight: "calc(100vh - 120px)",
           }}
         >
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
@@ -160,7 +160,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
-                height: "calc(100vh - 200px)",
+                maxHeight: "calc(100vh - 120px)",
                 width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
                 overflowX: "scroll",

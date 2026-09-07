@@ -84,7 +84,7 @@ the socket to remove a connection from
 
 boolean
 
-true if the connection was made successfuly; false if it is invalid
+true if the connection was removed successfully; false if it is invalid
 
 ## Remarks
 

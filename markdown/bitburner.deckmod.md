@@ -12,8 +12,9 @@ type DeckMod = {
   rarity: number;
   sockets: SocketList;
   type: ModType;
-  favorite?: boolean;
   stats: ModStats;
+  favorite?: boolean;
+  corrupted?: boolean;
 };
 ```
 **References:** [SocketList](./bitburner.socketlist.md)<!-- -->, [ModType](./bitburner.modtype.md)<!-- -->, [ModStats](./bitburner.modstats.md)

@@ -25,6 +25,7 @@ type ComponentStats = {
     kills: number;
     class: number;
     codingContracts: number;
+    cortexShare: number;
     netrunning: number;
   };
   cores: {

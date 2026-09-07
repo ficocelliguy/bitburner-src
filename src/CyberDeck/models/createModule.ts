@@ -18,7 +18,7 @@ import {
   getNextCraftingPowerSupplyWHRNG,
   getNextCraftingProcessingModWHRNG,
   getNextCraftingUplinkWHRNG,
-  getNextNetrunningWHRNG,
+  getNextNetrunningWHRNG, getOtherStatBuff,
   getOtherStatDebuff,
   getPlayerStatBuff,
 } from "../utils/statRng";
@@ -58,9 +58,12 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
 
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
+
   const extraSlotVariant = rng.random() < 0.1;
   const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng) : {};
   const bonus = extraSlotVariant ? 3 : 2;
+
+  const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.5) : {};
 
   return {
     type: ModType.PowerSupply,
@@ -68,7 +71,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
     sockets: getRandomSockets(rng, 2 + level / 3, bonus),
     rarity: level,
     stats: {
-      playerMults: debuff,
+      playerMults: mergeBuffs(debuff, buff),
       otherMults: debuff2,
     },
   };
@@ -81,16 +84,12 @@ export function createProcessingModule(
   scalar = 1,
   debuffScalar = 1,
 ): DeckMod {
-  const fullStats = getAllStatRanges(Math.max(level, 1));
-  const otherStatKeys = getRecordKeys(fullStats.otherMults);
-  const statToAdd = otherStatKeys[Math.floor(rng.random() * otherStatKeys.length)];
-  const valueRange: [number, number] = fullStats.otherMults[statToAdd];
-  const value = (valueRange[1] - valueRange[0]) * rng.random() * scalar + valueRange[0];
+  const buff = getOtherStatBuff(level, rng, scalar);
 
   const applyStandardDebuff = rng.random() < 0.5;
   const debuff = addDebuff && applyStandardDebuff ? getDebuff(level, rng, debuffScalar) : {};
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
-  const effects = mergeBuffs(otherMultDebuff, { [statToAdd]: value });
+  const effects = mergeBuffs(otherMultDebuff, buff);
 
   return {
     type: ModType.ProcessingMod,
@@ -126,9 +125,10 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
 
 function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
+  const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.5) : {};
   return {
     stats: {
-      playerMults: debuff,
+      playerMults: mergeBuffs(debuff, buff),
       extraRackSlots: clampNumber(Math.floor(1 + level / 4), 1, 3),
     },
     type: ModType.RackExtension,
@@ -242,6 +242,9 @@ export function createInitialModules() {
   CyberdeckState.components.chips = 25;
   CyberdeckState.components.cores = 2;
   CyberdeckState.components.ICEBreakers = 3;
+
+  CyberdeckState.tutorialSteps.hasMadeConnection = false;
+  CyberdeckState.tutorialSteps.hasChargedModule = false;
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
