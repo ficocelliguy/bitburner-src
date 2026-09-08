@@ -1,5 +1,24 @@
 REQUIRED FOR MVP
 
+- prevent page scrolling
+- support rack scrolling - test!
+
+- limit tooltips to icon and stats, not socket panel
+
+- prevent going negative on components
+
+- fix first-time netrun to produce gold mod
+
+- resize rewards modal to fit ~700px screen
+
+- add notification for module storage full for netrun attempt
+- add notification for all dev buttons
+
+- un-charging rack extension causes issues
+
+- add more gap for recycle bin below storage
+
+- nerf power supply socket count
 
 - expose getNetrunningTraceFraction
 - add getRackCapacity
@@ -16,6 +35,8 @@ REQUIRED FOR MVP
 - test importing existing save
 
 - re-enable offline summary & beta text
+
+- remove tmp
 
 TODO:
 
@@ -41,6 +62,10 @@ TODO LATER:
 - offline production?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
+
+- deck upgrades?
+  - boost connected mods?
+  - improve sockets?
 
 - stats page
 

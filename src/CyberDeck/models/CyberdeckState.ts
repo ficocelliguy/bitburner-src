@@ -79,7 +79,7 @@ export function hasCyberdeck(): boolean {
 }
 
 export function getRackExtensionCap() {
-  return 2; // TODO-fico: sf reward?
+  return 3; // TODO-fico: sf reward?
 }
 
 export function getChargedModuleIDs(): string[] {

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyberdeck NS-API user test — newer player, newer coder</title>
+    <style>
+      :root {
+        --bg: #0f1216;
+        --bg2: #161b22;
+        --bg3: #1e242d;
+        --fg: #d4d4d8;
+        --fg2: #9ca3af;
+        --accent: #61dafb;
+        --good: #22c55e;
+        --confusing: #eab308;
+        --gap: #a855f7;
+        --footgun: #f97316;
+        --minor: #6b7280;
+        --resolved: #22c55e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 24px 32px 80px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      h1 { margin: 0 0 4px; font-size: 24px; }
+      .meta { color: var(--fg2); font-size: 13px; margin-bottom: 20px; }
+      .meta code { color: var(--accent); }
+      .status {
+        background: var(--bg2);
+        padding: 14px 18px;
+        border-left: 4px solid var(--accent);
+        margin-bottom: 20px;
+      }
+      .progress-wrap { background: var(--bg2); padding: 14px 18px; margin-bottom: 20px; }
+      .progress-bar { height: 12px; background: var(--bg3); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--resolved), var(--accent)); transition: width 200ms ease; }
+      .progress-label { display: flex; justify-content: space-between; align-items: center; }
+      .toc {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      .toc a {
+        background: var(--bg2);
+        padding: 10px 14px;
+        color: var(--fg);
+        text-decoration: none;
+        border-left: 4px solid var(--minor);
+        display: block;
+        font-size: 13px;
+      }
+      .toc a:hover { background: var(--bg3); }
+      .toc a.scripts { border-color: var(--accent); }
+      .toc a.worked { border-color: var(--good); }
+      .toc a.confusing { border-color: var(--confusing); }
+      .toc a.gaps { border-color: var(--gap); }
+      .toc a.footguns { border-color: var(--footgun); }
+      .toc a.run { border-color: var(--minor); }
+      .toc .count {
+        color: var(--fg2);
+        float: right;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+      }
+      button.reset {
+        background: var(--bg3);
+        color: var(--fg);
+        border: 1px solid var(--minor);
+        padding: 6px 14px;
+        font-size: 12px;
+        cursor: pointer;
+        border-radius: 3px;
+      }
+      button.reset:hover { background: var(--minor); color: var(--bg); }
+      h2 {
+        margin: 28px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--bg3);
+        font-size: 18px;
+      }
+      h2 .count {
+        color: var(--fg2);
+        font-size: 13px;
+        font-weight: normal;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        margin-left: 8px;
+      }
+      .issue {
+        background: var(--bg2);
+        border-left: 4px solid var(--minor);
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 12px;
+        align-items: start;
+      }
+      .issue.scripts { border-color: var(--accent); }
+      .issue.worked { border-color: var(--good); }
+      .issue.confusing { border-color: var(--confusing); }
+      .issue.gap { border-color: var(--gap); }
+      .issue.footgun { border-color: var(--footgun); }
+      .issue.minor { border-color: var(--minor); }
+      .issue input[type="checkbox"] {
+        margin: 4px 0 0 0;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: var(--resolved);
+      }
+      .issue-body { min-width: 0; }
+      .issue-title { font-weight: 600; margin: 0 0 4px; font-size: 14px; }
+      .issue-loc {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        color: var(--accent);
+        margin-bottom: 6px;
+      }
+      .issue.done .issue-title,
+      .issue.done .issue-loc,
+      .issue.done p { opacity: 0.5; }
+      .issue.done .issue-title { text-decoration: line-through; }
+      .issue p { margin: 4px 0; }
+      .issue p.what::before { content: "What happens: "; color: var(--fg2); font-weight: 600; }
+      .issue p.fix::before { content: "Fix: "; color: var(--resolved); font-weight: 600; }
+      .issue p.example::before { content: "Example: "; color: var(--fg2); font-weight: 600; }
+      code {
+        background: var(--bg3);
+        padding: 1px 5px;
+        border-radius: 2px;
+        font-size: 12px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      pre {
+        background: var(--bg3);
+        padding: 10px 14px;
+        border-radius: 3px;
+        overflow-x: auto;
+        font-size: 12px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        margin: 8px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cyberdeck NS-API user test</h1>
+    <div class="meta">
+      Playtest of the <code>ns.cyberdeck</code> API from a "newer player, newer coder" seat. Branch <code>cyberdeck</code>
+      · reviewed 2026-09-07 · scripts in <code>tmp/cyberdeck-scripts/</code> · harness in
+      <code>test/jest/Cyberdeck/CyberdeckScripts.test.ts</code>
+    </div>
+
+    <div class="status">
+      Wrote a small script pack (netrun loop, icebreaker crafting, storage manager with a mod-scoring heuristic,
+      auto-installer, cortex-share, a greedy wiring solver, orchestrator). Eight Jest tests pass, including a
+      10-second live end-to-end and a wire-from-scratch test where the solver rebuilt the starter kit's wiring
+      exactly. Two headlines: <b>the MVP API is enough to build a working auto-farm including a basic wiring solver</b>,
+      but <b>a scripter has no way to see trace-decay progress</b>, so netrun cadence is guesswork — early-game decks
+      sit idle most of the time.
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Progress: <span id="progress-count">0 / 0</span></span>
+        <button class="reset" onclick="resetProgress()">Reset checkboxes</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+    </div>
+
+    <div class="toc">
+      <a class="scripts" href="#scripts">Scripts <span class="count" id="count-scripts">0/0</span></a>
+      <a class="worked" href="#worked">Worked well <span class="count" id="count-worked">0/0</span></a>
+      <a class="confusing" href="#confusing">Confusing <span class="count" id="count-confusing">0/0</span></a>
+      <a class="gaps" href="#gaps">API gaps <span class="count" id="count-gaps">0/0</span></a>
+      <a class="footguns" href="#footguns">Footguns <span class="count" id="count-footguns">0/0</span></a>
+      <a class="run" href="#run">Live 10s run <span class="count" id="count-run">0/0</span></a>
+    </div>
+
+    <h2 id="scripts">Scripts I wrote <span class="count" id="head-count-scripts"></span></h2>
+
+    <div class="issue scripts" data-key="script-main">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/main.js</code> — orchestrator</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/main.js</div>
+        <p>
+          Kicks off the five child scripts if the player has a deck. <code>ns.run(path, threads)</code> in a loop; skips
+          duplicates via <code>ns.isRunning</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-netrun">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/netrun.js</code> — main farming loop</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/netrun.js</div>
+        <p>
+          Netruns whenever <code>getNetrunningCost()</code> is at or below a cheap-cadence cap (default 3 icebreakers)
+          <em>and</em> there's storage headroom for the ~3 mods a netrun returns. Otherwise it prints why it's waiting.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-craft-ice">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/craft-icebreakers.js</code> — keeps a stockpile</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/craft-icebreakers.js</div>
+        <p>
+          Targets 8 icebreakers on hand. Reads the crafting cost once, computes what it can afford this tick from the
+          shared component pool, batches it into a single <code>craftICEBreaker(count)</code> call.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-manage-storage">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/manage-storage.js</code> — recycle trash, favorite gold</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/manage-storage.js</div>
+        <p>
+          Hand-rolled scorer in <code>cyberdeck/score.js</code> weights component-production, hacking, and
+          faction-rep mults. Auto-favorites anything above 25 so it won't get recycled by accident; recycles the
+          worst non-favorited mods to keep at least 5 free slots.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-auto-install">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/auto-install.js</code> — swap in upgrades, feed skill chips, re-wire</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/auto-install.js</div>
+        <p>
+          Three jobs. (1) Install any stored <code>SkillChip</code> so charging it hands out a permanent buff.
+          (2) If a stored mod scores at least 5 points above a same-type rack mod, store the old one and install the
+          new one in its slot. (3) After any change, call <code>wireUpAll(ns)</code> from <code>wire.js</code> so the
+          newly-installed mod actually gets charged.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-wire">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/wire.js</code> — greedy wiring solver</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/wire.js</div>
+        <p>
+          BFS from the IO panel. For each uncharged mod, walks the charged set looking for any shared socket index
+          where both ends are free, then <code>addConnection</code>s them. Any pair+socket that fails (overlap)
+          gets blocked so we don't retry it forever. Rewires the starter kit exactly (IO→PSU on 3, PSU→proc on 0,
+          PSU→uplink on 6) from a blank connection state in the test. <b>Doesn't</b> re-order mods on the rack to
+          route around overlaps — that's the honest limit of a script that can only see socket colors, not the
+          physical wire layout.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-cortex">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/cortex-share.js</code> — neurode farm</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/cortex-share.js</div>
+        <p>Trivial: <code>while (true) await ns.cyberdeck.cortexShare();</code>. Run with as many threads as spare RAM allows.</p>
+      </div>
+    </div>
+
+    <div class="issue scripts" data-key="script-score">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cyberdeck/score.js</code> — the scoring heuristic every other script needs</div>
+        <div class="issue-loc">tmp/cyberdeck-scripts/cyberdeck/score.js</div>
+        <p>
+          Weights player-mult buffs (hacking, faction_rep, hacking_speed, hacking_money…) and other-mult buffs
+          (romProduction, chipProduction, neurodeProduction) to match the "component production, hacking, faction rep"
+          goals. Skill chips and rack extensions get a flat bonus so they beat vanilla mods. Exists only because
+          there's no built-in comparator.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="worked">What worked well <span class="count" id="head-count-worked"></span></h2>
+
+    <div class="issue worked" data-key="good-typed-shapes">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">The typed return shapes are clean</div>
+        <p>
+          <code>getComponentCounts()</code>, <code>getStoredMods()</code>, <code>getInstalledMods()</code>,
+          <code>getNetrunningCost()</code> all return exactly what you want; no wrapper objects, no success/error
+          envelopes. The netrun gate ended up three lines that read like the docs example.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-charged-flag">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>getInstalledMods()</code> returns a <code>charged</code> flag</div>
+        <p>
+          Without it a script has to walk the connection graph to know which mods are contributing stats. With it:
+          <code>ns.cyberdeck.getInstalledMods().filter((m) =&gt; m.charged)</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-batch-craft">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>craftICEBreaker(count)</code> takes a batch count</div>
+        <p>
+          Crafting loop didn't have to spin one call per icebreaker; fits the "top up to target" pattern cleanly.
+          The mod crafters can't do this because each returns the specific rolled mod, which is fair.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-getratcapacity">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>getRackCapacity()</code> exists and includes rack-extension bonuses</div>
+        <p>
+          Auto-installer needs to know when the rack is full before trying to install a skill chip.
+          <code>getRackCapacity()</code> includes charged rack-extension slots, not just the base 5, which is what a
+          scripter actually wants.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-recyclemod-return">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>recycleMod</code> returns the components refunded</div>
+        <p>
+          Storage script can log "recycled X, +2 ROM +2 chips" without a second call to diff the pool.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-favorite-mod">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>favoriteMod()</code> composes cleanly with a scoring pass</div>
+        <p>
+          "Favorite above threshold; recycle worst first" is a two-line pattern. Same call as the right-click UI, so
+          scripted and hand-managed decks don't drift apart.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-addconnection-safe-probe">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>addConnection</code> is a safe probe (no side effects on failure)</div>
+        <div class="issue-loc">src/CyberDeck/models/moduleMutation.ts:126-135</div>
+        <p>
+          The wire-overlap check happens before the two <code>disconnectSocket</code> calls, so a failed
+          <code>addConnection</code> leaves state untouched. That's the property that makes scripted wiring viable —
+          <code>wire.js</code> can enumerate every candidate triple and try each one without worrying about clobbering
+          existing wires. Nothing in the docs advertises this; it's worth calling out as a stable contract.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue worked" data-key="good-wiring-scriptable">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Basic wiring is scriptable end-to-end</div>
+        <p>
+          Given <code>getInstalledMods()</code> (with the <code>charged</code> flag), <code>getConnections()</code>,
+          <code>getCyberdeckIOPanel().sockets</code>, and a safe-to-probe <code>addConnection</code>, a scripter has
+          everything needed for the "charge every uncharged mod" case. <code>wire.js</code> is ~55 lines and it works.
+          I originally listed this as an API gap; the gap is narrower than I thought.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="confusing">Confusing or hard to use <span class="count" id="head-count-confusing"></span></h2>
+
+    <div class="issue confusing" data-key="conf-cost-vs-decay">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Cost is the only proxy for trace decay, and it's the wrong shape</div>
+        <p class="what">
+          The policy I want to write is "netrun when trace decay is under 50%." The only signal is
+          <code>getNetrunningCost()</code>, which spikes to hundreds right after a run and creeps back down. I had to
+          pick a magic max-cost threshold (I chose 3) and hope. In the 10s run the cost went
+          <code>1 → 441 → 163 → 39</code>, never getting back under 3, so the loop stayed idle after the first run.
+        </p>
+        <p class="fix">
+          Expose <code>ns.cyberdeck.getNetrunningTraceFraction()</code> (already on
+          <code>src/CyberDeck/TODO.md</code>). Then policy can be phrased the way the player thinks about it: "netrun
+          when trace is under 20%" or "burn ICE hard, netrun continuously."
+        </p>
+      </div>
+    </div>
+
+    <div class="issue confusing" data-key="conf-mod-type-strings">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Mod type strings aren't in <code>ns.enums</code></div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:10390 (NSEnums)</div>
+        <p class="what">
+          <code>mod.type</code> is typed <code>ModType</code> on the returned <code>DeckMod</code>, but the enum isn't
+          on <code>ns.enums</code>. A scripter hardcodes <code>"SkillChip"</code>, <code>"Rack Extension"</code>, etc.
+          as string literals, with no autocomplete. And the strings are inconsistent — see footgun below.
+        </p>
+        <p class="fix">
+          Add <code>ModType: ModTypeEnumType</code> to <code>NSEnums</code>, same treatment as <code>CrimeType</code>,
+          <code>JobField</code>, etc.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue confusing" data-key="conf-component-key-casing">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>ComponentCounts</code> key casing is a mixed bag</div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4397 (ComponentCounts)</div>
+        <p class="what">
+          <code>ROM</code> (all caps), <code>ICEBreakers</code> (PascalCase-ish), <code>chips</code> /
+          <code>neurodes</code> / <code>cores</code> (lowercase). Every script that touches the pool has to remember
+          which is which. Tripped on this while writing <code>util.canAffordCost()</code>.
+        </p>
+        <p class="fix">
+          Pick one. All-lowercase (<code>rom</code>, <code>iceBreakers</code>) matches the rest of the NS API.
+          If renaming's too disruptive, at least call it out at the top of the docs page's "Crafting Components" section.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue confusing" data-key="conf-mod-stats-scoring">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">A stored mod is an opaque bag of buff/debuff numbers; no notion of "score"</div>
+        <p class="what">
+          Had to invent <code>score.js</code> to answer "should I install this or recycle it?" Fine that the scoring
+          choice is gameplay, but a scripter has no baseline to lean on. Even a raw-magnitude helper would let people
+          filter dumpster-fire mods. Right now every scripter reimplements the same rough heuristic.
+        </p>
+        <p class="fix">
+          Optional: <code>ns.cyberdeck.stats.evaluateMod(mod)</code> returning something like
+          <code>{ buffMagnitude, debuffMagnitude, rarityBias }</code>. Doesn't need to be smart, just consistent across
+          scripters.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue confusing" data-key="conf-installmod-bool-return">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Bare <code>boolean</code> return from <code>installMod</code> hides why it failed</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:98-111</div>
+        <p class="what">
+          The impl distinguishes "mod not found" (throws) from "rack full" (returns false + log line). A script
+          just sees false — could be rack full, invalid index, or something new added later. Only signal is the log.
+        </p>
+        <p class="fix">
+          Either throw for rack-full too (so the caller can catch specifically), or return
+          <code>{ success, reason }</code>. Matches <code>netrun</code>'s <code>{ success, mods, components }</code>
+          shape.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue confusing" data-key="conf-mod-id-opaque">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Mod IDs like <code>0z5B423</code> don't correlate to anything the UI shows</div>
+        <p class="what">
+          Cute flavor (base-2/8/12/16 prefixes), but when the storage manager logs
+          <code>Recycled [r0 Uplink 0b110]</code> there's no way to correlate that back to the rack UI without
+          visually hunting.
+        </p>
+        <p class="fix">
+          Not a bug, footnote. A helper like <code>ns.cyberdeck.describeMod(mod)</code> that returns the same string
+          the UI shows would make script logs a lot friendlier.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="gaps">API gaps <span class="count" id="head-count-gaps"></span></h2>
+
+    <div class="issue gap" data-key="gap-trace-fraction">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>getNetrunningTraceFraction</code> — single most useful missing method</div>
+        <div class="issue-loc">src/CyberDeck/TODO.md (already on the list)</div>
+        <p class="what">
+          Scripters guess "how long since my last run" via icebreaker cost. That's a proxy that also depends on
+          <code>netrunningCooldownLevel</code>, which changes over time. Any rate-policy script has to
+          reverse-engineer the cost formula.
+        </p>
+        <p class="fix">Expose the function that already exists internally (<code>getNetrunningTraceFraction</code>).</p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="gap-wiring-api">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Wire-overlap state isn't queryable from a script</div>
+        <p class="what">
+          Scripted wiring works for the easy case (see the "Basic wiring is scriptable" win), but the greedy solver
+          in <code>wire.js</code> can only learn about a wire-overlap by trying a connection and having it fail.
+          For a mod that shares three sockets with the IO panel but two of them are covered by wires between other
+          mods, the solver has to probe until it stumbles onto the working one. On a big rack this scales poorly.
+          <code>CyberdeckState.coveredSockets</code> exists internally — nothing on the NS surface exposes it.
+        </p>
+        <p class="fix">
+          <code>ns.cyberdeck.getCoveredSockets(): Socket[]</code> — same shape as <code>getConnections()</code>'s
+          <code>Socket</code>. Then a solver can skip covered sockets up front instead of finding out the hard way.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="gap-io-panel-sockets">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">IO-panel socket layout isn't documented anywhere script-visible</div>
+        <div class="issue-loc">src/CyberDeck/models/createModule.ts:37 (IO panel sockets = [f,t,f,t,f,t,f,f])</div>
+        <p class="what">
+          The panel has sockets on indices 1, 3, 5 only. If your first-installed mod only has sockets on 0, 2, or 4 —
+          RNG rolls this — the IO panel can never charge it directly. A script can discover it via
+          <code>getCyberdeckIOPanel().sockets</code>, but only if the scripter knows to look. Docs page doesn't
+          mention it.
+        </p>
+        <p class="fix">
+          One sentence in the docs page's "Wiring Up Mods" section: "The deck IO panel only has sockets on the
+          indices marked in <code>getCyberdeckIOPanel().sockets</code> — currently 1, 3, and 5."
+        </p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="gap-list-craft-cost">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">No unified "list all craft costs"; four separate <code>getXCraftingCost()</code> calls</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:300-303</div>
+        <p class="what">
+          Nit. A "what should I craft next?" script needs all four costs — four calls, four names, no mod type in the
+          return value.
+        </p>
+        <p class="fix">
+          <code>ns.cyberdeck.crafting.getAllCraftingCosts()</code> → <code>Record&lt;ModType, ComponentCounts&gt;</code>.
+          Keep the individual getters for compatibility.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="gap-mod-storage-cap">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>modStorageSize</code> is buried inside <code>stats.getLevels()</code></div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:216-225</div>
+        <p class="what">
+          "Is storage nearly full?" requires <code>ns.cyberdeck.stats.getLevels().modStorageSize</code> — awkward path
+          for a capacity value that isn't really a "level." Bumped into it twice while writing <code>netrun.js</code>.
+        </p>
+        <p class="fix">
+          Mirror <code>getRackCapacity()</code>: add top-level <code>ns.cyberdeck.getModStorageCapacity()</code>.
+          Keep <code>getLevels()</code> as-is.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="gap-charge-hint">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">No way to preview "will this mod be wire-able if I install it here?"</div>
+        <p class="what">
+          A scripted upgrade swap can install a strictly-better mod that ends up dead because none of its sockets
+          overlap the neighbors it landed next to. <code>wire.js</code> can retry after the fact, but it can't
+          answer the question <em>before</em> the swap — so auto-install occasionally throws away a good rack mod
+          for a stored mod that never charges. Would be much nicer to check first.
+        </p>
+        <p class="fix">
+          <code>ns.cyberdeck.previewInstall(modId, index): { chargeable: boolean, possibleConnections: Connection[] }</code>.
+          Would let auto-install rank swap candidates not just by score but by whether they'll actually get charged.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="footguns">Footguns <span class="count" id="head-count-footguns"></span></h2>
+
+    <div class="issue footgun" data-key="footgun-skillchip-string">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">"SkillChip" has no space; "Power Supply", "Processing Mod", "Rack Extension" do</div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4464-4471 (ModType enum)</div>
+        <p class="what">
+          A newer coder will guess <code>mod.type === "Skill Chip"</code> — matching every other multi-word mod type —
+          and their skill-chip auto-installer will silently never run. Got this wrong first try; only caught it because
+          the test asserted "at least one skill chip installed."
+        </p>
+        <p class="fix">
+          Rename the enum value to <code>"Skill Chip"</code> so it matches its siblings. Nothing else in
+          <code>ModType</code> uses PascalCase.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue footgun" data-key="footgun-installmod-await">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>installMod</code> and <code>netrun</code> both return promises; only one is loud about it</div>
+        <p class="what">
+          Docs example for <code>installMod</code> uses <code>await</code>; the type is <code>Promise&lt;boolean&gt;</code>.
+          Forget the <code>await</code> and there's no runtime error — the next call runs against pre-install state.
+          <code>auto-install.js</code> initially had a race where a bare <code>installMod</code> and an immediately
+          following <code>storeMod</code> fought each other.
+        </p>
+        <p class="fix">
+          One-line doc note at the top of the API: "All deck-mutating methods (<code>installMod</code>,
+          <code>storeMod</code>, <code>netrun</code>, <code>cortexShare</code>, upgrades) must be awaited." Or make
+          <code>storeMod</code> return a promise too so the pattern is uniform.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue footgun" data-key="footgun-corrupted-net-hidden">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>ns.cyberdeck.legacy.getCost()</code> returns <code>Infinity</code> pre-glitch; easy to divide by</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:437-443</div>
+        <p class="what">
+          Pre-glitch, legacy.getCost returns <code>Infinity</code> and prints a corrupted hint. A script that treats
+          getCost as a number happily does <code>if (cost &lt; myBudget)</code> — always false, so silent — but any
+          arithmetic (percent of budget, ratio to non-legacy cost) yields NaN and poisons everything downstream.
+        </p>
+        <p class="fix">
+          Either return <code>NaN</code> (at least loud in comparisons) or throw "glitch not yet discovered" so
+          scripters know to gate on their own discovery signal.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue footgun" data-key="footgun-rack-full-silent">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Storage overflow on netrun silently corrupts inventory</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:177-181 (see also related bug in the code review)</div>
+        <p class="what">
+          Netrun API guard is <code>modStorageSize &lt; storedModules.length</code>. At exactly full (8/8) the guard
+          passes and 3 new mods get unshifted → 11/8. <code>netrun.js</code> defends with
+          <code>STORAGE_HEADROOM = 4</code>, but only because I read the source. A scripter following the docs
+          example will overflow.
+        </p>
+        <p class="fix">
+          Cross-references the "Netrun succeeds with 0 free storage slots" bug in the code review; fixing it there
+          fixes the script-facing footgun too.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue footgun" data-key="footgun-cortex-thread-cap">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>cortexShare</code> has no documented thread ceiling but diminishes fast</div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4674-4687</div>
+        <p class="what">
+          Docs say "diminishing returns" with no shape. A player will run
+          <code>ns.run("cortex-share.js", -1)</code> (all RAM) — fine for a 4GB deck (1 thread), thousands wasted on a
+          big pserver. My script hardcoded 16 and I have no idea if that's high, low, or right.
+        </p>
+        <p class="fix">
+          Either a doc line ("returns follow <code>10*n/(n+300)</code>-ish, sweet spot is ~30 threads") or a
+          <code>ns.cyberdeck.getCortexShareRate(threads)</code> helper so scripters can plot the curve themselves.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="run">Live 10-second run <span class="count" id="head-count-run"></span></h2>
+
+    <div class="issue minor" data-key="run-transcript">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Transcript from <code>test/jest/Cyberdeck/CyberdeckScripts.test.ts</code> e2e</div>
+        <p class="what">
+          Fresh save, granted a cyberdeck, ran netrun + craft + storage side-by-side for 10 seconds. Starter kit
+          plus 5 icebreakers. State before and after:
+        </p>
+<pre>before: stored=2 installed=3 components={ROM:25, chips:25, neurodes:25, cores:2, ice:5}
+after : stored=3 installed=3 components={ROM:10, chips: 7, neurodes: 7, cores:2, ice:5}
+
+netrun.js:
+  Netrun loop started.
+  Netrunning (cost=1 icebreakers)...
+  Netrun success. Got 3 mods, +1 ROM, +0 chips, +0 neurodes, +0 cores.
+  Waiting: storage almost full (5/8).
+  Waiting: trace decay, cost=441 > 3.
+  Waiting: trace decay, cost=163 > 3.
+  Waiting: trace decay, cost=39 > 3.
+
+craft-icebreakers.js:
+  Craft-icebreakers loop started.
+  Each icebreaker costs 20 ROM + 20 neurodes + 20 chips.
+  Crafted 1 icebreakers (was 5).
+
+manage-storage.js:
+  Manage-storage loop started.
+  Favorited: [r3 SkillChip 0z5B423] score=26.9 { netrunning_lvl:+0.63 }
+  Recycled [r1 Processing Mod 0o2135] score=-333.3 { chipProduction:-111.3%, program_creation_speed:0.8% }
+  Recycled [r0 Uplink 0b110] score=-4.8 { hacking_exp:-2.4%, hacknet_node_money:1.2% }</pre>
+        <p>
+          Three things worth calling out. (1) Trace-decay cost went <code>1 → 441 → 163 → 39</code> after a single run
+          and never got back under 3 in the window. (2) At level-0 netrunning the run rewarded +1 ROM and nothing else,
+          so the craft loop only barely stayed even (net 1 icebreaker crafted). (3) The storage manager did its job:
+          one skill chip favorited, two junk mods recycled at strongly negative scores. Components drained
+          (25→10 ROM etc.) faster than they refill from netrun at low netrunning level.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue minor" data-key="run-wire">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">wire.js on a blank connection state — rebuilds the starter kit exactly</div>
+        <p class="what">
+          Cleared every starter connection so all 3 mods were dead, then ran <code>cyberdeck/wire.js</code>.
+        </p>
+<pre>  wired 0o46317 &lt;-&gt; cyberdeck-io-panel on socket 3    (power supply)
+  wired 0xC4E43 &lt;-&gt; 0o46317 on socket 0                (processing mod)
+  wired 0z9119  &lt;-&gt; 0o46317 on socket 6                (uplink)
+charged 0-&gt;3 (attempted=3, connected=3)</pre>
+        <p>
+          Solver picked the only viable path: IO panel has sockets 1/3/5, PSU has 0/3/6 — one shared color (3),
+          so wire that first. Then PSU becomes the source for the other two mods on their unique sockets (0 and 6).
+          Same wiring the starter kit ships with. No overlap failures on this rack.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue minor" data-key="run-harness">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Test harness passes 8/8</div>
+        <div class="issue-loc">test/jest/Cyberdeck/CyberdeckScripts.test.ts</div>
+        <p>
+          Boots a fresh bitnode, grants a deck via <code>gainCyberdeck()</code>, loads each script from
+          <code>tmp/cyberdeck-scripts/</code> into home, runs it for a couple of seconds, asserts observed behavior.
+          Whole suite: <code>npx jest test/jest/Cyberdeck/CyberdeckScripts.test.ts</code>, ~25 seconds.
+        </p>
+<pre>PASS test/jest/Cyberdeck/CyberdeckScripts.test.ts (25.773 s)
+  Cyberdeck test-script suite
+    √ environment: cyberdeck is enabled and has starter modules (23 ms)
+    √ craft-icebreakers.js: burns components into more icebreakers (1246 ms)
+    √ netrun.js: consumes icebreakers and gains stored mods (1632 ms)
+    √ manage-storage.js: recycles low-scoring mods when storage is tight (2270 ms)
+    √ auto-install.js: installs a stored skill chip (3096 ms)
+    √ main.js: orchestrates the child scripts (519 ms)
+    √ wire.js: charges every starter mod when run on a blank connection state (530 ms)
+    √ end-to-end: netrun + craft + storage for 10s, observe state churn (10079 ms)</pre>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "user-test:cyberdeck";
+      function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; } }
+      function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+      function resetProgress() {
+        if (!confirm("Clear all checkbox progress?")) return;
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll(".issue").forEach((issue) => {
+          const cb = issue.querySelector('input[type="checkbox"]');
+          cb.checked = false;
+          issue.classList.remove("done");
+        });
+        updateCounters();
+      }
+      function updateCounters() {
+        const sections = ["scripts", "worked", "confusing", "gaps", "footguns", "run"];
+        let totalOpen = 0, totalAll = 0;
+        for (const section of sections) {
+          const header = document.getElementById(section);
+          if (!header) continue;
+          const items = [];
+          let node = header.nextElementSibling;
+          while (node && node.tagName !== "H2") {
+            if (node.classList.contains("issue")) items.push(node);
+            node = node.nextElementSibling;
+          }
+          const total = items.length;
+          const done = items.filter((i) => i.querySelector('input[type="checkbox"]').checked).length;
+          const open = total - done;
+          const label = `${done}/${total}`;
+          const tocEl = document.getElementById(`count-${section}`);
+          const headEl = document.getElementById(`head-count-${section}`);
+          if (tocEl) tocEl.textContent = label;
+          if (headEl) headEl.textContent = `(${done}/${total} done)`;
+          totalOpen += open;
+          totalAll += total;
+        }
+        const totalDone = totalAll - totalOpen;
+        document.getElementById("progress-count").textContent = `${totalDone} / ${totalAll}`;
+        const pct = totalAll ? (totalDone / totalAll) * 100 : 0;
+        document.getElementById("progress-fill").style.width = pct + "%";
+      }
+      function init() {
+        const state = loadState();
+        document.querySelectorAll(".issue").forEach((issue) => {
+          const key = issue.dataset.key;
+          const cb = issue.querySelector('input[type="checkbox"]');
+          if (state[key]) { cb.checked = true; issue.classList.add("done"); }
+          cb.addEventListener("change", () => {
+            const s = loadState();
+            if (cb.checked) { s[key] = true; issue.classList.add("done"); }
+            else { delete s[key]; issue.classList.remove("done"); }
+            saveState(s);
+            updateCounters();
+          });
+        });
+        updateCounters();
+      }
+      init();
+    </script>
+  </body>
+</html>
