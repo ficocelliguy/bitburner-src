@@ -253,3 +253,13 @@ export const statBonusLongNames: {
   bladeburner_analysis: "Bladeburner Analysis",
   bladeburner_success_chance: "Bladeburner Success Chance",
 } as const;
+
+
+export type ModImageSet = {
+  white: string;
+  blue: string;
+  yellow: string;
+  green: string;
+  purple: string;
+  red: string;
+};

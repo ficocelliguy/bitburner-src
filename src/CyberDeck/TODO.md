@@ -2,6 +2,8 @@ REQUIRED FOR MVP
 
 - prevent page scrolling
 - support rack scrolling - test!
+- move docs button to top under tabs
+- extend storage and rack to be the full screen height
 
 - limit tooltips to icon and stats, not socket panel
 
@@ -24,7 +26,8 @@ REQUIRED FOR MVP
 - add getRackCapacity
 
 - Add WiFUs (Wired Firmware Unit)
-- add descriptions
+  - add descriptions
+  - credit @Mango_to_sleep
 
 - code review
 - unit tests
