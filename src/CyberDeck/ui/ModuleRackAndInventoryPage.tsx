@@ -143,11 +143,11 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       >
         Cyberdeck Docs
       </DocumentationLink>
-      <Container disableGutters maxWidth={false}>
+      <Container disableGutters maxWidth={false} sx={{overflowY: "hidden", position: "relative"}}>
         <canvas
           ref={canvas}
           width={"800px"}
-          height={"800px"}
+          height={"2000px"}
           style={{ position: "absolute", zIndex: 101, pointerEvents: "none" }}
         ></canvas>
         <div
@@ -156,7 +156,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
             flexDirection: "row",
             minWidth: "990px",
             maxWidth: "1100px",
-            maxHeight: "calc(100vh - 120px)",
+            height: "calc(100vh - 115px)",
           }}
         >
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={() => updateDisplay()}>
@@ -167,7 +167,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               whiteSpace="nowrap"
               style={{
                 margin: "10px",
-                maxHeight: "calc(100vh - 120px)",
+                maxHeight: "calc(100vh - 115px)",
                 width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
                 overflowX: "scroll",
@@ -266,7 +266,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               style={{
                 margin: "6px",
                 width: "462px",
-                maxHeight: "calc(100vh - 100px)",
+                maxHeight: "calc(100vh - 115px)",
               }}
             >
               <Droppable droppableId={MODULE_STORAGE} direction="vertical">
@@ -279,7 +279,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{
-                      maxHeight: "calc(100vh - 360px)",
+                      maxHeight: "calc(100vh - 235px)",
                       border: `1px solid ${Settings.theme.button}`,
                       backgroundColor: Settings.theme.backgroundprimary,
                       padding: "3px",
@@ -331,7 +331,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                       flexDirection="column"
                       alignItems="center"
                       whiteSpace="nowrap"
-                      style={{ height: "calc(100vh - 420px)", overflowY: "scroll" }}
+                      style={{ height: "calc(100vh - 235px)", overflowY: "scroll" }}
                     >
                       {getFilteredStoredModules(modFilter).map((module, index) => (
                         <ModuleComponent

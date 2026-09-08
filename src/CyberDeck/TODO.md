@@ -1,13 +1,7 @@
 REQUIRED FOR MVP
 
-- prevent page scrolling
 - support rack scrolling - test!
 - move docs button to top under tabs
-- extend storage and rack to be the full screen height
-
-- limit tooltips to icon and stats, not socket panel
-
-- prevent going negative on components
 
 - fix first-time netrun to produce gold mod
 

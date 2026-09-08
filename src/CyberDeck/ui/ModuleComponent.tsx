@@ -71,62 +71,59 @@ export function ModuleComponent({
   return (
     <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
       {(provided) => (
-        <Tooltip
-          title={
-            <div>
-              <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                {module.type} {getRarityText(module)}
-              </Typography>
-              <div style={{ color: Settings.theme.warning }}>
-                {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
-              </div>{" "}
-              <Typography
-                sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
-              >
-                ID: {module.id}
-              </Typography>
-              <div style={{ margin: "10px 0" }}>
-                <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
-              </div>
-              <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "300px" }}>
-                {getModuleDescription(module.type)}
-              </Typography>
-            </div>
-          }
-          open={!isAnyDragActive && tooltipOpen}
-          placement={index % 2 === 0 ? "top-end" : "top-start"}
-          arrow
-          enterDelay={600}
-          enterNextDelay={400}
-          onOpen={() => setTooltipOpen(true)}
-          onClose={() => setTooltipOpen(false)}
-        >
-          <Box
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            style={{
-              zIndex: 1,
-              position: "relative",
-              ...provided.draggableProps.style,
-              border: `2px solid ${
-                module.type === ModType.CyberdeckIOPanel
-                  ? Settings.theme.button
-                  : getChargedModuleIDs().includes(module.id)
-                  ? getRarityColor(module)
-                  : Settings.theme.welllight
-              }`,
-              background: getChargedModuleIDs().includes(module.id)
+        <Box
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={{
+            zIndex: 1,
+            position: "relative",
+            ...provided.draggableProps.style,
+            border: `2px solid ${
+              module.type === ModType.CyberdeckIOPanel
                 ? Settings.theme.button
-                : Settings.theme.backgroundprimary,
-            }}
-            sx={styles.modulePanel}
-            onMouseUp={() => socketDragEnd()}
-            onMouseDown={openTooltipOnRightClick}
-            onContextMenu={(e) => e.preventDefault()}
+                : getChargedModuleIDs().includes(module.id)
+                ? getRarityColor(module)
+                : Settings.theme.welllight
+            }`,
+            background: getChargedModuleIDs().includes(module.id)
+              ? Settings.theme.button
+              : Settings.theme.backgroundprimary,
+          }}
+          sx={styles.modulePanel}
+          onMouseUp={() => socketDragEnd()}
+          onMouseDown={openTooltipOnRightClick}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <Tooltip
+            title={
+              <div>
+                <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
+                  {module.type} {getRarityText(module)}
+                </Typography>
+                <div style={{ color: Settings.theme.warning }}>
+                  {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
+                </div>{" "}
+                <Typography
+                  sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
+                >
+                  ID: {module.id}
+                </Typography>
+                <div style={{ margin: "10px 0" }}>
+                  <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
+                </div>
+                <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "300px" }}>
+                  {getModuleDescription(module.type)}
+                </Typography>
+              </div>
+            }
+            placement={index % 2 === 0 ? "top-end" : "top-start"}
+            arrow
+            enterDelay={600}
+            enterNextDelay={400}
           >
             {module.type !== ModType.CyberdeckIOPanel ? (
-              <>
+              <div style={{display: "flex"}}>
                 <div>{getModuleIcon(module)}</div>
                 {module.favorite && (
                   <div style={{ position: "absolute", top: 0, left: "30px", color: Settings.theme.warning }}>
@@ -136,9 +133,9 @@ export function ModuleComponent({
                 <Box sx={styles.statsPanel}>
                   <StatBonus stats={module.stats} />
                 </Box>
-              </>
+              </div>
             ) : (
-              <div>
+              <span style={{display: "flex", flexDirection: "column"}}>
                 {isCustomBuild() ? (
                   <>
                     <Typography
@@ -182,17 +179,17 @@ export function ModuleComponent({
                     </Typography>
                   </>
                 )}
-              </div>
+              </span>
             )}
-            <SocketIOPanel
-              moduleId={module.id}
-              sockets={module.sockets}
-              currentDragSource={currentDragSource}
-              draggingWireStarted={draggingWireStarted}
-              draggingInstalledModule={draggingInstalledModule}
-            />
-          </Box>
-        </Tooltip>
+          </Tooltip>
+          <SocketIOPanel
+            moduleId={module.id}
+            sockets={module.sockets}
+            currentDragSource={currentDragSource}
+            draggingWireStarted={draggingWireStarted}
+            draggingInstalledModule={draggingInstalledModule}
+          />
+        </Box>
       )}
     </Draggable>
   );

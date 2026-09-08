@@ -89,7 +89,7 @@ export function useCyberdeckStyles() {
       cornerShape: "bevel",
       background: theme.colors.button,
       margin: "6px 2px",
-      width: "135px",
+      width: "130px",
       minWidth: 0,
       fontSize: "9px",
       alignContent: "center",
