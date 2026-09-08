@@ -3,16 +3,12 @@ REQUIRED FOR MVP
 - support rack scrolling - test!
 - move docs button to top under tabs
 
-- fix first-time netrun to produce gold mod
-
 - resize rewards modal to fit ~700px screen
 
 - add notification for module storage full for netrun attempt
 - add notification for all dev buttons
 
 - un-charging rack extension causes issues
-
-- add more gap for recycle bin below storage
 
 - nerf power supply socket count
 

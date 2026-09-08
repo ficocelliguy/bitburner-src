@@ -171,7 +171,7 @@ export function createInitialModules() {
   if (CyberdeckState.storedModules.length || CyberdeckState.installedModules.length) {
     return; // TODO-fico: throw error here later
   }
-  const rng = getNextNetrunningWHRNG();
+  const rng = getNextCraftingPowerSupplyWHRNG();
   const powerSupply: DeckMod = {
     type: ModType.PowerSupply,
     id: getID(rng),
