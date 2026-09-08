@@ -52,6 +52,8 @@ TODO:
 - netrunning
   - animated background
 
+- Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
+
 TODO LATER:
 
 - BN
