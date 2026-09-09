@@ -13,6 +13,8 @@ import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
 import { gainCyberdeck } from "./effects";
 import { CyberdeckEvents, hasCyberdeck } from "./models/CyberdeckState";
+import { DocumentationLink } from "../ui/React/DocumentationLink";
+import { Settings } from "../Settings/Settings";
 
 export function CyberdeckRoot(): React.ReactElement {
   const rerender = useRerender(1000);
@@ -49,7 +51,21 @@ export function CyberdeckRoot(): React.ReactElement {
           <Tab label="Stats" icon={<StackedBarChartOutlinedIcon />} iconPosition={"start"} sx={styles.tab} />
         </Tabs>
       </Box>
-      <ComponentInventoryCount />
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <ComponentInventoryCount />
+        <DocumentationLink
+          page="programming/cyberdeck.md"
+          style={{
+            fontSize: "18px",
+            padding: "3px 15px",
+            backgroundColor: Settings.theme.well,
+            margin: "1px 0 0 15px",
+          }}
+        >
+          Cyberdeck Docs
+        </DocumentationLink>
+      </Box>
+
       {value === 0 && <ModuleRackAndInventoryPage />}
       {value === 1 && <NetrunningPortal />}
       {value === 2 && <CraftingPage />}

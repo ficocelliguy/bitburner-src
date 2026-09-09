@@ -77,7 +77,8 @@ export function moveModule(
 }
 
 export function ejectOverloadedModules() {
-  for (const module of CyberdeckState.installedModules.slice(getCurrentRackSize())) {
+  while (CyberdeckState.installedModules.length > getCurrentRackSize()) {
+    const module = CyberdeckState.installedModules[CyberdeckState.installedModules.length - 1];
     disconnectModule(module);
     moveModule(module, false, true);
   }

@@ -130,19 +130,6 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <DocumentationLink
-        page="programming/cyberdeck.md"
-        style={{
-          fontSize: "18px",
-          padding: "8px 15px",
-          backgroundColor: Settings.theme.well,
-          position: "fixed",
-          right: 10,
-          bottom: 10,
-        }}
-      >
-        Cyberdeck Docs
-      </DocumentationLink>
       <Container disableGutters maxWidth={false} sx={{overflowY: "hidden", position: "relative"}}>
         <canvas
           ref={canvas}

@@ -1,7 +1,6 @@
 REQUIRED FOR MVP
 
 - support rack scrolling - test!
-- move docs button to top under tabs
 
 - resize rewards modal to fit ~700px screen
 
@@ -9,8 +8,7 @@ REQUIRED FOR MVP
 - add notification for all dev buttons
 
 - un-charging rack extension causes issues
-
-- nerf power supply socket count
+  - test!
 
 - expose getNetrunningTraceFraction
 - add getRackCapacity
