@@ -17,7 +17,7 @@ getNetrunningCost(): number;
 
 number
 
-the current ICEbreaker cost of netrunning
+the current ICEBreaker cost of netrunning
 
 ## Remarks
 

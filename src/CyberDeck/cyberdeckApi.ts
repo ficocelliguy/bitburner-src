@@ -308,7 +308,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
         if (CyberdeckState.components.rom < ICEbreakerCraftingCost.rom * numberToCraft) {
           logger(ctx)(
-            `Not enough ROM to craft ICEbreaker. Need ${ICEbreakerCraftingCost.rom * numberToCraft}, have ${
+            `Not enough ROM to craft ICEBreaker. Need ${ICEbreakerCraftingCost.rom * numberToCraft}, have ${
               CyberdeckState.components.rom
             }`,
           );
@@ -316,7 +316,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         if (CyberdeckState.components.neurodes < ICEbreakerCraftingCost.neurodes * numberToCraft) {
           logger(ctx)(
-            `Not enough neurodes to craft ICEbreaker. Need ${ICEbreakerCraftingCost.neurodes * numberToCraft}, have ${
+            `Not enough neurodes to craft ICEBreaker. Need ${ICEbreakerCraftingCost.neurodes * numberToCraft}, have ${
               CyberdeckState.components.neurodes
             }`,
           );
@@ -324,13 +324,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         if (CyberdeckState.components.chips < ICEbreakerCraftingCost.chips * numberToCraft) {
           logger(ctx)(
-            `Not enough chips to craft ICEbreaker. Need ${ICEbreakerCraftingCost.chips * numberToCraft}, have ${
+            `Not enough chips to craft ICEBreaker. Need ${ICEbreakerCraftingCost.chips * numberToCraft}, have ${
               CyberdeckState.components.chips
             }`,
           );
           return false;
         }
-        logger(ctx)(`Crafting ICEbreaker.`);
+        logger(ctx)(`Crafting ICEBreaker.`);
         return craftICEbreaker();
       },
 

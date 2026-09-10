@@ -4660,7 +4660,7 @@ export interface Cyberdeck {
    * @remarks
    * RAM cost: 0 GB
    *
-   * @returns the current ICEbreaker cost of netrunning
+   * @returns the current ICEBreaker cost of netrunning
    */
   getNetrunningCost(): number;
 
@@ -4775,7 +4775,7 @@ export interface Cyberdeck {
    */
   crafting: {
     /**
-     * @returns the crafting component cost to create an ICEbreaker.
+     * @returns the crafting component cost to create an ICEBreaker.
      *
      * @remarks
      * RAM cost: 0 GB
