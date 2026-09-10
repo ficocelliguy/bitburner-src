@@ -4658,11 +4658,19 @@ export interface Cyberdeck {
    * networks that were breached), and the cost slowly goes back down afterwards.
    *
    * @remarks
-   * RAM cost: 0.05 GB
+   * RAM cost: 0 GB
    *
    * @returns the current ICEbreaker cost of netrunning
    */
   getNetrunningCost(): number;
+
+  /**
+   * @returns the progress of the netrunning cost resetting to the base value, as a decimal
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   */
+  getNetrunningTraceFraction(): number;
 
   /**
    * Get the max number of mod slots available in the cyberdeck mod rack. Includes any extra
@@ -4878,6 +4886,11 @@ export interface Cyberdeck {
      * RAM cost: 8 GB
      */
     delve(): Promise<NetrunningRewards>;
+
+    /**
+     * It's not paranoia if they're really after you
+     */
+    trace(): number;
   };
 }
 

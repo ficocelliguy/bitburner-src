@@ -15,5 +15,7 @@ legacy: {
     getCost(): number;
 
     delve(): Promise<NetrunningRewards>;
+
+    trace(): number;
   };
 ```

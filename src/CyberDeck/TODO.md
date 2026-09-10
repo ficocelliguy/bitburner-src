@@ -5,9 +5,6 @@ REQUIRED FOR MVP
 - add notification for module storage full for netrun attempt
 - add notification for all dev buttons
 
-- expose getNetrunningTraceFraction
-- add getRackCapacity
-
 - Add WiFUs (Wired Firmware Unit)
   - add descriptions
   - credit @Mango_to_sleep

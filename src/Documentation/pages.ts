@@ -438,6 +438,7 @@ import nsDoc_bitburner_cyberdeck_getconnections_md from "../../markdown/bitburne
 import nsDoc_bitburner_cyberdeck_getcyberdeckiopanel_md from "../../markdown/bitburner.cyberdeck.getcyberdeckiopanel.md?raw";
 import nsDoc_bitburner_cyberdeck_getinstalledmods_md from "../../markdown/bitburner.cyberdeck.getinstalledmods.md?raw";
 import nsDoc_bitburner_cyberdeck_getnetrunningcost_md from "../../markdown/bitburner.cyberdeck.getnetrunningcost.md?raw";
+import nsDoc_bitburner_cyberdeck_getnetrunningtracefraction_md from "../../markdown/bitburner.cyberdeck.getnetrunningtracefraction.md?raw";
 import nsDoc_bitburner_cyberdeck_getrackcapacity_md from "../../markdown/bitburner.cyberdeck.getrackcapacity.md?raw";
 import nsDoc_bitburner_cyberdeck_getstoredmods_md from "../../markdown/bitburner.cyberdeck.getstoredmods.md?raw";
 import nsDoc_bitburner_cyberdeck_hascyberdeck_md from "../../markdown/bitburner.cyberdeck.hascyberdeck.md?raw";
@@ -2108,6 +2109,7 @@ AllPages["nsDoc/bitburner.cyberdeck.getconnections.md"] = nsDoc_bitburner_cyberd
 AllPages["nsDoc/bitburner.cyberdeck.getcyberdeckiopanel.md"] = nsDoc_bitburner_cyberdeck_getcyberdeckiopanel_md;
 AllPages["nsDoc/bitburner.cyberdeck.getinstalledmods.md"] = nsDoc_bitburner_cyberdeck_getinstalledmods_md;
 AllPages["nsDoc/bitburner.cyberdeck.getnetrunningcost.md"] = nsDoc_bitburner_cyberdeck_getnetrunningcost_md;
+AllPages["nsDoc/bitburner.cyberdeck.getnetrunningtracefraction.md"] = nsDoc_bitburner_cyberdeck_getnetrunningtracefraction_md;
 AllPages["nsDoc/bitburner.cyberdeck.getrackcapacity.md"] = nsDoc_bitburner_cyberdeck_getrackcapacity_md;
 AllPages["nsDoc/bitburner.cyberdeck.getstoredmods.md"] = nsDoc_bitburner_cyberdeck_getstoredmods_md;
 AllPages["nsDoc/bitburner.cyberdeck.hascyberdeck.md"] = nsDoc_bitburner_cyberdeck_hascyberdeck_md;

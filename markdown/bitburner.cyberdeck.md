@@ -64,7 +64,7 @@ Namespace for API methods that create or destroy mods and ICEbreakers.
 
 </td><td>
 
-{ getCost(): number; delve(): Promise&lt;[NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->&gt;; }
+{ getCost(): number; delve(): Promise&lt;[NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->&gt;; trace(): number; }
 
 
 </td><td>
@@ -223,6 +223,15 @@ Also indicates if the mod is currently charged (e.g. active, has a connection to
 Get the number of ICEBreakers required to netrun currently.
 
 ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security networks that were breached), and the cost slowly goes back down afterwards.
+
+
+</td></tr>
+<tr><td>
+
+[getNetrunningTraceFraction()](./bitburner.cyberdeck.getnetrunningtracefraction.md)
+
+
+</td><td>
 
 
 </td></tr>

@@ -248,7 +248,8 @@ const cyberdeck = {
   addConnection: 0.5,
   removeConnection: 0.05,
   netrun: 3,
-  getNetrunningCost: 0.05,
+  getNetrunningCost: 0,
+  getNetrunningTraceFraction: 0,
   getRackCapacity: 0,
   cortexShare: 2.4,
   stats: {
@@ -276,6 +277,7 @@ const cyberdeck = {
   legacy: {
     getCost: 0,
     delve: 8,
+    trace: 0,
   },
 };
 

@@ -21,5 +21,5 @@ the current ICEbreaker cost of netrunning
 
 ## Remarks
 
-RAM cost: 0.05 GB
+RAM cost: 0 GB
 

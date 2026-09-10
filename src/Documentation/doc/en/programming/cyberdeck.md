@@ -40,11 +40,15 @@ A mod only takes effect when it's powered. Power comes from the I/O panel at the
 - Click a socket to remove its wire.
 - Wires of the same color cannot cross other wires of that same color. Arrange your mods carefully!
 
+Each mod (and the base I/O panel) only have sockets on certain indexes (represented by colors in the UI). Connections can only go between mods that share a socket index/color.
+
 ```js
 const IO = ns.cyberdeck.getCyberdeckIOPanel();
 const mod = ns.cyberdeck.getInstalledMods()[0];
 
-ns.cyberdeck.addConnection(IO.id, mod.id, 3);
+if (mod.sockets[3] && getCyberdeckIOPanel().sockets[3]) {
+  ns.cyberdeck.addConnection(IO.id, mod.id, 3);
+}
 ```
 
 &nbsp;

@@ -22,7 +22,7 @@ import {
 import { logger } from "../DarkNet/effects/offlineServerHandling";
 import { createConnection, disconnectConnection, moveModule } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
-import { getCurrentNetrunningIceCost, netRun } from "./models/netrun";
+import { getCurrentNetrunningIceCost, getNetrunningTraceFraction, netRun } from "./models/netrun";
 import { getCorruptedHint } from "./ui/gainComponentToast";
 import { ComponentCounts } from "./Types";
 import {
@@ -192,6 +192,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     getNetrunningCost() {
       return getCurrentNetrunningIceCost();
+    },
+    getNetrunningTraceFraction() {
+      return getNetrunningTraceFraction();
     },
     getRackCapacity() {
       return getCurrentRackSize();
@@ -471,6 +474,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         return results;
       },
+      trace: (ctx: NetscriptContext) => {
+        if (!CyberdeckState.hasDiscoveredGlitch) {
+          ctx.workerScript.print(getCorruptedHint("The cost is far too great"));
+          return Infinity;
+        }
+        return getNetrunningTraceFraction(true);
+      }
     },
   };
 }
