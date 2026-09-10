@@ -7,6 +7,8 @@ import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
+import { Crimes } from "../../Crime/Crimes";
+import { isCrimeWork } from "../../Work/CrimeWork";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -38,7 +40,8 @@ export function gainCyberdeckComponents(cycles: number) {
 
   // Violent crime gives neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
-    const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * 3;
+    const factor = getCurrentCrimeDuration() > 10000 ? 5000 : 6;
+    const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * factor;
     CyberdeckState.components.neurodes += newNeurodes;
     CyberdeckState.componentStats.neurodes.kills += newNeurodes;
     lastStatsSnapshot.killCount = Player.numPeopleKilled;
@@ -46,8 +49,11 @@ export function gainCyberdeckComponents(cycles: number) {
   }
   // Petty crime gives ROM
   else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
-    const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
-    const newROM = 0.1 + (10 * newMoney + 1e7) / (newMoney + 1e7);
+
+    const crimeMagnitude = getCurrentCrimeDuration() / 5000;
+    const newMoney = (Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney);
+    const newROM = 0.1 + ((10 * newMoney + 1e7) / (newMoney + 1e7)) * crimeMagnitude;
+
     CyberdeckState.components.ROM += newROM;
     CyberdeckState.componentStats.ROM.pettyCrime += newROM;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
@@ -78,7 +84,8 @@ export function gainCyberdeckComponents(cycles: number) {
   // Hacknet gives chips
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
     const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
-    const newChips = 0.1 + (10 * newIncome + 1e6) / (newIncome + 1e6);
+    const magnitude = Math.log10(newIncome + 1);
+    const newChips = 0.1 + magnitude / 3;
     CyberdeckState.components.chips += newChips;
     CyberdeckState.componentStats.chips.hacknet += newChips;
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
@@ -158,4 +165,13 @@ export function prestigeCyberdeckComponents() {
       netrunning: 0,
     },
   };
+}
+
+
+function getCurrentCrimeDuration() {
+  if (!Player.currentWork || !isCrimeWork(Player.currentWork)) {
+    return 30000;
+  }
+  const crimeType = Player.currentWork.crimeType;
+  return Object.values(Crimes).find((c) => c.type === crimeType)?.time ?? 30000;
 }

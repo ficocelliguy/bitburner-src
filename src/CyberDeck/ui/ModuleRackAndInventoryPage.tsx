@@ -130,7 +130,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <Container disableGutters maxWidth={false} sx={{overflowY: "hidden", position: "relative"}}>
+      <Container disableGutters maxWidth={false} sx={{ overflowY: "hidden", position: "relative" }}>
         <canvas
           ref={canvas}
           width={"800px"}
@@ -152,6 +152,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               flexDirection="column"
               alignItems="center"
               whiteSpace="nowrap"
+              onScroll={() => updateDisplay()}
               style={{
                 margin: "10px",
                 maxHeight: "calc(100vh - 115px)",
@@ -189,6 +190,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                     whiteSpace="nowrap"
                     style={{
                       width: "462px",
+                      position: "relative",
                       backgroundColor: Settings.theme.backgroundprimary,
                     }}
                     ref={provided.innerRef}

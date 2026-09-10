@@ -9,7 +9,7 @@ import { CyberdeckState, hasCyberdeck } from "../../CyberDeck/models/CyberdeckSt
 import { gainCyberdeck } from "../../CyberDeck/effects";
 import { gainComponentMessage } from "../../CyberDeck/ui/gainComponentToast";
 import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../CyberDeck/models/netrun";
-import { NetrunningRewards } from "../../CyberDeck/Types";
+import { ModType, NetrunningRewards } from "../../CyberDeck/Types";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
 import { prestigeCyberdeck } from "../../CyberDeck/utils/prestigeCyberdeck";
@@ -85,9 +85,11 @@ export function CyberdeckDev(): React.ReactElement {
     for (let i = 0; i < 4; i++) {
       CyberdeckState.installedModules.push(createModule(getNextNetrunningWHRNG()));
     }
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG()));
     }
+
+    CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG(), ModType.RackExtension, 8));
     CyberdeckState.netrunningLevel -= 12;
     CyberdeckState.components.ROM = 25;
     CyberdeckState.components.chips = 25;

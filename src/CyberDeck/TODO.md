@@ -1,14 +1,9 @@
 REQUIRED FOR MVP
 
-- support rack scrolling - test!
-
 - resize rewards modal to fit ~700px screen
 
 - add notification for module storage full for netrun attempt
 - add notification for all dev buttons
-
-- un-charging rack extension causes issues
-  - test!
 
 - expose getNetrunningTraceFraction
 - add getRackCapacity
@@ -30,6 +25,8 @@ REQUIRED FOR MVP
 - remove tmp
 
 TODO:
+
+- choose color of each stat key and value, to hilight or hide stats
 
 - tooltips for stats page
 
