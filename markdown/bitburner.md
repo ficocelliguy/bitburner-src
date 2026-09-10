@@ -4,30 +4,6 @@
 
 ## bitburner package
 
-## Enumerations
-
-<table><thead><tr><th>
-
-Enumeration
-
-
-</th><th>
-
-Description
-
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[ModType](./bitburner.modtype.md)
-
-
-</td><td>
-
-
-</td></tr>
-</tbody></table>
-
 ## Interfaces
 
 <table><thead><tr><th>
@@ -2047,6 +2023,16 @@ Count of various cyberdeck component types.
 </td></tr>
 <tr><td>
 
+[CyberdeckModEnumType](./bitburner.cyberdeckmodenumtype.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
 [CyberdeckStats](./bitburner.cyberdeckstats.md)
 
 
@@ -2353,6 +2339,16 @@ Names of all locations
 
 
 </td><td>
+
+
+</td></tr>
+<tr><td>
+
+[ModType](./bitburner.modtype.md)
+
+
+</td><td>
+
 
 
 </td></tr>

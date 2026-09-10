@@ -106,9 +106,9 @@ if (costIsBelowThreshold && canAffordNetrunning) {
 
 ```js
 const cost = ns.cyberdeck.crafting.getICEBreakerCraftingCost();
-const { ROM, neurodes, chips } = ns.cyberdeck.getComponentCounts();
+const { rom, neurodes, chips } = ns.cyberdeck.getComponentCounts();
 
-if (cost.ROM <= ROM && cost.neurodes <= neurodes && cost.chips <= chips) {
+if (cost.rom <= rom && cost.neurodes <= neurodes && cost.chips <= chips) {
   ns.cyberdeck.crafting.craftICEBreaker(1);
 }
 ```

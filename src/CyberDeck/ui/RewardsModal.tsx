@@ -70,9 +70,9 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
                   <ComponentSymbol symbol={componentSymbols.neurodes} />: {rewards.components.neurodes}{" "}
                 </span>
               )}
-              {!!rewards.components.ROM && (
+              {!!rewards.components.rom && (
                 <span>
-                  <ComponentSymbol symbol={componentSymbols.ROM} />: {rewards.components.ROM}{" "}
+                  <ComponentSymbol symbol={componentSymbols.rom} />: {rewards.components.rom}{" "}
                 </span>
               )}
               {!!rewards.components.cores && (

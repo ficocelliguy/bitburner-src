@@ -238,11 +238,11 @@ export function createInitialModules() {
   createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
   //createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
 
-  CyberdeckState.components.ROM = 25;
+  CyberdeckState.components.rom = 25;
   CyberdeckState.components.neurodes = 25;
   CyberdeckState.components.chips = 25;
   CyberdeckState.components.cores = 2;
-  CyberdeckState.components.ICEBreakers = 3;
+  CyberdeckState.components.iceBreakers = 3;
 
   CyberdeckState.tutorialSteps.hasMadeConnection = false;
   CyberdeckState.tutorialSteps.hasChargedModule = false;
@@ -250,17 +250,17 @@ export function createInitialModules() {
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
   if (CyberdeckState.components.chips < (cost.chips ?? 0) * count) return false;
-  if (CyberdeckState.components.ROM < (cost.ROM ?? 0) * count) return false;
+  if (CyberdeckState.components.rom < (cost.rom ?? 0) * count) return false;
   if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0) * count) return false;
-  if (CyberdeckState.components.ICEBreakers < (cost.ICEBreakers ?? 0) * count) return false;
+  if (CyberdeckState.components.iceBreakers < (cost.iceBreakers ?? 0) * count) return false;
   return true;
 }
 
 export function payComponentCost(cost: Partial<ComponentCounts>, count = 1) {
   CyberdeckState.components.chips -= (cost.chips ?? 0) * count;
-  CyberdeckState.components.ROM -= (cost.ROM ?? 0) * count;
+  CyberdeckState.components.rom -= (cost.rom ?? 0) * count;
   CyberdeckState.components.neurodes -= (cost.neurodes ?? 0) * count;
-  CyberdeckState.components.ICEBreakers -= (cost.ICEBreakers ?? 0) * count;
+  CyberdeckState.components.iceBreakers -= (cost.iceBreakers ?? 0) * count;
 }
 
 export function craftICEbreaker(count = 1) {
@@ -268,7 +268,7 @@ export function craftICEbreaker(count = 1) {
     return false;
   }
   payComponentCost(ICEbreakerCraftingCost, count);
-  CyberdeckState.components.ICEBreakers += count;
+  CyberdeckState.components.iceBreakers += count;
   CyberdeckEvents.emit();
   return true;
 }
@@ -314,7 +314,7 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     if (showToast) {
       SnackbarEvents.emit(`Cannot disassemble favorited module!`, ToastVariant.ERROR, 2000);
     }
-    return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICEBreakers: 0 };
+    return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
   }
 
   disconnectModule(module);
@@ -327,21 +327,21 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     if (showToast) {
       SnackbarEvents.emit("Mod recycled.", ToastVariant.SUCCESS, 2000);
     }
-    return { chips: 0, ROM: 0, neurodes: 0, cores: 0, ICEBreakers: 0 };
+    return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
   }
 
   const chipsGained = module.type !== ModType.Uplink ? 2 : 0;
   const ROMGained = 2;
   const neurodesGained = module.type !== ModType.ProcessingMod ? 2 : 0;
   CyberdeckState.components.chips += chipsGained;
-  CyberdeckState.components.ROM += ROMGained;
+  CyberdeckState.components.rom += ROMGained;
   CyberdeckState.components.neurodes += neurodesGained;
 
   if (showToast) {
-    gainComponentMessage({ chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained });
+    gainComponentMessage({ chips: chipsGained, rom: ROMGained, neurodes: neurodesGained });
   }
   CyberdeckEvents.emit();
-  return { chips: chipsGained, ROM: ROMGained, neurodes: neurodesGained, cores: 0, ICEBreakers: 0 };
+  return { chips: chipsGained, rom: ROMGained, neurodes: neurodesGained, cores: 0, iceBreakers: 0 };
 }
 
 export function getEasterEggModule(): DeckMod {

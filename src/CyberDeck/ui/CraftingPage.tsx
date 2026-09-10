@@ -51,7 +51,7 @@ export function CraftingPage(): React.ReactElement {
   function tryCraftICEbreaker() {
     const success = craftICEbreaker();
     if (success) {
-      gainComponentMessage({ ICEBreakers: 1 });
+      gainComponentMessage({ iceBreakers: 1 });
       completeCraftedIcebreakerTutorial();
     }
   }
@@ -84,7 +84,7 @@ export function CraftingPage(): React.ReactElement {
             }}
           >
             <span>
-              Craft <ComponentSymbol symbol={componentSymbols.ICEBreakers} /> ICEbreaker
+              Craft <ComponentSymbol symbol={componentSymbols.iceBreakers} /> ICEbreaker
             </span>
             <ComponentCost cost={ICEbreakerCraftingCost} />
           </div>

@@ -449,6 +449,7 @@ import nsDoc_bitburner_cyberdeck_removeconnection_md from "../../markdown/bitbur
 import nsDoc_bitburner_cyberdeck_server_md from "../../markdown/bitburner.cyberdeck.server.md?raw";
 import nsDoc_bitburner_cyberdeck_stats_md from "../../markdown/bitburner.cyberdeck.stats.md?raw";
 import nsDoc_bitburner_cyberdeck_storemod_md from "../../markdown/bitburner.cyberdeck.storemod.md?raw";
+import nsDoc_bitburner_cyberdeckmodenumtype_md from "../../markdown/bitburner.cyberdeckmodenumtype.md?raw";
 import nsDoc_bitburner_cyberdeckstats_md from "../../markdown/bitburner.cyberdeckstats.md?raw";
 import nsDoc_bitburner_cyberdecktask_md from "../../markdown/bitburner.cyberdecktask.md?raw";
 import nsDoc_bitburner_cyberdecktask_type_md from "../../markdown/bitburner.cyberdecktask.type.md?raw";
@@ -2118,6 +2119,7 @@ AllPages["nsDoc/bitburner.cyberdeck.removeconnection.md"] = nsDoc_bitburner_cybe
 AllPages["nsDoc/bitburner.cyberdeck.server.md"] = nsDoc_bitburner_cyberdeck_server_md;
 AllPages["nsDoc/bitburner.cyberdeck.stats.md"] = nsDoc_bitburner_cyberdeck_stats_md;
 AllPages["nsDoc/bitburner.cyberdeck.storemod.md"] = nsDoc_bitburner_cyberdeck_storemod_md;
+AllPages["nsDoc/bitburner.cyberdeckmodenumtype.md"] = nsDoc_bitburner_cyberdeckmodenumtype_md;
 AllPages["nsDoc/bitburner.cyberdeckstats.md"] = nsDoc_bitburner_cyberdeckstats_md;
 AllPages["nsDoc/bitburner.cyberdecktask.md"] = nsDoc_bitburner_cyberdecktask_md;
 AllPages["nsDoc/bitburner.cyberdecktask.type.md"] = nsDoc_bitburner_cyberdecktask_type_md;

@@ -167,9 +167,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return success;
     },
     async netrun(ctx: NetscriptContext) {
-      if (CyberdeckState.components.ICEBreakers < getCurrentNetrunningIceCost()) {
+      if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost()) {
         logger(ctx)(
-          `Not enough ICEbreakers to netrun. ${CyberdeckState.components.ICEBreakers}/${getCurrentNetrunningIceCost()}`,
+          `Not enough ICEbreakers to netrun. ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost()}`,
         );
         return { success: false, mods: [], components: {} };
       }
@@ -244,9 +244,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
       upgradeRam(ctx: NetscriptContext): boolean {
         const cost = getCyberdeckServerRamUpgradeCost();
-        if (CyberdeckState.components.ROM < cost.componentCost.ROM) {
+        if (CyberdeckState.components.rom < cost.componentCost.rom) {
           logger(ctx)(
-            `Not enough ROM components to upgrade server RAM. Need ${cost.componentCost.ROM}, have ${CyberdeckState.components.ROM}`,
+            `Not enough ROM components to upgrade server RAM. Need ${cost.componentCost.rom}, have ${CyberdeckState.components.rom}`,
           );
           return false;
         }
@@ -270,9 +270,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
       upgradeCores(ctx: NetscriptContext): boolean {
         const cost = getCyberdeckServerCoreUpgradeCost();
-        if (CyberdeckState.components.ROM < cost.componentCost.ROM) {
+        if (CyberdeckState.components.rom < cost.componentCost.rom) {
           logger(ctx)(
-            `Not enough ROM components to upgrade server cores. Need ${cost.componentCost.ROM}, have ${CyberdeckState.components.ROM}`,
+            `Not enough ROM components to upgrade server cores. Need ${cost.componentCost.rom}, have ${CyberdeckState.components.rom}`,
           );
           return false;
         }
@@ -303,10 +303,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       getUplinkModCraftingCost: () => structuredClone(uplinkCraftingCost),
       craftICEBreaker: (ctx: NetscriptContext, count: unknown = 1) => {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
-        if (CyberdeckState.components.ROM < ICEbreakerCraftingCost.ROM * numberToCraft) {
+        if (CyberdeckState.components.rom < ICEbreakerCraftingCost.rom * numberToCraft) {
           logger(ctx)(
-            `Not enough ROM to craft ICEbreaker. Need ${ICEbreakerCraftingCost.ROM * numberToCraft}, have ${
-              CyberdeckState.components.ROM
+            `Not enough ROM to craft ICEbreaker. Need ${ICEbreakerCraftingCost.rom * numberToCraft}, have ${
+              CyberdeckState.components.rom
             }`,
           );
           return false;
@@ -332,9 +332,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftPowerSupplyMod: (ctx: NetscriptContext) => {
-        if (CyberdeckState.components.ROM < powerSupplyCraftingCost.ROM) {
+        if (CyberdeckState.components.rom < powerSupplyCraftingCost.rom) {
           logger(ctx)(
-            `Not enough ROM to craft Power Supply Mod. Need ${powerSupplyCraftingCost.ROM}, have ${CyberdeckState.components.ROM}`,
+            `Not enough ROM to craft Power Supply Mod. Need ${powerSupplyCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
           );
           return null;
         }
@@ -361,9 +361,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftProcessingMod: (ctx: NetscriptContext) => {
-        if (CyberdeckState.components.ROM < processingModuleCraftingCost.ROM) {
+        if (CyberdeckState.components.rom < processingModuleCraftingCost.rom) {
           logger(ctx)(
-            `Not enough ROM to craft Processing Mod. Need ${processingModuleCraftingCost.ROM}, have ${CyberdeckState.components.ROM}`,
+            `Not enough ROM to craft Processing Mod. Need ${processingModuleCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
           );
           return null;
         }
@@ -390,9 +390,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftUplinkMod(ctx: NetscriptContext): DeckMod | null {
-        if (CyberdeckState.components.ROM < uplinkCraftingCost.ROM) {
+        if (CyberdeckState.components.rom < uplinkCraftingCost.rom) {
           logger(ctx)(
-            `Not enough ROM to craft Uplink Mod. Need ${uplinkCraftingCost.ROM}, have ${CyberdeckState.components.ROM}`,
+            `Not enough ROM to craft Uplink Mod. Need ${uplinkCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
           );
           return null;
         }
@@ -428,7 +428,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         if (mod.favorite) {
           logger(ctx)(`Cannot recycle favorited module ${modId}!`);
-          return { success: false, chips: 0, ROM: 0, neurodes: 0, cores: 0, ICEBreakers: 0 };
+          return { success: false, chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
         }
         return { success: true, ...disassembleModule(mod) };
       },
@@ -446,10 +446,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           ctx.workerScript.print(getCorruptedHint());
           return { success: false, mods: [], components: {} };
         }
-        if (CyberdeckState.components.ICEBreakers < getCurrentNetrunningIceCost(true)) {
+        if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost(true)) {
           logger(ctx)(
             `Not enough ICEbreakers to breach the Blackwall. ${
-              CyberdeckState.components.ICEBreakers
+              CyberdeckState.components.iceBreakers
             }/${getCurrentNetrunningIceCost()}`,
           );
           return { success: false, mods: [], components: {} };

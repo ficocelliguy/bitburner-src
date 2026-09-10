@@ -48,7 +48,7 @@ export function getNetrunningTraceFraction(corrupted = false): number {
 
 export function canNetrun(corrupted = false): boolean {
   return (
-    CyberdeckState.components.ICEBreakers >= getCurrentNetrunningIceCost(corrupted) &&
+    CyberdeckState.components.iceBreakers >= getCurrentNetrunningIceCost(corrupted) &&
     CyberdeckState.modStorageSize >= CyberdeckState.storedModules.length
   );
 }
@@ -62,7 +62,7 @@ export function netRun(corrupted = false): NetrunningRewards {
   }
   completeNetrunTutorial();
 
-  CyberdeckState.components.ICEBreakers -= getCurrentNetrunningIceCost();
+  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost();
   const rng = getNextNetrunningWHRNG();
   const rewards = getNetrunningRewards(rng);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
@@ -74,7 +74,7 @@ export function netRun(corrupted = false): NetrunningRewards {
   CyberdeckState.components.neurodes += neurodesGained;
   CyberdeckState.componentStats.neurodes.netrunning += neurodesGained;
   const ROMGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
-  CyberdeckState.components.ROM += ROMGained;
+  CyberdeckState.components.rom += ROMGained;
   CyberdeckState.componentStats.ROM.netrunning += ROMGained;
   const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 1.5));
   CyberdeckState.components.cores += coresGained;
@@ -86,7 +86,7 @@ export function netRun(corrupted = false): NetrunningRewards {
     components: {
       chips: chipsGained,
       neurodes: neurodesGained,
-      ROM: ROMGained,
+      rom: ROMGained,
       cores: coresGained,
     },
   };
@@ -109,7 +109,7 @@ function corruptedNetrun(): NetrunningRewards {
   if (!canNetrun(true)) {
     return { success: false, mods: [], components: {} };
   }
-  CyberdeckState.components.ICEBreakers -= getCurrentNetrunningIceCost(true);
+  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const rewards = getCorruptedNetrunningRewards(rng);

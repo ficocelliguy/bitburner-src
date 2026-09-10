@@ -76,6 +76,7 @@ import { NetscriptFormulas } from "./NetscriptFunctions/Formulas";
 import { NetscriptStockMarket } from "./NetscriptFunctions/StockMarket";
 import { NetscriptGrafting } from "./NetscriptFunctions/Grafting";
 import type { NS, RecentScript, ProcessInfo, NSEnums, Server as NSInterfaceServer } from "@nsdefs";
+import { ModType } from "./CyberDeck/Types";
 import { NetscriptSingularity } from "./NetscriptFunctions/Singularity";
 import { NetscriptCloud } from "./NetscriptFunctions/Cloud";
 
@@ -140,6 +141,7 @@ export const enums: NSEnums = {
   SpecialBladeburnerActionTypeForSleeve,
   FragmentType: FragmentTypeEnum,
   DarknetResponseCode: ResponseCodeEnum,
+  CyberdeckModType: ModType,
   ProgramName: CompletedProgramName,
   GangTaskName: GangTaskNameEnum,
 };

@@ -4395,11 +4395,11 @@ export interface Cloud {
  * @public
  */
 type ComponentCounts = {
-  ROM: number;
+  rom: number;
   neurodes: number;
   chips: number;
   cores: number;
-  ICEBreakers: number;
+  iceBreakers: number;
 };
 
 type DeckMod = {
@@ -4461,14 +4461,18 @@ type Socket = {
   socketIndex: number;
 };
 
-enum ModType {
-  CyberdeckIOPanel = "Deck I/O Panel",
-  PowerSupply = "Power Supply",
-  ProcessingMod = "Processing Mod",
-  Uplink = "Uplink",
-  RackExtension = "Rack Extension",
-  SkillChip = "SkillChip",
-}
+/** @public */
+type CyberdeckModEnumType = {
+  CyberdeckIOPanel: "Deck I/O Panel";
+  PowerSupply: "Power Supply";
+  ProcessingMod: "Processing Mod";
+  Uplink: "Uplink";
+  RackExtension: "Rack Extension";
+  SkillChip: "SkillChip";
+};
+
+/** @public */
+type ModType = _ValueOf<CyberdeckModEnumType>;
 
 type MiscMults = {
   romProduction: number;
@@ -10408,6 +10412,7 @@ type NSEnums = {
   DarknetResponseCode: DarknetResponseCodeType;
   ProgramName: ProgramNameEnumType;
   GangTaskName: GangTaskNameEnumType;
+  CyberdeckModType: CyberdeckModEnumType;
 };
 
 /**

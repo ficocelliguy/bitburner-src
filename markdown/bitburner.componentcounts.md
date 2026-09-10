@@ -10,10 +10,10 @@ Count of various cyberdeck component types.
 
 ```typescript
 type ComponentCounts = {
-  ROM: number;
+  rom: number;
   neurodes: number;
   chips: number;
   cores: number;
-  ICEBreakers: number;
+  iceBreakers: number;
 };
 ```

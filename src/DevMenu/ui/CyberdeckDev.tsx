@@ -27,12 +27,12 @@ export function CyberdeckDev(): React.ReactElement {
 
   function getSomeComponents() {
     CyberdeckState.components.chips += 100;
-    CyberdeckState.components.ROM += 100;
+    CyberdeckState.components.rom += 100;
     CyberdeckState.components.neurodes += 100;
     CyberdeckState.components.cores += 5;
     gainComponentMessage({
       chips: 100,
-      ROM: 100,
+      rom: 100,
       neurodes: 100,
       cores: 5,
     });
@@ -40,12 +40,12 @@ export function CyberdeckDev(): React.ReactElement {
 
   function getManyComponents() {
     CyberdeckState.components.chips += 1e6;
-    CyberdeckState.components.ROM += 1e6;
+    CyberdeckState.components.rom += 1e6;
     CyberdeckState.components.neurodes += 1e6;
     CyberdeckState.components.cores += 1000;
     gainComponentMessage({
       chips: 1e6,
-      ROM: 1e6,
+      rom: 1e6,
       neurodes: 1e6,
       cores: 1000,
     });
@@ -91,10 +91,10 @@ export function CyberdeckDev(): React.ReactElement {
 
     CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG(), ModType.RackExtension, 8));
     CyberdeckState.netrunningLevel -= 12;
-    CyberdeckState.components.ROM = 25;
+    CyberdeckState.components.rom = 25;
     CyberdeckState.components.chips = 25;
     CyberdeckState.components.neurodes = 25;
-    CyberdeckState.components.ICEBreakers = 4;
+    CyberdeckState.components.iceBreakers = 4;
     CyberdeckState.components.cores = 4;
   }
 

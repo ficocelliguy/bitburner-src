@@ -17,10 +17,10 @@ export function ComponentInventoryCount() {
         gap: "15px",
       }}
     >
-      <ComponentTooltip symbol={componentSymbols.ROM}>
+      <ComponentTooltip symbol={componentSymbols.rom}>
         <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.ROM} />:
-          {formatNumber(Math.floor(CyberdeckState.components.ROM), 0, 1000)}
+          <ComponentSymbol symbol={componentSymbols.rom} />:
+          {formatNumber(Math.floor(CyberdeckState.components.rom), 0, 1000)}
         </Typography>
       </ComponentTooltip>
       <ComponentTooltip symbol={componentSymbols.chips}>
@@ -41,10 +41,10 @@ export function ComponentInventoryCount() {
           {formatNumber(Math.floor(CyberdeckState.components.cores), 0, 1000)}
         </Typography>
       </ComponentTooltip>
-      <ComponentTooltip symbol={componentSymbols.ICEBreakers}>
+      <ComponentTooltip symbol={componentSymbols.iceBreakers}>
         <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.ICEBreakers} />:
-          {formatNumber(Math.floor(CyberdeckState.components.ICEBreakers), 0, 1000)}
+          <ComponentSymbol symbol={componentSymbols.iceBreakers} />:
+          {formatNumber(Math.floor(CyberdeckState.components.iceBreakers), 0, 1000)}
         </Typography>
       </ComponentTooltip>
     </div>
@@ -82,7 +82,7 @@ export function ComponentTooltip({ symbol, children }: { symbol: string; childre
 
 function getComponentDetails(symbol: string) {
   switch (symbol) {
-    case componentSymbols.ROM:
+    case componentSymbols.rom:
       return {
         name: "ROM Components",
         description: "A component used for making cyberdeck mods.",
@@ -110,7 +110,7 @@ function getComponentDetails(symbol: string) {
         source: "Obtained from netrunning.",
         lore: "The core is the most integral part of a cyberdeck mod, handling both central processing as well as uplink data transfer.",
       };
-    case componentSymbols.ICEBreakers:
+    case componentSymbols.iceBreakers:
       return {
         name: "ICEbreakers",
         description: "Digital defense-breakers used for netrunning.",

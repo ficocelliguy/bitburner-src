@@ -36,7 +36,7 @@ export function gainCyberdeckComponents(cycles: number) {
   const stats = getCyberdeckStatBonuses();
   CyberdeckState.components.chips += Math.max(stats.otherMults.chipProduction, 0);
   CyberdeckState.components.neurodes += Math.max(stats.otherMults.neurodeProduction);
-  CyberdeckState.components.ROM += Math.max(stats.otherMults.romProduction);
+  CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction);
 
   // Violent crime gives neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
@@ -54,13 +54,13 @@ export function gainCyberdeckComponents(cycles: number) {
     const newMoney = (Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney);
     const newROM = 0.1 + ((10 * newMoney + 1e7) / (newMoney + 1e7)) * crimeMagnitude;
 
-    CyberdeckState.components.ROM += newROM;
+    CyberdeckState.components.rom += newROM;
     CyberdeckState.componentStats.ROM.pettyCrime += newROM;
     lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
   }
   // Making programs gives ROM
   if (isCreateProgramWork(Player.currentWork)) {
-    CyberdeckState.components.ROM += 3;
+    CyberdeckState.components.rom += 3;
     CyberdeckState.componentStats.ROM.programs += 3;
   }
 
@@ -135,10 +135,10 @@ export function prestigeCyberdeckComponents() {
 
   CyberdeckState.components = {
     chips: 0,
-    ROM: 0,
+    rom: 0,
     neurodes: 0,
     cores: 0,
-    ICEBreakers: 2,
+    iceBreakers: 2,
   };
   CyberdeckState.componentStats = {
     ROM: {

@@ -229,7 +229,8 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
 }
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
-  const levelUpAttempts = (levelBoost / (levelBoost + 1)) * 16 + 4;
+  const bonusAttempts = rng.random() < 0.08 ? 2 : 0;
+  const levelUpAttempts = (levelBoost / (levelBoost + 1)) * 16 + 4 + bonusAttempts;
   const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;
   for (let i = 0; i < levelUpAttempts; i++) {

@@ -27,11 +27,11 @@ export const CyberdeckState = {
   connections: [] as Connection[],
   coveredSockets: [] as Socket[],
   components: {
-    ROM: 25,
+    rom: 25,
     neurodes: 25,
     chips: 25,
     cores: 4,
-    ICEBreakers: 3,
+    iceBreakers: 3,
   } as ComponentCounts,
   componentStats: {
     ROM: {

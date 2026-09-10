@@ -2,115 +2,13 @@
 
 [Home](./index.md) &gt; [bitburner](./bitburner.md) &gt; [ModType](./bitburner.modtype.md)
 
-## ModType enum
+## ModType type
+
 
 **Signature:**
 
 ```typescript
-enum ModType 
+type ModType = _ValueOf<CyberdeckModEnumType>;
 ```
-
-## Enumeration Members
-
-<table><thead><tr><th>
-
-Member
-
-
-</th><th>
-
-Value
-
-
-</th><th>
-
-Description
-
-
-</th></tr></thead>
-<tbody><tr><td>
-
-CyberdeckIOPanel
-
-
-</td><td>
-
-`"Deck I/O Panel"`
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
-PowerSupply
-
-
-</td><td>
-
-`"Power Supply"`
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
-ProcessingMod
-
-
-</td><td>
-
-`"Processing Mod"`
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
-RackExtension
-
-
-</td><td>
-
-`"Rack Extension"`
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
-SkillChip
-
-
-</td><td>
-
-`"SkillChip"`
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
-Uplink
-
-
-</td><td>
-
-`"Uplink"`
-
-
-</td><td>
-
-
-</td></tr>
-</tbody></table>
+**References:** [\_ValueOf](./bitburner._valueof.md)<!-- -->, [CyberdeckModEnumType](./bitburner.cyberdeckmodenumtype.md)
 

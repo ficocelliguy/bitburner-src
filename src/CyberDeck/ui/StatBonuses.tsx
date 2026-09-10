@@ -69,7 +69,7 @@ function FormatStat({
 
 function FormattedKeyElement({ formattedKey }: { formattedKey: string }): JSX.Element {
   if (formattedKey === "Rom Production") {
-    return <ComponentSymbol symbol={componentSymbols.ROM} />;
+    return <ComponentSymbol symbol={componentSymbols.rom} />;
   }
   if (formattedKey === "Chip Production") {
     return <ComponentSymbol symbol={componentSymbols.chips} />;

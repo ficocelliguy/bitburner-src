@@ -14,43 +14,43 @@ export const CyberdeckManualCreationHackLevel = 1000;
 export const CyberdeckRequiredWorkUnits = CONSTANTS.MillisecondsPerHour;
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
-  ROM: "⛃",
+  rom: "⛃",
   neurodes: "⌬",
   chips: "⌨ ",
   cores: "⛯",
-  ICEBreakers: "❅",
+  iceBreakers: "❅",
 } as const;
 
 export const ICEbreakerCraftingCost: ComponentCounts = {
-  ROM: 20,
+  rom: 20,
   neurodes: 20,
   chips: 20,
   cores: 0,
-  ICEBreakers: 0,
+  iceBreakers: 0,
 };
 
 export const powerSupplyCraftingCost: ComponentCounts = {
-  ROM: 5,
+  rom: 5,
   neurodes: 0,
   chips: 10,
   cores: 1,
-  ICEBreakers: 0,
+  iceBreakers: 0,
 };
 
 export const processingModuleCraftingCost: ComponentCounts = {
-  ROM: 10,
+  rom: 10,
   neurodes: 0,
   chips: 5,
   cores: 1,
-  ICEBreakers: 0,
+  iceBreakers: 0,
 };
 
 export const uplinkCraftingCost: ComponentCounts = {
-  ROM: 5,
+  rom: 5,
   neurodes: 10,
   chips: 0,
   cores: 1,
-  ICEBreakers: 0,
+  iceBreakers: 0,
 };
 
 export function getModuleDescription(moduleType: ModType): string {

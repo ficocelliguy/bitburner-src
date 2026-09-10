@@ -16,14 +16,15 @@ export type Socket = {
   socketIndex: number;
 };
 
-export enum ModType {
-  CyberdeckIOPanel = "Deck I/O Panel",
-  PowerSupply = "Power Supply",
-  ProcessingMod = "Processing Mod",
-  Uplink = "Uplink",
-  RackExtension = "Rack Extension",
-  SkillChip = "SkillChip",
-}
+export const ModType = {
+  CyberdeckIOPanel: "Deck I/O Panel",
+  PowerSupply: "Power Supply",
+  ProcessingMod: "Processing Mod",
+  Uplink: "Uplink",
+  RackExtension: "Rack Extension",
+  SkillChip: "SkillChip",
+} as const;
+export type ModType = (typeof ModType)[keyof typeof ModType];
 
 export type ConsumableStats = {
   netrunning_lvl: number;
@@ -40,11 +41,11 @@ export type ModStats = {
 };
 
 export type ComponentCounts = {
-  ROM: number;
+  rom: number;
   neurodes: number;
   chips: number;
   cores: number;
-  ICEBreakers: number;
+  iceBreakers: number;
 };
 
 export type CyberdeckStats = {

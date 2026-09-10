@@ -10,7 +10,7 @@ export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
-        <ComponentCostRow available={CyberdeckState.components.ROM} cost={cost.ROM} symbol={componentSymbols.ROM} />
+        <ComponentCostRow available={CyberdeckState.components.rom} cost={cost.rom} symbol={componentSymbols.rom} />
         <ComponentCostRow
           available={CyberdeckState.components.neurodes}
           cost={cost.neurodes}
@@ -27,9 +27,9 @@ export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; 
           symbol={componentSymbols.cores}
         />
         <ComponentCostRow
-          available={CyberdeckState.components.ICEBreakers}
-          cost={cost.ICEBreakers}
-          symbol={componentSymbols.ICEBreakers}
+          available={CyberdeckState.components.iceBreakers}
+          cost={cost.iceBreakers}
+          symbol={componentSymbols.iceBreakers}
         />
       </div>
       {moneyCost > 0 && (
@@ -48,7 +48,7 @@ export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; 
 }
 
 export function ComponentSymbol({ symbol }: { symbol: string }) {
-  const isROM = symbol === componentSymbols.ROM;
+  const isROM = symbol === componentSymbols.rom;
   return (
     <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-2px" : "0" }}> {symbol}</span>
   );
@@ -69,13 +69,13 @@ export function ComponentCostRow({ available, cost, symbol }: { available: numbe
 
 function getSymbolColor(symbol: string): string {
   switch (symbol) {
-    case componentSymbols.ROM: // ROM
+    case componentSymbols.rom: // ROM
       return Settings.theme.cha;
     case componentSymbols.neurodes: // neurodes
       return Settings.theme.money;
     case componentSymbols.chips: // chips
       return Settings.theme.primary;
-    case componentSymbols.ICEBreakers: // ICEbreakers
+    case componentSymbols.iceBreakers: // ICEbreakers
       return Settings.theme.infolight;
     case componentSymbols.cores: // cores
       return Settings.theme.rep;

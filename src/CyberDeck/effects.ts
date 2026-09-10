@@ -19,9 +19,9 @@ export function gainCyberdeckComponentsFromSaveBackup() {
     return;
   }
   CyberdeckState.components.chips += 100;
-  CyberdeckState.components.ROM += 100;
+  CyberdeckState.components.rom += 100;
   CyberdeckState.components.neurodes += 100;
-  gainComponentMessage({ chips: 100, ROM: 100, neurodes: 100 });
+  gainComponentMessage({ chips: 100, rom: 100, neurodes: 100 });
 }
 
 export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number, showToast = true, backdoor = false) {
@@ -29,10 +29,10 @@ export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number,
     return;
   }
   const romGained = backdoor ? Math.floor(requiredLevel / 5 + 30) : 25;
-  CyberdeckState.components.ROM += romGained;
+  CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.ROM.backdoors += romGained;
   if (showToast) {
-    gainComponentMessage({ ROM: romGained });
+    gainComponentMessage({ rom: romGained });
   }
   return romGained;
 }
@@ -68,10 +68,10 @@ export function gainCyberdeckRomFromCache(showToast = true) {
     return;
   }
   const romGained = 20;
-  CyberdeckState.components.ROM += romGained;
+  CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.ROM.caches += romGained;
   if (showToast) {
-    gainComponentMessage({ ROM: romGained });
+    gainComponentMessage({ rom: romGained });
   }
   return romGained;
 }
