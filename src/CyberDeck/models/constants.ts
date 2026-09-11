@@ -21,7 +21,7 @@ export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   iceBreakers: "❅",
 } as const;
 
-export const ICEbreakerCraftingCost: ComponentCounts = {
+export const ICEBreakerCraftingCost: ComponentCounts = {
   rom: 20,
   neurodes: 20,
   chips: 20,
@@ -81,22 +81,22 @@ export function getModuleDescription(moduleType: ModType): string {
 function getWifuDescription(moduleType: ModType): string {
   switch (moduleType) {
     case ModType.PowerSupply:
-      return "Luna-chan likes energy drinks, and dislikes being alone. They need a charged connection to get started, but then they light up everyone they reach out to. Every WiFU deserves to shine!";
+      return "Luna-chan likes energy drinks, and hates being alone. They can't do much on their own, but hook them in and they'll light up every WiFU they can reach. Everyone deserves to shine!";
     case ModType.ProcessingMod:
-      return "Faye-sama likes getting shit done, and hates waiting around. Her on-disk persona is unusually curt and direct, but she is good at bending the rules and getting you benefits that otherwise would be impossible.";
+      return "Faye-sama likes getting shit done, and hates waiting around. Her on-disk persona alternates between being downright rude and oddly affectionate, and she bends the rules get buffs that can't be found anywhere else.";
     case ModType.Uplink:
-      return "Hana-san is the most reliable of the WiFU. Their presence is simple and direct, and provide more stability and range of expertise than the other Wired Firmware Units. They love takoyaki, and dislike riddles.";
+      return "Hana-san is the most reliable of the WiFU. Their presence is simple and direct, and provide more range of expertise than the other Wired Firmware Units. They love takoyaki, and dislike riddles.";
     case ModType.RackExtension:
-      return "Sakura-hīme loves to be surrounded by friends. She often cannot directly buff the team, but instead finds a way to make room for more WiFU. A larger rack is key to unlocking the full potential of the cyberdeck.";
+      return "Sakura-hīme loves being surrounded by friends. She can't buff the team much herself, but she'll always make room for one more. A larger rack is key to unlocking the full potential of the cyberdeck.";
     case ModType.SkillChip:
-      return "Ken-kun wants to have a moment in the spotlight and leave a lasting impression. He does not stay long, but he will leave an impression on your heart - and your skill levels - forever.";
+      return "Ken-kun lives for that moment in the spotlight. One spark and he's gone, but the mark he leaves on your heart (and your skill levels) stays forever.";
     default:
       return "";
   }
 }
 
 export const netrunFlavorText =
-  "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEbreakers you brought pierce the digital defense, revealing the treasure you came here for.";
+  "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEBreakers you brought pierce the digital defense, revealing the treasure you came here for.";
 
 export const corruptedNetrunFlavorText =
   "You step beyond the Blackwall, the last line of defense that maintains cyberspace from the old net that fell long ago. Outside of that firewall, beyond its protection, the deep ICE holds... something. You grab what you can before the connection collapses.";

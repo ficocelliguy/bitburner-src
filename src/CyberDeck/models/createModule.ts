@@ -3,7 +3,7 @@ import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModType } from "../Types";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
-  ICEbreakerCraftingCost,
+  ICEBreakerCraftingCost,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -263,11 +263,11 @@ export function payComponentCost(cost: Partial<ComponentCounts>, count = 1) {
   CyberdeckState.components.iceBreakers -= (cost.iceBreakers ?? 0) * count;
 }
 
-export function craftICEbreaker(count = 1) {
-  if (!canAffordComponentCost(ICEbreakerCraftingCost, count)) {
+export function craftICEBreaker(count = 1) {
+  if (!canAffordComponentCost(ICEBreakerCraftingCost, count)) {
     return false;
   }
-  payComponentCost(ICEbreakerCraftingCost, count);
+  payComponentCost(ICEBreakerCraftingCost, count);
   CyberdeckState.components.iceBreakers += count;
   CyberdeckEvents.emit();
   return true;

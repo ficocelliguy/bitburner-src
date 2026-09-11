@@ -112,10 +112,10 @@ function getComponentDetails(symbol: string) {
       };
     case componentSymbols.iceBreakers:
       return {
-        name: "ICEbreakers",
+        name: "ICEBreakers",
         description: "Digital defense-breakers used for netrunning.",
         source: "Crafted from ROM, neurodes, and chips.",
-        lore: "ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace. Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas, risking their minds and decks in the search for new mods.",
+        lore: "ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace. Netrunners create custom ICEBreakers to bypass these defenses and gain access to restricted areas, risking their minds and decks in the search for new mods.",
       };
     default:
       return {

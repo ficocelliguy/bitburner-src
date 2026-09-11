@@ -4771,7 +4771,7 @@ export interface Cyberdeck {
     upgradeCores(): boolean;
   };
   /**
-   * Namespace for API methods that create or destroy mods and ICEbreakers.
+   * Namespace for API methods that create or destroy mods and ICEBreakers.
    */
   crafting: {
     /**
@@ -4803,16 +4803,16 @@ export interface Cyberdeck {
      */
     getUplinkModCraftingCost(): ComponentCounts;
     /**
-     * Crafts ICEbreakers from crafting components.
+     * Crafts ICEBreakers from crafting components.
      *
      * ICE (Intrusion Countermeasure Executables) are defensive programs found almost everywhere in modern cyberspace.
-     * Netrunners create custom ICEbreakers to bypass these defenses and gain access to restricted areas to search
+     * Netrunners create custom ICEBreakers to bypass these defenses and gain access to restricted areas to search
      * for new, more powerful mods.
      *
      * @remarks
      * RAM cost: 1 GB
      *
-     * @param count - the number of ICEbreakers to craft
+     * @param count - the number of ICEBreakers to craft
      * @returns true if the crafting was successful, false if it failed due to a lack of components
      */
     craftICEBreaker(count?: number): boolean;

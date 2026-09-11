@@ -104,11 +104,11 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
                 <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
                   {corrupted ? (
                     <CorruptibleText
-                      content={`ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
+                      content={`ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
                       spoiler={false}
                     />
                   ) : (
-                    `ICEbreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
+                    `ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
                   )}
                 </Typography>
               )}

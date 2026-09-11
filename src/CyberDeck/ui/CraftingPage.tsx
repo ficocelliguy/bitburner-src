@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 
 import { Button } from "@mui/material";
-import { craftICEbreaker, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
+import { craftICEBreaker, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
 import { ComponentCost, ComponentSymbol } from "./ComponentCost";
 import {
   componentSymbols,
-  ICEbreakerCraftingCost,
+  ICEBreakerCraftingCost,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -48,8 +48,8 @@ export function CraftingPage(): React.ReactElement {
     craft(craftProcessingModule());
   }
 
-  function tryCraftICEbreaker() {
-    const success = craftICEbreaker();
+  function tryCraftICEBreaker() {
+    const success = craftICEBreaker();
     if (success) {
       gainComponentMessage({ iceBreakers: 1 });
       completeCraftedIcebreakerTutorial();
@@ -73,7 +73,7 @@ export function CraftingPage(): React.ReactElement {
         onClose={() => setShowRewardsModal(false)}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
-        <Button onClick={tryCraftICEbreaker}>
+        <Button onClick={tryCraftICEBreaker}>
           <div
             style={{
               display: "flex",
@@ -86,7 +86,7 @@ export function CraftingPage(): React.ReactElement {
             <span>
               Craft <ComponentSymbol symbol={componentSymbols.iceBreakers} /> ICEBreaker
             </span>
-            <ComponentCost cost={ICEbreakerCraftingCost} />
+            <ComponentCost cost={ICEBreakerCraftingCost} />
           </div>
         </Button>
 

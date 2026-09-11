@@ -129,7 +129,7 @@ Slot the right mods together, wire power through them, and the deck starts givin
 
 Gated by components, which can be gained from various other mechanics
 
-Netrunning is mod gacha - cooldown time "Trace Decay", costs resources (ICEbreakers that get slagged). Gives random mods, sometimes components, sometimes icebreakers
+Netrunning is mod gacha - cooldown time "Trace Decay", costs resources (ICEBreakers that get slagged). Gives random mods, sometimes components, sometimes icebreakers
 Some mod types can be crafted - takes money and components - power supply, processing unit, not consumables
 Netrunning and crafting can be leveled via consumables or spending lots of money + components
 

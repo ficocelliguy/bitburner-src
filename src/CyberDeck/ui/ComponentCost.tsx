@@ -75,7 +75,7 @@ function getSymbolColor(symbol: string): string {
       return Settings.theme.money;
     case componentSymbols.chips: // chips
       return Settings.theme.primary;
-    case componentSymbols.iceBreakers: // ICEbreakers
+    case componentSymbols.iceBreakers: // ICEBreakers
       return Settings.theme.infolight;
     case componentSymbols.cores: // cores
       return Settings.theme.rep;

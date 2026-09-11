@@ -3,7 +3,7 @@ import { Cyberdeck, DeckMod } from "@nsdefs";
 import { LocationName } from "@enums";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
-  craftICEbreaker,
+  craftICEBreaker,
   craftPowerSupply,
   craftProcessingModule,
   craftUplink,
@@ -14,7 +14,7 @@ import {
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import {
-  ICEbreakerCraftingCost,
+  ICEBreakerCraftingCost,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
   uplinkCraftingCost,
@@ -169,7 +169,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     async netrun(ctx: NetscriptContext) {
       if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost()) {
         logger(ctx)(
-          `Not enough ICEbreakers to netrun. ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost()}`,
+          `Not enough ICEBreakers to netrun. ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost()}`,
         );
         return { success: false, mods: [], components: {} };
       }
@@ -300,38 +300,38 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
 
     crafting: {
-      getICEBreakerCraftingCost: () => structuredClone(ICEbreakerCraftingCost),
+      getICEBreakerCraftingCost: () => structuredClone(ICEBreakerCraftingCost),
       getPowerSupplyModCraftingCost: () => structuredClone(powerSupplyCraftingCost),
       getProcessingModCraftingCost: () => structuredClone(processingModuleCraftingCost),
       getUplinkModCraftingCost: () => structuredClone(uplinkCraftingCost),
       craftICEBreaker: (ctx: NetscriptContext, count: unknown = 1) => {
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
-        if (CyberdeckState.components.rom < ICEbreakerCraftingCost.rom * numberToCraft) {
+        if (CyberdeckState.components.rom < ICEBreakerCraftingCost.rom * numberToCraft) {
           logger(ctx)(
-            `Not enough ROM to craft ICEBreaker. Need ${ICEbreakerCraftingCost.rom * numberToCraft}, have ${
+            `Not enough ROM to craft ICEBreaker. Need ${ICEBreakerCraftingCost.rom * numberToCraft}, have ${
               CyberdeckState.components.rom
             }`,
           );
           return false;
         }
-        if (CyberdeckState.components.neurodes < ICEbreakerCraftingCost.neurodes * numberToCraft) {
+        if (CyberdeckState.components.neurodes < ICEBreakerCraftingCost.neurodes * numberToCraft) {
           logger(ctx)(
-            `Not enough neurodes to craft ICEBreaker. Need ${ICEbreakerCraftingCost.neurodes * numberToCraft}, have ${
+            `Not enough neurodes to craft ICEBreaker. Need ${ICEBreakerCraftingCost.neurodes * numberToCraft}, have ${
               CyberdeckState.components.neurodes
             }`,
           );
           return false;
         }
-        if (CyberdeckState.components.chips < ICEbreakerCraftingCost.chips * numberToCraft) {
+        if (CyberdeckState.components.chips < ICEBreakerCraftingCost.chips * numberToCraft) {
           logger(ctx)(
-            `Not enough chips to craft ICEBreaker. Need ${ICEbreakerCraftingCost.chips * numberToCraft}, have ${
+            `Not enough chips to craft ICEBreaker. Need ${ICEBreakerCraftingCost.chips * numberToCraft}, have ${
               CyberdeckState.components.chips
             }`,
           );
           return false;
         }
         logger(ctx)(`Crafting ICEBreaker.`);
-        return craftICEbreaker();
+        return craftICEBreaker();
       },
 
       craftPowerSupplyMod: (ctx: NetscriptContext) => {
@@ -451,7 +451,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost(true)) {
           logger(ctx)(
-            `Not enough ICEbreakers to breach the Blackwall. ${
+            `Not enough ICEBreakers to breach the Blackwall. ${
               CyberdeckState.components.iceBreakers
             }/${getCurrentNetrunningIceCost()}`,
           );

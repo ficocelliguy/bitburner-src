@@ -50,7 +50,7 @@ Description
 
 </td><td>
 
-Namespace for API methods that create or destroy mods and ICEbreakers.
+Namespace for API methods that create or destroy mods and ICEBreakers.
 
 
 </td></tr>
