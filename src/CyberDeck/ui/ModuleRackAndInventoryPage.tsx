@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { Container, Box, Typography, FormControl, InputLabel, OutlinedInput } from "@mui/material";
-import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp";
-import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
@@ -22,7 +20,6 @@ import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils";
 import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
-import { DocumentationLink } from "../../ui/React/DocumentationLink";
 import { TutorialChecklist } from "./TutorialChecklist";
 import { gainCyberdeck } from "../effects";
 
@@ -63,13 +60,11 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   });
 
   function onDragStart(result: DragStart) {
-    document.body.style.overflow = "hidden";
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
     setDraggingStoredModule(result.source.droppableId === MODULE_STORAGE);
   }
 
   function onDragEnd(result: DropResult) {
-    document.body.style.overflow = "unset";
     handleModuleMoved(result);
     setDraggingInstalledModule(false);
     setDraggingStoredModule(false);
@@ -130,13 +125,23 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
       onMouseMove={redrawDraggedWire}
       onMouseEnter={() => updateDisplay()}
     >
-      <Container disableGutters maxWidth={false} sx={{ overflowY: "hidden", position: "relative" }}>
+      <div
+        style={{
+          position: "absolute",
+          overflow: "hidden",
+          width: "700px",
+          height: "calc(100vh - 115px)",
+          pointerEvents: "none",
+        }}
+      >
         <canvas
           ref={canvas}
-          width={"800px"}
+          width={"700px"}
           height={"2500px"}
-          style={{ position: "absolute", zIndex: 101, pointerEvents: "none", top: "-50px"}}
+          style={{ position: "absolute", zIndex: 101, top: "-50px", inset: 0, overflow: "hidden" }}
         ></canvas>
+      </div>
+      <Container disableGutters maxWidth={false} sx={{ overflowY: "hidden", position: "relative" }}>
         <div
           style={{
             display: "flex",
@@ -158,7 +163,6 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                 maxHeight: "calc(100vh - 115px)",
                 width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
-                overflowX: "scroll",
               }}
             >
               <Droppable droppableId={getCyberdeckIOPanel().id} direction="vertical" isDropDisabled>

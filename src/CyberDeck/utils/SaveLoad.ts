@@ -174,13 +174,13 @@ function isComponentCounts(obj: unknown): obj is ComponentCounts {
     typeof obj === "object" &&
     obj !== null &&
     "chips" in obj &&
-    "ROM" in obj &&
+    "rom" in obj &&
     "neurodes" in obj &&
-    "ICEBreakers" in obj &&
+    "iceBreakers" in obj &&
     typeof obj.chips === "number" &&
-    typeof obj.ROM === "number" &&
+    typeof obj.rom === "number" &&
     typeof obj.neurodes === "number" &&
-    typeof obj.ICEBreakers === "number"
+    typeof obj.iceBreakers === "number"
   );
 }
 

@@ -10,8 +10,6 @@ REQUIRED FOR MVP
 
 - improve charging tutorial - avoid initial connections to IO panel, be more specific
 
-- prevent scrolling on deck page!! but for real this time (test dragging)
-
 - resize rewards modal to fit ~700px screen
 
 - add notification for module storage full for netrun attempt
