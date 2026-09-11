@@ -1,5 +1,17 @@
 REQUIRED FOR MVP
 
+- feedback on crafting!
+  - effect on top bar
+  - toast
+
+- make tutorial show on most pages
+
+- make skill chip tutorial have icon, inline
+
+- improve charging tutorial - avoid initial connections to IO panel, be more specific
+
+- prevent scrolling on deck page!! but for real this time (test dragging)
+
 - resize rewards modal to fit ~700px screen
 
 - add notification for module storage full for netrun attempt

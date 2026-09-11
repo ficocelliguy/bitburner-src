@@ -155,7 +155,7 @@ export const statBonusShortNames: {
   class_cost: "Class Cost",
 
   // Consumable Stats
-  netrunning_lvl: "Netrunning Lvl",
+  netrunning_lvl: "Netrun Lvl",
   netrun_cooldown_lvl: "Trace CD",
   mod_storage: "Mod Storage",
   crafting_lvl: "Crafting Lvl",

@@ -394,6 +394,7 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
               count: augmentationCount,
             },
             { key_: Page.Hacknet, icon: AccountTreeIcon },
+            canCyberDeck && { key_: Page.CyberDeck, icon: MemoryIcon },
             canOpenSleeves && { key_: Page.Sleeves, icon: PeopleAltIcon },
             canOpenGrafting && { key_: Page.Grafting, icon: BiotechIcon },
           ]}
@@ -422,7 +423,6 @@ export function SidebarRoot(props: { page: Page }): React.ReactElement {
             canGang && { key_: Page.Gang, icon: SportsMmaIcon },
             canIPvGO && { key_: Page.Go, icon: BorderInnerSharpIcon },
             canDarkNet && { key_: Page.DarkNet, icon: ShareIcon },
-            canCyberDeck && { key_: Page.CyberDeck, icon: MemoryIcon },
           ]}
         />
         <Typography component="div" id="sidebar-extra-hook-2"></Typography>
