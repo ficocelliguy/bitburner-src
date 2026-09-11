@@ -134,8 +134,8 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
         <canvas
           ref={canvas}
           width={"800px"}
-          height={"2000px"}
-          style={{ position: "absolute", zIndex: 101, pointerEvents: "none" }}
+          height={"2500px"}
+          style={{ position: "absolute", zIndex: 101, pointerEvents: "none", top: "-50px"}}
         ></canvas>
         <div
           style={{

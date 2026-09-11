@@ -3,8 +3,6 @@ import { getSocketId } from "../utils/moduleUtilities";
 import { Socket } from "../Types";
 import { getSocketColor } from "../models/constants";
 
-const mostRecentMouseLocation = { x: 0, y: 0 };
-
 export function DrawWiresOnCanvas(
   canvas: HTMLCanvasElement | null,
   startingSocket: Socket | null = null,
@@ -16,11 +14,7 @@ export function DrawWiresOnCanvas(
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const startingLocation = document.getElementById(getSocketId(startingSocket))?.getBoundingClientRect();
-  if (mouseLocation) {
-    mostRecentMouseLocation.x = mouseLocation.x;
-    mostRecentMouseLocation.y = mouseLocation.y;
-  }
-  if (startingSocket && startingLocation) {
+  if (startingSocket && startingLocation && mouseLocation) {
     const startX = startingLocation.x + startingLocation.width / 2 - canvasLocation.x;
     const startY = startingLocation.y + startingLocation.height / 2 - canvasLocation.y;
 
@@ -29,8 +23,8 @@ export function DrawWiresOnCanvas(
       ctx,
       startX,
       startY,
-      mostRecentMouseLocation.x - canvasLocation.x,
-      mostRecentMouseLocation.y - canvasLocation.y,
+      mouseLocation.x - canvasLocation.x,
+      mouseLocation.y - canvasLocation.y,
     );
   }
 

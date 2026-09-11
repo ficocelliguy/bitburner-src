@@ -112,9 +112,12 @@ export function ModuleComponent({
                 <div style={{ margin: "10px 0" }}>
                   <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
                 </div>
-                <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "300px" }}>
+                <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "350px" }}>
                   {getModuleDescription(module.type)}
                 </Typography>
+                {Settings.CyberdeckWiFU && <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
+                  Art by @Mango_to_sleep
+                </Typography>}
               </div>
             }
             placement={index % 2 === 0 ? "top-end" : "top-start"}
@@ -123,7 +126,7 @@ export function ModuleComponent({
             enterNextDelay={400}
           >
             {module.type !== ModType.CyberdeckIOPanel ? (
-              <div style={{display: "flex"}}>
+              <div style={{ display: "flex" }}>
                 <div>{getModuleIcon(module)}</div>
                 {module.favorite && (
                   <div style={{ position: "absolute", top: 0, left: "30px", color: Settings.theme.warning }}>
@@ -135,7 +138,7 @@ export function ModuleComponent({
                 </Box>
               </div>
             ) : (
-              <span style={{display: "flex", flexDirection: "column"}}>
+              <span style={{ display: "flex", flexDirection: "column" }}>
                 {isCustomBuild() ? (
                   <>
                     <Typography
