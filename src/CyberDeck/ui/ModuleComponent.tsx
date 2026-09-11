@@ -112,7 +112,7 @@ export function ModuleComponent({
                 <div style={{ margin: "10px 0" }}>
                   <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
                 </div>
-                <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, width: "350px" }}>
+                <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
                   {getModuleDescription(module.type)}
                 </Typography>
                 {Settings.CyberdeckWiFU && <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
