@@ -16,8 +16,8 @@ REQUIRED FOR MVP
 - add notification for all dev buttons
 
 - Add WiFUs (Wired Firmware Unit)
-  - add descriptions
-  - credit @Mango_to_sleep
+  - update setting description
+  - add bigger icons in tooltip
 
 - code review
 - unit tests
@@ -31,9 +31,40 @@ REQUIRED FOR MVP
 
 - remove tmp
 
+
+NETRUNNING MINIGAME:
+- move around on grid
+  - WSAD?
+  - 20x30?
+  - random character art as player?
+  - see current threat level/% and threat signal count
+  - threat level left on ground as heatmap?
+- break ICE blocks (pentominos?) if hit
+  - WHOLE PENTOMINO IS BROKEN IN ONE HIT
+  - consumes some ICEBreaker(s)
+  - 3-7 tiles together?
+  - plays particle animation
+  - some ICE blocks have active countermeasures (bombs)
+  - hitting bomb ICE lowers reward potential
+- break walls
+  - only single tile breaks
+  - three hits? slow!
+  - particle animation
+  - consumes some ICEBreaker(s)
+- Golden pentomino boost reward potential when broken
+  - particle animation
+
+Corrupted variant:
+  - offline nodes spreading from one corner
+  - a delay before spreading?
+  - spread every 3 steps?
+    - disable movement for a moment after spreading
+  - puts player in hospital if caught
+
+
 TODO:
 
-- choose color of each stat key and value, to hilight or hide stats
+- let player choose color of each stat key and value, to hilight or hide stats
 
 - tooltips for stats page
 
