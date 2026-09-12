@@ -10,7 +10,7 @@ export const NetrunningState = {
 
 export type NetrunEntity = {
   type: netrunEntityVariantType;
-  group: number | null;
+  group: number;
   hits: number;
   threat: number;
   hasBomb: boolean;

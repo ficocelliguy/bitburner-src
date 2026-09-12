@@ -10,6 +10,7 @@ import {
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import char from "../assets/ProcessingMod/Purple.png";
+import { NetrunGridEntity } from "./NetrunGridEntity";
 
 
 export function NetrunMinigame() : React.ReactElement {
@@ -62,24 +63,7 @@ export function NetrunMinigame() : React.ReactElement {
         {NetrunningState.grid.map((row, rowIndex) => (
           <Box key={rowIndex} sx={{ display: "flex", flexDirection: "row" }}>
             {row.map((entity, colIndex) => (
-              <Box
-                key={colIndex}
-                sx={{
-                  width: 20,
-                  height: 20,
-                  minHeight: 20,
-                  border: `1px solid ${Settings.theme.button}`,
-                  backgroundColor:
-                    !entity.visible ? Settings.theme.backgroundprimary
-                      : entity.type === netrunEntityVariant.ice
-                      ? Settings.theme.infolight
-                      : entity.type === netrunEntityVariant.firewall
-                      ? Settings.theme.cha
-                      : Settings.theme.welllight,
-                }}
-              >
-                {entity.group ?? ""}
-              </Box>
+                <NetrunGridEntity key={colIndex} entity={entity} />
             ))}
           </Box>
         ))}

@@ -41,7 +41,7 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   for (let y = 0; y < height; y++) {
     const row: NetrunEntity[] = [];
     for (let x = 0; x < width; x++) {
-      row.push({ type: netrunEntityVariant.empty, group: null, hits: 0, threat: 0, hasBomb: false, visible: false, x, y });
+      row.push({ type: netrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, visible: false, x, y });
     }
     grid.push(row);
   }
@@ -50,11 +50,13 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
 
 export function initNetrunGrid() {
   NetrunningState.grid = getEmptyGrid(NETRUNNING_WIDTH, NETRUNNING_HEIGHT);
+  NetrunningState.location = [0,0];
+  NetrunningState.groups = {};
 
   // Add firewalls
-  const firewallCount = Math.random() * 4 + 4;
+  const firewallCount = Math.random() * 3 + 5;
   for (let i = 0; i < firewallCount; i++) {
-    const size = Math.floor(Math.random() * 5) + 3;
+    const size = Math.floor(Math.random() * 4) + 3;
     let x = Math.floor(Math.random() * NETRUNNING_WIDTH * 0.7);
     let y = Math.floor(Math.random() * NETRUNNING_HEIGHT * 0.7);
     for (let j = 0; j < size; j++) {
@@ -79,13 +81,13 @@ export function initNetrunGrid() {
     }
   }
 
-  // cluster contiguous non-firewall entities into groups
+  // cluster contiguous entities into groups
   let groupId = 0;
   for (let y = 0; y < NETRUNNING_HEIGHT; y++) {
     for (let x = 0; x < NETRUNNING_WIDTH; x++) {
       const baseEntity = NetrunningState.grid[y][x];
       const type = baseEntity.type;
-      if (type === netrunEntityVariant.firewall || baseEntity.group !== null) {
+      if (baseEntity.group) {
         continue;
       }
       groupId++;
@@ -96,16 +98,14 @@ export function initNetrunGrid() {
         if (
           !entity ||
           entity.type !== type ||
-          entity.group !== null ||
+          entity.group ||
           (type === netrunEntityVariant.ice && NetrunningState.groups[groupId]?.length > 3 && Math.random() < 0.3)
         ) {
           continue;
         }
 
         NetrunningState.grid[cy][cx].group = groupId;
-        if (!NetrunningState.groups[groupId]) {
-          NetrunningState.groups[groupId] = [];
-        }
+        NetrunningState.groups[groupId] ??= [];
         NetrunningState.groups[groupId].push(NetrunningState.grid[cy][cx]);
         stack.push([cx + 1, cy]);
         stack.push([cx - 1, cy]);
@@ -115,33 +115,12 @@ export function initNetrunGrid() {
     }
   }
 
-  // Convert tiny ice groups into empty space, unite them with neighboring emty space groups
+  // Convert tiny ice groups into empty space
   for (const group of Object.values(NetrunningState.groups)) {
     const id = group[0].group;
-    if (id !== null && group.length < 3 && group[0].type === netrunEntityVariant.ice) {
-      const groupsToCombineWith: number[] = [];
+    if (id && group.length < 3 && group[0].type === netrunEntityVariant.ice) {
       for (const entity of group) {
         entity.type = netrunEntityVariant.empty;
-
-        const neighbors = [
-          NetrunningState.grid[entity.y - 1]?.[entity.x],
-          NetrunningState.grid[entity.y + 1]?.[entity.x],
-          NetrunningState.grid[entity.y]?.[entity.x -1],
-          NetrunningState.grid[entity.y]?.[entity.x +1]
-        ]
-
-        groupsToCombineWith.push(...neighbors.filter(n => n && n.group && n.type === netrunEntityVariant.empty && n.group !== entity.group).map(n => n?.group ?? -1))
-      }
-      groupId++;
-      NetrunningState.groups[groupId] = [];
-      const uniqueGroupsToCombine = Array.from(new Set(groupsToCombineWith));
-      for (const oldGroupId of uniqueGroupsToCombine) {
-        const group = NetrunningState.groups[oldGroupId] ?? [];
-        for (const entity of group) {
-          entity.group = groupId;
-          NetrunningState.groups[groupId].push(entity);
-        }
-        NetrunningState.groups[oldGroupId] = [];
       }
     }
   }
@@ -149,7 +128,7 @@ export function initNetrunGrid() {
   // Make airspace at the start
   for (let x = 0; x < 3; x++) {
     for (let y = 0; y < 3; y++) {
-      breakEntity(NetrunningState.grid[x][y]);
+      breakEntity(NetrunningState.grid[y][x]);
     }
   }
 
@@ -157,19 +136,19 @@ export function initNetrunGrid() {
 }
 
 function breakEntity(entity: NetrunEntity) {
-  const group = entity.group !== null ? NetrunningState.groups[entity.group] : [entity];
-  for (const entity of group) {
-    entity.type = netrunEntityVariant.empty;
-    entity.group = null;
-    revealGroup(NetrunningState.grid[entity.y - 1]?.[entity.x]);
-    revealGroup(NetrunningState.grid[entity.y + 1]?.[entity.x]);
-    revealGroup(NetrunningState.grid[entity.y]?.[entity.x - 1]);
-    revealGroup(NetrunningState.grid[entity.y]?.[entity.x + 1]);
-
-  }
+  const group = NetrunningState.groups[entity.group];
+  const originalType = entity.type;
+  entity.type = netrunEntityVariant.empty;
   revealGroup(entity);
-  if (entity.group !== null) {
-    NetrunningState.groups[entity.group] = [];
+  if (originalType === netrunEntityVariant.firewall) {
+    return;
+  }
+  for (const member of group) {
+    member.type = netrunEntityVariant.empty;
+    revealGroup(NetrunningState.grid[member.y - 1]?.[member.x]);
+    revealGroup(NetrunningState.grid[member.y + 1]?.[member.x]);
+    revealGroup(NetrunningState.grid[member.y]?.[member.x - 1]);
+    revealGroup(NetrunningState.grid[member.y]?.[member.x + 1]);
   }
 }
 
@@ -178,7 +157,26 @@ function revealGroup(entity: NetrunEntity | undefined ) {
   entity.visible = true;
   if (entity.group === null) return;
   const group = NetrunningState.groups[entity.group] ?? [];
+  for (const member of group) {
+    member.visible = true;
+  }
+  if (entity.type !== netrunEntityVariant.empty) return;
+
   for (const entity of group) {
-    entity.visible = true;
+    const neighbors = [
+      NetrunningState.grid[entity.y - 1]?.[entity.x],
+      NetrunningState.grid[entity.y + 1]?.[entity.x],
+      NetrunningState.grid[entity.y]?.[entity.x -1],
+      NetrunningState.grid[entity.y]?.[entity.x +1],
+    ];
+    for (const neighbor of neighbors) {
+      if (
+        neighbor &&
+        neighbor.group !== entity.group &&
+        !neighbor.visible
+      ) {
+        revealGroup(neighbor);
+      }
+    }
   }
 }
