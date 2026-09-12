@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Box, Container, Tabs, Tab } from "@mui/material";
-import { NetrunningPortal } from "./ui/NetrunningPortal";
 import MemoryIcon from "@mui/icons-material/Memory";
 import ConstructionSharpIcon from "@mui/icons-material/ConstructionSharp";
 import StackedBarChartOutlinedIcon from "@mui/icons-material/StackedBarChartOutlined";
@@ -15,6 +14,7 @@ import { gainCyberdeck } from "./effects";
 import { CyberdeckEvents, hasCyberdeck } from "./models/CyberdeckState";
 import { DocumentationLink } from "../ui/React/DocumentationLink";
 import { Settings } from "../Settings/Settings";
+import { NetrunningPage } from "./ui/NetrunningPage";
 
 export function CyberdeckRoot(): React.ReactElement {
   const rerender = useRerender(1000);
@@ -67,7 +67,7 @@ export function CyberdeckRoot(): React.ReactElement {
       </Box>
 
       {value === 0 && <ModuleRackAndInventoryPage />}
-      {value === 1 && <NetrunningPortal />}
+      {value === 1 && <NetrunningPage />}
       {value === 2 && <CraftingPage />}
       {value === 3 && <StatsPage />}
     </Container>

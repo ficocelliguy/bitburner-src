@@ -1,0 +1,89 @@
+import React, {useEffect} from "react";
+import { Box, Typography } from "@mui/material";
+import { initNetrunGrid, move } from "../models/netrunningMinigame";
+import {
+  netrunDirections,
+  netrunEntityVariant,
+  NETRUNNING_HEIGHT,
+  NETRUNNING_WIDTH,
+  NetrunningState,
+} from "../models/NetrunningState";
+import { Settings } from "../../Settings/Settings";
+import char from "../assets/ProcessingMod/Purple.png";
+
+
+export function NetrunMinigame() : React.ReactElement {
+
+  useEffect(() => {
+    initNetrunGrid();
+    const listener = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp") {
+        move(netrunDirections.up);
+      } else if (event.key === "ArrowDown") {
+        move(netrunDirections.down);
+      } else if (event.key === "ArrowLeft") {
+        move(netrunDirections.left);
+      } else if (event.key === "ArrowRight") {
+        move(netrunDirections.right);
+      }
+    }
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  }, []);
+
+  return (
+    <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+      <Box
+        sx={{
+          flexDirection: "column",
+          position: "relative",
+          border: `1px solid ${Settings.theme.button}`,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            left: NetrunningState.location[0] * 22,
+            top: NetrunningState.location[1] * 22,
+          }}
+        >
+          <img
+            src={char}
+            style={{ position: "relative", top: "1px", left: "1px" }}
+            width={18}
+            height={18}
+            alt="character"
+          />
+        </div>
+        {NetrunningState.grid.map((row, rowIndex) => (
+          <Box key={rowIndex} sx={{ display: "flex", flexDirection: "row" }}>
+            {row.map((entity, colIndex) => (
+              <Box
+                key={colIndex}
+                sx={{
+                  width: 20,
+                  height: 20,
+                  minHeight: 20,
+                  border: `1px solid ${Settings.theme.button}`,
+                  backgroundColor:
+                    !entity.visible ? Settings.theme.backgroundprimary
+                      : entity.type === netrunEntityVariant.ice
+                      ? Settings.theme.infolight
+                      : entity.type === netrunEntityVariant.firewall
+                      ? Settings.theme.cha
+                      : Settings.theme.welllight,
+                }}
+              >
+                {entity.group ?? ""}
+              </Box>
+            ))}
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
