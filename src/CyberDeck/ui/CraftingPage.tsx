@@ -84,7 +84,7 @@ export function CraftingPage(): React.ReactElement {
             }}
           >
             <span>
-              Craft <ComponentSymbol symbol={componentSymbols.iceBreakers} /> ICEBreaker
+              Craft 10x <ComponentSymbol symbol={componentSymbols.iceBreakers} /> ICEBreaker
             </span>
             <ComponentCost cost={ICEBreakerCraftingCost} />
           </div>

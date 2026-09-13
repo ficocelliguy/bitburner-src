@@ -268,7 +268,7 @@ export function craftICEBreaker(count = 1) {
     return false;
   }
   payComponentCost(ICEBreakerCraftingCost, count);
-  CyberdeckState.components.iceBreakers += count;
+  CyberdeckState.components.iceBreakers += count * 10;
   CyberdeckEvents.emit();
   return true;
 }

@@ -31,7 +31,7 @@ export const CyberdeckState = {
     neurodes: 25,
     chips: 25,
     cores: 4,
-    iceBreakers: 3,
+    iceBreakers: 30,
   } as ComponentCounts,
   componentStats: {
     ROM: {

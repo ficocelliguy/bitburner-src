@@ -12,6 +12,7 @@ export const NetrunningState = {
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,
   detonations: 0,
+  energy: 1,
 };
 
 export type NetrunEntity = {

@@ -33,14 +33,13 @@ REQUIRED FOR MVP
 
 
 NETRUNNING MINIGAME:
-- button to claim rewards and leave
-- move around on grid
-  - random character art as player?
-- break ICE blocks (pentominos?) if hit
-  - hitting bomb ICE lowers signal strength?
-  - consumes some ICEBreaker(s)
-- break firewalls
-  - consumes some ICEBreaker(s)
+- API
+
+- energy level
+  - cannot proceed when out of energy - must finish
+    - add button to claim rewards and leave
+    - button always available, lights up green when out of energy
+  
 - Golden pentomino boost reward potential when broken
 - right-click to mark/flag groups 
 
@@ -53,6 +52,8 @@ Corrupted variant:
 
 
 TODO:
+
+- random character art as player for netrunning
 
 - let player choose color of each stat key and value, to hilight or hide stats
 

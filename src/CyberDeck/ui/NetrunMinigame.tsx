@@ -1,5 +1,8 @@
 import React, {useEffect} from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Tooltip, Button } from "@mui/material";
+import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sharp";
+import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
+import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorSharp";
 import { getThreatColor, getThreatSignalStrength, initNetrunGrid, move } from "../models/netrunningMinigame";
 import {
   GRID_SIZE,
@@ -42,14 +45,36 @@ export function NetrunMinigame() : React.ReactElement {
     };
   }, []);
 
+  function endNetrun() {
+    // TODO
+  }
+
   const {threat, signals} = getThreatSignalStrength()
   const threatColor = getThreatColor(threat) || Settings.theme.button;
 
   return (
     <Box sx={{ display: "grid", justifyContent: "center", marginTop: "20px" }}>
-      <Typography>
-        Threat level: {(threat * 100).toPrecision(3)}% Threat signals: {signals}
-      </Typography>
+      <div style={{ display: "inline-flex", gap: "30px", marginBottom: "15px", justifyContent: "space-between" }}>
+        <Tooltip title={"Threat level: How strong of a signal is coming from nearby hidden countermeasures"}>
+          <Typography>
+            <WarningAmberSharpIcon sx={{ position: "relative", top: "5px" }} /> {(threat * 100).toPrecision(3)}%
+          </Typography>
+        </Tooltip>
+
+        <Tooltip title={"Threat count: How many hidden threats are nearby."}>
+          <Typography>
+            <WifiTetheringErrorSharpIcon sx={{ position: "relative", top: "5px" }} /> {signals}
+          </Typography>
+        </Tooltip>
+
+        <Tooltip title={"Energy: Required for breaking ICE and firewalls"}>
+          <Typography>
+            <BatteryCharging90SharpIcon sx={{ position: "relative", top: "5px" }} />
+            {(NetrunningState.energy * 100).toPrecision(3)}%
+          </Typography>
+        </Tooltip>
+      </div>
+
       <Box
         sx={{
           flexDirection: "column",
@@ -84,6 +109,8 @@ export function NetrunMinigame() : React.ReactElement {
           </Box>
         ))}
       </Box>
+
+      <Button onClick={endNetrun}> End Netrun </Button>
     </Box>
   );
 }

@@ -6,7 +6,7 @@ import {
   NetrunningState,
   netrunDirectionType,
 } from "./NetrunningState";
-import { CyberdeckEvents } from "./CyberdeckState";
+import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import _ from "lodash";
 import { clampNumber } from "../../utils/helpers/clampNumber";
 import { Settings } from "../../Settings/Settings";
@@ -23,22 +23,36 @@ export function move(direction: netrunDirectionType) {
   if (newLocation.type === netrunEntityVariant.empty) {
     NetrunningState.location = [x + dx, y + dy];
     updateCurrentThreatSignalStrength();
+  } else if (newLocation.type === netrunEntityVariant.dataStore) {
+    breakEntity(newLocation);
+    consumeEnergy(energyCost() * 0.3);
+
+    // TODO: claim rewards?
   } else if (newLocation.hasBomb) {
     detonateBomb(newLocation);
+  } else if (NetrunningState.energy <= 0) {
+    return false;
   } else if (newLocation.type === netrunEntityVariant.ice) {
     breakEntity(newLocation);
+    consumeEnergy(energyCost());
   } else if (newLocation.type === netrunEntityVariant.firewall) {
     newLocation.hits++;
+    consumeEnergy(energyCost());
     if (newLocation.hits >= 3) {
       breakEntity(newLocation);
     }
-  } else if (newLocation.type === netrunEntityVariant.dataStore) {
-    breakEntity(newLocation);
-    // TODO: claim rewards?
   }
 
   CyberdeckEvents.emit();
   return true;
+}
+
+function energyCost() {
+  return Math.max(0.1 - CyberdeckState.netrunningLevel * 0.002, 0.03);
+}
+
+function consumeEnergy(amount: number) {
+  NetrunningState.energy = Math.max(NetrunningState.energy - amount, 0);
 }
 
 export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
@@ -228,6 +242,7 @@ function detonateBomb(entity: NetrunEntity) {
 
   if (entity.hits > 1) { return; }
 
+  consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
   NetrunningState.detonations++;
   NetrunningState.shaking = true;
   void setTimeout(() => NetrunningState.shaking = false, 700);

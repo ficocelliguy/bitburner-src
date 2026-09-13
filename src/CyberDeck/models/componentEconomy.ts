@@ -138,7 +138,7 @@ export function prestigeCyberdeckComponents() {
     rom: 0,
     neurodes: 0,
     cores: 0,
-    iceBreakers: 2,
+    iceBreakers: 0,
   };
   CyberdeckState.componentStats = {
     ROM: {

@@ -22,7 +22,7 @@ import {
 import { logger } from "../DarkNet/effects/offlineServerHandling";
 import { createConnection, disconnectConnection, moveModule } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
-import { getCurrentNetrunningIceCost, getNetrunningTraceFraction, netRun } from "./models/netrun";
+import { getCurrentNetrunningIceCost, getNetrunningTraceFraction, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
 import { ComponentCounts } from "./Types";
 import {
@@ -182,7 +182,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
       logger(ctx)(`Starting netrun...`);
       await helpers.netscriptDelay(ctx, 1000);
-      const results = netRun();
+      const results = netrunRewards();
       if (results.success) {
         logger(ctx)(`Netrun successfully. ${results.mods.length} new modules found.`);
       } else {
@@ -466,7 +466,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
         ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
         await helpers.netscriptDelay(ctx, 5000);
-        const results = netRun(true);
+        const results = netrunRewards(true);
         if (results.success) {
           logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
         } else {

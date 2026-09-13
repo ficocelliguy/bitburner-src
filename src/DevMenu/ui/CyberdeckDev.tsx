@@ -8,7 +8,7 @@ import { ToastVariant } from "@enums";
 import { CyberdeckState, hasCyberdeck } from "../../CyberDeck/models/CyberdeckState";
 import { gainCyberdeck } from "../../CyberDeck/effects";
 import { gainComponentMessage } from "../../CyberDeck/ui/gainComponentToast";
-import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../CyberDeck/models/netrun";
+import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../CyberDeck/models/netrunRewards";
 import { ModType, NetrunningRewards } from "../../CyberDeck/Types";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
@@ -30,11 +30,13 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.components.rom += 100;
     CyberdeckState.components.neurodes += 100;
     CyberdeckState.components.cores += 5;
+    CyberdeckState.components.iceBreakers += 30;
     gainComponentMessage({
       chips: 100,
       rom: 100,
       neurodes: 100,
       cores: 5,
+      iceBreakers: 30,
     });
   }
 
@@ -43,11 +45,13 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.components.rom += 1e6;
     CyberdeckState.components.neurodes += 1e6;
     CyberdeckState.components.cores += 1000;
+    CyberdeckState.components.iceBreakers += 300;
     gainComponentMessage({
       chips: 1e6,
       rom: 1e6,
       neurodes: 1e6,
       cores: 1000,
+      iceBreakers: 300,
     });
   }
 

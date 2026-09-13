@@ -34,7 +34,7 @@ function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corr
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
   const netrunningCooldownBoost =
     1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
-  return Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1);
+  return Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * 10;
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
@@ -53,7 +53,7 @@ export function canNetrun(corrupted = false): boolean {
   );
 }
 
-export function netRun(corrupted = false): NetrunningRewards {
+export function netrunRewards(corrupted = false): NetrunningRewards {
   if (!canNetrun(corrupted)) {
     return { success: false, mods: [], components: {} };
   }

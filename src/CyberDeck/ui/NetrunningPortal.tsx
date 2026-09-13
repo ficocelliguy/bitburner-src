@@ -13,7 +13,7 @@ import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
 import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
 import { CorruptibleText } from "../../ui/React/CorruptibleText";
-import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction, netRun } from "../models/netrun";
+import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction, netrunRewards } from "../models/netrunRewards";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants";
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
@@ -46,7 +46,7 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
     }
     if (!canNetrun(corrupted)) return;
     setEntering(true);
-    const rewards = netRun(corrupted);
+    const rewards = netrunRewards(corrupted);
     if (!rewards.success) return;
     if (corrupted) {
       CyberdeckState.hasDiscoveredGlitch = true;
