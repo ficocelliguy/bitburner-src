@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import {
   GRID_SIZE,
   NetrunEntity,
@@ -47,31 +47,53 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
   const westNeighbor = NetrunningState.grid[entity.y]?.[entity.x -1]
   const borderLeftColor = getBorderColor(westNeighbor);
 
+  const tooltip = !entity.visible ? "<unknown entity>" :
+    entity.hasBomb ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers." :
+    entity.type == netrunEntityVariant.ice
+      ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level!. Can be broken, if there are ICEBreakers still available." :
+      entity.type == netrunEntityVariant.dataStore ? "A data cache! Grab it while you can!" :
+        entity.type === netrunEntityVariant.firewall ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce" : "";
+
+  const size = entity.type === netrunEntityVariant.empty ? GRID_SIZE : (1 - entity.hits * 0.1) * GRID_SIZE;
+
   return (
-    <Box
-      id={`netrun-entity-${entity.x},${entity.y}`}
-      sx={{
-        width: GRID_SIZE,
-        height: GRID_SIZE,
-        minHeight: GRID_SIZE,
-        borderTop: `1px solid ${borderTopColor}`,
-        borderLeft: `1px solid ${borderLeftColor}`,
-        borderBottom: `1px solid ${borderBottomColor}`,
-        borderRight: `1px solid ${borderRightColor}`,
-        backgroundColor: color,
-        opacity: getOpacity(),
-      }}
-    >
+    <Tooltip title={tooltip}>
       <Box
         sx={{
-          width: 10,
-          height: 10,
-          minHeight: 10,
-          margin: "5px",
-          backgroundColor: getThreatColor(entity.threat),
-          borderRadius: "2px",
+          width: GRID_SIZE,
+          height: GRID_SIZE,
+          minHeight: GRID_SIZE,
+          border: `1px solid transparent`,
+          alignContent: "center",
         }}
-      />
-    </Box>
+      >
+        <Box
+          id={`netrun-entity-${entity.x},${entity.y}`}
+          sx={{
+            width: size,
+            height: size,
+            minHeight: size,
+            borderTop: `1px solid ${borderTopColor}`,
+            borderLeft: `1px solid ${borderLeftColor}`,
+            borderBottom: `1px solid ${borderBottomColor}`,
+            borderRight: `1px solid ${borderRightColor}`,
+            margin: "auto",
+            backgroundColor: color,
+            opacity: getOpacity(),
+          }}
+        >
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              minHeight: 10,
+              margin: "5px",
+              backgroundColor: getThreatColor(entity.threat),
+              borderRadius: "2px",
+            }}
+          />
+        </Box>
+      </Box>
+    </Tooltip>
   );
 }

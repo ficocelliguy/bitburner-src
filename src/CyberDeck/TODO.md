@@ -33,17 +33,15 @@ REQUIRED FOR MVP
 
 
 NETRUNNING MINIGAME:
+- button to claim rewards and leave
 - move around on grid
-  - WSAD?
   - random character art as player?
 - break ICE blocks (pentominos?) if hit
-  - plays particle animation
   - hitting bomb ICE lowers signal strength?
   - consumes some ICEBreaker(s)
 - break firewalls
   - consumes some ICEBreaker(s)
 - Golden pentomino boost reward potential when broken
-  - particle animation
 - right-click to mark/flag groups 
 
 Corrupted variant:

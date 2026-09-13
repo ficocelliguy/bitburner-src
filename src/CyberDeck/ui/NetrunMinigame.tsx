@@ -18,19 +18,19 @@ export function NetrunMinigame() : React.ReactElement {
   useEffect(() => {
     initNetrunGrid();
     const listener = (event: KeyboardEvent) => {
-      if (event.key === "ArrowUp") {
+      if (event.key === "ArrowUp" || event.key === "w") {
         move(netrunDirections.up);
         event.preventDefault();
         event.stopPropagation();
-      } else if (event.key === "ArrowDown") {
+      } else if (event.key === "ArrowDown" || event.key === "s") {
         move(netrunDirections.down);
         event.preventDefault();
         event.stopPropagation();
-      } else if (event.key === "ArrowLeft") {
+      } else if (event.key === "ArrowLeft" || event.key === "a") {
         move(netrunDirections.left);
         event.preventDefault();
         event.stopPropagation();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === "ArrowRight" || event.key === "d") {
         move(netrunDirections.right);
         event.preventDefault();
         event.stopPropagation();
