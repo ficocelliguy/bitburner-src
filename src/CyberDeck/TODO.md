@@ -36,17 +36,15 @@ NETRUNNING MINIGAME:
 - move around on grid
   - WSAD?
   - random character art as player?
-  - see current threat level/% and threat signal count
-  - threat level left on ground as heatmap?
 - break ICE blocks (pentominos?) if hit
   - plays particle animation
-  - some ICE blocks have active countermeasures (bombs)
   - hitting bomb ICE lowers signal strength?
   - consumes some ICEBreaker(s)
 - break firewalls
   - consumes some ICEBreaker(s)
 - Golden pentomino boost reward potential when broken
   - particle animation
+- right-click to mark/flag groups 
 
 Corrupted variant:
   - offline nodes spreading from one corner

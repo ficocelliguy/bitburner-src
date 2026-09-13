@@ -7,6 +7,7 @@ import {
   NetrunningState,
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
+import { clampNumber } from "../../utils/helpers/clampNumber";
 
 export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
   const color = getEntityColor();
@@ -16,9 +17,15 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
     if (!entity.visible) {
       return theme.backgroundprimary;
     }
+    if (entity.type === netrunEntityVariant.dataStore) {
+      return Settings.theme.money;
+    }
+    if (entity.type === netrunEntityVariant.ice && entity.hasBomb && entity.hits) {
+      return Settings.theme.error;
+    }
     if (entity.type === netrunEntityVariant.ice) {
-      const variant = entity.group % 3;
-      return [theme.infolight, theme.info, theme.infodark][variant];
+      const variant = entity.group % 2;
+      return [theme.infolight, theme.info][variant];
     }
     if (entity.type === netrunEntityVariant.firewall) {
       return Settings.theme.cha;
@@ -40,6 +47,41 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
       return color;
     }
     return Settings.theme.secondarydark;
+  }
+
+  function interpolateColor(color1: number[], color2: number[], factor: number, opacity: number) {
+    const r = Math.round(color1[0] + factor * (color2[0] - color1[0]));
+    const g = Math.round(color1[1] + factor * (color2[1] - color1[1]));
+    const b = Math.round(color1[2] + factor * (color2[2] - color1[2]));
+    return `rgba(${r},${g},${b},${opacity})`;
+  }
+
+  function getThreatColor() {
+    if (entity.threat === 0) {
+      return "";
+    }
+    // Clamp threat between 0 and 1.5
+    const threat = clampNumber(entity.threat, 0, 1.5);
+    // Define RGB anchors: Green -> Red -> Purple
+    const green = [0, 128, 0];
+    const red = [255, 0, 0];
+    const purple = [128, 0, 128];
+
+    if (threat < 1) {
+      // First half: Green to Red
+      const opacity = clampNumber(entity.threat * 3, 0.4, 1);
+      return interpolateColor(green, red, threat ** 2, opacity);
+    } else {
+      // Second half: Red to Purple
+      return interpolateColor(red, purple, (threat - 1) * 2, 1);
+    }
+  }
+
+  function getOpacity() {
+    if (entity.type !== netrunEntityVariant.ice || entity.hits) {
+      return 1;
+    }
+    return [0.6, 0.7, 0.8, 0.9, 1][entity.group % 5];
   }
 
   const northNeighbor = NetrunningState.grid[entity.y -1]?.[entity.x]
@@ -65,8 +107,19 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
         borderBottom: `1px solid ${borderBottomColor}`,
         borderRight: `1px solid ${borderRightColor}`,
         backgroundColor: color,
+        opacity: getOpacity(),
       }}
     >
+      <Box
+        sx={{
+          width: 10,
+          height: 10,
+          minHeight: 10,
+          margin: "5px",
+          backgroundColor: getThreatColor(),
+          borderRadius: "2px",
+        }}
+      />
     </Box>
   );
 }

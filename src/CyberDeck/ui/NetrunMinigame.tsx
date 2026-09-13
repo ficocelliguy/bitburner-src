@@ -1,12 +1,9 @@
 import React, {useEffect} from "react";
 import { Box, Typography } from "@mui/material";
-import { initNetrunGrid, move } from "../models/netrunningMinigame";
+import { getThreatSignalStrength, initNetrunGrid, move } from "../models/netrunningMinigame";
 import {
   GRID_SIZE,
   netrunDirections,
-  netrunEntityVariant,
-  NETRUNNING_HEIGHT,
-  NETRUNNING_WIDTH,
   NetrunningState,
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
@@ -21,12 +18,20 @@ export function NetrunMinigame() : React.ReactElement {
     const listener = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         move(netrunDirections.up);
+        event.preventDefault();
+        event.stopPropagation();
       } else if (event.key === "ArrowDown") {
         move(netrunDirections.down);
+        event.preventDefault();
+        event.stopPropagation();
       } else if (event.key === "ArrowLeft") {
         move(netrunDirections.left);
+        event.preventDefault();
+        event.stopPropagation();
       } else if (event.key === "ArrowRight") {
         move(netrunDirections.right);
+        event.preventDefault();
+        event.stopPropagation();
       }
     }
     document.addEventListener("keydown", listener);
@@ -35,8 +40,11 @@ export function NetrunMinigame() : React.ReactElement {
     };
   }, []);
 
+  const {threat, signals} = getThreatSignalStrength()
+
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+    <Box sx={{ display: "grid", justifyContent: "center", marginTop: "20px" }}>
+      <Typography>Threat level: {(threat * 100).toPrecision(3)}%    Threat signals: {signals}</Typography>
       <Box
         sx={{
           flexDirection: "column",

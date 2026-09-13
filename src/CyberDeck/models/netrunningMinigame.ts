@@ -7,6 +7,7 @@ import {
   netrunDirectionType,
 } from "./NetrunningState";
 import { CyberdeckEvents } from "./CyberdeckState";
+import _ from "lodash";
 
 export function move(direction: netrunDirectionType) {
   const [x,y] = NetrunningState.location;
@@ -14,24 +15,25 @@ export function move(direction: netrunDirectionType) {
   const dy = direction === "up" ? -1 : direction === "down" ? 1 : 0;
   const newLocation = NetrunningState.grid[y + dy]?.[x + dx];
   if (!newLocation) {
-    console.warn("Cannot move outside of grid");
     return false;
   }
   if (newLocation.type === netrunEntityVariant.empty) {
     NetrunningState.location = [x + dx, y + dy];
-  }
-  else if (newLocation.type === netrunEntityVariant.ice) {
+    updateCurrentThreatSignalStrength();
+  } else if (newLocation.hasBomb) {
+    detonateBomb(newLocation);
+  } else if (newLocation.type === netrunEntityVariant.ice) {
     breakEntity(newLocation);
-    // TODO: bombs
-  }
-  else if (newLocation.type === netrunEntityVariant.firewall) {
+  } else if (newLocation.type === netrunEntityVariant.firewall) {
     newLocation.hits++;
     if (newLocation.hits >= 3) {
       breakEntity(newLocation);
     }
+  } else if (newLocation.type === netrunEntityVariant.dataStore) {
+    breakEntity(newLocation);
+    // TODO: claim rewards?
   }
 
-  console.log(`Moved to ${NetrunningState.location[0]}, ${NetrunningState.location[1]}`);
   CyberdeckEvents.emit();
   return true;
 }
@@ -132,6 +134,31 @@ export function initNetrunGrid() {
     }
   }
 
+  // Plant bombs
+  const bombCount = Math.random() * 2 + 4;
+  for (let i = 0; i <bombCount; i++) {
+    const iceGroup = _.shuffle(
+      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb),
+    )[0];
+    if (!iceGroup) { break; }
+    for (const member of iceGroup) {
+      member.hasBomb = true;
+    }
+  }
+
+  // Convert some ice groups to reward groups
+  const rewardCount = 5;
+  for (let i = 0; i < rewardCount; i++) {
+    const iceGroup = _.shuffle(
+      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10))
+    )[0];
+    if (!iceGroup) { break; }
+    for (const member of iceGroup) {
+      member.type = netrunEntityVariant.dataStore;
+    }
+  }
+
+  updateCurrentThreatSignalStrength();
   CyberdeckEvents.emit();
 }
 
@@ -155,7 +182,6 @@ function breakEntity(entity: NetrunEntity) {
 function revealGroup(entity: NetrunEntity | undefined ) {
   if (!entity) return;
   entity.visible = true;
-  if (entity.group === null) return;
   const group = NetrunningState.groups[entity.group] ?? [];
   for (const member of group) {
     member.visible = true;
@@ -179,4 +205,55 @@ function revealGroup(entity: NetrunEntity | undefined ) {
       }
     }
   }
+}
+
+function detonateBomb(entity: NetrunEntity) {
+  if (entity.hits >= 2) {
+    breakEntity(entity);
+    return;
+  }
+  const group = NetrunningState.groups[entity.group] ?? [];
+  for (const entity of group) {
+    entity.hits++;
+  }
+  revealGroup(entity);
+
+  // Reset known threat levels
+  for (let y = 0; y < NETRUNNING_HEIGHT; y++) {
+    for (let x = 0; x < NETRUNNING_WIDTH; x++) {
+      NetrunningState.grid[y][x].threat = 0;
+    }
+  }
+  updateCurrentThreatSignalStrength();
+
+  // TODO: energy loss from detonating bomb
+  // TODO: particle effect
+}
+
+export function getThreatSignalStrength() {
+  const bombGroups = Object.values(NetrunningState.groups).filter(
+    (g) => g[0]?.type === netrunEntityVariant.ice && g[0]?.hasBomb && !g[0]?.hits,
+  );
+  let threat = 0;
+  let signals = 0;
+  for (const group of bombGroups) {
+    const distance = getDistanceToGroup(group);
+    threat += Math.max(6-distance, 0) /6;
+    signals += distance < 6 ? 1 : 0
+  }
+
+  return {threat, signals};
+}
+
+function updateCurrentThreatSignalStrength() {
+  const [x,y] = NetrunningState.location;
+  NetrunningState.grid[y][x].threat = getThreatSignalStrength().threat;
+}
+
+function getDistanceToGroup(group: NetrunEntity[]): number {
+  return group.reduce((distance, member) => {
+    const [x,y] = NetrunningState.location;
+    const memberDistance = Math.sqrt((x - member.x) ** 2 + (y - member.y) ** 2) - 1;
+    return Math.min(memberDistance, distance);
+  }, 999);
 }
