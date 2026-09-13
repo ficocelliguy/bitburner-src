@@ -2,6 +2,8 @@
 export const NETRUNNING_WIDTH = 20;
 export const NETRUNNING_HEIGHT = 15;
 
+export const GRID_SIZE = 30;
+
 export const NetrunningState = {
   location: [0, 0],
   grid: [] as NetrunEntity[][],

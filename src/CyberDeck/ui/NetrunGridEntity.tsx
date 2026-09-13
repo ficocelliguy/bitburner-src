@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import {
+  GRID_SIZE,
   NetrunEntity,
   netrunEntityVariant,
   NetrunningState,
@@ -56,9 +57,9 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
   return (
     <Box
       sx={{
-        width: 20,
-        height: 20,
-        minHeight: 20,
+        width: GRID_SIZE,
+        height: GRID_SIZE,
+        minHeight: GRID_SIZE,
         borderTop: `1px solid ${borderTopColor}`,
         borderLeft: `1px solid ${borderLeftColor}`,
         borderBottom: `1px solid ${borderBottomColor}`,
@@ -66,7 +67,6 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
         backgroundColor: color,
       }}
     >
-      {entity.group}
     </Box>
   );
 }

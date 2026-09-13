@@ -2,6 +2,7 @@ import React, {useEffect} from "react";
 import { Box, Typography } from "@mui/material";
 import { initNetrunGrid, move } from "../models/netrunningMinigame";
 import {
+  GRID_SIZE,
   netrunDirections,
   netrunEntityVariant,
   NETRUNNING_HEIGHT,
@@ -48,22 +49,22 @@ export function NetrunMinigame() : React.ReactElement {
         <div
           style={{
             position: "absolute",
-            left: NetrunningState.location[0] * 22,
-            top: NetrunningState.location[1] * 22,
+            left: NetrunningState.location[0] * (GRID_SIZE + 2),
+            top: NetrunningState.location[1] * (GRID_SIZE + 2),
           }}
         >
           <img
             src={char}
             style={{ position: "relative", top: "1px", left: "1px" }}
-            width={18}
-            height={18}
+            width={GRID_SIZE - 2}
+            height={GRID_SIZE - 2}
             alt="character"
           />
         </div>
         {NetrunningState.grid.map((row, rowIndex) => (
           <Box key={rowIndex} sx={{ display: "flex", flexDirection: "row" }}>
             {row.map((entity, colIndex) => (
-                <NetrunGridEntity key={colIndex} entity={entity} />
+              <NetrunGridEntity key={colIndex} entity={entity} />
             ))}
           </Box>
         ))}
