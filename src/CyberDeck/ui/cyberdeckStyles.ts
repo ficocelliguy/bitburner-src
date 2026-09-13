@@ -20,6 +20,15 @@ const flicker = keyframes`
    25% { filter: invert(0.8); }
    100% { filter: invert(0); }
 `;
+const shake = keyframes`
+  0% { transform: translateY(-2px) rotate(2deg) }
+  25% { transform: translateY(2px) rotate(-2deg) }
+  35% { transform: translateY(-2px) rotate(2deg) }
+  55% { transform: translateY(1px) rotate(-1deg) }
+  65% { transform: translateY(-1px) rotate(1deg) }
+  75% { transform: translateY(0px) rotate(-0.5deg) }
+  100% { transform: translateY(0) rotate(0) }
+`;
 
 const getSkewFrames = () => {
   let result = "";
@@ -107,6 +116,9 @@ export function useCyberdeckStyles() {
       height: "50px",
       minHeight: "unset",
       width: "210px",
+    },
+    shake: {
+      animation: `${shake} 0.3s steps(1)`,
     },
   } as const;
 }
@@ -198,10 +210,10 @@ export function usePortalStyles() {
       animation: `${growAndFade} 1.5s ease-in forwards`,
     },
     corruptedSkew: {
-      animation: `${skewFrames} 5s infinite`,
+      animation: `${skewFrames} 5s infinite steps(1)`,
       [`& .${PORTAL_CONTAINER_CLASS}`]: {
         "&:hover": {
-          animation: `${flicker} 0.2s`,
+          animation: `${flicker} 0.2s steps(1)`,
         },
       },
     },

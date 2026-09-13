@@ -5,9 +5,13 @@ export const NETRUNNING_HEIGHT = 15;
 export const GRID_SIZE = 30;
 
 export const NetrunningState = {
+  isNetrunning: false,
+  corrupted: false,
+  shaking: false,
   location: [0, 0],
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,
+  detonations: 0,
 };
 
 export type NetrunEntity = {

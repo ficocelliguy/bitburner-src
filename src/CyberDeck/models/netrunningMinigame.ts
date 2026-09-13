@@ -8,6 +8,9 @@ import {
 } from "./NetrunningState";
 import { CyberdeckEvents } from "./CyberdeckState";
 import _ from "lodash";
+import { clampNumber } from "../../utils/helpers/clampNumber";
+import { Settings } from "../../Settings/Settings";
+import { createSparkles } from "../utils/fx";
 
 export function move(direction: netrunDirectionType) {
   const [x,y] = NetrunningState.location;
@@ -54,6 +57,9 @@ export function initNetrunGrid() {
   NetrunningState.grid = getEmptyGrid(NETRUNNING_WIDTH, NETRUNNING_HEIGHT);
   NetrunningState.location = [0,0];
   NetrunningState.groups = {};
+  NetrunningState.isNetrunning = true;
+  NetrunningState.shaking = false;
+  NetrunningState.detonations = 0;
 
   // Add firewalls
   const firewallCount = Math.random() * 3 + 5;
@@ -163,6 +169,8 @@ export function initNetrunGrid() {
 }
 
 function breakEntity(entity: NetrunEntity) {
+  emitSparklesOnEntity(entity);
+
   const group = NetrunningState.groups[entity.group];
   const originalType = entity.type;
   entity.type = netrunEntityVariant.empty;
@@ -218,6 +226,12 @@ function detonateBomb(entity: NetrunEntity) {
   }
   revealGroup(entity);
 
+  if (entity.hits > 1) { return; }
+
+  NetrunningState.detonations++;
+  NetrunningState.shaking = true;
+  void setTimeout(() => NetrunningState.shaking = false, 700);
+
   // Reset known threat levels
   for (let y = 0; y < NETRUNNING_HEIGHT; y++) {
     for (let x = 0; x < NETRUNNING_WIDTH; x++) {
@@ -226,8 +240,7 @@ function detonateBomb(entity: NetrunEntity) {
   }
   updateCurrentThreatSignalStrength();
 
-  // TODO: energy loss from detonating bomb
-  // TODO: particle effect
+  emitSparklesOnEntity(entity);
 }
 
 export function getThreatSignalStrength() {
@@ -256,4 +269,60 @@ function getDistanceToGroup(group: NetrunEntity[]): number {
     const memberDistance = Math.sqrt((x - member.x) ** 2 + (y - member.y) ** 2) - 1;
     return Math.min(memberDistance, distance);
   }, 999);
+}
+
+function interpolateColor(color1: number[], color2: number[], factor: number, opacity: number) {
+  const r = Math.round(color1[0] + factor * (color2[0] - color1[0]));
+  const g = Math.round(color1[1] + factor * (color2[1] - color1[1]));
+  const b = Math.round(color1[2] + factor * (color2[2] - color1[2]));
+  return `rgba(${r},${g},${b},${opacity})`;
+}
+
+export function getThreatColor(threatRating: number) {
+  if (threatRating === 0) {
+    return "";
+  }
+  // Clamp threat between 0 and 1.5
+  const threat = clampNumber(threatRating, 0, 1.5);
+  // Define RGB anchors: Green -> Red -> Purple
+  const green = [0, 128, 0];
+  const red = [255, 0, 0];
+  const purple = [255, 0, 128];
+
+  if (threat < 1) {
+    // First half: Green to Red
+    const opacity = clampNumber(threat * 3, 0.4, 1);
+    return interpolateColor(green, red, threat ** 3, opacity);
+  } else {
+    // Second half: Red to Purple
+    return interpolateColor(red, purple, (threat - 1) * 2, 1);
+  }
+}
+
+export function getEntityColor(entity: NetrunEntity) {
+  const theme = Settings.theme;
+  if (!entity.visible) {
+    return theme.backgroundprimary;
+  }
+  if (entity.type === netrunEntityVariant.dataStore) {
+    return Settings.theme.money;
+  }
+  if (entity.type === netrunEntityVariant.ice && entity.hasBomb && entity.hits) {
+    return Settings.theme.error;
+  }
+  if (entity.type === netrunEntityVariant.ice) {
+    const variant = entity.group % 2;
+    return [theme.infolight, theme.info][variant];
+  }
+  if (entity.type === netrunEntityVariant.firewall) {
+    return Settings.theme.cha;
+  }
+  return Settings.theme.welllight;
+}
+
+function emitSparklesOnEntity(entity:NetrunEntity) {
+  const element = document.getElementById(`netrun-entity-${entity.x},${entity.y}`);
+  if (!element) { return; }
+  const {x, y} = element.getBoundingClientRect()
+  createSparkles(x + 10, y + 10, getEntityColor(entity));
 }

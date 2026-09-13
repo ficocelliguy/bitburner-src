@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import { Box, Typography } from "@mui/material";
-import { getThreatSignalStrength, initNetrunGrid, move } from "../models/netrunningMinigame";
+import { getThreatColor, getThreatSignalStrength, initNetrunGrid, move } from "../models/netrunningMinigame";
 import {
   GRID_SIZE,
   netrunDirections,
@@ -9,9 +9,11 @@ import {
 import { Settings } from "../../Settings/Settings";
 import char from "../assets/ProcessingMod/Purple.png";
 import { NetrunGridEntity } from "./NetrunGridEntity";
+import { useCyberdeckStyles } from "./cyberdeckStyles";
 
 
 export function NetrunMinigame() : React.ReactElement {
+  const styles = useCyberdeckStyles();
 
   useEffect(() => {
     initNetrunGrid();
@@ -41,10 +43,13 @@ export function NetrunMinigame() : React.ReactElement {
   }, []);
 
   const {threat, signals} = getThreatSignalStrength()
+  const threatColor = getThreatColor(threat) || Settings.theme.button;
 
   return (
     <Box sx={{ display: "grid", justifyContent: "center", marginTop: "20px" }}>
-      <Typography>Threat level: {(threat * 100).toPrecision(3)}%    Threat signals: {signals}</Typography>
+      <Typography>
+        Threat level: {(threat * 100).toPrecision(3)}% Threat signals: {signals}
+      </Typography>
       <Box
         sx={{
           flexDirection: "column",
@@ -52,6 +57,8 @@ export function NetrunMinigame() : React.ReactElement {
           border: `1px solid ${Settings.theme.button}`,
           display: "flex",
           justifyContent: "center",
+          boxShadow: `0 0 30px ${threatColor}`,
+          ...(NetrunningState.shaking ? styles.shake : {}),
         }}
       >
         <div
