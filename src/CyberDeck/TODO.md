@@ -35,13 +35,15 @@ REQUIRED FOR MVP
 NETRUNNING MINIGAME:
 - API
 
-- energy level
-  - cannot proceed when out of energy - must finish
-    - add button to claim rewards and leave
-    - button always available, lights up green when out of energy
-  
-- Golden pentomino boost reward potential when broken
-- right-click to mark/flag groups 
+- right-click to toggle mark/flag groups 
+  - red outline?
+  - prevent walking into?
+
+- disable threat markers when out of energy
+- colors on icons
+  - battery gets more red
+  - gold rewards
+  - threat level matches threat color
 
 Corrupted variant:
   - offline nodes spreading from one corner
