@@ -29,6 +29,7 @@ export function move(direction: netrunDirectionType) {
     const groupSize = NetrunningState.groups[newLocation.group]?.length ?? 5;
     NetrunningState.rewardScore += getIceReward(newLocation) * groupSize;
   } else if (NetrunningState.energy <= 0) {
+    shakePowerIndicator();
     return false;
   } else if (newLocation.hasBomb) {
     detonateBomb(newLocation);
@@ -353,4 +354,10 @@ function emitSparklesOnEntity(entity:NetrunEntity) {
   if (!element) { return; }
   const {x, y} = element.getBoundingClientRect()
   createSparkles(x + 10, y + 10, getEntityColor(entity));
+}
+
+function shakePowerIndicator() {
+  NetrunningState.shakingBattery = true;
+  void setTimeout(() => (NetrunningState.shakingBattery = false), 700);
+  CyberdeckEvents.emit();
 }

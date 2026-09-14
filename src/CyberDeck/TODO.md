@@ -6,10 +6,6 @@ REQUIRED FOR MVP
 
 - make tutorial show on most pages
 
-- make skill chip tutorial have icon, inline
-
-- improve charging tutorial - avoid initial connections to IO panel, be more specific
-
 - resize rewards modal to fit ~700px screen
 
 - add notification for module storage full for netrun attempt
@@ -34,6 +30,8 @@ REQUIRED FOR MVP
 
 NETRUNNING MINIGAME:
 - API
+
+- scale rewards
 
 - right-click to toggle mark/flag groups 
   - red outline?

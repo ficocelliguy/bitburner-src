@@ -71,7 +71,7 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         </Tooltip>
 
         <Tooltip title={"Energy: Required for breaking ICE and firewalls"}>
-          <Typography>
+          <Typography id={"netrunning-energy"} sx={{ ...(NetrunningState.shakingBattery ? styles.shake : {}) }}>
             <BatteryCharging90SharpIcon sx={{ position: "relative", top: "5px" }} />
             {(NetrunningState.energy * 100).toPrecision(3)}%
           </Typography>

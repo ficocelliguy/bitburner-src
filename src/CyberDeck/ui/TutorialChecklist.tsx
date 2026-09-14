@@ -2,6 +2,7 @@ import React from "react";
 import {  Typography } from "@mui/material";
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp";
 import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
+import MedicalInformationSharpIcon from "@mui/icons-material/MedicalInformationSharp";
 import { CyberdeckState } from "../models/CyberdeckState";
 
 
@@ -57,7 +58,7 @@ export function TutorialChecklist() {
             textDecoration: CyberdeckState.tutorialSteps.hasChargedModule ? "line-through" : "none",
           }}
         >
-          Charge a module via connections
+          Charge a module via connection to the I/O Panel
         </span>
       </Typography>
 
@@ -74,7 +75,7 @@ export function TutorialChecklist() {
             textDecoration: CyberdeckState.tutorialSteps.hasConsumedSkillchip ? "line-through" : "none",
           }}
         >
-          Consume a skillchip mod by charging it
+          Consume a <MedicalInformationSharpIcon sx={{top: "5px", position: "relative"}}/> skillchip mod by charging it
         </span>
       </Typography>
 
@@ -91,7 +92,7 @@ export function TutorialChecklist() {
             textDecoration: CyberdeckState.tutorialSteps.hasCraftedIcebreaker ? "line-through" : "none",
           }}
         >
-          Craft an icebreaker on the crafting page
+          Craft some icebreakers on the crafting page
         </span>
       </Typography>
 

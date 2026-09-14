@@ -8,6 +8,7 @@ export const NetrunningState = {
   isNetrunning: false,
   corrupted: false,
   shaking: false,
+  shakingBattery: false,
   location: [0, 0],
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,

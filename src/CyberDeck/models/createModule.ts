@@ -234,9 +234,7 @@ export function createInitialModules() {
 
   CyberdeckState.storedModules = [skillChip, uplinkModule2];
   CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule];
-  createConnection({ modId: powerSupply.id, socketIndex: 3 }, { modId: getCyberdeckIOPanel().id, socketIndex: 3 });
   createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
-  //createConnection({ modId: powerSupply.id, socketIndex: 6 }, { modId: uplinkModule.id, socketIndex: 6 });
 
   CyberdeckState.components.rom = 25;
   CyberdeckState.components.neurodes = 25;

@@ -137,9 +137,11 @@ export function createConnection(source: Socket, destination: Socket) {
 
   CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
-  completeMadeConnectionTutorial();
+  if (source.modId !== getCyberdeckIOPanel().id && destination.modId !== getCyberdeckIOPanel().id) {
+    completeMadeConnectionTutorial();
+  }
   const chargedMods = getChargedModules();
-  if (chargedMods.some(m => m.id == sourceModule.id)) {
+  if (chargedMods.some(m => m.id == sourceModule.id || m.id == destinationModule.id)) {
     completeChargedModuleTutorial();
   }
   return {
