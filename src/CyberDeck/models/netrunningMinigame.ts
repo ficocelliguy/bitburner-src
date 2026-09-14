@@ -26,15 +26,16 @@ export function move(direction: netrunDirectionType) {
   } else if (newLocation.type === netrunEntityVariant.dataStore) {
     breakEntity(newLocation);
     consumeEnergy(energyCost() * 0.3);
-
-    // TODO: claim rewards?
-  } else if (newLocation.hasBomb) {
-    detonateBomb(newLocation);
+    const groupSize = NetrunningState.groups[newLocation.group]?.length ?? 5;
+    NetrunningState.rewardScore += getIceReward(newLocation) * groupSize;
   } else if (NetrunningState.energy <= 0) {
     return false;
+  } else if (newLocation.hasBomb) {
+    detonateBomb(newLocation);
   } else if (newLocation.type === netrunEntityVariant.ice) {
     breakEntity(newLocation);
     consumeEnergy(energyCost());
+    NetrunningState.rewardScore += getIceReward(newLocation);
   } else if (newLocation.type === netrunEntityVariant.firewall) {
     newLocation.hits++;
     consumeEnergy(energyCost());
@@ -45,6 +46,11 @@ export function move(direction: netrunDirectionType) {
 
   CyberdeckEvents.emit();
   return true;
+}
+
+function getIceReward(entity: NetrunEntity) {
+  const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y/NETRUNNING_HEIGHT) * 0.6 + 0.2;
+  return 0.05 * entityDepth;
 }
 
 function energyCost() {
@@ -67,13 +73,15 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   return grid;
 }
 
-export function initNetrunGrid() {
+export function initNetrunGrid(corrupted: boolean) {
   NetrunningState.grid = getEmptyGrid(NETRUNNING_WIDTH, NETRUNNING_HEIGHT);
-  NetrunningState.location = [0,0];
+  NetrunningState.location = [0, 0];
   NetrunningState.groups = {};
   NetrunningState.isNetrunning = true;
+  NetrunningState.corrupted = corrupted;
   NetrunningState.shaking = false;
-  NetrunningState.detonations = 0;
+  NetrunningState.rewardScore = 0;
+  NetrunningState.energy = 1;
 
   // Add firewalls
   const firewallCount = Math.random() * 3 + 5;
@@ -156,11 +164,13 @@ export function initNetrunGrid() {
 
   // Plant bombs
   const bombCount = Math.random() * 2 + 4;
-  for (let i = 0; i <bombCount; i++) {
+  for (let i = 0; i < bombCount; i++) {
     const iceGroup = _.shuffle(
       Object.values(NetrunningState.groups).filter((g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb),
     )[0];
-    if (!iceGroup) { break; }
+    if (!iceGroup) {
+      break;
+    }
     for (const member of iceGroup) {
       member.hasBomb = true;
     }
@@ -170,9 +180,13 @@ export function initNetrunGrid() {
   const rewardCount = 5;
   for (let i = 0; i < rewardCount; i++) {
     const iceGroup = _.shuffle(
-      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10))
+      Object.values(NetrunningState.groups).filter(
+        (g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10),
+      ),
     )[0];
-    if (!iceGroup) { break; }
+    if (!iceGroup) {
+      break;
+    }
     for (const member of iceGroup) {
       member.type = netrunEntityVariant.dataStore;
     }
@@ -243,7 +257,6 @@ function detonateBomb(entity: NetrunEntity) {
   if (entity.hits > 1) { return; }
 
   consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
-  NetrunningState.detonations++;
   NetrunningState.shaking = true;
   void setTimeout(() => NetrunningState.shaking = false, 700);
 

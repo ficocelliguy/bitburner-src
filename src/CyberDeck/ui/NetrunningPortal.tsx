@@ -7,28 +7,20 @@ import {
   PORTAL_RING_REVERSE_CLASS,
   usePortalStyles,
 } from "./cyberdeckStyles";
-import { RewardsModal } from "./RewardsModal";
-import { NetrunningRewards } from "../Types";
 import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
 import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
 import { CorruptibleText } from "../../ui/React/CorruptibleText";
-import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction, netrunRewards } from "../models/netrunRewards";
-import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants";
+import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction } from "../models/netrunRewards";
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
 
-export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
+export function NetrunningPortal({ entered, corrupted = false }: { entered: () => void, corrupted?: boolean }): React.ReactElement {
   useRerender(200);
   const styles = usePortalStyles();
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
-  const [showRewardsModal, setShowRewardsModal] = React.useState(false);
-  const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
-    success: false,
-    mods: [],
-    components: {},
-  });
+
 
   const disabled = !entering && !canNetrun(corrupted);
 
@@ -46,39 +38,23 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
     }
     if (!canNetrun(corrupted)) return;
     setEntering(true);
-    const rewards = netrunRewards(corrupted);
-    if (!rewards.success) return;
     if (corrupted) {
       CyberdeckState.hasDiscoveredGlitch = true;
     }
-    setNetrunningModRewards(rewards);
     setTimeout(() => {
       if (!entering) {
         setShowPortal(false);
-        setShowRewardsModal(true);
       }
+      entered();
     }, 1200);
   }
 
-  function resetPortal() {
-    setShowRewardsModal(false);
-    setEntering(false);
-    setShowPortal(true);
-  }
-
   function minimumCost(corrupted: boolean) {
-    return corrupted ? 5 : 1;
+    return corrupted ? 40 : 10;
   }
 
   return (
     <Container disableGutters maxWidth={false} sx={[{ m: 3 }, corrupted && styles.corruptedSkew]}>
-      <RewardsModal
-        open={showRewardsModal}
-        onClose={() => resetPortal()}
-        rewards={netrunningModRewards}
-        title={"Netrunning Results"}
-        flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
-      />
       {showPortal && (
         <>
           <Box
@@ -114,7 +90,7 @@ export function NetrunningPortal({ corrupted = false }: { corrupted?: boolean })
               )}
               {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
-                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 100, 2)}%
+                  Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 10, 2)}%
                 </Typography>
               )}
             </>

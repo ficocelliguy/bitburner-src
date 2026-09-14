@@ -3,7 +3,8 @@ import { Box, Typography, Tooltip, Button } from "@mui/material";
 import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sharp";
 import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
 import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorSharp";
-import { getThreatColor, getThreatSignalStrength, initNetrunGrid, move } from "../models/netrunningMinigame";
+import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
+import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
 import {
   GRID_SIZE,
   netrunDirections,
@@ -15,11 +16,10 @@ import { NetrunGridEntity } from "./NetrunGridEntity";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 
 
-export function NetrunMinigame() : React.ReactElement {
+export function NetrunMinigame({complete} : {complete: () => void}) : React.ReactElement {
   const styles = useCyberdeckStyles();
 
   useEffect(() => {
-    initNetrunGrid();
     const listener = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "w") {
         move(netrunDirections.up);
@@ -45,10 +45,6 @@ export function NetrunMinigame() : React.ReactElement {
     };
   }, []);
 
-  function endNetrun() {
-    // TODO
-  }
-
   const {threat, signals} = getThreatSignalStrength()
   const threatColor = getThreatColor(threat) || Settings.theme.button;
 
@@ -64,6 +60,13 @@ export function NetrunMinigame() : React.ReactElement {
         <Tooltip title={"Threat count: How many hidden threats are nearby."}>
           <Typography>
             <WifiTetheringErrorSharpIcon sx={{ position: "relative", top: "5px" }} /> {signals}
+          </Typography>
+        </Tooltip>
+
+        <Tooltip title={"Rewards: The quality of the loot collected"}>
+          <Typography>
+            <AutoAwesomeSharpIcon sx={{ position: "relative", top: "5px" }} />
+            {(NetrunningState.rewardScore * 100).toPrecision(3)}
           </Typography>
         </Tooltip>
 
@@ -110,7 +113,9 @@ export function NetrunMinigame() : React.ReactElement {
         ))}
       </Box>
 
-      <Button onClick={endNetrun}> End Netrun </Button>
+      <Button onClick={complete} sx={{ margin: "5px", ...(NetrunningState.energy ? {} : styles.buttonHighlight) }}>
+        {NetrunningState.energy ? "End Netrun" : "Netrun Complete"}
+      </Button>
     </Box>
   );
 }

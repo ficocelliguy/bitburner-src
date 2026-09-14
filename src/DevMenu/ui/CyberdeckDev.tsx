@@ -98,7 +98,7 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.components.rom = 25;
     CyberdeckState.components.chips = 25;
     CyberdeckState.components.neurodes = 25;
-    CyberdeckState.components.iceBreakers = 4;
+    CyberdeckState.components.iceBreakers = 40;
     CyberdeckState.components.cores = 4;
   }
 

@@ -242,7 +242,7 @@ export function createInitialModules() {
   CyberdeckState.components.neurodes = 25;
   CyberdeckState.components.chips = 25;
   CyberdeckState.components.cores = 2;
-  CyberdeckState.components.iceBreakers = 3;
+  CyberdeckState.components.iceBreakers = 30;
 
   CyberdeckState.tutorialSteps.hasMadeConnection = false;
   CyberdeckState.tutorialSteps.hasChargedModule = false;

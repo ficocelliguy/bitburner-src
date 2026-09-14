@@ -1,5 +1,6 @@
 import { keyframes } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
+import { fadeLoop } from "../../Go/boardState/goStyles";
 
 const spin = keyframes`
    0% { transform: rotate(0deg) scale(1); }
@@ -119,6 +120,13 @@ export function useCyberdeckStyles() {
     },
     shake: {
       animation: `${shake} 0.3s steps(1)`,
+    },
+    buttonHighlight: {
+      borderStyle: "solid",
+      borderWidth: "6px",
+      borderColor: theme.colors.success,
+      padding: "0 12px",
+      animation: `${fadeLoop} 600ms ease-in-out infinite alternate`,
     },
   } as const;
 }

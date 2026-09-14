@@ -30,7 +30,7 @@ function getCorruptedNetrunningIceCost(): number {
 
 function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corrupted = false): number {
   const traceDecay = netrunningTraceDecayMs * (corrupted ? 2 : 1);
-  const diminishingCosts = 1 + traceDecay / timeSinceLastRun;
+  const diminishingCosts = 0.95 + traceDecay / timeSinceLastRun;
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
   const netrunningCooldownBoost =
     1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
@@ -38,12 +38,11 @@ function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corr
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-  const lastTimestamp = corrupted
-    ? CyberdeckState.lastCorruptedNetrunningTimestamp
-    : CyberdeckState.lastNetrunningTimestamp;
-  const corruptionHardCooldown = corrupted ? corruptedNetrunningHardCooldownMs : 0;
-  const timeSinceLastRun = Date.now() - lastTimestamp - corruptionHardCooldown;
-  return Math.max((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs, 0) ** 2;
+  const timeSinceLastRun =  corrupted ?
+    CyberdeckState.lastCorruptedNetrunningTimestamp - corruptedNetrunningHardCooldownMs :
+    Date.now() - CyberdeckState.lastNetrunningTimestamp;
+  const cost = getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun, corrupted);
+  return cost / 10 - 1;
 }
 
 export function canNetrun(corrupted = false): boolean {

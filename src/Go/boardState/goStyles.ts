@@ -23,7 +23,7 @@ type Structure =
   | "southLiberty";
 type Highlight = "hover" | "valid" | "priorPoint" | "hack" | "hp" | "money" | "int" | "cha";
 
-const fadeLoop = keyframes`
+export const fadeLoop = keyframes`
     0% {
         opacity: 0.4;
     }

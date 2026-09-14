@@ -42,7 +42,7 @@ import { getDarkscapeNavigator } from "../../DarkNet/effects/effects";
 import { hasDarknetAccess } from "../../DarkNet/utils/darknetAuthUtils";
 import { DarknetConstants } from "../../DarkNet/Constants";
 import { formatMoney } from "../../ui/formatNumber";
-import { NetrunningPortal } from "../../CyberDeck/ui/NetrunningPortal";
+import { NetrunningPage } from "../../CyberDeck/ui/NetrunningPage";
 
 interface SpecialLocationProps {
   loc: Location;
@@ -372,7 +372,7 @@ export function SpecialLocation(props: SpecialLocationProps): React.ReactElement
     return (
       <>
         <div>
-          <NetrunningPortal corrupted={true} />
+          <NetrunningPage corrupted={true} />
         </div>
       </>
     );
