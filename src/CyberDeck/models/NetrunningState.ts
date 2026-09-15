@@ -22,6 +22,7 @@ export type NetrunEntity = {
   hits: number;
   threat: number;
   hasBomb: boolean;
+  flagged: boolean;
   visible: boolean;
   x: number;
   y: number;

@@ -16,19 +16,8 @@ export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): Reac
     components: {},
   });
 
-
-  function resetPortal() {
-    setShowRewardsModal(false);
-  }
-
-  function startNetrun() {
-    initNetrunGrid(corrupted);
-  }
-
   function endNetrun() {
     NetrunningState.isNetrunning = false;
-
-    // TODO-fico: reward scaling
     const rewards = netrunRewards(corrupted);
     if (!rewards.success) return;
     setNetrunningModRewards(rewards);
@@ -39,12 +28,16 @@ export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): Reac
     <>
       <RewardsModal
         open={showRewardsModal}
-        onClose={() => resetPortal()}
+        onClose={() => setShowRewardsModal(false)}
         rewards={netrunningModRewards}
         title={"Netrunning Results"}
         flavorText={netrunFlavorText}
       />
-      {NetrunningState.isNetrunning ? <NetrunMinigame complete={endNetrun}></NetrunMinigame> : <NetrunningPortal entered={startNetrun} />}
+      {NetrunningState.isNetrunning ? (
+        <NetrunMinigame complete={endNetrun}></NetrunMinigame>
+      ) : (
+        <NetrunningPortal entered={() => initNetrunGrid(corrupted)} />
+      )}
     </>
   );
 }

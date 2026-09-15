@@ -32,6 +32,8 @@ export function move(direction: netrunDirectionType) {
   } else if (NetrunningState.energy <= 0) {
     shakePowerIndicator();
     return false;
+  } else if (newLocation.flagged && newLocation.hits === 0) {
+    return false;
   } else if (newLocation.hasBomb) {
     detonateBomb(newLocation);
   } else if (newLocation.type === netrunEntityVariant.ice) {
@@ -71,7 +73,7 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   for (let y = 0; y < height; y++) {
     const row: NetrunEntity[] = [];
     for (let x = 0; x < width; x++) {
-      row.push({ type: netrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, visible: false, x, y });
+      row.push({ type: netrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, flagged: false, visible: false, x, y });
     }
     grid.push(row);
   }
@@ -87,6 +89,7 @@ export function initNetrunGrid(corrupted: boolean) {
   NetrunningState.shaking = false;
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 1;
+
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
 
   // Add firewalls
@@ -369,5 +372,17 @@ function emitSparklesOnEntity(entity:NetrunEntity) {
 function shakePowerIndicator() {
   NetrunningState.shakingBattery = true;
   void setTimeout(() => (NetrunningState.shakingBattery = false), 700);
+  CyberdeckEvents.emit();
+}
+
+
+export function flagEntity(entity:NetrunEntity) {
+  if (!entity.visible || entity.type !== netrunEntityVariant.ice) {
+    return;
+  }
+  const group = NetrunningState.groups[entity.group];
+  for (const member of group) {
+    member.flagged = !member.flagged;
+  }
   CyberdeckEvents.emit();
 }

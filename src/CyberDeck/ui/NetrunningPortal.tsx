@@ -14,6 +14,7 @@ import { CorruptibleText } from "../../ui/React/CorruptibleText";
 import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction } from "../models/netrunRewards";
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
+import { NetrunningState } from "../models/NetrunningState";
 
 export function NetrunningPortal({ entered, corrupted = false }: { entered: () => void, corrupted?: boolean }): React.ReactElement {
   useRerender(200);
@@ -30,6 +31,17 @@ export function NetrunningPortal({ entered, corrupted = false }: { entered: () =
         <Box>
           <CorruptibleText
             content={"Netrunning without a cyberdeck? Are you trying to get yourself killed?"}
+            spoiler={false}
+          />
+        </Box>,
+      );
+      return;
+    }
+    if (NetrunningState.isNetrunning && NetrunningState.corrupted !== corrupted) {
+      dialogBoxCreate(
+        <Box>
+          <CorruptibleText
+            content={"There is already a netrun in progress."}
             spoiler={false}
           />
         </Box>,

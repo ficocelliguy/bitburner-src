@@ -7,7 +7,7 @@ import {
   NetrunningState,
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
-import { getEntityColor, getThreatColor } from "../models/netrunningMinigame";
+import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
 
 export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
   const color = getEntityColor(entity);
@@ -25,6 +25,9 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
     ) {
       return color;
     }
+    if (entity.flagged && entity.type === netrunEntityVariant.ice) {
+      return Settings.theme.errorlight;
+    }
     return Settings.theme.secondarydark;
   }
 
@@ -33,6 +36,12 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
       return 1;
     }
     return [0.6, 0.7, 0.8, 0.9, 1][entity.group % 5];
+  }
+
+  function flag(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    flagEntity(entity);
   }
 
   const northNeighbor = NetrunningState.grid[entity.y -1]?.[entity.x]
@@ -66,6 +75,7 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
           border: `1px solid transparent`,
           alignContent: "center",
         }}
+        onClick={flag}
       >
         <Box
           id={`netrun-entity-${entity.x},${entity.y}`}

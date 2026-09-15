@@ -40,10 +40,6 @@ NETRUNNING MINIGAME:
   - add movement api
   - add location info / map api
 
-- right-click to toggle mark/flag groups 
-  - red outline?
-  - prevent walking into?
-
 - colors on icons
   - battery gets more red
   - gold rewards
