@@ -13,7 +13,7 @@ import { ModType, NetrunningRewards } from "../../CyberDeck/Types";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
 import { prestigeCyberdeck } from "../../CyberDeck/utils/prestigeCyberdeck";
-import { getNextNetrunningWHRNG } from "../../CyberDeck/utils/statRng";
+import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../../CyberDeck/utils/statRng";
 import { createModule } from "../../CyberDeck/models/createModule";
 
 export function CyberdeckDev(): React.ReactElement {
@@ -56,14 +56,14 @@ export function CyberdeckDev(): React.ReactElement {
   }
 
   function getNetrunRewards() {
-    const rewards = getNetrunningRewards();
+    const rewards = getNetrunningRewards(getNextNetrunningWHRNG(), 3);
     setCorrupted(false);
     setNetrunningModRewards({ success: true, mods: rewards, components: {} });
     setShowRewardsModal(true);
   }
 
   function getCorruptedNetrunRewards() {
-    const rewards = getCorruptedNetrunningRewards();
+    const rewards = getCorruptedNetrunningRewards(getNextNetrunningCorruptedWHRNG(), 100);
     setCorrupted(true);
     setNetrunningModRewards({ success: true, mods: rewards, components: {} });
     setShowRewardsModal(true);

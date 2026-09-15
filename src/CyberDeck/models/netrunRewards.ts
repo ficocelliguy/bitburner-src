@@ -5,11 +5,13 @@ import {
   netrunningTraceDecayMs,
 } from "./constants";
 import { ModType, NetrunningRewards } from "../Types";
-import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
+import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 import { completeNetrunTutorial } from "./tutorial";
+import { NetrunningState } from "./NetrunningState";
+import { WHRNG } from "../../Casino/RNG";
 
 export function getCurrentNetrunningIceCost(corrupted = false): number {
   if (corrupted) {
@@ -53,29 +55,28 @@ export function canNetrun(corrupted = false): boolean {
 }
 
 export function netrunRewards(corrupted = false): NetrunningRewards {
-  if (!canNetrun(corrupted)) {
-    return { success: false, mods: [], components: {} };
-  }
   if (corrupted) {
     return corruptedNetrun();
   }
   completeNetrunTutorial();
 
-  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost();
   const rng = getNextNetrunningWHRNG();
-  const rewards = getNetrunningRewards(rng);
+
+  const scoreFactor = NetrunningState.rewardScore / 25;
+
+  const rewards = getNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
 
-  const chipsGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  const chipsGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.componentStats.chips.netrunning += chipsGained;
-  const neurodesGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  const neurodesGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.neurodes += neurodesGained;
   CyberdeckState.componentStats.neurodes.netrunning += neurodesGained;
-  const ROMGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 2 + 2));
+  const ROMGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.rom += ROMGained;
   CyberdeckState.componentStats.ROM.netrunning += ROMGained;
-  const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 1.5));
+  const coresGained = Math.floor(rng.random() * (scoreFactor + 1.5));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 
@@ -91,30 +92,36 @@ export function netrunRewards(corrupted = false): NetrunningRewards {
   };
 }
 
-export function getNetrunningRewards(rng = getNextNetrunningWHRNG()) {
-  const isFirstRun = CyberdeckState.netrunningSeedUsages <= 1;
-  const specialReward = isFirstRun ? createModule(rng, ModType.ProcessingMod, 5) : createModule(rng);
-  const rewards = [createModule(rng), createModule(rng), specialReward].sort((m1, m2) => m1.rarity - m2.rarity);
+export function getNetrunningRewards(rng: WHRNG, score: number) {
+  const isEarlyRun = CyberdeckState.netrunningSeedUsages <= 2;
+  const hasRareMod = [...CyberdeckState.storedModules, ...CyberdeckState.installedModules].some(m => m.rarity >= 5);
+  const eligibleForSpecialReward = score > 60 && isEarlyRun && hasRareMod;
+  const specialReward = eligibleForSpecialReward ? createModule(rng, ModType.ProcessingMod, 5) : createModule(rng);
+  const rewards = [specialReward];
 
-  // guarantee at least one rarity 3+ mod
-  if (!rewards.some((m) => m.rarity >= 3)) {
-    rewards[2] = createModule(rng, undefined, 3);
+  if (score > 30) {
+    rewards.push(createModule(rng));
   }
-  CyberdeckState.storedModules.unshift(...rewards);
-  return rewards;
+  if (score > 75) {
+    rewards.push(createModule(rng, undefined, getLevel(rng, CyberdeckState.netrunningLevel + 1)));
+  }
+  if (score > 120) {
+    rewards.push(createModule(rng, undefined, getLevel(rng, CyberdeckState.netrunningLevel + 2)));
+  }
+
+  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity)
+  CyberdeckState.storedModules.unshift(...sortedRewards);
+  return sortedRewards;
 }
 
 function corruptedNetrun(): NetrunningRewards {
-  if (!canNetrun(true)) {
-    return { success: false, mods: [], components: {} };
-  }
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
-  const rewards = getCorruptedNetrunningRewards(rng);
+  const rewards = getCorruptedNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
 
-  const coresGained = Math.floor(rng.random() * (CyberdeckState.netrunningLevel * 0.3 + 2.5));
+  const coresGained = Math.floor(rng.random() * (NetrunningState.rewardScore/25 + 2));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 
@@ -127,7 +134,7 @@ function corruptedNetrun(): NetrunningRewards {
   };
 }
 
-export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWHRNG()) {
+export function getCorruptedNetrunningRewards(rng: WHRNG, score: number) {
   const isFirstRun = CyberdeckState.netrunningCorruptedSeedUsages <= 1;
 
   const hasEndgame = !!Player.sourceFiles.get(1);
@@ -136,11 +143,20 @@ export function getCorruptedNetrunningRewards(rng = getNextNetrunningCorruptedWH
       ? getEndgameStatModule(rng)
       : getCorruptedSkillChip(rng)
     : createCorruptedModule(rng);
+  const rewards = [specialReward];
 
-  const rewards = [createCorruptedModule(rng), createCorruptedModule(rng), specialReward].sort(
-    (m1, m2) => m1.rarity - m2.rarity,
-  );
+  if (score > 30) {
+    rewards.push(createCorruptedModule(rng));
+  }
+  if (score > 75) {
+    rewards.push(createCorruptedModule(rng));
+  }
+  if (score > 120) {
+    rewards.push(createCorruptedModule(rng));
+  }
 
-  CyberdeckState.storedModules.unshift(...rewards);
-  return rewards;
+  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity);
+
+  CyberdeckState.storedModules.unshift(...sortedRewards);
+  return sortedRewards;
 }

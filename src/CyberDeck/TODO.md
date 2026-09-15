@@ -29,15 +29,21 @@ REQUIRED FOR MVP
 
 
 NETRUNNING MINIGAME:
-- API
 
-- scale rewards
+- validate ICEBreaker requirements
+
+- API
+  - update netrun() and delve()
+    - no longer async
+    - starts netrun
+    - consumes ICEBreakers, if the player has enough
+  - add movement api
+  - add location info / map api
 
 - right-click to toggle mark/flag groups 
   - red outline?
   - prevent walking into?
 
-- disable threat markers when out of energy
 - colors on icons
   - battery gets more red
   - gold rewards

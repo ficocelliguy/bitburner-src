@@ -11,6 +11,7 @@ import _ from "lodash";
 import { clampNumber } from "../../utils/helpers/clampNumber";
 import { Settings } from "../../Settings/Settings";
 import { createSparkles } from "../utils/fx";
+import { getCurrentNetrunningIceCost } from "./netrunRewards";
 
 export function move(direction: netrunDirectionType) {
   const [x,y] = NetrunningState.location;
@@ -51,7 +52,7 @@ export function move(direction: netrunDirectionType) {
 
 function getIceReward(entity: NetrunEntity) {
   const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y/NETRUNNING_HEIGHT) * 0.6 + 0.2;
-  return 0.05 * entityDepth;
+  return 5 * entityDepth;
 }
 
 function energyCost() {
@@ -60,6 +61,9 @@ function energyCost() {
 
 function consumeEnergy(amount: number) {
   NetrunningState.energy = Math.max(NetrunningState.energy - amount, 0);
+  if (!NetrunningState.energy) {
+    resetThreatLevels();
+  }
 }
 
 export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
@@ -83,6 +87,7 @@ export function initNetrunGrid(corrupted: boolean) {
   NetrunningState.shaking = false;
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 1;
+  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
 
   // Add firewalls
   const firewallCount = Math.random() * 3 + 5;
@@ -261,18 +266,23 @@ function detonateBomb(entity: NetrunEntity) {
   NetrunningState.shaking = true;
   void setTimeout(() => NetrunningState.shaking = false, 700);
 
-  // Reset known threat levels
+  resetThreatLevels();
+  updateCurrentThreatSignalStrength();
+  emitSparklesOnEntity(entity);
+}
+
+function resetThreatLevels() {
   for (let y = 0; y < NETRUNNING_HEIGHT; y++) {
     for (let x = 0; x < NETRUNNING_WIDTH; x++) {
       NetrunningState.grid[y][x].threat = 0;
     }
   }
-  updateCurrentThreatSignalStrength();
-
-  emitSparklesOnEntity(entity);
 }
 
 export function getThreatSignalStrength() {
+  if (!NetrunningState.energy) {
+    return {threat: 0, signals: 0};
+  }
   const bombGroups = Object.values(NetrunningState.groups).filter(
     (g) => g[0]?.type === netrunEntityVariant.ice && g[0]?.hasBomb && !g[0]?.hits,
   );

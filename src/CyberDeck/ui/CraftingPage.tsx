@@ -21,10 +21,11 @@ import {
   upgradeCyberdeckServerCores,
   upgradeCyberdeckServerRam,
 } from "../models/cyberdeckServer";
-import { CyberdeckEvents } from "../models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
 import { gainComponentMessage } from "./gainComponentToast";
 import { completeCraftedIcebreakerTutorial } from "../models/tutorial";
+import { TutorialChecklist } from "./TutorialChecklist";
 
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
@@ -72,7 +73,7 @@ export function CraftingPage(): React.ReactElement {
         rewards={{ success: true, mods: craftingRewards, components: {} }}
         onClose={() => setShowRewardsModal(false)}
       />
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginRight: "20px", width: "300px" }}>
         <Button onClick={tryCraftICEBreaker}>
           <div
             style={{
@@ -126,9 +127,11 @@ export function CraftingPage(): React.ReactElement {
             />
           </div>
         </Button>
+
+        {!CyberdeckState.hasCompletedTutorial && <TutorialChecklist />}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px", width: "300px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "300px" }}>
         <Button onClick={tryCraftPowerSupply}>
           <div
             style={{

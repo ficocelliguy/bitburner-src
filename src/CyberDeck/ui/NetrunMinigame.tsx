@@ -66,7 +66,7 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         <Tooltip title={"Rewards: The quality of the loot collected"}>
           <Typography>
             <AutoAwesomeSharpIcon sx={{ position: "relative", top: "5px" }} />
-            {(NetrunningState.rewardScore * 100).toPrecision(3)}
+            {NetrunningState.rewardScore.toPrecision(3)}
           </Typography>
         </Tooltip>
 
