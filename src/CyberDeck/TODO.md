@@ -1,14 +1,5 @@
 REQUIRED FOR MVP
 
-- feedback on crafting!
-  - effect on top bar
-  - toast
-
-- make tutorial show on most pages
-
-- resize rewards modal to fit ~700px screen
-
-- add notification for module storage full for netrun attempt
 - add notification for all dev buttons
 
 - Add WiFUs (Wired Firmware Unit)
@@ -29,8 +20,6 @@ REQUIRED FOR MVP
 
 
 NETRUNNING MINIGAME:
-
-- validate ICEBreaker requirements
 
 - API
   - update netrun() and delve()

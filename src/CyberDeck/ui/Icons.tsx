@@ -86,13 +86,12 @@ export function getRarityColor(module: DeckMod) {
   const rarityColors = [
     t.secondarylight,
     t.secondarylight,
-    t.maplocation,
     t.infolight,
-    t.info,
-    t.warninglight,
+    t.infolight,
+    t.money,
     t.money,
     t.successlight,
-    t.success,
+    t.successlight,
   ];
   return rarityColors[module.rarity] ?? t.cha;
 }
@@ -158,16 +157,16 @@ function getRarityImage(module: DeckMod, images: ModImageSet) {
   if (module.corrupted) {
     return images.red;
   }
-  if (module.rarity < 3) {
+  if (module.rarity < 2) {
     return images.white;
   }
-  if (module.rarity < 5) {
+  if (module.rarity < 4) {
     return images.blue;
   }
-  if (module.rarity < 7) {
+  if (module.rarity < 6) {
     return images.yellow;
   }
-  if (module.rarity < 9) {
+  if (module.rarity < 8) {
     return images.green;
   }
   return images.purple;

@@ -36,18 +36,20 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
     disassembleModule(moduleToTrash, true);
     setDisplayedModules((mods) => mods.filter((m) => m.id !== moduleToTrash.id));
   }
+  const screenSizeIsTall = (window.visualViewport?.height ?? 999) > 750;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", overflow: "visible" }}>
-        {flavorText && (
-          <Typography
-            sx={{ fontStyle: "italic", fontSize: "13px", marginBottom: "12px", color: Settings.theme.maplocation }}
-          >
-            {flavorText}
-          </Typography>
-        )}
+        {flavorText &&
+          screenSizeIsTall && (
+            <Typography
+              sx={{ fontStyle: "italic", fontSize: "13px", marginBottom: "12px", color: Settings.theme.maplocation }}
+            >
+              {flavorText}
+            </Typography>
+          )}
         {rewardsHaveComponents(rewards.components) && (
           <>
             <Typography variant="h6">Components Found:</Typography>

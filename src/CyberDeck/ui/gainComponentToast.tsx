@@ -8,7 +8,7 @@ import { CorruptibleText } from "../../ui/React/CorruptibleText";
 import { Typography } from "@mui/material";
 
 export function gainComponentMessage(result: Partial<ComponentCounts>) {
-  if (!result.chips && !result.rom && !result.neurodes) {
+  if (!result.chips && !result.rom && !result.neurodes && !result.iceBreakers) {
     return;
   }
   SnackbarEvents.emit(
@@ -31,9 +31,15 @@ export function gainComponentMessage(result: Partial<ComponentCounts>) {
           +{result.neurodes} <ComponentSymbol symbol={componentSymbols.neurodes} />
         </>
       )}
+      {!!result.iceBreakers && (
+        <>
+          {" "}
+          +{result.iceBreakers} <ComponentSymbol symbol={componentSymbols.iceBreakers} />
+        </>
+      )}
     </>,
     ToastVariant.INFO,
-    2000,
+    3000,
   );
 }
 

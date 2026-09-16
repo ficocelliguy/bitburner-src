@@ -12,7 +12,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
 
   function reveal() {
     setOpen(true);
-    setTimeout(celebrationSparkles, 500);
+    setTimeout(celebrationSparkles, 400);
   }
 
   function celebrationSparkles() {

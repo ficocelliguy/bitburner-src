@@ -14,6 +14,7 @@ import { Settings } from "../../Settings/Settings";
 import char from "../assets/ProcessingMod/Purple.png";
 import { NetrunGridEntity } from "./NetrunGridEntity";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
+import { CyberdeckState } from "../models/CyberdeckState";
 
 
 export function NetrunMinigame({complete} : {complete: () => void}) : React.ReactElement {
@@ -113,6 +114,7 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         ))}
       </Box>
 
+      {CyberdeckState.netrunningCorruptedSeedUsages < 2 && (<Typography sx={{maxWidth: "550px"}}>Arrow keys or WSAD to move. Break though ICE to look for rewards until your energy runs out - but be warned, some of the ICE has active countermeasures. Watch your threat level! </Typography>)}
       <Button onClick={complete} sx={{ margin: "5px", ...(NetrunningState.energy ? {} : styles.buttonHighlight) }}>
         {NetrunningState.energy ? "End Netrun" : "Netrun Complete"}
       </Button>

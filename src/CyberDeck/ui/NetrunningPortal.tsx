@@ -15,6 +15,8 @@ import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction } fr
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
 import { NetrunningState } from "../models/NetrunningState";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
 
 export function NetrunningPortal({ entered, corrupted = false }: { entered: () => void, corrupted?: boolean }): React.ReactElement {
   useRerender(200);
@@ -46,6 +48,10 @@ export function NetrunningPortal({ entered, corrupted = false }: { entered: () =
           />
         </Box>,
       );
+      return;
+    }
+    if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+      SnackbarEvents.emit("Module storage is full!", ToastVariant.WARNING, 2000);
       return;
     }
     if (!canNetrun(corrupted)) return;
@@ -84,22 +90,23 @@ export function NetrunningPortal({ entered, corrupted = false }: { entered: () =
           </Box>
           {!entering && hasCyberdeck() && (
             <>
-              {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length ? (
+              {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length && (
                 <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
                   Module storage full!
                 </Typography>
-              ) : (
-                <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
-                  {corrupted ? (
-                    <CorruptibleText
-                      content={`ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
-                      spoiler={false}
-                    />
-                  ) : (
-                    `ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
-                  )}
-                </Typography>
               )}
+
+              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
+                {corrupted ? (
+                  <CorruptibleText
+                    content={`ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
+                    spoiler={false}
+                  />
+                ) : (
+                  `ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
+                )}
+              </Typography>
+
               {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
                   Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 10, 2)}%

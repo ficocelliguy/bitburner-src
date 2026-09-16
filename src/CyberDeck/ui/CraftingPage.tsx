@@ -26,6 +26,8 @@ import { useRerender } from "../../ui/React/hooks";
 import { gainComponentMessage } from "./gainComponentToast";
 import { completeCraftedIcebreakerTutorial } from "../models/tutorial";
 import { TutorialChecklist } from "./TutorialChecklist";
+import { SnackbarEvents } from "../../ui/React/Snackbar";
+import { ToastVariant } from "@enums";
 
 export function CraftingPage(): React.ReactElement {
   const render = useRerender();
@@ -52,8 +54,10 @@ export function CraftingPage(): React.ReactElement {
   function tryCraftICEBreaker() {
     const success = craftICEBreaker();
     if (success) {
-      gainComponentMessage({ iceBreakers: 1 });
+      gainComponentMessage({ iceBreakers: 10 });
       completeCraftedIcebreakerTutorial();
+    } else {
+      SnackbarEvents.emit(`Not enough components.`, ToastVariant.WARNING, 2000);
     }
   }
 
@@ -63,6 +67,23 @@ export function CraftingPage(): React.ReactElement {
     }
     setCraftingRewards([results]);
     setShowRewardsModal(true);
+  }
+
+  function tryUpgradeCores() {
+    const result = upgradeCyberdeckServerCores();
+    if (result) {
+      SnackbarEvents.emit(`Cyberdeck server cores upgraded.`, ToastVariant.SUCCESS, 2000);
+    } else {
+      SnackbarEvents.emit(`Cannot afford upgrade.`, ToastVariant.WARNING, 2000);
+    }
+  }
+  function tryUpgradeRam() {
+    const result = upgradeCyberdeckServerRam();
+    if (result) {
+      SnackbarEvents.emit(`Cyberdeck server ram upgraded.`, ToastVariant.SUCCESS, 2000);
+    } else {
+      SnackbarEvents.emit(`Cannot afford upgrade.`, ToastVariant.WARNING, 2000);
+    }
   }
 
   return (
@@ -91,7 +112,7 @@ export function CraftingPage(): React.ReactElement {
           </div>
         </Button>
 
-        <Button onClick={upgradeCyberdeckServerRam} disabled={!canUpgradeCyberdeckServerRam()}>
+        <Button onClick={tryUpgradeRam} disabled={!canUpgradeCyberdeckServerRam()}>
           <div
             style={{
               display: "flex",
@@ -110,7 +131,7 @@ export function CraftingPage(): React.ReactElement {
             )}
           </div>
         </Button>
-        <Button onClick={upgradeCyberdeckServerCores}>
+        <Button onClick={tryUpgradeCores}>
           <div
             style={{
               display: "flex",
