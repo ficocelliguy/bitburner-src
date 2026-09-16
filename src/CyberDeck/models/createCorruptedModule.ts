@@ -1,5 +1,6 @@
 import { WHRNG } from "../../Casino/RNG";
-import { DeckMod, ModType } from "../Types";
+import { DeckMod } from "../Types";
+import { ModType } from "../Enums";
 import {
   getConsumableBuff,
   getDebuff,

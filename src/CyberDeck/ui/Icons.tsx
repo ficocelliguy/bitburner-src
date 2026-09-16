@@ -1,5 +1,6 @@
 import React from "react";
-import { DeckMod, ModImageSet, ModType } from "../Types";
+import { DeckMod, ModImageSet } from "../Types";
+import { ModType } from "../Enums";
 import MemoryIcon from "@mui/icons-material/Memory";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import AllInboxSharpIcon from "@mui/icons-material/AllInboxSharp";
@@ -38,10 +39,11 @@ import blueUplink from "../assets/Uplink/Blue.png";
 import greenUplink from "../assets/Uplink/Green.png";
 
 
-export function getModuleIcon(module: DeckMod) {
-  const size = Settings.CyberdeckWiFU ? 50 : 40;
+export function getModuleIcon(module: DeckMod, sizeOverride: number = 0) {
+  const size = sizeOverride || (Settings.CyberdeckWiFU ? 50 : 40);
+  const width = sizeOverride || 40;
   return (
-    <div style={{ padding: "8px 2px", width: `40px`, height: `${size}px`, color: getRarityColor(module) }}>
+    <div style={{ padding: "8px 2px", width: `${width}px`, height: `${size}px`, color: getRarityColor(module) }}>
       {Settings.CyberdeckWiFU ? getCustomModIcon(module, size) : getModIconComponent(module.type, size)}
     </div>
   );

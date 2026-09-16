@@ -1,4 +1,5 @@
 import { Multipliers } from "../PersonObjects/Multipliers";
+import { ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
 
 export type DeckMod = {
   id: string;
@@ -15,16 +16,6 @@ export type Socket = {
   modId: string;
   socketIndex: number;
 };
-
-export const ModType = {
-  CyberdeckIOPanel: "Deck I/O Panel",
-  PowerSupply: "Power Supply",
-  ProcessingMod: "Processing Mod",
-  Uplink: "Uplink",
-  RackExtension: "Rack Extension",
-  SkillChip: "SkillChip",
-} as const;
-export type ModType = (typeof ModType)[keyof typeof ModType];
 
 export type ConsumableStats = {
   netrunning_lvl: number;
@@ -104,9 +95,30 @@ export type ComponentStats = {
 };
 
 export type NetrunningRewards = {
-  success: boolean;
   mods: DeckMod[];
   components: Partial<ComponentCounts>;
+};
+
+export type NetrunEntity = {
+  type: NetrunEntityVariant;
+  group: number;
+  hits: number;
+  threat: number;
+  hasBomb: boolean;
+  flagged: boolean;
+  visible: boolean;
+  x: number;
+  y: number;
+};
+
+export type NetrunStatus = {
+  success: boolean;
+  coordinates: number[];
+  surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
+  threat: number;
+  threatCount: number;
+  energy: number;
+  score: number;
 };
 
 export type ModKey =

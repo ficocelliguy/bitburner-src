@@ -1,11 +1,5 @@
 REQUIRED FOR MVP
 
-- add notification for all dev buttons
-
-- Add WiFUs (Wired Firmware Unit)
-  - update setting description
-  - add bigger icons in tooltip
-
 - code review
 - unit tests
 - lint
@@ -18,10 +12,14 @@ REQUIRED FOR MVP
 
 - remove tmp
 
-
 NETRUNNING MINIGAME:
 
-- API
+- expose enums - test
+  - directions
+  - module types
+  - entity types
+
+- API - test
   - update netrun() and delve()
     - no longer async
     - starts netrun
@@ -43,6 +41,8 @@ Corrupted variant:
 
 
 TODO:
+
+- add notification for all dev buttons
 
 - random character art as player for netrunning
 

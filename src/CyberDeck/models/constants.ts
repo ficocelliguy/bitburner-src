@@ -1,4 +1,5 @@
-import { ComponentCounts, ModType } from "../Types";
+import { ComponentCounts } from "../Types";
+import { ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "./CyberdeckState";
 import { CONSTANTS } from "../../Constants";

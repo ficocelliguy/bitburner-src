@@ -11,7 +11,6 @@ import { initNetrunGrid } from "../models/netrunningMinigame";
 export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
-    success: false,
     mods: [],
     components: {},
   });
@@ -19,7 +18,6 @@ export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): Reac
   function endNetrun() {
     NetrunningState.isNetrunning = false;
     const rewards = netrunRewards(corrupted);
-    if (!rewards.success) return;
     setNetrunningModRewards(rewards);
     setShowRewardsModal(true)
   }

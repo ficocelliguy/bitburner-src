@@ -2,12 +2,12 @@ import React from "react";
 import { Box, Tooltip } from "@mui/material";
 import {
   GRID_SIZE,
-  NetrunEntity,
-  netrunEntityVariant,
   NetrunningState,
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
+import { NetrunEntity } from "../Types";
+import { NetrunEntityVariant } from "../Enums";
 
 export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
   const color = getEntityColor(entity);
@@ -16,23 +16,23 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
     if (!neighbor || !entity.visible) {
       return Settings.theme.well;
     }
-    if (entity.type === netrunEntityVariant.firewall) {
+    if (entity.type === NetrunEntityVariant.firewall) {
       return Settings.theme.secondarydark;
     }
     if (
       neighbor.group === entity.group ||
-      (entity.type === netrunEntityVariant.empty && neighbor.type === entity.type)
+      (entity.type === NetrunEntityVariant.empty && neighbor.type === entity.type)
     ) {
       return color;
     }
-    if (entity.flagged && entity.type === netrunEntityVariant.ice) {
+    if (entity.flagged && entity.type === NetrunEntityVariant.ice) {
       return Settings.theme.errorlight;
     }
     return Settings.theme.secondarydark;
   }
 
   function getOpacity() {
-    if (entity.type !== netrunEntityVariant.ice || entity.hits) {
+    if (entity.type !== NetrunEntityVariant.ice || entity.hits) {
       return 1;
     }
     return [0.6, 0.7, 0.8, 0.9, 1][entity.group % 5];
@@ -58,12 +58,12 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
 
   const tooltip = !entity.visible ? "<unknown entity>" :
     entity.hasBomb ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers." :
-    entity.type == netrunEntityVariant.ice
+    entity.type == NetrunEntityVariant.ice
       ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level!. Can be broken, if there are ICEBreakers still available." :
-      entity.type == netrunEntityVariant.dataStore ? "A data cache! Grab it while you can!" :
-        entity.type === netrunEntityVariant.firewall ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce" : "";
+      entity.type == NetrunEntityVariant.dataStore ? "A data cache! Grab it while you can!" :
+        entity.type === NetrunEntityVariant.firewall ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce" : "";
 
-  const size = entity.type === netrunEntityVariant.empty ? GRID_SIZE : (1 - entity.hits * 0.1) * GRID_SIZE;
+  const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE : (1 - entity.hits * 0.1) * GRID_SIZE;
 
   return (
     <Tooltip title={tooltip}>

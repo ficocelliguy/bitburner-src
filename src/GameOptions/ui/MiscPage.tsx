@@ -60,8 +60,7 @@ export const MiscPage = (): React.ReactElement => {
         text="Enable WiFU Cyberdeck Theme"
         tooltip={
           <>
-            If enabled, changes the default cyberdeck mod icons to instead be WiFU as a nod to Molly, Trinity, Rachael,
-            Judy, Lucy, and other characters in cyberpunk media.
+            If enabled, changes the default cyberdeck mod icons to instead be WiFU as a nod to the many colorful characters in cyberpunk media.
           </>
         }
       />

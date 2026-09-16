@@ -3,7 +3,8 @@ import { Draggable } from "react-beautiful-dnd";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { CyberdeckEvents, getChargedModuleIDs } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
-import { DeckMod, ModType, Socket } from "../Types";
+import { DeckMod, Socket } from "../Types";
+import { ModType } from "../Enums";
 import { useRerender } from "../../ui/React/hooks";
 import { getModuleIcon, getRarityColor } from "./Icons";
 import { SocketIOPanel } from "./SocketIOPanel";
@@ -31,11 +32,9 @@ export function ModuleComponent({
   draggingWireEnded,
   draggingInstalledModule,
   currentDragSource,
-  isAnyDragActive,
 }: DeckModuleProps) {
   const render = useRerender(200);
   const styles = useCyberdeckStyles();
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
   const updateDisplay = useCallback(() => {
     render();
   }, [render]);
@@ -97,27 +96,32 @@ export function ModuleComponent({
         >
           <Tooltip
             title={
-              <div>
-                <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                  {module.type} {getRarityText(module)}
-                </Typography>
-                <div style={{ color: Settings.theme.warning }}>
-                  {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
-                </div>{" "}
-                <Typography
-                  sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
-                >
-                  ID: {module.id}
-                </Typography>
-                <div style={{ margin: "10px 0" }}>
-                  <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
+              <div style={{display: "inline-flex", alignItems: "center"}}>
+                <div>
+                  <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
+                    {module.type} {getRarityText(module)}
+                  </Typography>
+                  <div style={{ color: Settings.theme.warning }}>
+                    {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
+                  </div>{" "}
+                  <Typography
+                    sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
+                  >
+                    ID: {module.id}
+                  </Typography>
+                  <div style={{ margin: "10px 0" }}>
+                    <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
+                  </div>
+                  <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
+                    {getModuleDescription(module.type)}
+                  </Typography>
+                  {Settings.CyberdeckWiFU && (
+                    <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
+                      Art by @Mango_to_sleep
+                    </Typography>
+                  )}
                 </div>
-                <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                  {getModuleDescription(module.type)}
-                </Typography>
-                {Settings.CyberdeckWiFU && <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
-                  Art by @Mango_to_sleep
-                </Typography>}
+                <div style={{marginLeft: "10px"}}>{getModuleIcon(module, 150)}</div>
               </div>
             }
             placement={index % 2 === 0 ? "top-end" : "top-start"}

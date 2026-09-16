@@ -247,11 +247,14 @@ const cyberdeck = {
   storeMod: 0.5,
   addConnection: 0.5,
   removeConnection: 0.05,
-  netrun: 3,
-  getNetrunningCost: 0,
-  getNetrunningTraceFraction: 0,
   getRackCapacity: 0,
   cortexShare: 2.4,
+  netrun: {
+    start: 0,
+    move: 3,
+    finish: 0,
+    getNetrunningCost: 0,
+  },
   stats: {
     getStatBonuses: 0,
     getLevels: 0,

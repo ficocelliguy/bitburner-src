@@ -7,14 +7,16 @@ import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
 import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
 import {
   GRID_SIZE,
-  netrunDirections,
   NetrunningState,
 } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
-import char from "../assets/ProcessingMod/Purple.png";
+import purple from "../assets/ProcessingMod/Purple.png";
+import yellow from "../assets/Special/Yellow.png";
+import green from "../assets/PowerSupply/Green.png";
 import { NetrunGridEntity } from "./NetrunGridEntity";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { CyberdeckState } from "../models/CyberdeckState";
+import { NetrunDirection } from "../Enums";
 
 
 export function NetrunMinigame({complete} : {complete: () => void}) : React.ReactElement {
@@ -23,19 +25,19 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "w") {
-        move(netrunDirections.up);
+        move(NetrunDirection.up);
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === "ArrowDown" || event.key === "s") {
-        move(netrunDirections.down);
+        move(NetrunDirection.down);
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === "ArrowLeft" || event.key === "a") {
-        move(netrunDirections.left);
+        move(NetrunDirection.left);
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === "ArrowRight" || event.key === "d") {
-        move(netrunDirections.right);
+        move(NetrunDirection.right);
         event.preventDefault();
         event.stopPropagation();
       }
@@ -45,6 +47,8 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
       document.removeEventListener("keydown", listener);
     };
   }, []);
+
+  const char = [purple, yellow, green][CyberdeckState.netrunningSeedUsages % 3];
 
   const {threat, signals} = getThreatSignalStrength()
   const threatColor = getThreatColor(threat) || Settings.theme.button;

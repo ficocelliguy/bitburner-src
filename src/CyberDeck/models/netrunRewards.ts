@@ -4,7 +4,8 @@ import {
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
-import { ModType, NetrunningRewards } from "../Types";
+import { NetrunningRewards } from "../Types";
+import { ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
@@ -81,7 +82,6 @@ export function netrunRewards(corrupted = false): NetrunningRewards {
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 
   return {
-    success: true,
     mods: rewards,
     components: {
       chips: chipsGained,
@@ -126,7 +126,6 @@ function corruptedNetrun(): NetrunningRewards {
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 
   return {
-    success: true,
     mods: rewards,
     components: {
       cores: coresGained,

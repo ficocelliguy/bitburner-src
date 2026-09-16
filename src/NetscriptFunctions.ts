@@ -33,6 +33,8 @@ import {
   BladeburnerActionType,
   SpecialBladeburnerActionTypeForSleeve,
   GangTaskNameEnum,
+  NetrunDirection,
+  NetrunEntityVariant,
 } from "@enums";
 import { PromptEvent } from "./ui/React/PromptManager";
 import { GetServer } from "./Server/AllServers";
@@ -76,7 +78,7 @@ import { NetscriptFormulas } from "./NetscriptFunctions/Formulas";
 import { NetscriptStockMarket } from "./NetscriptFunctions/StockMarket";
 import { NetscriptGrafting } from "./NetscriptFunctions/Grafting";
 import type { NS, RecentScript, ProcessInfo, NSEnums, Server as NSInterfaceServer } from "@nsdefs";
-import { ModType } from "./CyberDeck/Types";
+import { ModType } from "@enums";
 import { NetscriptSingularity } from "./NetscriptFunctions/Singularity";
 import { NetscriptCloud } from "./NetscriptFunctions/Cloud";
 
@@ -142,6 +144,8 @@ export const enums: NSEnums = {
   FragmentType: FragmentTypeEnum,
   DarknetResponseCode: ResponseCodeEnum,
   CyberdeckModType: ModType,
+  NetrunDirection,
+  NetrunEntityVariant,
   ProgramName: CompletedProgramName,
   GangTaskName: GangTaskNameEnum,
 };

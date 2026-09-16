@@ -4503,9 +4503,41 @@ type EndgameMults = {
 };
 
 type NetrunningRewards = {
-  success: boolean;
   mods: DeckMod[];
   components: Partial<ComponentCounts>;
+};
+
+/** @public */
+type NetrunEntityVariantEnumType = {
+  empty: "empty";
+  ice: "ice";
+  firewall: "firewall";
+  dataStore: "dataStore";
+  offline: "offline";
+};
+
+/** @public */
+type NetrunEntityVariant = _ValueOf<NetrunEntityVariantEnumType>;
+
+/** @public */
+type NetrunDirectionEnumType = {
+  up: "up";
+  down: "down";
+  left: "left";
+  right: "right";
+};
+
+/** @public */
+type NetrunDirection = _ValueOf<NetrunDirectionEnumType>;
+
+type NetrunStatus = {
+  success: boolean;
+  coordinates: number[];
+  surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
+  threat: number;
+  threatCount: number;
+  energy: number;
+  score: number;
 };
 
 /**
@@ -4639,40 +4671,6 @@ export interface Cyberdeck {
   removeConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 
   /**
-   * Delve into the cybernet to look for new mods. Costs ICEBreakers to pierce through the ICE defenses that try to
-   * keep netrunners out.
-   *
-   * This function must be awaited - netrunning takes some time.
-   *
-   * @remarks
-   * RAM cost: 3 GB
-   *
-   * @returns an indication if netrunning was successful, and the rewards from netrunning (if any)
-   */
-  netrun(): Promise<NetrunningRewards>;
-
-  /**
-   * Get the number of ICEBreakers required to netrun currently.
-   *
-   * ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security
-   * networks that were breached), and the cost slowly goes back down afterwards.
-   *
-   * @remarks
-   * RAM cost: 0 GB
-   *
-   * @returns the current ICEBreaker cost of netrunning
-   */
-  getNetrunningCost(): number;
-
-  /**
-   * @returns the progress of the netrunning cost resetting to the base value, as a decimal
-   *
-   * @remarks
-   * RAM cost: 0 GB
-   */
-  getNetrunningTraceFraction(): number;
-
-  /**
    * Get the max number of mod slots available in the cyberdeck mod rack. Includes any extra
    * slots from charged rack extension mods.
    *
@@ -4697,6 +4695,50 @@ export interface Cyberdeck {
    * some part of you is always half in the tank.
    */
   cortexShare(): Promise<void>;
+
+  netrun: {
+    /**
+     * Delve into the cybernet to look for new mods. Costs ICEBreakers to pierce through the ICE defenses that try to
+     * keep netrunners out.
+     *
+     * @returns the status of the netrun, including if the current run was successful.
+     *
+     * @remarks
+     * Ram cost: 0 GB
+     */
+    start(): NetrunStatus;
+
+    /**
+     * Attemts to move to an adjacent nearby empty space, or interact with an adgacent entity.
+     *
+     * @param direction - the direction to move
+     *
+     * @remarks
+     * Ram cost: 3 GB
+     */
+    move(direction: NetrunDirection): Promise<NetrunStatus>;
+
+    /**
+     * Completes the current netrun and retrieves rewards.
+     *
+     * @remarks
+     * Ram cost: 0 GB
+     */
+    finish(): NetrunningRewards;
+
+    /**
+     * Get the number of ICEBreakers required to netrun currently.
+     *
+     * ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security
+     * networks that were breached), and the cost slowly goes back down afterwards.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     *
+     * @returns the current ICEBreaker cost of netrunning
+     */
+    getNetrunningCost(): number;
+  };
 
   /**
    * Namespace for API that give statistics on mod effects, components, and levels
@@ -10426,6 +10468,8 @@ type NSEnums = {
   ProgramName: ProgramNameEnumType;
   GangTaskName: GangTaskNameEnumType;
   CyberdeckModType: CyberdeckModEnumType;
+  NetrunDirection: NetrunDirectionEnumType;
+  NetrunEntityVariant: NetrunEntityVariantEnumType;
 };
 
 /**

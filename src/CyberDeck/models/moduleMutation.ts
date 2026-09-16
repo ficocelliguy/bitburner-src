@@ -4,7 +4,8 @@ import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, getChargedModules
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { DeckMod, ModType, Socket } from "../Types";
+import { DeckMod, Socket } from "../Types";
+import { ModType } from "../Enums";
 import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";

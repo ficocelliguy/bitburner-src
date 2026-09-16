@@ -1,6 +1,7 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
-import { ComponentCounts, DeckMod, ModType } from "../Types";
+import { ComponentCounts, DeckMod } from "../Types";
+import { ModType } from "../Enums";
 import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
 import {
   ICEBreakerCraftingCost,
@@ -8,9 +9,7 @@ import {
   processingModuleCraftingCost,
   uplinkCraftingCost,
 } from "./constants";
-import { getRecordKeys } from "../../Types/Record";
 import {
-  getAllStatRanges,
   getConsumableBuff,
   getDebuff,
   getID,

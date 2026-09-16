@@ -1,6 +1,8 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
-import { Cyberdeck, DeckMod } from "@nsdefs";
+import { Cyberdeck } from "@nsdefs";
+import { DeckMod } from "./Types";
 import { LocationName } from "@enums";
+import { getEnumHelper } from "../utils/EnumHelper";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
   craftICEBreaker,
@@ -24,7 +26,7 @@ import { createConnection, disconnectConnection, moveModule } from "./models/mod
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, getNetrunningTraceFraction, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
-import { ComponentCounts } from "./Types";
+import { ComponentCounts, NetrunningRewards, NetrunStatus } from "./Types";
 import {
   getCyberdeckServerCoreUpgradeCost,
   getCyberdeckServerRamUpgradeCost,
@@ -33,6 +35,8 @@ import {
 } from "./models/cyberdeckServer";
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
+import { NetrunningState } from "./models/NetrunningState";
+import { getSurroundings, getThreatSignalStrength, move } from "./models/netrunningMinigame";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -166,36 +170,6 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       }
       return success;
     },
-    async netrun(ctx: NetscriptContext) {
-      if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost()) {
-        logger(ctx)(
-          `Not enough ICEBreakers to netrun. ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost()}`,
-        );
-        return { success: false, mods: [], components: {} };
-      }
-      if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
-        logger(ctx)(
-          `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
-        );
-        return { success: false, mods: [], components: {} };
-      }
-
-      logger(ctx)(`Starting netrun...`);
-      await helpers.netscriptDelay(ctx, 1000);
-      const results = netrunRewards();
-      if (results.success) {
-        logger(ctx)(`Netrun successfully. ${results.mods.length} new modules found.`);
-      } else {
-        logger(ctx)(`Netrun attempt failed.`);
-      }
-      return results;
-    },
-    getNetrunningCost() {
-      return getCurrentNetrunningIceCost();
-    },
-    getNetrunningTraceFraction() {
-      return getNetrunningTraceFraction();
-    },
     getRackCapacity() {
       return getCurrentRackSize();
     },
@@ -210,7 +184,89 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         CyberdeckState.cortexSharedThreads -= threads;
       });
     },
+    netrun: {
+      start(ctx: NetscriptContext): NetrunStatus {
+        const failedToStartResponse = {
+          success: false,
+          coordinates: [0, 0],
+          energy: 0,
+          score: 0,
+          surroundings: getSurroundings(),
+          threat: 0,
+          threatCount: 0,
+        };
+        if (NetrunningState.isNetrunning) {
+          logger(ctx)("Failed to start netrun - a run is already in progress.");
+          return failedToStartResponse;
+        }
+        if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost()) {
+          logger(ctx)(
+            `Not enough ICEBreakers to netrun. ${
+              CyberdeckState.components.iceBreakers
+            }/${getCurrentNetrunningIceCost()}`,
+          );
+          return failedToStartResponse;
+        }
+        if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+          logger(ctx)(
+            `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
+          );
+          return failedToStartResponse;
+        }
 
+        logger(ctx)(`Starting netrun...`);
+        const { threat, signals } = getThreatSignalStrength();
+        return {
+          success: true,
+          coordinates: structuredClone(NetrunningState.location),
+          energy: NetrunningState.energy,
+          score: NetrunningState.rewardScore,
+          threat,
+          threatCount: signals,
+          surroundings: getSurroundings(),
+        };
+      },
+      move(ctx: NetscriptContext, directionInput: unknown): Promise<NetrunStatus> {
+        const direction = getEnumHelper("NetrunDirection").nsGetMember(ctx, directionInput, "direction");
+        if (!NetrunningState.isNetrunning) {
+          return Promise.resolve({
+            success: false,
+            coordinates: [0, 0],
+            energy: 0,
+            score: 0,
+            surroundings: getSurroundings(),
+            threat: 0,
+            threatCount: 0,
+          });
+        }
+        // TODO-fico: log feedback - OOM, off the map, broke ice, etc
+        return helpers.netscriptDelay(ctx, 500).then(() => {
+          const result = move(direction);
+          const {threat, signals} = getThreatSignalStrength();
+          return {
+            success: result,
+            coordinates: structuredClone(NetrunningState.location),
+            energy: NetrunningState.energy,
+            score: NetrunningState.rewardScore,
+            threat,
+            threatCount: signals,
+            surroundings: getSurroundings(),
+          };
+        });
+      },
+      finish(ctx: NetscriptContext): NetrunningRewards {
+        if (!NetrunningState.isNetrunning) {
+          throw new Error("Failed to complete netrun - no run in progress.");
+        }
+        NetrunningState.isNetrunning = false;
+        const results = netrunRewards();
+        logger(ctx)(`Netrun completed. ${results.mods.length} new modules found.`);
+        return results;
+      },
+      getNetrunningCost() {
+        return getCurrentNetrunningIceCost();
+      },
+    },
     stats: {
       getStatBonuses: () => {
         const state = getCyberdeckStatBonuses();
@@ -467,11 +523,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
         await helpers.netscriptDelay(ctx, 5000);
         const results = netrunRewards(true);
-        if (results.success) {
-          logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
-        } else {
-          logger(ctx)(`Old net delve attempt failed.`);
-        }
+        logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
         return results;
       },
       trace: (ctx: NetscriptContext) => {
@@ -480,7 +532,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           return Infinity;
         }
         return getNetrunningTraceFraction(true);
-      }
+      },
     },
   };
 }

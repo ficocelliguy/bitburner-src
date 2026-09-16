@@ -1,10 +1,7 @@
 import {
-  netrunEntityVariant,
   NETRUNNING_HEIGHT,
   NETRUNNING_WIDTH,
-  NetrunEntity,
   NetrunningState,
-  netrunDirectionType,
 } from "./NetrunningState";
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import _ from "lodash";
@@ -12,19 +9,21 @@ import { clampNumber } from "../../utils/helpers/clampNumber";
 import { Settings } from "../../Settings/Settings";
 import { createSparkles } from "../utils/fx";
 import { getCurrentNetrunningIceCost } from "./netrunRewards";
+import { NetrunEntity } from "../Types";
+import { NetrunDirection, NetrunEntityVariant } from "../Enums";
 
-export function move(direction: netrunDirectionType) {
-  const [x,y] = NetrunningState.location;
+export function move(direction: NetrunDirection) {
+  const [x, y] = NetrunningState.location;
   const dx = direction === "left" ? -1 : direction === "right" ? 1 : 0;
   const dy = direction === "up" ? -1 : direction === "down" ? 1 : 0;
   const newLocation = NetrunningState.grid[y + dy]?.[x + dx];
   if (!newLocation) {
     return false;
   }
-  if (newLocation.type === netrunEntityVariant.empty) {
+  if (newLocation.type === NetrunEntityVariant.empty) {
     NetrunningState.location = [x + dx, y + dy];
     updateCurrentThreatSignalStrength();
-  } else if (newLocation.type === netrunEntityVariant.dataStore) {
+  } else if (newLocation.type === NetrunEntityVariant.dataStore) {
     breakEntity(newLocation);
     consumeEnergy(energyCost() * 0.3);
     const groupSize = NetrunningState.groups[newLocation.group]?.length ?? 5;
@@ -36,11 +35,11 @@ export function move(direction: netrunDirectionType) {
     return false;
   } else if (newLocation.hasBomb) {
     detonateBomb(newLocation);
-  } else if (newLocation.type === netrunEntityVariant.ice) {
+  } else if (newLocation.type === NetrunEntityVariant.ice) {
     breakEntity(newLocation);
     consumeEnergy(energyCost());
     NetrunningState.rewardScore += getIceReward(newLocation);
-  } else if (newLocation.type === netrunEntityVariant.firewall) {
+  } else if (newLocation.type === NetrunEntityVariant.firewall) {
     newLocation.hits++;
     consumeEnergy(energyCost());
     if (newLocation.hits >= 3) {
@@ -73,7 +72,7 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   for (let y = 0; y < height; y++) {
     const row: NetrunEntity[] = [];
     for (let x = 0; x < width; x++) {
-      row.push({ type: netrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, flagged: false, visible: false, x, y });
+      row.push({ type: NetrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, flagged: false, visible: false, x, y });
     }
     grid.push(row);
   }
@@ -107,15 +106,15 @@ export function initNetrunGrid(corrupted: boolean) {
       if (!NetrunningState.grid[y]?.[x]) {
         break;
       }
-      NetrunningState.grid[y][x].type = netrunEntityVariant.firewall;
+      NetrunningState.grid[y][x].type = NetrunEntityVariant.firewall;
     }
   }
 
   // Fill with ICE
   for (let y = 0; y < NETRUNNING_HEIGHT; y++) {
     for (let x = 0; x < NETRUNNING_WIDTH; x++) {
-      if (NetrunningState.grid[y][x].type === netrunEntityVariant.empty && Math.random() < 0.9) {
-        NetrunningState.grid[y][x].type = netrunEntityVariant.ice;
+      if (NetrunningState.grid[y][x].type === NetrunEntityVariant.empty && Math.random() < 0.9) {
+        NetrunningState.grid[y][x].type = NetrunEntityVariant.ice;
       }
     }
   }
@@ -131,14 +130,14 @@ export function initNetrunGrid(corrupted: boolean) {
       }
       groupId++;
       const stack: [number, number][] = [[x, y]];
-      while (stack.length && ((NetrunningState.groups[groupId]?.length ?? 0) < 7 || type !== netrunEntityVariant.ice)) {
+      while (stack.length && ((NetrunningState.groups[groupId]?.length ?? 0) < 7 || type !== NetrunEntityVariant.ice)) {
         const [cx, cy] = stack.pop() ?? [-1, -1];
         const entity = NetrunningState.grid[cy]?.[cx];
         if (
           !entity ||
           entity.type !== type ||
           entity.group ||
-          (type === netrunEntityVariant.ice && NetrunningState.groups[groupId]?.length > 3 && Math.random() < 0.3)
+          (type === NetrunEntityVariant.ice && NetrunningState.groups[groupId]?.length > 3 && Math.random() < 0.3)
         ) {
           continue;
         }
@@ -157,9 +156,9 @@ export function initNetrunGrid(corrupted: boolean) {
   // Convert tiny ice groups into empty space
   for (const group of Object.values(NetrunningState.groups)) {
     const id = group[0].group;
-    if (id && group.length < 3 && group[0].type === netrunEntityVariant.ice) {
+    if (id && group.length < 3 && group[0].type === NetrunEntityVariant.ice) {
       for (const entity of group) {
-        entity.type = netrunEntityVariant.empty;
+        entity.type = NetrunEntityVariant.empty;
       }
     }
   }
@@ -175,7 +174,7 @@ export function initNetrunGrid(corrupted: boolean) {
   const bombCount = Math.random() * 2 + 4;
   for (let i = 0; i < bombCount; i++) {
     const iceGroup = _.shuffle(
-      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb),
+      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb),
     )[0];
     if (!iceGroup) {
       break;
@@ -190,14 +189,14 @@ export function initNetrunGrid(corrupted: boolean) {
   for (let i = 0; i < rewardCount; i++) {
     const iceGroup = _.shuffle(
       Object.values(NetrunningState.groups).filter(
-        (g) => g[0]?.type === netrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10),
+        (g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10),
       ),
     )[0];
     if (!iceGroup) {
       break;
     }
     for (const member of iceGroup) {
-      member.type = netrunEntityVariant.dataStore;
+      member.type = NetrunEntityVariant.dataStore;
     }
   }
 
@@ -210,13 +209,13 @@ function breakEntity(entity: NetrunEntity) {
 
   const group = NetrunningState.groups[entity.group];
   const originalType = entity.type;
-  entity.type = netrunEntityVariant.empty;
+  entity.type = NetrunEntityVariant.empty;
   revealGroup(entity);
-  if (originalType === netrunEntityVariant.firewall) {
+  if (originalType === NetrunEntityVariant.firewall) {
     return;
   }
   for (const member of group) {
-    member.type = netrunEntityVariant.empty;
+    member.type = NetrunEntityVariant.empty;
     revealGroup(NetrunningState.grid[member.y - 1]?.[member.x]);
     revealGroup(NetrunningState.grid[member.y + 1]?.[member.x]);
     revealGroup(NetrunningState.grid[member.y]?.[member.x - 1]);
@@ -231,7 +230,7 @@ function revealGroup(entity: NetrunEntity | undefined ) {
   for (const member of group) {
     member.visible = true;
   }
-  if (entity.type !== netrunEntityVariant.empty) return;
+  if (entity.type !== NetrunEntityVariant.empty) return;
 
   for (const entity of group) {
     const neighbors = [
@@ -287,7 +286,7 @@ export function getThreatSignalStrength() {
     return {threat: 0, signals: 0};
   }
   const bombGroups = Object.values(NetrunningState.groups).filter(
-    (g) => g[0]?.type === netrunEntityVariant.ice && g[0]?.hasBomb && !g[0]?.hits,
+    (g) => g[0]?.type === NetrunEntityVariant.ice && g[0]?.hasBomb && !g[0]?.hits,
   );
   let threat = 0;
   let signals = 0;
@@ -346,17 +345,17 @@ export function getEntityColor(entity: NetrunEntity) {
   if (!entity.visible) {
     return theme.backgroundprimary;
   }
-  if (entity.type === netrunEntityVariant.dataStore) {
+  if (entity.type === NetrunEntityVariant.dataStore) {
     return Settings.theme.money;
   }
-  if (entity.type === netrunEntityVariant.ice && entity.hasBomb && entity.hits) {
+  if (entity.type === NetrunEntityVariant.ice && entity.hasBomb && entity.hits) {
     return Settings.theme.error;
   }
-  if (entity.type === netrunEntityVariant.ice) {
+  if (entity.type === NetrunEntityVariant.ice) {
     const variant = entity.group % 2;
     return [theme.infolight, theme.info][variant];
   }
-  if (entity.type === netrunEntityVariant.firewall) {
+  if (entity.type === NetrunEntityVariant.firewall) {
     return Settings.theme.cha;
   }
   return Settings.theme.welllight;
@@ -377,7 +376,7 @@ function shakePowerIndicator() {
 
 
 export function flagEntity(entity:NetrunEntity) {
-  if (!entity.visible || entity.type !== netrunEntityVariant.ice) {
+  if (!entity.visible || entity.type !== NetrunEntityVariant.ice) {
     return;
   }
   const group = NetrunningState.groups[entity.group];
@@ -385,4 +384,14 @@ export function flagEntity(entity:NetrunEntity) {
     member.flagged = !member.flagged;
   }
   CyberdeckEvents.emit();
+}
+
+export function getSurroundings(): Record<NetrunDirection, NetrunEntityVariant> {
+  const [x, y] = NetrunningState.location;
+  return {
+    [NetrunDirection.up]: NetrunningState.grid[y - 1]?.[x]?.type,
+    [NetrunDirection.down]: NetrunningState.grid[y + 1]?.[x]?.type,
+    [NetrunDirection.left]: NetrunningState.grid[y]?.[x - 1]?.type,
+    [NetrunDirection.right]: NetrunningState.grid[y]?.[x + 1]?.type,
+  };
 }

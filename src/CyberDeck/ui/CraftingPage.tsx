@@ -11,7 +11,8 @@ import {
   uplinkCraftingCost,
 } from "../models/constants";
 import { getModIconComponent } from "./Icons";
-import { DeckMod, ModType } from "../Types";
+import { DeckMod } from "../Types";
+import { ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
 import {
@@ -91,7 +92,7 @@ export function CraftingPage(): React.ReactElement {
       <RewardsModal
         title={"Crafting successful!"}
         open={showRewardsModal}
-        rewards={{ success: true, mods: craftingRewards, components: {} }}
+        rewards={{ mods: craftingRewards, components: {} }}
         onClose={() => setShowRewardsModal(false)}
       />
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginRight: "20px", width: "300px" }}>
