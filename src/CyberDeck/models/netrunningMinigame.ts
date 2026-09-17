@@ -13,7 +13,7 @@ import { NetrunEntity } from "../Types";
 import { NetrunDirection, NetrunEntityVariant } from "../Enums";
 
 export function move(direction: NetrunDirection) {
-  const [x, y] = NetrunningState.location;
+  const [y, x] = NetrunningState.location;
   const dx = direction === "left" ? -1 : direction === "right" ? 1 : 0;
   const dy = direction === "up" ? -1 : direction === "down" ? 1 : 0;
   const newLocation = NetrunningState.grid[y + dy]?.[x + dx];
@@ -21,7 +21,7 @@ export function move(direction: NetrunDirection) {
     return false;
   }
   if (newLocation.type === NetrunEntityVariant.empty) {
-    NetrunningState.location = [x + dx, y + dy];
+    NetrunningState.location = [y + dy, x + dx];
     updateCurrentThreatSignalStrength();
   } else if (newLocation.type === NetrunEntityVariant.dataStore) {
     breakEntity(newLocation);
@@ -298,13 +298,13 @@ export function getThreatSignalStrength() {
 }
 
 function updateCurrentThreatSignalStrength() {
-  const [x,y] = NetrunningState.location;
+  const [y, x] = NetrunningState.location;
   NetrunningState.grid[y][x].threat = getThreatSignalStrength().threat;
 }
 
 function getDistanceToGroup(group: NetrunEntity[]): number {
   return group.reduce((distance, member) => {
-    const [x,y] = NetrunningState.location;
+    const [y, x] = NetrunningState.location;
     const memberDistance = Math.sqrt((x - member.x) ** 2 + (y - member.y) ** 2) - 1;
     return Math.min(memberDistance, distance);
   }, 999);
@@ -385,7 +385,7 @@ export function flagEntity(entity:NetrunEntity) {
 }
 
 export function getSurroundings(): Record<NetrunDirection, NetrunEntityVariant> {
-  const [x, y] = NetrunningState.location;
+  const [y, x] = NetrunningState.location;
   return {
     [NetrunDirection.up]: NetrunningState.grid[y - 1]?.[x]?.type ?? null,
     [NetrunDirection.down]: NetrunningState.grid[y + 1]?.[x]?.type ?? null,

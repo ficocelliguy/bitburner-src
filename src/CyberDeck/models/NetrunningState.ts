@@ -10,7 +10,8 @@ export const NetrunningState = {
   corrupted: false,
   shaking: false,
   shakingBattery: false,
-  location: [0, 0],
+  location: [0, 0], // [y, x] — matches grid[y][x] indexing
+
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,
   energy: 1,

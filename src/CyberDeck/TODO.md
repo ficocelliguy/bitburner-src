@@ -41,6 +41,8 @@ TODO:
 - method to detect if a move would cause overlaps
   - Reject moves ahead of time instead of partial rollbacks
 
+- full docs for various types in the API
+
 TODO LATER:
 
 - save netrun mid-run?

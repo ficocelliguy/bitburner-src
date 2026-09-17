@@ -4401,7 +4401,7 @@ type ComponentCounts = {
   cores: number;
   iceBreakers: number;
 };
-
+/** @public */
 type DeckMod = {
   id: string;
   rarity: number;
@@ -4412,7 +4412,7 @@ type DeckMod = {
   corrupted?: boolean;
   charged?: boolean;
 };
-
+/** @public */
 type CyberdeckStats = {
   playerMults: Multipliers;
   otherMults: MiscMults;
@@ -4420,7 +4420,7 @@ type CyberdeckStats = {
   consumableStats: ConsumableStats;
   endgameStats: EndgameMults;
 };
-
+/** @public */
 type ModStats = {
   playerMults?: Partial<Multipliers> | null;
   otherMults?: Partial<MiscMults> | null;
@@ -4428,7 +4428,7 @@ type ModStats = {
   consumableStats?: Partial<ConsumableStats>;
   endgameStats?: Partial<EndgameMults>;
 };
-
+/** @public */
 type ComponentStats = {
   ROM: {
     backdoors: number;
@@ -4454,9 +4454,11 @@ type ComponentStats = {
     netrunning: number;
   };
 };
-
+/** @public */
 type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+/** @public */
 type Connection = [Socket, Socket];
+/** @public */
 type Socket = {
   modId: string;
   socketIndex: number;
@@ -4475,6 +4477,7 @@ type CyberdeckModEnumType = {
 /** @public */
 type ModType = _ValueOf<CyberdeckModEnumType>;
 
+/** @public */
 type MiscMults = {
   romProduction: number;
   chipProduction: number;
@@ -4487,6 +4490,7 @@ type MiscMults = {
   class_cost: number;
 };
 
+/** @public */
 type ConsumableStats = {
   netrunning_lvl: number;
   netrun_cooldown_lvl: number;
@@ -4494,6 +4498,7 @@ type ConsumableStats = {
   crafting_lvl: number;
 };
 
+/** @public */
 type EndgameMults = {
   stamina_gain: number;
   graft_speed: number;
@@ -4503,6 +4508,7 @@ type EndgameMults = {
   int_exp: number;
 };
 
+/** @public */
 type NetrunningRewards = {
   mods: DeckMod[];
   components: Partial<ComponentCounts>;
@@ -4532,8 +4538,10 @@ type NetrunDirectionEnumType = {
 /** @public */
 type NetrunDirection = _ValueOf<NetrunDirectionEnumType>;
 
+/** @public */
 type NetrunStatus = {
   success: boolean;
+  /** the current coordinates as [y, x] */
   coordinates: number[];
   surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
   threat: number;
@@ -4543,6 +4551,7 @@ type NetrunStatus = {
   isNetrunning: boolean;
 };
 
+/** @public */
 type EntityInfo = {
   type: NetrunEntityVariant;
   x: number;
@@ -4770,13 +4779,13 @@ export interface Cyberdeck {
     /**
      * Flag an ICE block at the specified coordinates.
      *
-     * @param x
      * @param y
+     * @param x
      *
      * @remarks
      * RAM cost: 0 GB
      */
-    toggleFlag(x, y): void;
+    toggleFlag(y, x): void;
   };
 
   /**

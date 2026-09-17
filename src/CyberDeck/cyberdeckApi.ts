@@ -274,18 +274,18 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
             logger(ctx)("Fail to move - no netrun has been started.");
             return failureReult;
           }
-          const [x, y] = NetrunningState.location;
+          const [y, x] = NetrunningState.location;
           const result = move(direction);
-          const newX = NetrunningState.location[0];
-          const newY = NetrunningState.location[1];
+          const newY = NetrunningState.location[0];
+          const newX = NetrunningState.location[1];
 
           // TODO-fico: log feedback - OOM, off the map, broke ice, etc
           if (result && newX !== x && newY !== y) {
-            logger(ctx)(`Moved to ${x},${y}`);
+            logger(ctx)(`Moved to ${y},${x}`);
           } else if (result) {
-            logger(ctx)(`Interacted! Still at ${x},${y}`);
+            logger(ctx)(`Interacted! Still at ${y},${x}`);
           } else {
-            logger(ctx)(`Failed to move. Still at ${x},${y}`);
+            logger(ctx)(`Failed to move. Still at ${y},${x}`);
           }
           const { threat, signals } = getThreatSignalStrength();
           return {
@@ -346,21 +346,21 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           }),
         );
       },
-      toggleFlag(ctx: NetscriptContext, _x: unknown, _y: unknown) {
-       const x = helpers.integer(ctx, "x", _x);
+      toggleFlag(ctx: NetscriptContext, _y: unknown, _x: unknown) {
        const y = helpers.integer(ctx, "y", _y);
+       const x = helpers.integer(ctx, "x", _x);
+       if (y < 0 || y > GRID_SIZE) {
+         throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${GRID_SIZE}`)
+       }
        if (x < 0 || x > GRID_SIZE) {
          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${GRID_SIZE}`)
        }
-       if (y < 0 || y > GRID_SIZE) {
-         throw new Error(`Invalid x coordinate (${y}): value must be between 0 and ${GRID_SIZE}`)
-       }
        const entity = NetrunningState.grid[y]?.[x];
        if (!entity) {
-         throw new Error(`No entity found at ${x},${y}`);
+         throw new Error(`No entity found at ${y},${x}`);
        }
        if (entity.type !== NetrunEntityVariant.ice) {
-         logger(ctx)(`Entity at ${x},${y} is type ${entity.type} - only ice can be flagged`);
+         logger(ctx)(`Entity at ${y},${x} is type ${entity.type} - only ice can be flagged`);
        }
        flagEntity(entity);
       },

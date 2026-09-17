@@ -97,8 +97,8 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         <div
           style={{
             position: "absolute",
-            left: NetrunningState.location[0] * (GRID_SIZE + 2),
-            top: NetrunningState.location[1] * (GRID_SIZE + 2),
+            left: NetrunningState.location[1] * (GRID_SIZE + 2),
+            top: NetrunningState.location[0] * (GRID_SIZE + 2),
           }}
         >
           <img
