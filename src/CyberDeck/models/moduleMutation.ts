@@ -12,7 +12,8 @@ import { formatNumber } from "../../ui/formatNumber";
 import {
   completeChargedModuleTutorial,
   completeInstalledModTutorial,
-  completeMadeConnectionTutorial, hasConsumedSkillchipTutorial,
+  completeMadeConnectionTutorial,
+  hasConsumedSkillchipTutorial,
 } from "./tutorial";
 
 export function handleModuleMoved(result: DropResult) {
@@ -142,7 +143,7 @@ export function createConnection(source: Socket, destination: Socket) {
     completeMadeConnectionTutorial();
   }
   const chargedMods = getChargedModules();
-  if (chargedMods.some(m => m.id == sourceModule.id || m.id == destinationModule.id)) {
+  if (chargedMods.some((m) => m.id == sourceModule.id || m.id == destinationModule.id)) {
     completeChargedModuleTutorial();
   }
   return {

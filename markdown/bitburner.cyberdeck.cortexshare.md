@@ -4,7 +4,7 @@
 
 ## Cyberdeck.cortexShare() method
 
-Loans neural bandwidth (and ram) to produce neurodes.
+Loans neural bandwidth (and ram) to produce neurodes. Effect increases with the number of threads the current script is launched with.
 
 **Signature:**
 

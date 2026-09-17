@@ -11,11 +11,11 @@ Also indicates if the mod is currently charged (e.g. active, has a connection to
 **Signature:**
 
 ```typescript
-getInstalledMods(): (DeckMod & { charged: boolean })[];
+getInstalledMods(): DeckMod[];
 ```
 **Returns:**
 
-([DeckMod](./bitburner.deckmod.md) &amp; { charged: boolean })\[\]
+[DeckMod](./bitburner.deckmod.md)<!-- -->\[\]
 
 ## Remarks
 

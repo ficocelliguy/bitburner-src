@@ -4,6 +4,7 @@
 
 ## Connection type
 
+
 **Signature:**
 
 ```typescript

@@ -49,9 +49,8 @@ export function gainCyberdeckComponents(cycles: number) {
   }
   // Petty crime gives ROM
   else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
-
     const crimeMagnitude = getCurrentCrimeDuration() / 5000;
-    const newMoney = (Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney);
+    const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
     const newROM = 0.1 + ((10 * newMoney + 1e7) / (newMoney + 1e7)) * crimeMagnitude;
 
     CyberdeckState.components.rom += newROM;
@@ -166,7 +165,6 @@ export function prestigeCyberdeckComponents() {
     },
   };
 }
-
 
 function getCurrentCrimeDuration() {
   if (!Player.currentWork || !isCrimeWork(Player.currentWork)) {

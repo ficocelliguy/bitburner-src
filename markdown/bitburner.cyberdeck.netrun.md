@@ -2,24 +2,24 @@
 
 [Home](./index.md) &gt; [bitburner](./bitburner.md) &gt; [Cyberdeck](./bitburner.cyberdeck.md) &gt; [netrun](./bitburner.cyberdeck.netrun.md)
 
-## Cyberdeck.netrun() method
-
-Delve into the cybernet to look for new mods. Costs ICEBreakers to pierce through the ICE defenses that try to keep netrunners out.
-
-This function must be awaited - netrunning takes some time.
+## Cyberdeck.netrun property
 
 **Signature:**
 
 ```typescript
-netrun(): Promise<NetrunningRewards>;
+netrun: {
+    start(): NetrunStatus;
+
+    move(direction: NetrunDirection): Promise<NetrunStatus>;
+
+    finish(): NetrunningRewards;
+
+    getNetrunningCost(): number;
+
+    getStatus(): NetrunStatus;
+
+    getGrid(): EntityInfo[][];
+
+    toggleFlag(y, x): void;
+  };
 ```
-**Returns:**
-
-Promise&lt;[NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->&gt;
-
-an indication if netrunning was successful, and the rewards from netrunning (if any)
-
-## Remarks
-
-RAM cost: 3 GB
-

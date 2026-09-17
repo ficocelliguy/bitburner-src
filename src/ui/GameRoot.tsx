@@ -80,6 +80,7 @@ import { DWRoot } from "../DarkNet/DWRoot";
 import { DocumentationPopUp } from "../Documentation/ui/DocumentationPopUp";
 import { CustomPage } from "./CustomPage";
 import { CyberdeckRoot } from "../CyberDeck/CyberdeckRoot";
+import { hasDevQueryParam } from "../utils/Utility";
 
 const htmlLocation = location;
 
@@ -153,8 +154,8 @@ function determineStartPage(): PageWithContext {
   if (RecoveryMode) {
     return { page: Page.Recovery };
   }
-  // TODO-fico
-  if (new URLSearchParams(window.location.search).has("dev")) {
+  // TODO-fico - remove after testing phase
+  if (hasDevQueryParam()) {
     return { page: Page.CyberDeck };
   }
   /**

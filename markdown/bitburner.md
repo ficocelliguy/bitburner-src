@@ -1882,6 +1882,7 @@ Count of various cyberdeck component types.
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -1891,6 +1892,7 @@ Count of various cyberdeck component types.
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -1898,6 +1900,7 @@ Count of various cyberdeck component types.
 
 
 </td><td>
+
 
 
 </td></tr>
@@ -2039,6 +2042,7 @@ Count of various cyberdeck component types.
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -2089,6 +2093,7 @@ Errors:
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -2096,6 +2101,17 @@ Errors:
 
 
 </td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[EntityInfo](./bitburner.entityinfo.md)
+
+
+</td><td>
+
 
 
 </td></tr>
@@ -2332,6 +2348,7 @@ Names of all locations
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -2339,6 +2356,7 @@ Names of all locations
 
 
 </td><td>
+
 
 
 </td></tr>
@@ -2354,10 +2372,61 @@ Names of all locations
 </td></tr>
 <tr><td>
 
+[NetrunDirection](./bitburner.netrundirection.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[NetrunDirectionEnumType](./bitburner.netrundirectionenumtype.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[NetrunEntityVariant](./bitburner.netrunentityvariant.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[NetrunEntityVariantEnumType](./bitburner.netrunentityvariantenumtype.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
 [NetrunningRewards](./bitburner.netrunningrewards.md)
 
 
 </td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[NetrunStatus](./bitburner.netrunstatus.md)
+
+
+</td><td>
+
 
 
 </td></tr>
@@ -2494,6 +2563,7 @@ Object representing a sleeve current task.
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -2501,6 +2571,7 @@ Object representing a sleeve current task.
 
 
 </td><td>
+
 
 
 </td></tr>

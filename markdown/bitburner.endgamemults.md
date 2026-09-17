@@ -4,6 +4,7 @@
 
 ## EndgameMults type
 
+
 **Signature:**
 
 ```typescript

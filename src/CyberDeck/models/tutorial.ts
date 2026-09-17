@@ -30,8 +30,6 @@ export function hasConsumedSkillchipTutorial() {
   checkTutorialCompletion();
 }
 
-
-
 function checkTutorialCompletion() {
   if (CyberdeckState.hasCompletedTutorial) {
     return;
@@ -42,8 +40,14 @@ function checkTutorialCompletion() {
     hasCraftedIcebreaker,
     hasNetrun,
     hasMadeConnection,
-    hasConsumedSkillchip
+    hasConsumedSkillchip,
   } = CyberdeckState.tutorialSteps;
-  CyberdeckState.hasCompletedTutorial = hasInstalledMod && hasChargedModule && hasCraftedIcebreaker && hasNetrun && hasMadeConnection && hasConsumedSkillchip;
+  CyberdeckState.hasCompletedTutorial =
+    hasInstalledMod &&
+    hasChargedModule &&
+    hasCraftedIcebreaker &&
+    hasNetrun &&
+    hasMadeConnection &&
+    hasConsumedSkillchip;
   CyberdeckEvents.emit();
 }

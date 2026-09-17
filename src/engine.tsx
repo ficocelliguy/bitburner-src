@@ -60,6 +60,7 @@ import { apr1 } from "./Terminal/commands/apr1";
 import { CyberdeckState } from "./CyberDeck/models/CyberdeckState";
 import { gainCyberdeckComponents } from "./CyberDeck/models/componentEconomy";
 import { LastExportBonus } from "./ExportBonus";
+import { hasDevQueryParam } from "./utils/Utility";
 
 declare global {
   // This property is only available in the dev build
@@ -363,32 +364,32 @@ const Engine = {
 
       Player.lastUpdate = Engine._lastUpdate;
       Engine.start(); // Run main game loop and Scripts loop
-      // TODO-fico - revert before testing
-      // const timeOfflineString = convertTimeMsToTimeElapsedString(time);
-      // setTimeout(
-      //   () =>
-      //     AlertEvents.emit(
-      //       <>
-      //         <Typography>Offline for {timeOfflineString}. While you were offline:</Typography>
-      //         <ul>
-      //           <li>
-      //             <Typography>
-      //               Your scripts generated <Money money={offlineHackingIncome} />
-      //             </Typography>
-      //           </li>
-      //           <li>
-      //             <Typography>Your Hacknet Nodes generated {hacknetProdInfo}</Typography>
-      //           </li>
-      //           <li>
-      //             <Typography>
-      //               You gained <Reputation reputation={offlineReputation} /> reputation divided amongst your factions
-      //             </Typography>
-      //           </li>
-      //         </ul>
-      //       </>,
-      //     ),
-      //   250,
-      // );
+      const timeOfflineString = convertTimeMsToTimeElapsedString(time);
+      !hasDevQueryParam() &&
+        setTimeout(
+          () =>
+            AlertEvents.emit(
+              <>
+                <Typography>Offline for {timeOfflineString}. While you were offline:</Typography>
+                <ul>
+                  <li>
+                    <Typography>
+                      Your scripts generated <Money money={offlineHackingIncome} />
+                    </Typography>
+                  </li>
+                  <li>
+                    <Typography>Your Hacknet Nodes generated {hacknetProdInfo}</Typography>
+                  </li>
+                  <li>
+                    <Typography>
+                      You gained <Reputation reputation={offlineReputation} /> reputation divided amongst your factions
+                    </Typography>
+                  </li>
+                </ul>
+              </>,
+            ),
+          250,
+        );
     } else {
       // No save found, start new game
       FormatsNeedToChange.emit();

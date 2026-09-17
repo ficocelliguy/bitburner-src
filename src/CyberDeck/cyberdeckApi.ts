@@ -35,7 +35,13 @@ import {
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
 import { GRID_SIZE, NetrunningState } from "./models/NetrunningState";
-import { flagEntity, getSurroundings, getThreatSignalStrength, initNetrunGrid, move } from "./models/netrunningMinigame";
+import {
+  flagEntity,
+  getSurroundings,
+  getThreatSignalStrength,
+  initNetrunGrid,
+  move,
+} from "./models/netrunningMinigame";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -56,7 +62,7 @@ function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
 
 function checkCyberdeckAccess() {
   if (!hasCyberdeck()) {
-    throw new Error("You must make or purchase a cyberdeck before using the API.")
+    throw new Error("You must make or purchase a cyberdeck before using the API.");
   }
 }
 
@@ -347,22 +353,22 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         );
       },
       toggleFlag(ctx: NetscriptContext, _y: unknown, _x: unknown) {
-       const y = helpers.integer(ctx, "y", _y);
-       const x = helpers.integer(ctx, "x", _x);
-       if (y < 0 || y > GRID_SIZE) {
-         throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${GRID_SIZE}`)
-       }
-       if (x < 0 || x > GRID_SIZE) {
-         throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${GRID_SIZE}`)
-       }
-       const entity = NetrunningState.grid[y]?.[x];
-       if (!entity) {
-         throw new Error(`No entity found at ${y},${x}`);
-       }
-       if (entity.type !== NetrunEntityVariant.ice) {
-         logger(ctx)(`Entity at ${y},${x} is type ${entity.type} - only ice can be flagged`);
-       }
-       flagEntity(entity);
+        const y = helpers.integer(ctx, "y", _y);
+        const x = helpers.integer(ctx, "x", _x);
+        if (y < 0 || y > GRID_SIZE) {
+          throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${GRID_SIZE}`);
+        }
+        if (x < 0 || x > GRID_SIZE) {
+          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${GRID_SIZE}`);
+        }
+        const entity = NetrunningState.grid[y]?.[x];
+        if (!entity) {
+          throw new Error(`No entity found at ${y},${x}`);
+        }
+        if (entity.type !== NetrunEntityVariant.ice) {
+          logger(ctx)(`Entity at ${y},${x} is type ${entity.type} - only ice can be flagged`);
+        }
+        flagEntity(entity);
       },
     },
     stats: {

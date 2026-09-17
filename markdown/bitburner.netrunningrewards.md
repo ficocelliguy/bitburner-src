@@ -4,11 +4,11 @@
 
 ## NetrunningRewards type
 
+
 **Signature:**
 
 ```typescript
 type NetrunningRewards = {
-  success: boolean;
   mods: DeckMod[];
   components: Partial<ComponentCounts>;
 };

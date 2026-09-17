@@ -18,12 +18,17 @@ import { NetrunningState } from "../models/NetrunningState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 
-export function NetrunningPortal({ entered, corrupted = false }: { entered: () => void, corrupted?: boolean }): React.ReactElement {
+export function NetrunningPortal({
+  entered,
+  corrupted = false,
+}: {
+  entered: () => void;
+  corrupted?: boolean;
+}): React.ReactElement {
   useRerender(200);
   const styles = usePortalStyles();
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
-
 
   const disabled = !entering && !canNetrun(corrupted);
 
@@ -42,10 +47,7 @@ export function NetrunningPortal({ entered, corrupted = false }: { entered: () =
     if (NetrunningState.isNetrunning && NetrunningState.corrupted !== corrupted) {
       dialogBoxCreate(
         <Box>
-          <CorruptibleText
-            content={"There is already a netrun in progress."}
-            spoiler={false}
-          />
+          <CorruptibleText content={"There is already a netrun in progress."} spoiler={false} />
         </Box>,
       );
       return;

@@ -16,10 +16,12 @@ REQUIRED FOR MVP
 NETRUNNING MINIGAME:
 
 - expose enums - test
+
   - module types
   - entity types
 
 - API - test
+
   - toggleFlag()
   - docs!
 
@@ -27,18 +29,18 @@ NETRUNNING MINIGAME:
   - add simple code examples
   - explain entity types
 
-
 Corrupted variant:
-  - offline nodes spreading from one corner
-  - a delay before spreading?
-  - spread every 3 steps?
-    - disable movement for a moment after spreading
-  - puts player in hospital if caught
 
+- offline nodes spreading from one corner
+- a delay before spreading?
+- spread every 3 steps?
+  - disable movement for a moment after spreading
+- puts player in hospital if caught
 
 TODO:
 
 - method to detect if a move would cause overlaps
+
   - Reject moves ahead of time instead of partial rollbacks
 
 - full docs for various types in the API
@@ -55,14 +57,15 @@ TODO LATER:
 - tooltips for stats page
 
 - filter box help text
+
   - more search options? > and < ?
 
 - netrunning portal animated background / matrix text
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 
-
 - colors on icons
+
   - battery gets more red
   - gold rewards
   - threat level matches threat color
@@ -80,6 +83,7 @@ TODO LATER:
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 
 - deck upgrades?
+
   - boost connected mods?
   - improve sockets?
 

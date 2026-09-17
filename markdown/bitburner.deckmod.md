@@ -4,6 +4,7 @@
 
 ## DeckMod type
 
+
 **Signature:**
 
 ```typescript
@@ -15,6 +16,7 @@ type DeckMod = {
   stats: ModStats;
   favorite?: boolean;
   corrupted?: boolean;
+  charged?: boolean;
 };
 ```
 **References:** [SocketList](./bitburner.socketlist.md)<!-- -->, [ModType](./bitburner.modtype.md)<!-- -->, [ModStats](./bitburner.modstats.md)

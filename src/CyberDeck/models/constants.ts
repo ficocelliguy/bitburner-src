@@ -56,9 +56,7 @@ export const uplinkCraftingCost: ComponentCounts = {
 
 export function getModuleDescription(moduleType: ModType): string {
   if (moduleType === ModType.CyberdeckIOPanel) {
-    return isCustomBuild()
-      ? "Ono-Sendai Mk7, custom build."
-      : "Hosaka Cyberdecks: The finest that money can buy.";
+    return isCustomBuild() ? "Ono-Sendai Mk7, custom build." : "Hosaka Cyberdecks: The finest that money can buy.";
   }
   if (Settings.CyberdeckWiFU) {
     return getWifuDescription(moduleType);

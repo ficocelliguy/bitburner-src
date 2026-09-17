@@ -38,7 +38,6 @@ import purpleUplink from "../assets/Uplink/Purple.png";
 import blueUplink from "../assets/Uplink/Blue.png";
 import greenUplink from "../assets/Uplink/Green.png";
 
-
 export function getModuleIcon(module: DeckMod, sizeOverride: number = 0) {
   const size = sizeOverride || (Settings.CyberdeckWiFU ? 50 : 40);
   const width = sizeOverride || 40;
@@ -79,7 +78,6 @@ export function getCustomModIcon(module: DeckMod, size: number) {
   );
 }
 
-
 export function getRarityColor(module: DeckMod) {
   const t = Settings.theme;
   if (module.corrupted) {
@@ -97,7 +95,6 @@ export function getRarityColor(module: DeckMod) {
   ];
   return rarityColors[module.rarity] ?? t.cha;
 }
-
 
 const modImagesByType: Record<ModType, ModImageSet> = {
   [ModType.ProcessingMod]: {

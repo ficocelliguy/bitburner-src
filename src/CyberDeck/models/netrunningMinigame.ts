@@ -1,14 +1,9 @@
-import {
-  NETRUNNING_HEIGHT,
-  NETRUNNING_WIDTH,
-  NetrunningState,
-} from "./NetrunningState";
+import { NETRUNNING_HEIGHT, NETRUNNING_WIDTH, NetrunningState } from "./NetrunningState";
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import _ from "lodash";
 import { clampNumber } from "../../utils/helpers/clampNumber";
 import { Settings } from "../../Settings/Settings";
 import { createSparkles } from "../utils/fx";
-import { getCurrentNetrunningIceCost } from "./netrunRewards";
 import { NetrunEntity } from "../Types";
 import { NetrunDirection, NetrunEntityVariant } from "../Enums";
 
@@ -52,7 +47,7 @@ export function move(direction: NetrunDirection) {
 }
 
 function getIceReward(entity: NetrunEntity) {
-  const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y/NETRUNNING_HEIGHT) * 0.6 + 0.2;
+  const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y / NETRUNNING_HEIGHT) * 0.6 + 0.2;
   return 5 * entityDepth;
 }
 
@@ -72,7 +67,17 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   for (let y = 0; y < height; y++) {
     const row: NetrunEntity[] = [];
     for (let x = 0; x < width; x++) {
-      row.push({ type: NetrunEntityVariant.empty, group: 0, hits: 0, threat: 0, hasBomb: false, flagged: false, visible: false, x, y });
+      row.push({
+        type: NetrunEntityVariant.empty,
+        group: 0,
+        hits: 0,
+        threat: 0,
+        hasBomb: false,
+        flagged: false,
+        visible: false,
+        x,
+        y,
+      });
     }
     grid.push(row);
   }
@@ -221,7 +226,7 @@ function breakEntity(entity: NetrunEntity) {
   }
 }
 
-function revealGroup(entity: NetrunEntity | undefined ) {
+function revealGroup(entity: NetrunEntity | undefined) {
   if (!entity) return;
   entity.visible = true;
   const group = NetrunningState.groups[entity.group] ?? [];
@@ -234,15 +239,11 @@ function revealGroup(entity: NetrunEntity | undefined ) {
     const neighbors = [
       NetrunningState.grid[entity.y - 1]?.[entity.x],
       NetrunningState.grid[entity.y + 1]?.[entity.x],
-      NetrunningState.grid[entity.y]?.[entity.x -1],
-      NetrunningState.grid[entity.y]?.[entity.x +1],
+      NetrunningState.grid[entity.y]?.[entity.x - 1],
+      NetrunningState.grid[entity.y]?.[entity.x + 1],
     ];
     for (const neighbor of neighbors) {
-      if (
-        neighbor &&
-        neighbor.group !== entity.group &&
-        !neighbor.visible
-      ) {
+      if (neighbor && neighbor.group !== entity.group && !neighbor.visible) {
         revealGroup(neighbor);
       }
     }
@@ -260,11 +261,13 @@ function detonateBomb(entity: NetrunEntity) {
   }
   revealGroup(entity);
 
-  if (entity.hits > 1) { return; }
+  if (entity.hits > 1) {
+    return;
+  }
 
   consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
   NetrunningState.shaking = true;
-  void setTimeout(() => NetrunningState.shaking = false, 700);
+  void setTimeout(() => (NetrunningState.shaking = false), 700);
 
   resetThreatLevels();
   updateCurrentThreatSignalStrength();
@@ -281,7 +284,7 @@ function resetThreatLevels() {
 
 export function getThreatSignalStrength() {
   if (!NetrunningState.energy) {
-    return {threat: 0, signals: 0};
+    return { threat: 0, signals: 0 };
   }
   const bombGroups = Object.values(NetrunningState.groups).filter(
     (g) => g[0]?.type === NetrunEntityVariant.ice && g[0]?.hasBomb && !g[0]?.hits,
@@ -290,11 +293,11 @@ export function getThreatSignalStrength() {
   let signals = 0;
   for (const group of bombGroups) {
     const distance = getDistanceToGroup(group);
-    threat += Math.max(6-distance, 0) /6;
-    signals += distance < 6 ? 1 : 0
+    threat += Math.max(6 - distance, 0) / 6;
+    signals += distance < 6 ? 1 : 0;
   }
 
-  return {threat, signals};
+  return { threat, signals };
 }
 
 function updateCurrentThreatSignalStrength() {
@@ -359,10 +362,12 @@ export function getEntityColor(entity: NetrunEntity) {
   return Settings.theme.welllight;
 }
 
-function emitSparklesOnEntity(entity:NetrunEntity) {
+function emitSparklesOnEntity(entity: NetrunEntity) {
   const element = document.getElementById(`netrun-entity-${entity.x},${entity.y}`);
-  if (!element) { return; }
-  const {x, y} = element.getBoundingClientRect()
+  if (!element) {
+    return;
+  }
+  const { x, y } = element.getBoundingClientRect();
   createSparkles(x + 10, y + 10, getEntityColor(entity));
 }
 
@@ -372,8 +377,7 @@ function shakePowerIndicator() {
   CyberdeckEvents.emit();
 }
 
-
-export function flagEntity(entity:NetrunEntity) {
+export function flagEntity(entity: NetrunEntity) {
   if (!entity.visible || entity.type !== NetrunEntityVariant.ice) {
     return;
   }

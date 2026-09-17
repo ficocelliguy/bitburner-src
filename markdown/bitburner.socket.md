@@ -4,6 +4,7 @@
 
 ## Socket type
 
+
 **Signature:**
 
 ```typescript

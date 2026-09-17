@@ -4,6 +4,7 @@
 
 ## ConsumableStats type
 
+
 **Signature:**
 
 ```typescript

@@ -4,6 +4,7 @@
 
 ## SocketList type
 
+
 **Signature:**
 
 ```typescript

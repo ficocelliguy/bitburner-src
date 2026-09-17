@@ -9,7 +9,7 @@ export type DeckMod = {
   stats: ModStats;
   favorite?: boolean;
   corrupted?: boolean;
-  charged?: boolean
+  charged?: boolean;
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];
@@ -268,7 +268,6 @@ export const statBonusLongNames: {
   bladeburner_analysis: "Bladeburner Analysis",
   bladeburner_success_chance: "Bladeburner Success Chance",
 } as const;
-
 
 export type ModImageSet = {
   white: string;

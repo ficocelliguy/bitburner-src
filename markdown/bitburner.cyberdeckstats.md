@@ -4,6 +4,7 @@
 
 ## CyberdeckStats type
 
+
 **Signature:**
 
 ```typescript

@@ -38,6 +38,7 @@ import { hasDarknetAccess } from "./DarkNet/utils/darknetAuthUtils";
 import { loadSettings } from "./Settings/SettingsUtils";
 import { getBitNodeLevel } from "./BitNode/BitNodeUtils";
 import { getCyberdeckSaveData, loadCyberdeckSaveData } from "./CyberDeck/utils/SaveLoad";
+import { hasDevQueryParam } from "./utils/Utility";
 
 /* SaveObject.js
  *  Defines the object used to save/load games
@@ -547,10 +548,9 @@ export async function loadGame(saveData: SaveData): Promise<boolean> {
         throw new Error(`Invalid VersionSave: ${saveObj.VersionSave}`);
       }
       await evaluateVersionCompatibility(ver);
-      if (CONSTANTS.isDevBranch) {
+      if (CONSTANTS.isDevBranch && !hasDevQueryParam()) {
         // Beta branch, always show changes
-        // TODO-fico
-        //createBetaUpdateText();
+        createBetaUpdateText();
       } else if (ver !== CONSTANTS.VersionNumber) {
         createNewUpdateText();
       }

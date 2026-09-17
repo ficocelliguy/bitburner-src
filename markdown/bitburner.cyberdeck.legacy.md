@@ -14,8 +14,6 @@ May the Blackwall continue to shield us all.
 legacy: {
     getCost(): number;
 
-    delve(): Promise<NetrunningRewards>;
-
-    trace(): number;
+    delve(): NetrunStatus;
   };
 ```

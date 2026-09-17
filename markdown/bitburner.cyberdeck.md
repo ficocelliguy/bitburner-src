@@ -64,7 +64,7 @@ Namespace for API methods that create or destroy mods and ICEBreakers.
 
 </td><td>
 
-{ getCost(): number; delve(): Promise&lt;[NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->&gt;; trace(): number; }
+{ getCost(): number; delve(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; }
 
 
 </td><td>
@@ -72,6 +72,23 @@ Namespace for API methods that create or destroy mods and ICEBreakers.
 The old net is a wasteland. Rampant corporate greed and unrestricted AI gradually turned it into a death trap. A great firewall was erected around the remaining clean systems in a few small areas, and the old net was abandoned.
 
 May the Blackwall continue to shield us all.
+
+
+</td></tr>
+<tr><td>
+
+[netrun](./bitburner.cyberdeck.netrun.md)
+
+
+</td><td>
+
+
+</td><td>
+
+{ start(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; move(direction: [NetrunDirection](./bitburner.netrundirection.md)<!-- -->): Promise&lt;[NetrunStatus](./bitburner.netrunstatus.md)<!-- -->&gt;; finish(): [NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->; getNetrunningCost(): number; getStatus(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; getGrid(): [EntityInfo](./bitburner.entityinfo.md)<!-- -->\[\]\[\]; toggleFlag(y, x): void; }
+
+
+</td><td>
 
 
 </td></tr>
@@ -148,7 +165,7 @@ If one of the mods is already charged, or if one of the connection points is the
 
 </td><td>
 
-Loans neural bandwidth (and ram) to produce neurodes.
+Loans neural bandwidth (and ram) to produce neurodes. Effect increases with the number of threads the current script is launched with.
 
 
 </td></tr>
@@ -215,28 +232,6 @@ Also indicates if the mod is currently charged (e.g. active, has a connection to
 </td></tr>
 <tr><td>
 
-[getNetrunningCost()](./bitburner.cyberdeck.getnetrunningcost.md)
-
-
-</td><td>
-
-Get the number of ICEBreakers required to netrun currently.
-
-ICEBreaker costs are greatly increased for a time after netrunning (due to disturbing all of the security networks that were breached), and the cost slowly goes back down afterwards.
-
-
-</td></tr>
-<tr><td>
-
-[getNetrunningTraceFraction()](./bitburner.cyberdeck.getnetrunningtracefraction.md)
-
-
-</td><td>
-
-
-</td></tr>
-<tr><td>
-
 [getRackCapacity()](./bitburner.cyberdeck.getrackcapacity.md)
 
 
@@ -278,19 +273,6 @@ Returns whether the player has a cyberdeck.
 Move a mod to the cyberdeck mod rack. This method must be awaited - installing mods is not instant. This method can also be used to shift a mod to another location on the mod rack.
 
 Mods must be both installed and charged (have a connection to another charged mod, or to the cyberdeck IO panel itself) for their buffs to apply.
-
-
-</td></tr>
-<tr><td>
-
-[netrun()](./bitburner.cyberdeck.netrun.md)
-
-
-</td><td>
-
-Delve into the cybernet to look for new mods. Costs ICEBreakers to pierce through the ICE defenses that try to keep netrunners out.
-
-This function must be awaited - netrunning takes some time.
 
 
 </td></tr>

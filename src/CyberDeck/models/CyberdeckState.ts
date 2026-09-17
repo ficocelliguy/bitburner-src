@@ -71,7 +71,7 @@ export const CyberdeckState = {
     hasConsumedSkillchip: false,
     hasCraftedIcebreaker: false,
     hasNetrun: false,
-  }
+  },
 };
 
 export function hasCyberdeck(): boolean {

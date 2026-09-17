@@ -10,7 +10,7 @@ import { initNetrunGrid } from "../models/netrunningMinigame";
 import { useRerender } from "../../ui/React/hooks";
 import { CyberdeckEvents } from "../models/CyberdeckState";
 
-export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): React.ReactElement {
+export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
   const rerender = useRerender(1000);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
@@ -26,7 +26,7 @@ export function NetrunningPage({corrupted = false}: {corrupted?: boolean}): Reac
   function endNetrun() {
     const rewards = netrunRewards(corrupted);
     setNetrunningModRewards(rewards);
-    setShowRewardsModal(true)
+    setShowRewardsModal(true);
   }
 
   return (

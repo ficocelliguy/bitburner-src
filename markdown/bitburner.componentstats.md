@@ -4,6 +4,7 @@
 
 ## ComponentStats type
 
+
 **Signature:**
 
 ```typescript

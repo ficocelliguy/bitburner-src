@@ -47,7 +47,7 @@ export function getNetrunningTraceFraction(corrupted = false): number {
       const timeFactor = (corruptedNetrunningHardCooldownMs - timeSinceLastRun) / 100;
       return getNetrunningCost(timeFactor, true) / 10 - 1;
     }
-    const timeFactor = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp
+    const timeFactor = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
     return getNetrunningCost(timeFactor, true) / 10 - 1;
   }
   return getNetrunningCost(Date.now() - CyberdeckState.lastNetrunningTimestamp, corrupted) / 10 - 1;
@@ -102,7 +102,7 @@ export function netrunRewards(corrupted: boolean): NetrunningRewards {
 
 export function getNetrunningRewards(rng: WHRNG, score: number) {
   const isEarlyRun = CyberdeckState.netrunningSeedUsages <= 2;
-  const hasRareMod = [...CyberdeckState.storedModules, ...CyberdeckState.installedModules].some(m => m.rarity >= 5);
+  const hasRareMod = [...CyberdeckState.storedModules, ...CyberdeckState.installedModules].some((m) => m.rarity >= 5);
   const eligibleForSpecialReward = score > 70 && isEarlyRun && !hasRareMod;
   const specialReward = eligibleForSpecialReward ? createModule(rng, ModType.ProcessingMod, 5) : createModule(rng);
   const rewards = [specialReward];
@@ -117,7 +117,7 @@ export function getNetrunningRewards(rng: WHRNG, score: number) {
     rewards.push(createModule(rng, undefined, getLevel(rng, CyberdeckState.netrunningLevel + 2)));
   }
 
-  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity)
+  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity);
   CyberdeckState.storedModules.unshift(...sortedRewards);
   return sortedRewards;
 }
@@ -128,7 +128,7 @@ function corruptedNetrun(): NetrunningRewards {
   const rewards = getCorruptedNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
 
-  const coresGained = Math.floor(rng.random() * (NetrunningState.rewardScore/25 + 2));
+  const coresGained = Math.floor(rng.random() * (NetrunningState.rewardScore / 25 + 2));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 

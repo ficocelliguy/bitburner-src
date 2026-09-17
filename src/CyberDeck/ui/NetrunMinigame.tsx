@@ -1,14 +1,11 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Tooltip, Button } from "@mui/material";
 import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sharp";
 import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
 import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorSharp";
 import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
 import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
-import {
-  GRID_SIZE,
-  NetrunningState,
-} from "../models/NetrunningState";
+import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import purple from "../assets/ProcessingMod/Purple.png";
 import yellow from "../assets/Special/Yellow.png";
@@ -18,8 +15,7 @@ import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { NetrunDirection } from "../Enums";
 
-
-export function NetrunMinigame({complete} : {complete: () => void}) : React.ReactElement {
+export function NetrunMinigame({ complete }: { complete: () => void }): React.ReactElement {
   const styles = useCyberdeckStyles();
 
   useEffect(() => {
@@ -41,7 +37,7 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         event.preventDefault();
         event.stopPropagation();
       }
-    }
+    };
     document.addEventListener("keydown", listener);
     return () => {
       document.removeEventListener("keydown", listener);
@@ -50,7 +46,7 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
 
   const char = [purple, yellow, green][CyberdeckState.netrunningSeedUsages % 3];
 
-  const {threat, signals} = getThreatSignalStrength()
+  const { threat, signals } = getThreatSignalStrength();
   const threatColor = getThreatColor(threat) || Settings.theme.button;
 
   return (
@@ -118,7 +114,12 @@ export function NetrunMinigame({complete} : {complete: () => void}) : React.Reac
         ))}
       </Box>
 
-      {CyberdeckState.netrunningCorruptedSeedUsages < 2 && (<Typography sx={{maxWidth: "550px"}}>Arrow keys or WSAD to move. Break though ICE to look for rewards until your energy runs out - but be warned, some of the ICE has active countermeasures. Watch your threat level! </Typography>)}
+      {CyberdeckState.netrunningCorruptedSeedUsages < 2 && (
+        <Typography sx={{ maxWidth: "550px" }}>
+          Arrow keys or WSAD to move. Break though ICE to look for rewards until your energy runs out - but be warned,
+          some of the ICE has active countermeasures. Watch your threat level!{" "}
+        </Typography>
+      )}
       <Button onClick={complete} sx={{ margin: "5px", ...(NetrunningState.energy ? {} : styles.buttonHighlight) }}>
         {NetrunningState.energy ? "End Netrun" : "Netrun Complete"}
       </Button>

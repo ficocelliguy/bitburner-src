@@ -1,15 +1,12 @@
 import React from "react";
 import { Box, Tooltip } from "@mui/material";
-import {
-  GRID_SIZE,
-  NetrunningState,
-} from "../models/NetrunningState";
+import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
 import { NetrunEntity } from "../Types";
 import { NetrunEntityVariant } from "../Enums";
 
-export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
+export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
   const color = getEntityColor(entity);
 
   function getBorderColor(neighbor: NetrunEntity): string {
@@ -44,24 +41,29 @@ export function NetrunGridEntity({ entity }: {entity: NetrunEntity}) {
     flagEntity(entity);
   }
 
-  const northNeighbor = NetrunningState.grid[entity.y -1]?.[entity.x]
+  const northNeighbor = NetrunningState.grid[entity.y - 1]?.[entity.x];
   const borderTopColor = getBorderColor(northNeighbor);
 
-  const eastNeighbor = NetrunningState.grid[entity.y]?.[entity.x +1]
+  const eastNeighbor = NetrunningState.grid[entity.y]?.[entity.x + 1];
   const borderRightColor = getBorderColor(eastNeighbor);
 
-  const southNeighbor = NetrunningState.grid[entity.y + 1]?.[entity.x]
+  const southNeighbor = NetrunningState.grid[entity.y + 1]?.[entity.x];
   const borderBottomColor = getBorderColor(southNeighbor);
 
-  const westNeighbor = NetrunningState.grid[entity.y]?.[entity.x -1]
+  const westNeighbor = NetrunningState.grid[entity.y]?.[entity.x - 1];
   const borderLeftColor = getBorderColor(westNeighbor);
 
-  const tooltip = !entity.visible ? "<unknown entity>" :
-    entity.hasBomb ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers." :
-    entity.type == NetrunEntityVariant.ice
-      ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level!. Can be broken, if there are ICEBreakers still available." :
-      entity.type == NetrunEntityVariant.dataStore ? "A data cache! Grab it while you can!" :
-        entity.type === NetrunEntityVariant.firewall ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce" : "";
+  const tooltip = !entity.visible
+    ? "<unknown entity>"
+    : entity.hasBomb
+    ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers."
+    : entity.type == NetrunEntityVariant.ice
+    ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level!. Can be broken, if there are ICEBreakers still available."
+    : entity.type == NetrunEntityVariant.dataStore
+    ? "A data cache! Grab it while you can!"
+    : entity.type === NetrunEntityVariant.firewall
+    ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce"
+    : "";
 
   const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE : (1 - entity.hits * 0.1) * GRID_SIZE;
 

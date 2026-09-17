@@ -4,6 +4,7 @@
 
 ## ModStats type
 
+
 **Signature:**
 
 ```typescript
