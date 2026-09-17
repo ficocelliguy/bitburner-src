@@ -281,7 +281,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
             return failureReult;
           }
           const [y, x] = NetrunningState.location;
-          const result = move(direction);
+          const result = move(direction, true);
           const newY = NetrunningState.location[0];
           const newX = NetrunningState.location[1];
 

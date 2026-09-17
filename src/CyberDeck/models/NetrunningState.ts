@@ -16,4 +16,5 @@ export const NetrunningState = {
   groups: {} as Record<string, NetrunEntity[]>,
   energy: 1,
   rewardScore: 0,
+  steps: 0,
 };

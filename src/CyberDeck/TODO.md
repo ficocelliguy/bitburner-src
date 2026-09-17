@@ -15,11 +15,6 @@ REQUIRED FOR MVP
 
 NETRUNNING MINIGAME:
 
-- expose enums - test
-
-  - module types
-  - entity types
-
 - API - test
 
   - toggleFlag()

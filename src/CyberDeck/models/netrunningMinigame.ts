@@ -6,13 +6,20 @@ import { Settings } from "../../Settings/Settings";
 import { createSparkles } from "../utils/fx";
 import { NetrunEntity } from "../Types";
 import { NetrunDirection, NetrunEntityVariant } from "../Enums";
+import { Player } from "@player";
 
-export function move(direction: NetrunDirection) {
+export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
+  spreadOfflineNodes();
+
   const [y, x] = NetrunningState.location;
   const dx = direction === "left" ? -1 : direction === "right" ? 1 : 0;
   const dy = direction === "up" ? -1 : direction === "down" ? 1 : 0;
   const newLocation = NetrunningState.grid[y + dy]?.[x + dx];
   if (!newLocation) {
+    return false;
+  }
+  if (newLocation.type == NetrunEntityVariant.offline) {
+    hitOfflineNode(programmaticMove);
     return false;
   }
   if (newLocation.type === NetrunEntityVariant.empty) {
@@ -46,6 +53,13 @@ export function move(direction: NetrunDirection) {
   return true;
 }
 
+function hitOfflineNode(programmaticMove: boolean) {
+  NetrunningState.isNetrunning = false;
+  NetrunningState.rewardScore = 0;
+  NetrunningState.energy = 0;
+  Player.hospitalize(programmaticMove);
+}
+
 function getIceReward(entity: NetrunEntity) {
   const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y / NETRUNNING_HEIGHT) * 0.6 + 0.2;
   return 5 * entityDepth;
@@ -61,6 +75,7 @@ function consumeEnergy(amount: number) {
     resetThreatLevels();
   }
 }
+
 
 export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   const grid: NetrunEntity[][] = [];
@@ -93,6 +108,7 @@ export function initNetrunGrid(corrupted: boolean) {
   NetrunningState.shaking = false;
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 1;
+  NetrunningState.steps = 0;
 
   // Add firewalls
   const firewallCount = Math.random() * 3 + 5;
@@ -203,8 +219,60 @@ export function initNetrunGrid(corrupted: boolean) {
     }
   }
 
+  // Seed offline node for corrupted netrun
+  if (corrupted) {
+    const coinflip = Math.random() < 0.5;
+    const x = coinflip ? 0 : NETRUNNING_WIDTH -1;
+    const y = coinflip ? NETRUNNING_HEIGHT - 1 : 0;
+    offlineEntity(NetrunningState.grid[y][x]);
+  }
+
   updateCurrentThreatSignalStrength();
   CyberdeckEvents.emit();
+}
+
+function offlineEntity(entity: NetrunEntity | null) {
+  if (!entity || entity.type === NetrunEntityVariant.offline) {return}
+  const [y, x] = NetrunningState.location;
+  if (entity.x == x && entity.y == y) {
+    return offlineEntity(NetrunningState.grid[y +1][x +1]);
+  }
+  entity.type = NetrunEntityVariant.offline;
+  entity.group = -1;
+  NetrunningState.groups[-1] ??= [];
+  NetrunningState.groups[-1].unshift(entity);
+}
+
+function spreadOfflineNodes() {
+  NetrunningState.steps++;
+
+  if (NetrunningState.steps % 3 !== 0) {
+    return;
+  }
+
+  const offlineNodes = NetrunningState.groups[-1].slice(0);
+
+  for (const [index, entity] of offlineNodes.entries()) {
+    if (Math.random() < 0.6 && index > 4) {
+      continue;
+    }
+    const neighbors = getNeighbors(entity).filter(n => n);
+    const spreadLocationPrime = neighbors[Math.floor(Math.random() * neighbors.length)];
+    const spreadLocationNeighbors = getNeighbors(spreadLocationPrime).filter((n) => n && n.type !== NetrunEntityVariant.offline);
+    const finalSpreadLocation = spreadLocationNeighbors[Math.floor(Math.random() * spreadLocationNeighbors.length)];
+    offlineEntity(spreadLocationPrime);
+
+    offlineEntity(finalSpreadLocation);
+  }
+}
+
+function getNeighbors(entity: NetrunEntity) {
+  return [
+    NetrunningState.grid[entity.y - 1]?.[entity.x],
+    NetrunningState.grid[entity.y + 1]?.[entity.x],
+    NetrunningState.grid[entity.y]?.[entity.x - 1],
+    NetrunningState.grid[entity.y]?.[entity.x + 1],
+  ];
 }
 
 function breakEntity(entity: NetrunEntity) {
@@ -219,10 +287,9 @@ function breakEntity(entity: NetrunEntity) {
   }
   for (const member of group) {
     member.type = NetrunEntityVariant.empty;
-    revealGroup(NetrunningState.grid[member.y - 1]?.[member.x]);
-    revealGroup(NetrunningState.grid[member.y + 1]?.[member.x]);
-    revealGroup(NetrunningState.grid[member.y]?.[member.x - 1]);
-    revealGroup(NetrunningState.grid[member.y]?.[member.x + 1]);
+    for (const neighbor of getNeighbors(member)) {
+      revealGroup(neighbor);
+    }
   }
 }
 
@@ -236,13 +303,7 @@ function revealGroup(entity: NetrunEntity | undefined) {
   if (entity.type !== NetrunEntityVariant.empty) return;
 
   for (const entity of group) {
-    const neighbors = [
-      NetrunningState.grid[entity.y - 1]?.[entity.x],
-      NetrunningState.grid[entity.y + 1]?.[entity.x],
-      NetrunningState.grid[entity.y]?.[entity.x - 1],
-      NetrunningState.grid[entity.y]?.[entity.x + 1],
-    ];
-    for (const neighbor of neighbors) {
+    for (const neighbor of getNeighbors(entity)) {
       if (neighbor && neighbor.group !== entity.group && !neighbor.visible) {
         revealGroup(neighbor);
       }
@@ -343,6 +404,9 @@ export function getThreatColor(threatRating: number) {
 
 export function getEntityColor(entity: NetrunEntity) {
   const theme = Settings.theme;
+  if (entity.type === NetrunEntityVariant.offline) {
+    return theme.hack;
+  }
   if (!entity.visible) {
     return theme.backgroundprimary;
   }
