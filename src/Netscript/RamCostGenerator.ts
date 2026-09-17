@@ -253,7 +253,7 @@ const cyberdeck = {
     start: 0,
     move: 3,
     finish: 0,
-    getNetrunningCost: 0,
+    getCost: 0,
     getStatus: 0,
     getGrid: 0,
     toggleFlag: 0,

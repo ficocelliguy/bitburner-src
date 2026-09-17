@@ -46,7 +46,7 @@ Each mod (and the base I/O panel) only have sockets on certain indexes (represen
 const IO = ns.cyberdeck.getCyberdeckIOPanel();
 const mod = ns.cyberdeck.getInstalledMods()[0];
 
-if (mod.sockets[3] && getCyberdeckIOPanel().sockets[3]) {
+if (mod.sockets[3] && IO.sockets[3]) {
   ns.cyberdeck.addConnection(IO.id, mod.id, 3);
 }
 ```
@@ -57,25 +57,27 @@ if (mod.sockets[3] && getCyberdeckIOPanel().sockets[3]) {
 
 Netrunning is the main way to get new mods. You spend a few ICEBreakers, dive into cyberspace, and come back out with random loot: mods, and sometimes crafting components. It is also the only source of cores, which are needed for hand-crafting new mods.
 
-Each run trips automated security. For a while after, it takes many more ICEBreakers to get back in. This cooldown is called trace decay.
+While netrunning, your character moves through cyberspace, breaking through ICE and looking for valuable reward caches. As you move, you will see a threat level indicator and signal count. It indicates how many of the nearby ICE groups within 6 blocks have active countermeasures or traps, and how many distinct traps are nearby. (TODO: flesh out details more)
 
-You can make netrunning better over time by finding and consuming the right skill chips:
+You can make netrunning rewards and energy cost better over time by finding and consuming the right skill chips:
 
 - Raising your **netrunning level** increases the rarity of the loot you find.
 - Raising your **netrunning cooldown level** shortens the trace decay window.
 
 ```js
-const costIsBelowThreshold = ns.cyberdeck.getNetrunningCost() <= 2;
-const canAffordNetrunning = ns.cyberdeck.getNetrunningCost() <= ns.cyberdeck.getComponentCounts().ICEBreakers;
+const cost = ns.cyberdeck.netrun.getCost();
+const costIsBelowThreshold = cost <= 20;
+const canAffordNetrunning = cost <= ns.cyberdeck.getComponentCounts().iceBreakers;
 
 if (costIsBelowThreshold && canAffordNetrunning) {
-  const result = await ns.cyberdeck.netrun();
+  let result = ns.cyberdeck.netrun.start();
 
-  // Recycle mods that don't have valuable stats to save storage space
-  const firstModReward = result.mods[0];
-  if (!(firstModReward.stats.playerMults?.strength > 0)) {
-    ns.cyberdeck.crafting.recycleMod(firstModReward.id);
+  while (result.energy) {
+    await ns.cyberdeck.netrun.move(ns.enums.NetrunDirection.down);
+    result = await ns.cyberdeck.netrun.move(ns.enums.NetrunDirection.right);
   }
+
+  const rewards = ns.cyberdeck.netrun.finish();
 }
 ```
 

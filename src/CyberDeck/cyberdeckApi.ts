@@ -138,16 +138,16 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return true;
       });
     },
-    storeMod(ctx: NetscriptContext, moduleId: unknown, modIndex: unknown = 0) {
+    storeMod(ctx: NetscriptContext, moduleId: unknown, _storageIndex: unknown = 0) {
       checkCyberdeckAccess();
       const modId = helpers.string(ctx, "modId", moduleId);
       const mod = getModOrThrow(modId);
-      const locationIndex = helpers.integer(ctx, "modIndex", modIndex);
+      const locationIndex = helpers.integer(ctx, "modIndex", _storageIndex);
       if (locationIndex < 0) {
         throw new Error(`modIndex must be a non-negative integer, was ${locationIndex}`);
       }
-      const storageIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
-      const sourceIsStorage = storageIndex !== -1;
+      const storageSourceIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
+      const sourceIsStorage = storageSourceIndex !== -1;
       const newIndex = Math.min(locationIndex, CyberdeckState.storedModules.length);
       logger(ctx)(`Mod ${modId} moved to storage slot #${newIndex}`);
       moveModule(mod, sourceIsStorage, true, newIndex);
@@ -286,7 +286,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           const newX = NetrunningState.location[1];
 
           // TODO-fico: log feedback - OOM, off the map, broke ice, etc
-          if (result && newX !== x && newY !== y) {
+          if (result && (newX !== x || newY !== y)) {
             logger(ctx)(`Moved to ${y},${x}`);
           } else if (result) {
             logger(ctx)(`Interacted! Still at ${y},${x}`);
@@ -315,7 +315,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         logger(ctx)(`Netrun completed. ${results.mods.length} new modules found.`);
         return results;
       },
-      getNetrunningCost() {
+      getCost() {
         checkCyberdeckAccess();
         return getCurrentNetrunningIceCost();
       },

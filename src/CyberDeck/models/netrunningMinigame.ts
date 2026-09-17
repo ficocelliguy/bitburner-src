@@ -7,6 +7,8 @@ import { createSparkles } from "../utils/fx";
 import { NetrunEntity } from "../Types";
 import { NetrunDirection, NetrunEntityVariant } from "../Enums";
 import { Player } from "@player";
+import { Page } from "../../ui/Router";
+import { Router } from "../../ui/GameRoot";
 
 export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
   spreadOfflineNodes();
@@ -20,9 +22,7 @@ export function move(direction: NetrunDirection, programmaticMove: boolean = fal
   }
   if (newLocation.type == NetrunEntityVariant.offline) {
     hitOfflineNode(programmaticMove);
-    return false;
-  }
-  if (newLocation.type === NetrunEntityVariant.empty) {
+  } else if (newLocation.type === NetrunEntityVariant.empty) {
     NetrunningState.location = [y + dy, x + dx];
     updateCurrentThreatSignalStrength();
   } else if (newLocation.type === NetrunEntityVariant.dataStore) {
@@ -54,10 +54,20 @@ export function move(direction: NetrunDirection, programmaticMove: boolean = fal
 }
 
 function hitOfflineNode(programmaticMove: boolean) {
-  NetrunningState.isNetrunning = false;
+  shakeGrid();
+  const [y, x] = NetrunningState.location;
+  const entity = NetrunningState.grid[y]?.[x];
+  emitSparklesOnEntity(entity);
+  emitSparklesOnEntity(entity);
+  emitSparklesOnEntity(entity);
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 0;
-  Player.hospitalize(programmaticMove);
+
+  setTimeout(() => {
+    NetrunningState.isNetrunning = false;
+    Player.hospitalize(programmaticMove);
+    Router.toPage(Page.City);
+  }, 500);
 }
 
 function getIceReward(entity: NetrunEntity) {
@@ -75,7 +85,6 @@ function consumeEnergy(amount: number) {
     resetThreatLevels();
   }
 }
-
 
 export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   const grid: NetrunEntity[][] = [];
@@ -222,7 +231,7 @@ export function initNetrunGrid(corrupted: boolean) {
   // Seed offline node for corrupted netrun
   if (corrupted) {
     const coinflip = Math.random() < 0.5;
-    const x = coinflip ? 0 : NETRUNNING_WIDTH -1;
+    const x = coinflip ? 0 : NETRUNNING_WIDTH - 1;
     const y = coinflip ? NETRUNNING_HEIGHT - 1 : 0;
     offlineEntity(NetrunningState.grid[y][x]);
   }
@@ -232,10 +241,12 @@ export function initNetrunGrid(corrupted: boolean) {
 }
 
 function offlineEntity(entity: NetrunEntity | null) {
-  if (!entity || entity.type === NetrunEntityVariant.offline) {return}
+  if (!entity || entity.type === NetrunEntityVariant.offline) {
+    return;
+  }
   const [y, x] = NetrunningState.location;
   if (entity.x == x && entity.y == y) {
-    return offlineEntity(NetrunningState.grid[y +1][x +1]);
+    return offlineEntity(NetrunningState.grid[y + 1]?.[x + 1]);
   }
   entity.type = NetrunEntityVariant.offline;
   entity.group = -1;
@@ -250,15 +261,17 @@ function spreadOfflineNodes() {
     return;
   }
 
-  const offlineNodes = NetrunningState.groups[-1].slice(0);
+  const offlineNodes = NetrunningState.groups[-1]?.slice(0) ?? [];
 
   for (const [index, entity] of offlineNodes.entries()) {
     if (Math.random() < 0.6 && index > 4) {
       continue;
     }
-    const neighbors = getNeighbors(entity).filter(n => n);
+    const neighbors = getNeighbors(entity).filter((n) => n);
     const spreadLocationPrime = neighbors[Math.floor(Math.random() * neighbors.length)];
-    const spreadLocationNeighbors = getNeighbors(spreadLocationPrime).filter((n) => n && n.type !== NetrunEntityVariant.offline);
+    const spreadLocationNeighbors = getNeighbors(spreadLocationPrime).filter(
+      (n) => n && n.type !== NetrunEntityVariant.offline,
+    );
     const finalSpreadLocation = spreadLocationNeighbors[Math.floor(Math.random() * spreadLocationNeighbors.length)];
     offlineEntity(spreadLocationPrime);
 
@@ -327,9 +340,7 @@ function detonateBomb(entity: NetrunEntity) {
   }
 
   consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
-  NetrunningState.shaking = true;
-  void setTimeout(() => (NetrunningState.shaking = false), 700);
-
+  shakeGrid();
   resetThreatLevels();
   updateCurrentThreatSignalStrength();
   emitSparklesOnEntity(entity);
@@ -404,11 +415,11 @@ export function getThreatColor(threatRating: number) {
 
 export function getEntityColor(entity: NetrunEntity) {
   const theme = Settings.theme;
-  if (entity.type === NetrunEntityVariant.offline) {
-    return theme.hack;
-  }
   if (!entity.visible) {
-    return theme.backgroundprimary;
+    return theme.black;
+  }
+  if (entity.type === NetrunEntityVariant.offline) {
+    return "transparent";
   }
   if (entity.type === NetrunEntityVariant.dataStore) {
     return Settings.theme.money;
@@ -433,6 +444,11 @@ function emitSparklesOnEntity(entity: NetrunEntity) {
   }
   const { x, y } = element.getBoundingClientRect();
   createSparkles(x + 10, y + 10, getEntityColor(entity));
+}
+
+function shakeGrid() {
+  NetrunningState.shaking = true;
+  void setTimeout(() => (NetrunningState.shaking = false), 700);
 }
 
 function shakePowerIndicator() {

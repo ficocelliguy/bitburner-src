@@ -85,7 +85,7 @@ May the Blackwall continue to shield us all.
 
 </td><td>
 
-{ start(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; move(direction: [NetrunDirection](./bitburner.netrundirection.md)<!-- -->): Promise&lt;[NetrunStatus](./bitburner.netrunstatus.md)<!-- -->&gt;; finish(): [NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->; getNetrunningCost(): number; getStatus(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; getGrid(): [EntityInfo](./bitburner.entityinfo.md)<!-- -->\[\]\[\]; toggleFlag(y, x): void; }
+{ start(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; move(direction: [NetrunDirection](./bitburner.netrundirection.md)<!-- -->): Promise&lt;[NetrunStatus](./bitburner.netrunstatus.md)<!-- -->&gt;; finish(): [NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->; getCost(): number; getStatus(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; getGrid(): [EntityInfo](./bitburner.entityinfo.md)<!-- -->\[\]\[\]; toggleFlag(y: number, x: number): void; }
 
 
 </td><td>

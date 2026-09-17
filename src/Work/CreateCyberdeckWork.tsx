@@ -68,7 +68,7 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
   }
 
   getStatusText() {
-    return "";
+    return "Assembling cyberdeck...";
   }
 }
 

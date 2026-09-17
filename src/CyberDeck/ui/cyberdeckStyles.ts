@@ -61,6 +61,11 @@ const growAndFade = keyframes`
   }
 `;
 
+const staticNoise = keyframes`
+  0% { transform: translate(0, 0);  background-size: 100%}
+  100% { transform: translate(-1%, 0.5%); background-size: 200%}
+`;
+
 export const PORTAL_CONTAINER_CLASS = "portal-container";
 export const PORTAL_RING_CLASS = "portal-ring";
 export const PORTAL_RING_REVERSE_CLASS = "portal-ring-reverse";
@@ -127,6 +132,13 @@ export function useCyberdeckStyles() {
       borderColor: theme.colors.success,
       padding: "0 12px",
       animation: `${fadeLoop} 600ms ease-in-out infinite alternate`,
+    },
+    offlineNode: {
+      backgroundImage: `repeating-radial-gradient(circle at 17% 32%, ${theme.colors.white}, black 0.00085px)`,
+      backgroundPosition: "center",
+      opacity: 0.8,
+
+      animation: `${staticNoise} 0.3s steps(4) infinite`,
     },
   } as const;
 }

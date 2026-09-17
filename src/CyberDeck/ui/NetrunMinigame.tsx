@@ -114,10 +114,10 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
         ))}
       </Box>
 
-      {CyberdeckState.netrunningCorruptedSeedUsages < 2 && (
+      {CyberdeckState.netrunningSeedUsages < 2 && (
         <Typography sx={{ maxWidth: "550px" }}>
-          Arrow keys or WSAD to move. Break though ICE to look for rewards until your energy runs out - but be warned,
-          some of the ICE has active countermeasures. Watch your threat level!{" "}
+          Arrow keys or WSAD to move. Break through ICE to look for rewards until your energy runs out - but be warned,
+          some of the ICE has active countermeasures. Watch your threat level!
         </Typography>
       )}
       <Button onClick={complete} sx={{ margin: "5px", ...(NetrunningState.energy ? {} : styles.buttonHighlight) }}>

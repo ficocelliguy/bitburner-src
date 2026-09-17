@@ -4761,7 +4761,7 @@ export interface Cyberdeck {
      *
      * @returns the current ICEBreaker cost of netrunning
      */
-    getNetrunningCost(): number;
+    getCost(): number;
 
     /**
      * Get the current netrun status.
@@ -4773,6 +4773,9 @@ export interface Cyberdeck {
 
     /**
      * Retrieves the current netrunning grid.
+     *
+     * @remarks
+     * RAM cost: 0 GB
      */
     getGrid(): EntityInfo[][];
 
@@ -4785,7 +4788,7 @@ export interface Cyberdeck {
      * @remarks
      * RAM cost: 0 GB
      */
-    toggleFlag(y, x): void;
+    toggleFlag(y: number, x: number): void;
   };
 
   /**

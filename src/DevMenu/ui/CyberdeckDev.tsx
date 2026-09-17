@@ -85,7 +85,7 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
     CyberdeckState.connections = [];
-    CyberdeckState.netrunningLevel += 12;
+    CyberdeckState.netrunningLevel += 18;
     for (let i = 0; i < 4; i++) {
       CyberdeckState.installedModules.push(createModule(getNextNetrunningWHRNG()));
     }
@@ -94,7 +94,7 @@ export function CyberdeckDev(): React.ReactElement {
     }
 
     CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG(), ModType.RackExtension, 8));
-    CyberdeckState.netrunningLevel -= 12;
+    CyberdeckState.netrunningLevel -= 18;
     CyberdeckState.components.rom = 25;
     CyberdeckState.components.chips = 25;
     CyberdeckState.components.neurodes = 25;

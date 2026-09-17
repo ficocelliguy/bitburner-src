@@ -14,12 +14,12 @@ netrun: {
 
     finish(): NetrunningRewards;
 
-    getNetrunningCost(): number;
+    getCost(): number;
 
     getStatus(): NetrunStatus;
 
     getGrid(): EntityInfo[][];
 
-    toggleFlag(y, x): void;
+    toggleFlag(y: number, x: number): void;
   };
 ```

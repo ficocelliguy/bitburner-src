@@ -5,8 +5,10 @@ import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
 import { NetrunEntity } from "../Types";
 import { NetrunEntityVariant } from "../Enums";
+import { useCyberdeckStyles } from "./cyberdeckStyles";
 
 export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
+  const styles = useCyberdeckStyles();
   const color = getEntityColor(entity);
 
   function getBorderColor(neighbor: NetrunEntity): string {
@@ -58,7 +60,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
     : entity.hasBomb
     ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers."
     : entity.type == NetrunEntityVariant.ice
-    ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level!. Can be broken, if there are ICEBreakers still available."
+    ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level! Can be broken, if there are ICEBreakers still available."
     : entity.type == NetrunEntityVariant.dataStore
     ? "A data cache! Grab it while you can!"
     : entity.type === NetrunEntityVariant.firewall
@@ -92,6 +94,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
             margin: "auto",
             backgroundColor: color,
             opacity: getOpacity(),
+            ...(entity.type === NetrunEntityVariant.offline /* && entity.visible */ ? styles.offlineNode : {}),
           }}
         >
           <Box

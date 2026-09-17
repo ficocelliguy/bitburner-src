@@ -259,6 +259,7 @@ export function payComponentCost(cost: Partial<ComponentCounts>, count = 1) {
   CyberdeckState.components.chips -= (cost.chips ?? 0) * count;
   CyberdeckState.components.rom -= (cost.rom ?? 0) * count;
   CyberdeckState.components.neurodes -= (cost.neurodes ?? 0) * count;
+  CyberdeckState.components.cores -= (cost.cores ?? 0) * count;
   CyberdeckState.components.iceBreakers -= (cost.iceBreakers ?? 0) * count;
 }
 
@@ -278,7 +279,7 @@ export function craftPowerSupply() {
   }
   payComponentCost(powerSupplyCraftingCost);
   const rng = getNextCraftingPowerSupplyWHRNG();
-  const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel), rng);
+  const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel + 1), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   return newComponent;

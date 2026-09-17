@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cyberdeck pre-test review — cyberdeck vs origin/dev</title>
+    <title>Cyberdeck pre-test review — dev branch</title>
     <style>
       :root {
         --bg: #0f1216;
@@ -72,7 +72,7 @@
       }
       .toc {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 10px;
         margin-bottom: 24px;
       }
@@ -103,98 +103,94 @@
       .toc a.minor {
         border-color: var(--minor);
       }
-      .toc .count {
-        color: var(--fg2);
+      .toc a.resolved {
+        border-color: var(--resolved);
+      }
+      .count {
         float: right;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 12px;
+        color: var(--fg2);
+      }
+      h2 {
+        margin: 32px 0 10px;
+        font-size: 18px;
+        border-bottom: 1px solid var(--bg3);
+        padding-bottom: 4px;
+      }
+      h2 .count {
+        float: right;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--fg2);
       }
       button.reset {
         background: var(--bg3);
-        color: var(--fg);
         border: 1px solid var(--minor);
-        padding: 6px 14px;
-        font-size: 12px;
+        color: var(--fg);
+        padding: 4px 12px;
+        border-radius: 2px;
         cursor: pointer;
-        border-radius: 3px;
+        font-size: 12px;
       }
       button.reset:hover {
-        background: var(--minor);
-        color: var(--bg);
-      }
-      h2 {
-        margin: 28px 0 12px;
-        padding-bottom: 6px;
-        border-bottom: 1px solid var(--bg3);
-        font-size: 18px;
-      }
-      h2 .count {
-        color: var(--fg2);
-        font-size: 13px;
-        font-weight: normal;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        margin-left: 8px;
+        border-color: var(--fg2);
       }
       .issue {
         background: var(--bg2);
+        margin-bottom: 12px;
+        padding: 12px 14px;
         border-left: 4px solid var(--minor);
-        padding: 12px 16px;
-        margin-bottom: 10px;
-        display: grid;
-        grid-template-columns: 22px 1fr;
+        display: flex;
         gap: 12px;
-        align-items: start;
+        align-items: flex-start;
       }
       .issue.bug {
-        border-color: var(--bug);
+        border-left-color: var(--bug);
       }
       .issue.label {
-        border-color: var(--label);
+        border-left-color: var(--label);
       }
       .issue.gap {
-        border-color: var(--gap);
+        border-left-color: var(--gap);
       }
       .issue.footgun {
-        border-color: var(--footgun);
+        border-left-color: var(--footgun);
       }
       .issue.minor {
-        border-color: var(--minor);
+        border-left-color: var(--minor);
       }
-      .issue input[type="checkbox"] {
-        margin: 4px 0 0 0;
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        accent-color: var(--resolved);
+      .issue.resolved {
+        border-left-color: var(--resolved);
       }
-      .issue-body {
-        min-width: 0;
-      }
-      .issue-title {
-        font-weight: 600;
-        margin: 0 0 4px;
-        font-size: 14px;
-      }
-      .issue-loc {
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 12px;
-        color: var(--accent);
-        margin-bottom: 6px;
-      }
-      .issue.done .issue-title,
-      .issue.done .issue-loc,
-      .issue.done p {
-        opacity: 0.5;
+      .issue.done {
+        opacity: 0.55;
       }
       .issue.done .issue-title {
         text-decoration: line-through;
+      }
+      .issue input[type="checkbox"] {
+        margin-top: 4px;
+        transform: scale(1.1);
+        cursor: pointer;
+      }
+      .issue-body {
+        flex: 1;
+      }
+      .issue-title {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .issue-loc {
+        font-size: 12px;
+        color: var(--fg2);
+        margin-bottom: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       }
       .issue p {
         margin: 4px 0;
       }
       .issue p.fix::before {
         content: "Fix: ";
-        color: var(--resolved);
+        color: var(--fg2);
         font-weight: 600;
       }
       .issue p.what::before {
@@ -215,16 +211,15 @@
     </style>
   </head>
   <body>
-    <h1>Cyberdeck pre-test review</h1>
-    <div class="meta">
-      Branch <code>cyberdeck</code> vs <code>origin/dev</code> · HEAD <code>33f403148</code> · reviewed 2026-09-06
-    </div>
+    <h1>Cyberdeck pre-test review — pass 2</h1>
+    <div class="meta">Branch <code>dev</code> · HEAD <code>f3cbfea16</code> · reviewed 2026-09-17</div>
 
     <div class="status">
-      First pass against <code>origin/dev</code>. Two hard blockers for the tester round:
-      <b>every save reload silently loses componentStats + seed usages</b> (guard checks a non-existent field name), and
-      <b>server RAM/core upgrades aren't persisted</b>. Also the custom-build work is scheduled to take ~200 real-time
-      hours, which no tester will make it through.
+      Second pass. Big wins: save/load is unblocked, server upgrades persist, custom-build no longer takes 200 hours,
+      bitnode prestige resets all seeds. New critical bug from the latest offline-node commit:
+      <b>every normal netrun crashes on the 3rd move</b> (accesses <code>groups[-1]</code> which is only seeded on
+      corrupted runs). Also: <b>cores are never deducted when crafting mods</b> — free power supplies. Storage overflow
+      guard still off. See "Behavior bugs" section.
     </div>
 
     <div class="progress-wrap">
@@ -236,93 +231,58 @@
     </div>
 
     <div class="toc">
-      <a class="bugs" href="#bugs">Behavior bugs <span class="count" id="count-bugs">0/0</span></a>
+      <a class="bugs" href="#bugs">Bugs <span class="count" id="count-bugs">0/0</span></a>
       <a class="labels" href="#labels">Labels <span class="count" id="count-labels">0/0</span></a>
       <a class="gaps" href="#gaps">API gaps <span class="count" id="count-gaps">0/0</span></a>
       <a class="footguns" href="#footguns">Footguns <span class="count" id="count-footguns">0/0</span></a>
       <a class="minor" href="#minor">Minor <span class="count" id="count-minor">0/0</span></a>
+      <a class="resolved" href="#resolved">Resolved <span class="count" id="count-resolved">0/0</span></a>
     </div>
 
     <h2 id="bugs">Behavior bugs <span class="count" id="head-count-bugs"></span></h2>
 
-    <div class="issue bug" data-key="save-load-broken-ice-field">
+    <div class="issue bug" data-key="spread-offline-nodes-crashes-normal-netrun">
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          Save/load silently drops half the state — guard checks for a field that doesn't exist
+          <span class="star">★</span> Normal netrun crashes on the 3rd move — <code>groups[-1]</code> is undefined
         </div>
-        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:163-167 (isComponentCounts)</div>
+        <div class="issue-loc">src/CyberDeck/models/netrunningMinigame.ts:253 (spreadOfflineNodes)</div>
         <p class="what">
-          The <code>components</code> validator requires an <code>"ICE"</code> field and <code>obj.ICE</code> to be a
-          number. The actual data has <code>ICEBreakers</code>. Every load throws "Invalid cyberdeck savestring value:
-          components", the catch swallows it, and everything below that check in <code>loadCyberdeckSaveData</code> —
-          <code>componentStats</code>, <code>netrunningSeedUsages</code>, <code>netrunningCorruptedSeedUsages</code>,
-          <code>craftingPowerSupplySeedUsages</code>, <code>craftingProcessingModSeedUsages</code>,
-          <code>craftingUplinkSeedUsages</code> — never loads. Testers will see components reset, componentStats blank,
-          and seed-driven RNG re-randomize on every refresh.
+          <code>move()</code> calls <code>spreadOfflineNodes()</code> on every step. That function increments
+          <code>NetrunningState.steps</code> and, when <code>steps % 3 === 0</code>, does
+          <code>NetrunningState.groups[-1].slice(0)</code>. <code>groups[-1]</code> is only ever seeded in
+          <code>initNetrunGrid</code> when <code>corrupted === true</code>. For a normal netrun,
+          <code>groups[-1]</code> is <code>undefined</code> — the third move throws
+          <code>TypeError: Cannot read properties of undefined (reading 'slice')</code> and the run wedges. Testers will
+          hit this immediately.
         </p>
         <p class="fix">
-          Rename <code>"ICE"</code> to <code>"ICEBreakers"</code> and <code>obj.ICE</code> to
-          <code>obj.ICEBreakers</code> (twice each). While you're there, add a <code>cores</code> check — it's in the
-          type but not the guard.
+          Early-return when there are no offline nodes:
+          <code>if (!NetrunningState.groups[-1]?.length) return;</code> at the top of <code>spreadOfflineNodes</code>,
+          or seed an empty <code>groups[-1] = []</code> in <code>initNetrunGrid</code> for both branches.
         </p>
       </div>
     </div>
 
-    <div class="issue bug" data-key="server-upgrades-not-persisted">
+    <div class="issue bug" data-key="pay-component-cost-skips-cores">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Cyberdeck server RAM and core upgrades vanish on refresh</div>
-        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:6-27 (CyberdeckSaveData)</div>
+        <div class="issue-title">
+          <span class="star">★</span> <code>payComponentCost</code> never deducts cores — power supply / processing mod
+          / uplink craft cores-free
+        </div>
+        <div class="issue-loc">src/CyberDeck/models/createModule.ts:258-263</div>
         <p class="what">
-          <code>serverRamUpgrades</code> and <code>serverCoreUpgrades</code> are on <code>CyberdeckState</code> but
-          never included in the save data type, written by <code>getCyberdeckSaveData</code>, or loaded by
-          <code>loadCyberdeckSaveData</code>. After a refresh, both reset to <code>0</code> and
-          <code>addCyberdeckServer</code> rebuilds the server with <code>maxRam = 4</code>, <code>cpuCores = 0</code>.
-          All the components and money the player spent on upgrades are gone.
+          <code>payComponentCost</code> subtracts <code>chips</code>, <code>rom</code>, <code>neurodes</code>,
+          <code>iceBreakers</code> — but not <code>cores</code>. The affordability check
+          (<code>canAffordComponentCost</code>) DOES require cores, so the crafting cost tooltip and gate both mention
+          the cost, but nothing is actually spent. Every craft that lists <code>cores: 1</code>
+          (power supply, processing, uplink) is effectively cores-free.
         </p>
         <p class="fix">
-          Add both fields to <code>CyberdeckSaveData</code>, write them in <code>getCyberdeckSaveData</code>, validate +
-          assign them in <code>loadCyberdeckSaveData</code>. <code>addCyberdeckServer</code> already uses the state
-          values, so no further wiring needed.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue bug" data-key="custom-build-200-hours">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Custom cyberdeck build takes 200 real-time hours (unitRate is 1)</div>
-        <div class="issue-loc">src/Work/CreateCyberdeckWork.tsx:20</div>
-        <p class="what">
-          <code>this.unitRate = 1</code> and <code>unitNeeded = MillisecondsPerHour = 3,600,000</code>. With one cycle
-          per 200ms tick, <code>unitCompleted</code> grows by ~1 per tick — 5 per real-time second — so the build
-          finishes in 3.6M ticks ≈ 200 hours. Compare <code>CreateProgramWork</code> which uses
-          <code>unitRate = MilliPerCycle * skillMult ≈ 200+</code>. The constant name
-          <code>MillisecondsPerHour</code> implies the intent was ~1 hour.
-        </p>
-        <p class="fix">
-          Set <code>this.unitRate = CONSTANTS.MilliPerCycle</code>. That gets you ~1000 units/sec and the build finishes
-          in ~1 hour of focused work, matching the constant name.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue bug" data-key="crafting-seeds-not-bitnode-reset">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Two crafting seed counters aren't reset on bitnode prestige</div>
-        <div class="issue-loc">src/CyberDeck/utils/prestigeCyberdeck.ts:22</div>
-        <p class="what">
-          The bitnode reset resets <code>netrunningSeedUsages</code>, <code>craftingPowerSupplySeedUsages</code>, and
-          <code>netrunningCorruptedSeedUsages</code>, but skips <code>craftingProcessingModSeedUsages</code> and
-          <code>craftingUplinkSeedUsages</code>. Second-bitnode crafting will roll from stale counter positions, so the
-          RNG isn't deterministic across a fresh bitnode start.
-        </p>
-        <p class="fix">
-          Add both fields to the bitnode reset block:
-          <code>CyberdeckState.craftingProcessingModSeedUsages = 0;</code> and
-          <code>CyberdeckState.craftingUplinkSeedUsages = 0;</code>
+          Add <code>CyberdeckState.components.cores -= (cost.cores ?? 0) * count;</code> to
+          <code>payComponentCost</code>.
         </p>
       </div>
     </div>
@@ -330,147 +290,101 @@
     <div class="issue bug" data-key="netrun-storage-overflow">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Netrun succeeds with 0 free storage slots, overflowing storage by 3</div>
-        <div class="issue-loc">src/CyberDeck/models/netrun.ts:51 and src/CyberDeck/cyberdeckApi.ts:174</div>
+        <div class="issue-title">Netrun still succeeds with 0 free storage slots, overflowing storage by 1-4</div>
+        <div class="issue-loc">src/CyberDeck/models/netrunRewards.ts:57-60 (canNetrun) and cyberdeckApi.ts:240</div>
         <p class="what">
-          The check is <code>modStorageSize &gt;= storedModules.length</code> (in <code>canNetrun</code>) or
-          <code>modStorageSize &lt; storedModules.length</code> (in the API guard). If storage is exactly full — say 8/8
-          — both conditions pass and the netrun proceeds. <code>getNetrunningRewards</code> unshifts 3 mods, leaving
-          storage at 11/8. Same for corrupted netrun.
+          The check is <code>modStorageSize &gt;= storedModules.length</code>. If storage is exactly full — say 8/8 —
+          <code>8 &gt;= 8</code> passes and the netrun runs. <code>getNetrunningRewards</code> unshifts 1-4 mods based
+          on score, so a full-storage player ends the run at 9/8 to 12/8. Same off-by-N as before; only the count of
+          added mods changed.
         </p>
         <p class="fix">
-          Require 3 free slots: <code>storedModules.length + 3 &lt;= modStorageSize</code>. Or expose the "netrun
-          returns 3 mods" as a shared constant and use it in both checks.
+          Reserve at least one slot: <code>storedModules.length + 1 &lt;= modStorageSize</code>. Ideally reserve the
+          worst case (4) since score is unknown at gate time, or expose a
+          <code>getMaxNetrunRewardCount()</code> constant and gate on that.
         </p>
       </div>
     </div>
 
-    <div class="issue bug" data-key="corrupted-mod-debuff-never-applied">
+    <div class="issue bug" data-key="tutorial-steps-not-saved">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Corrupted mods' extra debuff never applies (<code>??=</code> can't fire)</div>
-        <div class="issue-loc">src/CyberDeck/models/createCorruptedModule.ts:34 and :42</div>
+        <div class="issue-title">Tutorial progress mid-checklist doesn't survive a refresh</div>
+        <div class="issue-loc">
+          src/CyberDeck/utils/SaveLoad.ts:6-30 (CyberdeckSaveData); CyberdeckState.tutorialSteps
+        </div>
         <p class="what">
-          <code>module.stats.playerMults ??= mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});</code> —
-          but <code>createProcessingModule</code> and <code>createUplink</code> always set
-          <code>stats.playerMults</code> to at least <code>{}</code>, so it's never nullish. The <code>??=</code> never
-          fires. The intended "add a nastier debuff on top of the base one" is a silent no-op for these corrupted
-          branches.
+          <code>CyberdeckState.tutorialSteps</code> tracks the six per-item flags shown in
+          <code>TutorialChecklist</code>. Save data has <code>hasCompletedTutorial</code> but not the individual step
+          flags. A tester who does 5 of the 6 steps and reloads will see 0/6 again — all their check marks reset.
         </p>
         <p class="fix">
-          Change <code>??=</code> to <code>=</code>:
-          <code>module.stats.playerMults = mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});</code>
+          Add <code>tutorialSteps</code> to <code>CyberdeckSaveData</code>, write it in
+          <code>getCyberdeckSaveData</code>, validate its shape and assign it in <code>loadCyberdeckSaveData</code>.
         </p>
       </div>
     </div>
 
-    <div class="issue bug" data-key="cortex-shared-threads-not-reset">
+    <div class="issue bug" data-key="offline-entity-recursion-out-of-bounds">
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          In-flight <code>cortexShare()</code> thread count doesn't reset on bitnode prestige
+          <code>offlineEntity</code> recursion can crash at grid corners when the target lands on the player
         </div>
-        <div class="issue-loc">src/CyberDeck/utils/prestigeCyberdeck.ts (bitnode block)</div>
+        <div class="issue-loc">src/CyberDeck/models/netrunningMinigame.ts:234-244</div>
         <p class="what">
-          <code>CyberdeckState.cortexSharedThreads</code> is incremented at the start of a scripted
-          <code>cortexShare()</code> and decremented in its <code>.finally()</code>. On bitnode prestige scripts are
-          killed mid-flight — the <code>finally</code> may not run — leaving a stale non-zero count. The next tick's
-          <code>gainCyberdeckComponents()</code> in the new bitnode reads that stale value and hands out phantom
-          neurodes from the cortex source.
-        </p>
-        <p class="fix">In the bitnode reset block, add <code>CyberdeckState.cortexSharedThreads = 0;</code></p>
-      </div>
-    </div>
-
-    <div class="issue bug" data-key="server-cpu-cores-zero">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Fresh cyberdeck server has <code>cpuCores = 0</code></div>
-        <div class="issue-loc">src/CyberDeck/models/cyberdeckServer.ts:33</div>
-        <p class="what">
-          <code>server.cpuCores = CyberdeckState.serverCoreUpgrades</code>, which is 0 until the player buys an upgrade.
-          Every real server has ≥1 core; grow/weaken and similar formulas assume it. A cyberdeck server with 0 cores
-          will misbehave for scripts running on it.
+          When the entity being marked offline is at the player's location, the function recurses with
+          <code>NetrunningState.grid[y + 1][x + 1]</code>. If the player is at the bottom-right corner (or the last
+          row), <code>grid[y + 1]</code> is <code>undefined</code> and <code>undefined[x + 1]</code> throws. The
+          corrupted netrun spawns offline nodes in the corners, so this is a real path once spreading brings a node to
+          the player.
         </p>
         <p class="fix">
-          <code>server.cpuCores = 1 + CyberdeckState.serverCoreUpgrades;</code> — matches how RAM is
-          <code>4 + serverRamUpgrades</code>. Update <code>upgradeCyberdeckServerCores</code>'s server assignment the
-          same way.
+          Guard both indices:
+          <code>const next = NetrunningState.grid[y + 1]?.[x + 1]; if (next) offlineEntity(next);</code>
+          — or pick a safe adjacent tile that isn't the player and isn't out of bounds.
         </p>
       </div>
     </div>
 
     <h2 id="labels">Misleading or incorrect labelling <span class="count" id="head-count-labels"></span></h2>
 
+    <div class="issue label" data-key="hostile-trace-risk-infinity-and-huge-values">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">"Hostile trace risk" now displays as Infinity% and huge percentages</div>
+        <div class="issue-loc">
+          src/CyberDeck/models/netrunRewards.ts:43-54 (getNetrunningTraceFraction); NetrunningPortal.tsx:114
+        </div>
+        <p class="what">
+          The rewritten <code>getNetrunningTraceFraction</code> returns <code>getNetrunningCost(...) / 10 - 1</code>. At
+          <code>timeSinceLastRun === 0</code>, <code>traceDecay / 0 = Infinity</code>, so the fraction is Infinity; the
+          UI shows "Hostile trace risk: Infinity%". Even a few ms later it's still thousands of percent (e.g. cost 5000
+          → "5000000%" with the current <code>* 10</code> multiplier). And the display multiplier changed from
+          <code>* 100</code> to <code>* 10</code>, which no longer reads as a percentage of anything intelligible.
+        </p>
+        <p class="fix">
+          Decide whether this display is a % or a raw multiplier, then normalize accordingly. If it's meant as a "risk"
+          bar, clamp to [0, 100]% and use a monotonic decay curve. If it's the ICE-cost surcharge, label it as such
+          ("Cost surcharge: ×N") and skip the % sign.
+        </p>
+      </div>
+    </div>
+
     <div class="issue label" data-key="ishima-portal-infinity">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Ishima Glitch portal shows "ICEbreakers needed: Infinity" during hard cooldown</div>
-        <div class="issue-loc">src/CyberDeck/ui/NetrunningPortal.tsx:107 and :111</div>
+        <div class="issue-title">Ishima Glitch portal shows "ICEBreakers needed: Infinity" during hard cooldown</div>
+        <div class="issue-loc">src/CyberDeck/ui/NetrunningPortal.tsx:104,108</div>
         <p class="what">
-          In corrupted mode, when we're inside the <code>corruptedNetrunningHardCooldownMs</code> window,
-          <code>getCurrentNetrunningIceCost(true)</code> returns <code>Infinity</code>, and the template literal
-          stringifies it. Players see "ICEbreakers needed: Infinity" with a "Hostile trace risk: NaN%" underneath.
+          In corrupted mode, when inside <code>corruptedNetrunningHardCooldownMs</code>,
+          <code>getCurrentNetrunningIceCost(true)</code> returns <code>Infinity</code>, template-literalized as the
+          string "Infinity". Players see "ICEBreakers needed: Infinity". Same story now compounds with "Hostile trace
+          risk: NaN%" or "Infinity%" underneath.
         </p>
         <p class="fix">
-          Guard: render "Portal recharging..." when <code>!Number.isFinite(cost)</code>. Bonus: use the remaining
-          <code>corruptedNetrunningHardCooldownMs</code> to show a countdown.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="trace-risk-goes-back-up">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Netrun trace risk shows increasing % after cooldown expires (goes past 100%)</div>
-        <div class="issue-loc">src/CyberDeck/models/netrun.ts:45</div>
-        <p class="what">
-          <code>((netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs) ** 2</code>. Once
-          <code>timeSinceLastRun &gt; decay</code>, the numerator goes negative; squaring makes it positive. At 2× decay
-          the label reads 100%; at 3× it reads 400%. Testers waiting out the cooldown will see the risk falling to 0 and
-          then rising again.
-        </p>
-        <p class="fix">
-          Clamp before squaring:
-          <code>Math.max(0, (netrunningTraceDecayMs - timeSinceLastRun) / netrunningTraceDecayMs) ** 2</code>.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="add-connection-return-type-mismatch">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          <code>addConnection</code> impl returns <code>boolean</code>, .d.ts says <code>void</code>
-        </div>
-        <div class="issue-loc">
-          src/CyberDeck/cyberdeckApi.ts:139 vs src/ScriptEditor/NetscriptDefinitions.d.ts:4621
-        </div>
-        <p class="what">
-          The impl <code>return result.success;</code> gives scripters a usable boolean, but the type says
-          <code>addConnection(...): void</code>. TypeScript users writing
-          <code>if (ns.cyberdeck.addConnection(...))</code> get a type error even though the runtime works.
-        </p>
-        <p class="fix">
-          Change the .d.ts to
-          <code>addConnection(modId1: string, modId2: string, socketIndex: number): boolean;</code> — matches
-          <code>removeConnection</code>'s shape.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="remove-connection-doc-copy-paste">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title"><code>removeConnection</code> JSDoc says "true if the connection was made"</div>
-        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4632</div>
-        <p class="what">
-          Copy-paste from <code>addConnection</code>'s doc. Scripter reads "true if the connection was made successfuly;
-          false if it is invalid" on a method called removeConnection and has to guess.
-        </p>
-        <p class="fix">
-          "true if the connection was removed; false if no such connection existed." (And fix the "successfuly" typo
-          while there.)
+          Guard: render "Portal recharging..." (with a countdown from
+          <code>corruptedNetrunningHardCooldownMs</code>) when <code>!Number.isFinite(cost)</code>.
         </p>
       </div>
     </div>
@@ -479,61 +393,16 @@
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          Error messages from <code>installMod</code>/<code>storeMod</code> reference "index", not
-          <code>modIndex</code>/<code>storageIndex</code>
+          <code>storeMod</code> error messages still say "modIndex", .d.ts calls it <code>storageIndex</code>
         </div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:90 and :114</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:145</div>
         <p class="what">
-          The .d.ts calls the params <code>modIndex</code> and <code>storageIndex</code>. The impl passes
-          <code>"index"</code> to <code>helpers.integer(ctx, "index", index)</code>, so type-check errors read "index
-          must be an integer" even when the scripter wrote <code>modIndex: -1</code>. Confusing when debugging.
+          <code>installMod</code> was fixed to pass <code>"modIndex"</code> (matching the .d.ts param name), but
+          <code>storeMod</code> also passes <code>"modIndex"</code> where its .d.ts param is <code>storageIndex</code>.
+          Type-check errors read "modIndex must be an integer" even when the scripter wrote
+          <code>storageIndex: -1</code>.
         </p>
-        <p class="fix">
-          Pass the .d.ts param name: <code>helpers.integer(ctx, "modIndex", index)</code> and
-          <code>helpers.integer(ctx, "storageIndex", index)</code>.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="doc-recyclemod-example-passes-object">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          Docs example passes a <code>DeckMod</code> object to <code>recycleMod</code> — it takes a string ID
-        </div>
-        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:74</div>
-        <p class="what">
-          <code>ns.cyberdeck.crafting.recycleMod(firstModReward)</code> — but the API is
-          <code>recycleMod(modId: string)</code>. Copy-pasting the example crashes with a
-          <code>helpers.string</code> type failure. Testers who use the docs as their starting point hit this
-          immediately.
-        </p>
-        <p class="fix">Change to <code>ns.cyberdeck.crafting.recycleMod(firstModReward.id)</code>.</p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="doc-netrun-vs-netrunning-terminology">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Docs use "netrun level" and "netrun cooldown level"; code/UI call it "netrunning"</div>
-        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:61-62</div>
-        <p class="what">
-          State fields are <code>netrunningLevel</code>/<code>netrunningCooldownLevel</code>, StatsPage says "Netrunning
-          level" and "Netrun trace cooldown level", API says
-          <code>netrunningLevel</code>/<code>netrunningCooldownLevel</code>. Docs drift to "netrun level". A scripter
-          searching the API for "netrun cooldown level" won't find it.
-        </p>
-        <p class="fix">Docs: "netrunning level" and "netrunning cooldown level" to match the API and stats page.</p>
-      </div>
-    </div>
-
-    <div class="issue label" data-key="purchase-dialog-typo">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">Purchase dialog reads "Congratulations the purchase of your new rig!"</div>
-        <div class="issue-loc">src/CyberDeck/ui/CyberdeckPurchaseButton.tsx:28</div>
-        <p class="what">Missing "on". Reads as broken English.</p>
-        <p class="fix">"Congratulations on the purchase of your new rig!"</p>
+        <p class="fix"><code>helpers.integer(ctx, "storageIndex", modIndex)</code> in <code>storeMod</code>.</p>
       </div>
     </div>
 
@@ -541,35 +410,124 @@
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          Stats page displays fractional levels like "8.14" for Netrunning/Crafting/Cooldown level
+          Stats page still displays fractional levels like "8.14" for Netrunning/Crafting/Cooldown level
         </div>
         <div class="issue-loc">src/CyberDeck/ui/StatsPage.tsx:34-40</div>
         <p class="what">
-          Skill chips give fractional level buffs (via <code>getConsumableBuff</code>), so
-          <code>netrunningLevel</code> etc. are non-integer. The label shows "Netrunning level: 8.13". The word "level"
-          reads as an integer in most games and testers will find this jarring.
+          Skill chips give fractional buffs (via <code>getConsumableBuff</code>), so <code>netrunningLevel</code>,
+          <code>craftingLevel</code>, and <code>netrunningCooldownLevel</code> are non-integers. The label reads
+          "Netrunning level: 8.13". Testers will read "level" as an integer and find this jarring.
         </p>
         <p class="fix">
-          Either <code>Math.floor</code> for display (levels are used continuously internally, so display precision
-          doesn't have to match), or rename these to "power" / "affinity" so a decimal reads naturally. Same tension on
-          <code>modStorageSize</code> — see the fractional-storage footgun below.
+          Either <code>Math.floor</code> for display (mechanics can keep the continuous value internally), or rename
+          these to "power" / "affinity" so a decimal reads naturally.
         </p>
       </div>
     </div>
 
-    <div class="issue label" data-key="neurodes-tooltip-missing-cortexshare">
+    <div class="issue label" data-key="netrun-tutorial-hint-uses-corrupted-counter">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Neurodes inventory tooltip omits <code>cortexShare()</code> as a source</div>
-        <div class="issue-loc">src/CyberDeck/ui/ComponentInventoryCount.tsx:96</div>
+        <div class="issue-title">
+          Netrun keyboard hint hides based on <b>corrupted</b> netrun count, not normal netrun count
+        </div>
+        <div class="issue-loc">src/CyberDeck/ui/NetrunMinigame.tsx:117</div>
         <p class="what">
-          Says "Obtained from crime kills, attending classes, and completing coding contracts." The docs list a fourth
-          source: "Using <code>cortexShare()</code>". Scripters who wire that into their farm won't see it acknowledged
-          in the tooltip and may not know it's working.
+          <code>CyberdeckState.netrunningCorruptedSeedUsages &lt; 2</code> gates the "Arrow keys or WSAD to move..."
+          hint. A player doing normal netruns increments <code>netrunningSeedUsages</code>, not the corrupted counter —
+          the hint will keep showing for them forever, and vanish after only two corrupted runs. Almost certainly the
+          wrong counter.
         </p>
         <p class="fix">
-          Add cortexShare to the source string. "some mods, when powered" is also worth mentioning, since that's what
-          the docs advertise.
+          <code>CyberdeckState.netrunningSeedUsages &lt; 2</code>, or a dedicated
+          <code>tutorialSteps.hasSeenNetrunHint</code> flag.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="netrun-hint-typo-through">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Netrun keyboard hint says "Break though ICE" — should be "through"</div>
+        <div class="issue-loc">src/CyberDeck/ui/NetrunMinigame.tsx:119</div>
+        <p class="what">Typo in the visible in-run tutorial text.</p>
+        <p class="fix">"Break through ICE to look for rewards..."</p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="netrun-grid-tooltip-typo">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">ICE tooltip has doubled punctuation ("...watch your threat level!.")</div>
+        <div class="issue-loc">src/CyberDeck/ui/NetrunGridEntity.tsx:61</div>
+        <p class="what">Ends with "!." — a leftover period after the exclamation. Minor but visible on every hover.</p>
+        <p class="fix">Drop the trailing period.</p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="doc-example-invented-netrun-fn">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Docs example calls <code>ns.cyberdeck.netrun()</code> — no such function</div>
+        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:72</div>
+        <p class="what">
+          The netrun example does <code>const result = await ns.cyberdeck.netrun();</code>. The API is
+          <code>netrun.start() / netrun.move() / netrun.finish()</code>. Copy-pasting from the docs immediately throws
+          "ns.cyberdeck.netrun is not a function".
+        </p>
+        <p class="fix">
+          Rewrite the example around <code>netrun.start()</code>, a loop of <code>netrun.move(...)</code>, then
+          <code>netrun.finish()</code>. Or link the reader to a longer standalone example page.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="doc-example-icebreakers-case">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          Docs example reads <code>.ICEBreakers</code>; the field is <code>iceBreakers</code>
+        </div>
+        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:69</div>
+        <p class="what">
+          <code>ns.cyberdeck.getComponentCounts().ICEBreakers</code> — but <code>ComponentCounts.iceBreakers</code> is
+          lowercase-first. <code>.ICEBreakers</code> is <code>undefined</code>, so the affordability check silently
+          becomes <code>cost &lt;= undefined</code> → false. The example will look like it "works" (never enters the
+          if-branch) but is actually broken.
+        </p>
+        <p class="fix"><code>ns.cyberdeck.getComponentCounts().iceBreakers</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="doc-example-missing-ns-prefix">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Wiring example calls <code>getCyberdeckIOPanel()</code> as a bare function</div>
+        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:49</div>
+        <p class="what">
+          The example already aliases <code>const IO = ns.cyberdeck.getCyberdeckIOPanel();</code> but then references
+          <code>getCyberdeckIOPanel().sockets[3]</code> without the <code>ns.cyberdeck.</code> prefix (or reusing
+          <code>IO</code>). ReferenceError on paste.
+        </p>
+        <p class="fix">Reuse <code>IO.sockets[3]</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue label" data-key="component-tooltips-missing-mod-source">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          ROM/chips/neurodes tooltips don't mention "Some mods, when powered" as a source (docs do)
+        </div>
+        <div class="issue-loc">src/CyberDeck/ui/ComponentInventoryCount.tsx:83-127</div>
+        <p class="what">
+          The docs list "Some mods, when powered" as a fifth source for ROM/chips/neurodes; the in-game tooltips omit
+          it. Scripters who wire up production mods and see counts tick up won't get confirmation in the tooltip that
+          the mods are contributing.
+        </p>
+        <p class="fix">
+          Append "Some mods, when powered." to the three tooltip source strings. (Also worth adding "gym training" under
+          neurodes to match the doc phrasing.)
         </p>
       </div>
     </div>
@@ -580,21 +538,19 @@
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          <span class="star">★</span> No <code>server.canUpgradeRam()</code> — cost getter returns
-          <code>Infinity</code> when maxed, poisoning downstream checks
+          <span class="star">★</span> No <code>server.canUpgradeRam()</code> — cost getter still returns
+          <code>Infinity</code> when maxed
         </div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:226 (server.getRamUpgradeCost)</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:397 (server.getRamUpgradeCost)</div>
         <p class="what">
-          When RAM is maxed, <code>getCyberdeckServerRamUpgradeCost</code> returns
-          <code>{componentCost: {ROM: Infinity, neurodes: Infinity, chips: Infinity, ...}, moneyCost: Infinity}</code>.
-          The API spreads that into <code>{ROM: Infinity, chips: Infinity, ..., money: Infinity}</code>. Scripter code
-          like <code>if (cost.money &lt; player.money) upgrade()</code> reads "money we need is Infinity, so we can't
-          afford it" — no way to distinguish that from "expensive but not maxed".
+          When RAM is maxed at 28, <code>getCyberdeckServerRamUpgradeCost</code> returns componentCost fields =
+          <code>Infinity</code>. The API spreads that into <code>{rom: Infinity, ..., money: Infinity}</code>. Scripter
+          code like <code>if (cost.money &lt; player.money) upgrade()</code> reads "money we need is Infinity, so we
+          can't afford it" — no way to distinguish that from "expensive but not maxed".
         </p>
         <p class="fix">
-          Add <code>server.canUpgradeRam(): boolean</code> (and <code>canUpgradeCores(): boolean</code> for symmetry,
-          even though cores has no cap yet). Alternatively return <code>null</code> from the cost getter when maxed, but
-          that's a breaking type change.
+          Add <code>server.canUpgradeRam(): boolean</code>. Cores has no cap so a symmetric
+          <code>canUpgradeCores(): boolean</code> would just always return true — still valuable for a stable API shape.
         </p>
       </div>
     </div>
@@ -602,17 +558,21 @@
     <div class="issue gap" data-key="no-trace-cooldown-api">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">No API to observe netrun trace cooldown / decay progress</div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts (Cyberdeck namespace)</div>
+        <div class="issue-title">
+          Still no API to observe netrun trace cooldown / decay progress —
+          <code>getNetrunningTraceFraction</code> exists internally
+        </div>
+        <div class="issue-loc">
+          src/CyberDeck/cyberdeckApi.ts (Cyberdeck namespace); src/CyberDeck/models/netrunRewards.ts:43
+        </div>
         <p class="what">
-          Scripters can call <code>getNetrunningCost()</code> to see the current ICE cost, but that's a lagging
-          indicator. They can't tell how close the cost is to fully-decayed, or how long until the next cheap netrun. To
-          auto-schedule netruns optimally they'd need to poll <code>getNetrunningCost()</code> in a busy loop, which is
-          wasteful.
+          Scripters have <code>netrun.getNetrunningCost()</code>, but no way to tell if that number is a peak (just
+          netran) or approaching the floor (safe to run again). <code>getNetrunningTraceFraction</code> exists in the
+          model but isn't exposed. To time optimal netruns they'd have to poll cost repeatedly.
         </p>
         <p class="fix">
-          Expose either <code>getNetrunningTraceFraction(): number</code> (0..1, matches the UI's "hostile trace risk"),
-          or <code>getMillisSinceLastNetrun(): number</code>. Same for corrupted.
+          Expose <code>netrun.getTraceFraction(): number</code> (and a corrupted variant if you keep the parameter), or
+          <code>netrun.getMsSinceLastRun(): number</code>. Give the number a stable, documented meaning.
         </p>
       </div>
     </div>
@@ -620,37 +580,17 @@
     <div class="issue gap" data-key="mod-storage-size-name-confusing">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">
-          <code>getLevels().modStorageSize</code> is a capacity, not a level — surprising in a "levels" record
-        </div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:216 (stats.getLevels)</div>
+        <div class="issue-title"><code>getLevels().modStorageSize</code> is a capacity, not a level</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:380-390 (stats.getLevels)</div>
         <p class="what">
-          The <code>getLevels()</code> return has <code>netrunningLevel</code>, <code>craftingLevel</code>,
-          <code>netrunningCooldownLevel</code>, and then <code>modStorageSize</code>. Only one of these isn't a level in
-          the sense of "consumed from skill chips over time" — <code>modStorageSize</code> is a slot count. Scripters
-          comparing "levels" to bound their farm will trip over this.
+          <code>getLevels()</code> returns <code>netrunningLevel</code>, <code>craftingLevel</code>,
+          <code>netrunningCooldownLevel</code>, then <code>modStorageSize</code>, plus the two server-upgrade counts.
+          Only some of these are "levels". Scripters iterating over the return value expecting integer skill levels will
+          find <code>modStorageSize</code> is a slot count and the server-upgrade fields are step counters.
         </p>
         <p class="fix">
-          Either rename the return field (breaking, but pre-launch is the right time), or add a dedicated
-          <code>getStorageCapacity(): number</code>.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue gap" data-key="no-get-rack-capacity">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">No API to read the current rack capacity</div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts (Cyberdeck namespace)</div>
-        <p class="what">
-          Rack capacity is <code>baseRackSize + extraRackSlots</code> from charged Rack Extensions. Scripters have no
-          way to read it — they'd have to sum
-          <code>getInstalledMods().filter(charged).reduce((s,m) =&gt; s + (m.stats?.extraRackSlots ?? 0), 0)</code> plus
-          a hardcoded base. Fragile and duplicative.
-        </p>
-        <p class="fix">
-          Add <code>getRackCapacity(): number</code> returning <code>getCurrentRackSize()</code>. Bonus:
-          <code>getMaxInstalledRackExtensions(): number</code> so scripters know when Rack Extension installs will fail.
+          Either move <code>modStorageSize</code> / server upgrades under a separate <code>getCapacities()</code> /
+          <code>getServerUpgrades()</code>, or rename the aggregate <code>getStats()</code>.
         </p>
       </div>
     </div>
@@ -659,38 +599,18 @@
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          <code>recycleMod</code> throws for missing mod but returns <code>{success: false, ...}</code> for favorited
-          mod
+          <code>recycleMod</code> still throws for missing mod but returns <code>{success: false, ...}</code> for
+          favorited mod
         </div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:416-429</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:601-608</div>
         <p class="what">
-          Two error paths with two shapes: <code>throw new Error('not found')</code> for a bad ID, and
-          <code>{success: false, chips: 0, ...}</code> for a favorited mod. Scripters have to wrap in try/catch AND
-          check <code>result.success</code>. Would be nicer to pick one convention.
+          Two error paths, two shapes: <code>throw new Error("not found")</code> vs
+          <code>{success: false, chips: 0, ...}</code>. Scripters have to wrap in try/catch AND check
+          <code>result.success</code>.
         </p>
         <p class="fix">
-          Return <code>{success: false, ...}</code> for both (log the reason via <code>logger(ctx)</code>), OR throw for
-          both. Either is fine; consistency is what matters.
-        </p>
-      </div>
-    </div>
-
-    <div class="issue gap" data-key="favorite-mod-swallows-io-panel-error">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          <code>favoriteMod</code> throws if called on the IO panel — with the same message shape as "not found"
-        </div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:78-83 → getModOrThrow:37-52</div>
-        <p class="what">
-          Calling <code>favoriteMod(ns.cyberdeck.getCyberdeckIOPanel().id)</code> throws "Cannot modify the IO Panel".
-          The scripter's action was <i>favorite</i>, not modify — the message is misleading. And
-          <code>getModOrThrow</code>'s "not found" throw and this IO-panel throw are both bare <code>Error</code>s, so
-          try/catch can't distinguish them.
-        </p>
-        <p class="fix">
-          Either allow favoriting the IO panel (harmless), or throw a specific message:
-          <code>"IO Panel cannot be favorited"</code>. Consider distinct error subtypes.
+          Pick one convention. Returning <code>{success: false, ...}</code> for both and logging the reason via
+          <code>logger(ctx)</code> keeps the type simple.
         </p>
       </div>
     </div>
@@ -698,16 +618,48 @@
     <div class="issue gap" data-key="no-programmatic-glitch-discovery">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">No way for a script to observe <code>hasDiscoveredGlitch</code> state</div>
+        <div class="issue-title">Still no way for a script to observe <code>hasDiscoveredGlitch</code> state</div>
         <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts (legacy namespace)</div>
         <p class="what">
-          The <code>legacy.getCost</code> and <code>legacy.delve</code> APIs both silently print a corrupted hint if the
-          glitch isn't discovered yet, and return <code>Infinity</code> / <code>{success:false}</code>. A script that
-          wants to gate work on "player has discovered the glitch" has no direct predicate to check.
+          <code>legacy.getCost</code> and <code>legacy.delve</code> silently print a corrupted hint and return
+          <code>Infinity</code> / <code>{success: false}</code> when the glitch isn't discovered. A script that wants to
+          gate work on that state has no direct predicate.
+        </p>
+        <p class="fix">Add <code>legacy.hasDiscoveredGlitch(): boolean</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="netrun-toggleflag-untyped">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>netrun.toggleFlag(y, x): void</code> has no parameter types in the .d.ts</div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4788</div>
+        <p class="what">
+          Signature is bare <code>toggleFlag(y, x): void</code> — implicit <code>any</code> per parameter. Users of
+          TypeScript get no autocompletion or type checking. Also the JSDoc @param entries have no descriptions.
         </p>
         <p class="fix">
-          Add <code>legacy.hasDiscoveredGlitch(): boolean</code>. Or fold it into a <code>hasCyberdeck()</code>-shaped
-          predicate.
+          <code>toggleFlag(y: number, x: number): void</code>, and fill in the @param descriptions (with a note about
+          y/x ordering matching <code>getGrid()</code>).
+        </p>
+      </div>
+    </div>
+
+    <div class="issue gap" data-key="no-netrun-abort">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">No way to abort a netrun without paying ICEBreakers — "End Netrun" always deducts</div>
+        <div class="issue-loc">
+          src/CyberDeck/ui/NetrunMinigame.tsx:123 (End Netrun button) → netrunRewards.ts:63-65
+        </div>
+        <p class="what">
+          Once the portal fires, the player is committed. Clicking "End Netrun" — even one move in, even with score zero
+          — always calls <code>netrunRewards</code>, which unconditionally subtracts
+          <code>getCurrentNetrunningIceCost(corrupted)</code>. A tester who mis-clicks the portal has no recovery.
+        </p>
+        <p class="fix">
+          Either confirm-dialog on early "End Netrun" (below some score threshold), or split the button: "Abort" (no
+          cost, no rewards) while energy > 0 and score is 0; "End Netrun" once the player has done anything.
         </p>
       </div>
     </div>
@@ -717,22 +669,21 @@
     <div class="issue footgun" data-key="fractional-storage-wasted">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Fractional <code>modStorageSize</code> from skill chips is silently wasted</div>
+        <div class="issue-title">Fractional <code>modStorageSize</code> from skill chips is still silently wasted</div>
         <div class="issue-loc">
-          src/CyberDeck/models/moduleMutation.ts:266; comparisons in netrun.ts:52, cyberdeckApi.ts:174,
-          NetrunningPortal.tsx:99
+          src/CyberDeck/models/moduleMutation.ts:290; comparisons in netrunRewards.ts:57, cyberdeckApi.ts:240,
+          NetrunningPortal.tsx:95
         </div>
         <p class="what">
-          Skill chips add fractional slot counts (e.g., <code>+0.32</code>). So <code>modStorageSize</code> becomes
-          <code>8.32</code>. All the "is storage full" checks use <code>&lt; storedModules.length</code>:
-          <code>8.32 &lt; 9</code> is true, so the 9th slot never materializes. The player pays for a fractional bonus
-          that never turns into an actual slot. The UI's <code>Math.floor(modStorageSize)</code> displays honestly, but
-          the number just slowly grows toward a threshold that never registers.
+          Skill chips add fractional slot counts (e.g., <code>+0.32</code>), so <code>modStorageSize</code> becomes
+          <code>8.32</code>. The gate is <code>modStorageSize &gt;= storedModules.length</code>:
+          <code>8.32 &gt;= 9</code> is false, so the 9th slot never materializes. The player pays for a bonus that never
+          becomes an actual slot. UI displays <code>Math.floor(modStorageSize)</code> = 8, so the fractional part is
+          invisible to the player entirely.
         </p>
         <p class="fix">
-          Either round skill chip storage buffs up on consumption (<code>Math.ceil(stats.mod_storage)</code> before
-          adding), or floor <code>modStorageSize</code> in all the guard comparisons. Preferably:
-          <code>Math.floor(modStorageSize) &lt; storedModules.length + 3</code>.
+          Ceil-on-consumption: <code>CyberdeckState.modStorageSize += Math.ceil(stats.mod_storage)</code>, or floor at
+          compare time and reserve worst-case reward slots (see storage-overflow bug).
         </p>
       </div>
     </div>
@@ -740,37 +691,17 @@
     <div class="issue footgun" data-key="getid-small-base-collisions">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title"><code>getID</code> can pick a 32-value ID space; collision retry can spin</div>
-        <div class="issue-loc">src/CyberDeck/utils/statRng.ts:228-238</div>
+        <div class="issue-title"><code>getID</code> can still pick a 32-value ID space</div>
+        <div class="issue-loc">src/CyberDeck/utils/statRng.ts:256</div>
         <p class="what">
-          Bases are <code>[2, 8, 12, 16]</code> and IDs are <code>Math.floor(random * base**5).toString(base)</code>.
-          For <code>base=2</code>, that's <code>2**5 = 32</code> possible values. A player with many stored mods will
-          hit collisions frequently, and the <code>do…while</code> retries until it lucks into a free one — potentially
-          many iterations, and only re-rolling the numeric part means it can loop forever if all 32 base-2 IDs are taken
-          and the rng happens to keep picking base=2.
+          <code>baseOptions = [2, 8, 12, 16]</code>; for base 2, IDs are
+          <code>Math.floor(random * 32).toString(2)</code>
+          — 32 values. A player with many stored mods can hit collisions frequently; the retry loop only re-rolls the
+          numeric portion, so if the RNG keeps landing on base 2 and all 32 are taken, it spins forever.
         </p>
         <p class="fix">
-          Drop the small bases or bump the exponent so the smallest space is at least ~4x the max mod count. A cheap
-          fix: <code>const baseOptions = [8, 12, 16];</code>
-        </p>
-      </div>
-    </div>
-
-    <div class="issue footgun" data-key="ram-upgrade-button-not-affordability-gated">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          RAM upgrade button is enabled when the player can't afford it — silent no-op on click
-        </div>
-        <div class="issue-loc">src/CyberDeck/ui/CraftingPage.tsx:91</div>
-        <p class="what">
-          Only disabled on <code>!canUpgradeCyberdeckServerRam()</code> (the cap check). Not on affordability. Player
-          clicks, <code>upgradeCyberdeckServerRam</code> returns false silently, nothing changes, no toast. Same for the
-          cores upgrade button (which also lacks a cap and has NO disable state at all).
-        </p>
-        <p class="fix">
-          Disable on <code>!canAffordCyberdeckServerRamUpgrade()</code> too, OR fire a SnackbarEvent on failure. Apply
-          the same to the cores button.
+          Drop base 2 or bump the exponent: <code>const baseOptions = [8, 12, 16];</code> gives at least 32,768 IDs per
+          base.
         </p>
       </div>
     </div>
@@ -778,40 +709,16 @@
     <div class="issue footgun" data-key="cores-upgrade-uncapped">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">
-          Cores upgrade has no cap — player can spend components/money forever with diminishing benefit
-        </div>
+        <div class="issue-title">Cores upgrade still has no cap — player can grind cpuCores to arbitrary values</div>
         <div class="issue-loc">src/CyberDeck/models/cyberdeckServer.ts:91-127</div>
         <p class="what">
-          No <code>getCyberdeckServerCoreUpgradeCap</code> exists. <code>upgradeCyberdeckServerCores</code> succeeds
-          indefinitely. Player can grind to <code>cpuCores = 100+</code>, at which point grow/weaken formulas produce
-          weird values. No UI hint that cores stop being useful past some ceiling.
+          There's still no <code>canUpgradeCyberdeckServerCores</code>. Player can push <code>cpuCores</code> past what
+          grow/weaken formulas were tuned for. The UI now surfaces a "Cannot afford" toast (nice), but there's no
+          "Maxed" state.
         </p>
         <p class="fix">
-          Either add a cap (parallel to RAM's 28) and update the UI "Maxed" state, or document that cores are uncapped.
-          If uncapped is intentional, at least the cost curve should telegraph "diminishing returns".
-        </p>
-      </div>
-    </div>
-
-    <div class="issue footgun" data-key="add-connection-same-socket-index-only">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          <code>addConnection(a, b, socket)</code> requires the same socketIndex on BOTH mods — undocumented
-        </div>
-        <div class="issue-loc">
-          src/CyberDeck/models/moduleMutation.ts:78-129 (createConnection) and NetscriptDefinitions.d.ts:4603-4620
-        </div>
-        <p class="what">
-          The impl builds <code>{modId1, socketIndex}</code> and <code>{modId2, socketIndex}</code> — same index on both
-          ends. If mod A has socket 3 but mod B doesn't, the connection fails with "Socket colors do not match." The
-          .d.ts hints at "socket colors" but doesn't spell out the invariant that the same socketIndex slot must exist
-          on both mods. Scripters will spend time trying socket permutations before figuring it out.
-        </p>
-        <p class="fix">
-          Add a line to the JSDoc: "Both mods must have a socket at <code>socketIndex</code>. Use
-          <code>mod.sockets[socketIndex]</code> to check."
+          Either add a cap parallel to RAM's 28 and expose <code>canUpgradeCyberdeckServerCores</code>, or document
+          uncapped and telegraph diminishing returns in the cost curve.
         </p>
       </div>
     </div>
@@ -819,94 +726,77 @@
     <div class="issue footgun" data-key="netscript-delay-1s-per-install">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title"><code>installMod</code> costs 1 second each — batch installs are painfully slow</div>
-        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:96</div>
+        <div class="issue-title"><code>installMod</code> still costs 1 second each — batch installs are slow</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:120</div>
         <p class="what">
-          Every <code>installMod</code> awaits <code>helpers.netscriptDelay(ctx, 1000)</code>. A script that installs 5
-          mods takes 5s of wall time even without any real work in between. Doesn't scale for auto-swapping loadouts.
+          Every <code>installMod</code> awaits <code>helpers.netscriptDelay(ctx, 1000)</code>. A loadout swap of 5 mods
+          takes ~5s of wall time. Doesn't scale for auto-swapping.
         </p>
         <p class="fix">
           Either shorten the delay (200-500ms), or add an <code>installMods(ids: string[])</code> batch method with a
-          single delay, or at least document the delay so scripters aren't surprised.
+          single delay, or document the delay in the JSDoc.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue footgun" data-key="favoritemod-io-panel-silent-noop">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>favoriteMod</code> on the IO Panel silently mutates a throwaway copy</div>
+        <div class="issue-loc">
+          src/CyberDeck/cyberdeckApi.ts:98-106 → getModOrThrow:46-61; createModule.ts:32 (getCyberdeckIOPanel)
+        </div>
+        <p class="what">
+          <code>getCyberdeckIOPanel()</code> returns a fresh object literal every call. The API now allows favoriting
+          the IO panel (fixes prior "swallows error" issue) — but the mutation happens on the returned copy, which is
+          GC'd. Nothing is persisted. Scripter sees the log line "Mod ... is now favorited" and thinks it worked.
+        </p>
+        <p class="fix">
+          Either persist the IO panel state (store <code>ioPanelFavorite</code> on <code>CyberdeckState</code> and read
+          from it in <code>getCyberdeckIOPanel</code>), or reject favoriting with an explicit message ("The IO Panel
+          cannot be favorited").
         </p>
       </div>
     </div>
 
     <h2 id="minor">Minor <span class="count" id="head-count-minor"></span></h2>
 
-    <div class="issue minor" data-key="isComponentStats-doesnt-check-cores">
+    <div class="issue minor" data-key="isComponentCounts-doesnt-check-cores">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title"><code>isComponentStats</code> doesn't validate <code>cores</code> subobject</div>
-        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:171-181</div>
+        <div class="issue-title"><code>isComponentCounts</code> guard doesn't check <code>cores</code></div>
+        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:173-186</div>
         <p class="what">
-          Only checks <code>ROM</code>, <code>chips</code>, <code>neurodes</code>. A save missing
-          <code>cores</code> loads without complaint, later reads of <code>componentStats.cores.netrunning</code> throw.
+          <code>cores</code> is in <code>ComponentCounts</code>, but the guard only verifies <code>chips</code>,
+          <code>rom</code>, <code>neurodes</code>, <code>iceBreakers</code>. A save missing <code>cores</code> would
+          load with <code>cores === undefined</code>, and later arithmetic (<code>components.cores -= X</code>) yields
+          <code>NaN</code>.
         </p>
-        <p class="fix">Add <code>"cores" in obj &amp;&amp; typeof obj.cores === "object"</code> to the guard.</p>
+        <p class="fix">Add <code>"cores" in obj &amp;&amp; typeof obj.cores === "number"</code> to the guard.</p>
       </div>
     </div>
 
     <div class="issue minor" data-key="log-stat-ranges-console-noise">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title"><code>logStatRanges()</code> spams the browser console on every Rack page mount</div>
+        <div class="issue-title">
+          <code>logStatRanges()</code> still spams the browser console on every Rack page mount
+        </div>
         <div class="issue-loc">
-          src/CyberDeck/ui/ModuleRackAndInventoryPage.tsx:44 (function marked TODO-fico for removal)
+          src/CyberDeck/ui/ModuleRackAndInventoryPage.tsx:51 (function marked TODO-fico for removal)
         </div>
-        <p class="what">
-          Fine for internal iteration but if a tester opens devtools they'll see a table dump every time they switch to
-          the Manage Mods tab.
-        </p>
-        <p class="fix">Gate on a dev flag, or remove before the test round.</p>
-      </div>
-    </div>
-
-    <div class="issue minor" data-key="component-tooltip-missing-source-default">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          <code>getComponentDetails</code> default case returns object with no <code>source</code> field
-        </div>
-        <div class="issue-loc">src/CyberDeck/ui/ComponentInventoryCount.tsx:120-125</div>
-        <p class="what">
-          If a new component symbol is added without a case, the tooltip renders a blank source paragraph.
-        </p>
-        <p class="fix">Add <code>source: ""</code> to the default, or narrow the type so it can't happen.</p>
-      </div>
-    </div>
-
-    <div class="issue minor" data-key="right-click-favorite-doesnt-emit">
-      <input type="checkbox" />
-      <div class="issue-body">
-        <div class="issue-title">
-          Right-click "favorite" mutates state without firing <code>CyberdeckEvents.emit</code>
-        </div>
-        <div class="issue-loc">src/CyberDeck/ui/ModuleComponent.tsx:55-61</div>
-        <p class="what">
-          The 200ms <code>useRerender</code> on ModuleComponent hides the effect — the star icon appears within a frame
-          or two. But other subscribers to CyberdeckEvents (e.g., the stats page) won't react until their own timer
-          fires.
-        </p>
-        <p class="fix">
-          Call <code>CyberdeckEvents.emit()</code> after mutating <code>module.favorite</code>. The mutation is also a
-          direct field write on a shared object; consider whether it should go through a helper.
-        </p>
+        <p class="what">Testers with devtools open will see a stat range dump every tab switch to Manage Mods.</p>
+        <p class="fix">Gate on a dev flag or remove before the test round.</p>
       </div>
     </div>
 
     <div class="issue minor" data-key="stats-page-raw-json-dump">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">Stats page dumps raw <code>JSON.stringify(componentStats)</code> to the UI</div>
+        <div class="issue-title">Stats page still dumps raw <code>JSON.stringify(componentStats)</code> to the UI</div>
         <div class="issue-loc">src/CyberDeck/ui/StatsPage.tsx:49</div>
-        <p class="what">
-          Testers will see a nested JSON blob under "Component Stats" instead of a readable table. Almost certainly a
-          placeholder.
-        </p>
-        <p class="fix">
-          Either flag with a TODO comment and leave it in, or render a small table (rows = sources, cells = counts).
-        </p>
+        <p class="what">Testers will see a nested JSON blob under "Component Stats" instead of a readable table.</p>
+        <p class="fix">Render a small table (rows = sources, cells = counts), or hide behind a dev flag.</p>
       </div>
     </div>
 
@@ -914,12 +804,12 @@
       <input type="checkbox" />
       <div class="issue-body">
         <div class="issue-title">
-          <code>getFixedCountSocketArray</code> shuffles via <code>sort(() =&gt; rng.random() - 0.5)</code>
+          <code>getFixedCountSocketArray</code> still shuffles via <code>sort(() =&gt; rng.random() - 0.5)</code>
         </div>
         <div class="issue-loc">src/CyberDeck/utils/moduleUtilities.ts:26</div>
         <p class="what">
           Well-known non-uniform shuffle. Some socket layouts are statistically more likely than others. Cosmetic — no
-          player-visible impact — but worth flagging since it's called for every generated mod.
+          player-visible impact — but worth cleaning up since it's called for every generated mod.
         </p>
         <p class="fix">
           Fisher-Yates:
@@ -934,18 +824,289 @@
     <div class="issue minor" data-key="tester-bootstrap-auto-gains-cyberdeck">
       <input type="checkbox" />
       <div class="issue-body">
-        <div class="issue-title">
-          CyberdeckRoot auto-runs <code>gainCyberdeck()</code> on mount (TODO left in for testing)
+        <div class="issue-title">Multiple tester-only auto-gains still in place</div>
+        <div class="issue-loc">
+          src/CyberDeck/CyberdeckRoot.tsx:29-34; src/CyberDeck/ui/ModuleRackAndInventoryPage.tsx:44-48;
+          CyberdeckState.ts:10,18,19
         </div>
-        <div class="issue-loc">src/CyberDeck/CyberdeckRoot.tsx:27-32</div>
         <p class="what">
-          Explicitly marked <code>// TODO-fico: this is temporary setup for testers</code>. Called out here just so it
-          doesn't get lost before the merge.
+          Explicitly marked TODO-fico. Include: <code>hasCyberdeck: true</code> default, starting levels of
+          <code>netrunningLevel = 8</code> and <code>craftingLevel = 8</code>, and two useEffects that call
+          <code>gainCyberdeck()</code> when the player somehow doesn't have one yet.
         </p>
         <p class="fix">
-          Remove the useEffect (and the tester defaults on <code>CyberdeckState.netrunningLevel = 8</code> /
-          <code>craftingLevel = 8</code>) once testing is done.
+          Sweep before merge: default <code>hasCyberdeck: false</code>, starting levels to 0, remove both bootstrap
+          useEffects.
         </p>
+      </div>
+    </div>
+
+    <div class="issue minor" data-key="create-cyberdeck-work-empty-status">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          Custom cyberdeck build work has empty <code>getStatusText()</code> — work screen shows nothing under the
+          progress bar
+        </div>
+        <div class="issue-loc">src/Work/CreateCyberdeckWork.tsx:70-72</div>
+        <p class="what">
+          <code>WorkInProgressRoot.tsx:489</code> renders <code>Player.currentWork.getStatusText()</code> as the "gains"
+          row. For CreateCyberdeckWork it's <code>""</code>, so the row is empty. Player sees title + progress bar and
+          nothing else.
+        </p>
+        <p class="fix">
+          Return something informative — e.g., <code>`Assembling components... ${formatPercent(pct)} complete.`</code>
+          — or drop the row entirely from the layout for this work type.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue minor" data-key="netscript-def-legacy-getcost-empty-jsdoc">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          <code>legacy.getCost()</code> JSDoc is just "It's not paranoia if they're really after you" — no @returns, no
+          RAM cost line
+        </div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4966-4969</div>
+        <p class="what">
+          Scripter sees a flavor line and no functional description. Compare <code>legacy.delve</code> which at least
+          notes RAM cost. Also the return semantics of "Infinity while glitch undiscovered" is undocumented.
+        </p>
+        <p class="fix">
+          Keep the flavor as the first line, but add a real description, <code>@remarks RAM cost</code>, and a
+          <code>@returns</code> that notes the <code>Infinity</code> behavior.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="resolved">Resolved <span class="count" id="head-count-resolved"></span></h2>
+
+    <div class="issue resolved" data-key="save-load-broken-ice-field">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          Save/load silently drops half the state — guard checks for a field that doesn't exist
+        </div>
+        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:173-186 (isComponentCounts)</div>
+        <p class="what">
+          Guard now checks <code>iceBreakers</code> (matching the real field name); componentStats and seed counters
+          load correctly. (Cores is still not checked — see the separate minor item.)
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="server-upgrades-not-persisted">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Cyberdeck server RAM and core upgrades vanish on refresh</div>
+        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:15-16, 40-41, 77-78, 110-114</div>
+        <p class="what">
+          <code>serverRamUpgrades</code> and <code>serverCoreUpgrades</code> are now in <code>CyberdeckSaveData</code>,
+          written, and validated + loaded.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="custom-build-200-hours">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Custom cyberdeck build takes 200 real-time hours</div>
+        <div class="issue-loc">src/Work/CreateCyberdeckWork.tsx:20</div>
+        <p class="what">
+          <code>this.unitRate = CONSTANTS.MilliPerCycle;</code> now — ~1000 units/sec, ~1 hour to finish.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="crafting-seeds-not-bitnode-reset">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Two crafting seed counters aren't reset on bitnode prestige</div>
+        <div class="issue-loc">src/CyberDeck/utils/prestigeCyberdeck.ts:24-25</div>
+        <p class="what">
+          <code>craftingProcessingModSeedUsages</code> and <code>craftingUplinkSeedUsages</code> now reset in the
+          bitnode block.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="corrupted-mod-debuff-never-applied">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Corrupted mods' extra debuff never applies (<code>??=</code> can't fire)</div>
+        <div class="issue-loc">src/CyberDeck/models/createCorruptedModule.ts:43,51</div>
+        <p class="what">Now uses plain <code>=</code>; the extra debuff always merges in.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="cortex-shared-threads-not-reset">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          In-flight <code>cortexShare()</code> thread count doesn't reset on bitnode prestige
+        </div>
+        <div class="issue-loc">src/CyberDeck/utils/prestigeCyberdeck.ts:35</div>
+        <p class="what"><code>CyberdeckState.cortexSharedThreads = 0;</code> now resets on every prestige.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="server-cpu-cores-zero">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Fresh cyberdeck server has <code>cpuCores = 0</code></div>
+        <div class="issue-loc">src/CyberDeck/models/cyberdeckServer.ts:33,123</div>
+        <p class="what"><code>server.cpuCores = 1 + CyberdeckState.serverCoreUpgrades;</code> now.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="trace-risk-goes-back-up">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Trace risk % rises past 100% after the cooldown expires</div>
+        <div class="issue-loc">src/CyberDeck/models/netrunRewards.ts:43</div>
+        <p class="what">
+          Old squared-decay formula replaced. New formula has its own labeling issues (see
+          <b>hostile-trace-risk-infinity-and-huge-values</b>) but the "goes back up" specific bug is gone.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="add-connection-return-type-mismatch">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          <code>addConnection</code> impl returns <code>boolean</code>, .d.ts says <code>void</code>
+        </div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4680</div>
+        <p class="what">.d.ts now declares <code>: boolean</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="remove-connection-doc-copy-paste">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>removeConnection</code> JSDoc says "true if the connection was made"</div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4691</div>
+        <p class="what">Now reads "was removed successfully".</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="doc-recyclemod-example-passes-object">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Docs example passes a <code>DeckMod</code> object to <code>recycleMod</code></div>
+        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:77</div>
+        <p class="what">Now passes <code>.id</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="doc-netrun-vs-netrunning-terminology">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Docs use "netrun level" and "netrun cooldown level"</div>
+        <div class="issue-loc">src/Documentation/doc/en/programming/cyberdeck.md:64-65</div>
+        <p class="what">
+          Docs now use "netrunning level" and "netrunning cooldown level", matching API and stats page.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="purchase-dialog-typo">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Purchase dialog reads "Congratulations the purchase of your new rig!"</div>
+        <div class="issue-loc">src/CyberDeck/ui/CyberdeckPurchaseButton.tsx:28</div>
+        <p class="what">Reads "Congratulations on the purchase of your new rig!" now.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="neurodes-tooltip-missing-cortexshare">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">Neurodes inventory tooltip omits <code>cortexShare()</code> as a source</div>
+        <div class="issue-loc">src/CyberDeck/ui/ComponentInventoryCount.tsx:96</div>
+        <p class="what">cortexShare now listed. (Still missing "Some mods, when powered" — see labeling section.)</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="no-get-rack-capacity">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">No API to read the current rack capacity</div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:200-202</div>
+        <p class="what"><code>getRackCapacity()</code> exposed.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="favorite-mod-swallows-io-panel-error">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          <code>favoriteMod</code> throws on the IO panel with a misleading "Cannot modify" message
+        </div>
+        <div class="issue-loc">src/CyberDeck/cyberdeckApi.ts:98-106</div>
+        <p class="what">
+          Now uses <code>getModOrThrow(modId, true)</code> — no more throw. But there's a new footgun in the new
+          behavior (see <b>favoritemod-io-panel-silent-noop</b>).
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="add-connection-same-socket-index-only">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          <code>addConnection(a, b, socket)</code> requires the same socketIndex on both mods — undocumented
+        </div>
+        <div class="issue-loc">src/ScriptEditor/NetscriptDefinitions.d.ts:4661-4680</div>
+        <p class="what">
+          The API only takes one <code>socketIndex</code> (so the invariant is now visible in the type), and the JSDoc
+          explicitly says "Both mods need a socket on socketIndex in order to be able to connect."
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="ram-upgrade-button-not-affordability-gated">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">RAM/cores upgrade buttons don't disable on affordability — silent no-op on click</div>
+        <div class="issue-loc">src/CyberDeck/ui/CraftingPage.tsx:73-88</div>
+        <p class="what">
+          Both buttons now fire a "Cannot afford upgrade." snackbar on failure. Not a hard "disabled" state, but the
+          silence is gone.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="isComponentStats-doesnt-check-cores">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title"><code>isComponentStats</code> doesn't validate <code>cores</code> subobject</div>
+        <div class="issue-loc">src/CyberDeck/utils/SaveLoad.ts:188-201</div>
+        <p class="what">Guard now checks <code>"cores" in obj &amp;&amp; typeof obj.cores === "object"</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="component-tooltip-missing-source-default">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          <code>getComponentDetails</code> default case returns object with no <code>source</code> field
+        </div>
+        <div class="issue-loc">src/CyberDeck/ui/ComponentInventoryCount.tsx:120-127</div>
+        <p class="what">Default now returns <code>source: ""</code>.</p>
+      </div>
+    </div>
+
+    <div class="issue resolved" data-key="right-click-favorite-doesnt-emit">
+      <input type="checkbox" />
+      <div class="issue-body">
+        <div class="issue-title">
+          Right-click "favorite" mutates state without firing <code>CyberdeckEvents.emit</code>
+        </div>
+        <div class="issue-loc">src/CyberDeck/ui/ModuleComponent.tsx:59</div>
+        <p class="what"><code>CyberdeckEvents.emit()</code> is now called immediately after the mutation.</p>
       </div>
     </div>
 
@@ -972,11 +1133,23 @@
           cb.checked = false;
           issue.classList.remove("done");
         });
+        // Re-pre-check resolved items after wipe
+        preCheckResolved();
         updateCounters();
       }
 
+      function preCheckResolved() {
+        document.querySelectorAll(".issue.resolved").forEach((issue) => {
+          const cb = issue.querySelector('input[type="checkbox"]');
+          if (!cb.checked) {
+            cb.checked = true;
+            issue.classList.add("done");
+          }
+        });
+      }
+
       function updateCounters() {
-        const sections = ["bugs", "labels", "gaps", "footguns", "minor"];
+        const sections = ["bugs", "labels", "gaps", "footguns", "minor", "resolved"];
         let totalOpen = 0;
         let totalAll = 0;
         for (const section of sections) {
@@ -1027,6 +1200,15 @@
             updateCounters();
           });
         });
+        // Pre-check resolved items on first render if the user hasn't already set them
+        preCheckResolved();
+        // Persist the pre-check so refreshes don't flicker back
+        const s = loadState();
+        document.querySelectorAll(".issue.resolved").forEach((issue) => {
+          const key = issue.dataset.key;
+          if (!s[key]) s[key] = true;
+        });
+        saveState(s);
         updateCounters();
       }
 

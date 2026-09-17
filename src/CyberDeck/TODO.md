@@ -1,5 +1,7 @@
 REQUIRED FOR MVP
 
+- recycling mods from crafting can be done infinitely?
+
 - code review
 - docs
 - unit tests
