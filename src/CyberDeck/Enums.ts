@@ -13,6 +13,7 @@ export enum NetrunEntityVariant {
   firewall = "firewall",
   dataStore = "dataStore",
   offline = "offline",
+  unknown = "unknown",
 }
 
 export enum NetrunDirection {

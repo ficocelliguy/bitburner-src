@@ -20,12 +20,8 @@ NETRUNNING MINIGAME:
   - entity types
 
 - API - test
-  - add location info / map api
   - toggleFlag()
-  - getGrid()
-  - getStatus()
-  - getMod(id)
-  - getAllMods()
+  - docs!
 
 - Docs
   - add simple code examples

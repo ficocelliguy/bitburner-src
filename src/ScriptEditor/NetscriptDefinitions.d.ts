@@ -4515,6 +4515,7 @@ type NetrunEntityVariantEnumType = {
   firewall: "firewall";
   dataStore: "dataStore";
   offline: "offline";
+  unknown: "unknown";
 };
 
 /** @public */
@@ -4539,6 +4540,17 @@ type NetrunStatus = {
   threatCount: number;
   energy: number;
   score: number;
+  isNetrunning: boolean;
+};
+
+type EntityInfo = {
+  type: NetrunEntityVariant;
+  x: number;
+  y: number;
+  visible: boolean;
+  flagged: boolean;
+  hits: number;
+  hasBomb?: boolean;
 };
 
 /**
@@ -4741,6 +4753,30 @@ export interface Cyberdeck {
      * @returns the current ICEBreaker cost of netrunning
      */
     getNetrunningCost(): number;
+
+    /**
+     * Get the current netrun status.
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    getStatus(): NetrunStatus;
+
+    /**
+     * Retrieves the current netrunning grid.
+     */
+    getGrid(): EntityInfo[][];
+
+    /**
+     * Flag an ICE block at the specified coordinates.
+     *
+     * @param x
+     * @param y
+     *
+     * @remarks
+     * RAM cost: 0 GB
+     */
+    toggleFlag(x, y): void;
   };
 
   /**

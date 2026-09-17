@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
-import { Cyberdeck } from "@nsdefs";
-import { DeckMod } from "./Types";
-import { LocationName } from "@enums";
+import { Cyberdeck, EntityInfo } from "@nsdefs";
+import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
+import { LocationName, NetrunEntityVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
@@ -9,8 +9,8 @@ import {
   craftPowerSupply,
   craftProcessingModule,
   craftUplink,
-  getCyberdeckIOPanel,
   disassembleModule,
+  getCyberdeckIOPanel,
   getEasterEggModule,
 } from "./models/createModule";
 import { helpers } from "../Netscript/NetscriptHelpers";
@@ -26,7 +26,6 @@ import { createConnection, disconnectConnection, moveModule, wireOverlapsSocket 
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
-import { ComponentCounts, NetrunningRewards, NetrunStatus } from "./Types";
 import {
   getCyberdeckServerCoreUpgradeCost,
   getCyberdeckServerRamUpgradeCost,
@@ -35,8 +34,8 @@ import {
 } from "./models/cyberdeckServer";
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
-import { NetrunningState } from "./models/NetrunningState";
-import { getSurroundings, getThreatSignalStrength, initNetrunGrid, move } from "./models/netrunningMinigame";
+import { GRID_SIZE, NetrunningState } from "./models/NetrunningState";
+import { flagEntity, getSurroundings, getThreatSignalStrength, initNetrunGrid, move } from "./models/netrunningMinigame";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -218,6 +217,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           surroundings: getSurroundings(),
           threat: 0,
           threatCount: 0,
+          isNetrunning: NetrunningState.isNetrunning,
         };
         if (NetrunningState.isNetrunning) {
           logger(ctx)("Failed to start netrun - a run is already in progress.");
@@ -249,6 +249,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           threat,
           threatCount: signals,
           surroundings: getSurroundings(),
+          isNetrunning: NetrunningState.isNetrunning,
         };
       },
       move(ctx: NetscriptContext, _direction: unknown): Promise<NetrunStatus> {
@@ -262,6 +263,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           surroundings: getSurroundings(),
           threat: 0,
           threatCount: 0,
+          isNetrunning: NetrunningState.isNetrunning,
         };
         if (!NetrunningState.isNetrunning) {
           logger(ctx)("Failed to move - no netrun has been started.");
@@ -294,6 +296,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
             threat,
             threatCount: signals,
             surroundings: getSurroundings(),
+            isNetrunning: NetrunningState.isNetrunning,
           };
         });
       },
@@ -307,7 +310,59 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return results;
       },
       getNetrunningCost() {
+        checkCyberdeckAccess();
         return getCurrentNetrunningIceCost();
+      },
+      getStatus() {
+        checkCyberdeckAccess();
+        const { threat, signals } = getThreatSignalStrength();
+        return {
+          success: true,
+          coordinates: structuredClone(NetrunningState.location),
+          energy: NetrunningState.energy,
+          score: NetrunningState.rewardScore,
+          threat,
+          threatCount: signals,
+          surroundings: getSurroundings(),
+          isNetrunning: NetrunningState.isNetrunning,
+        };
+      },
+      getGrid() {
+        checkCyberdeckAccess();
+        return NetrunningState.grid.map((row) =>
+          row.map((entity) => {
+            const entityInfo: EntityInfo = {
+              type: entity.visible ? entity.type : NetrunEntityVariant.unknown,
+              x: entity.x,
+              y: entity.y,
+              visible: entity.visible,
+              flagged: entity.flagged,
+              hits: entity.hits,
+            };
+            if (entity.visible && entity.hasBomb) {
+              entityInfo.hasBomb = true;
+            }
+            return entityInfo;
+          }),
+        );
+      },
+      toggleFlag(ctx: NetscriptContext, _x: unknown, _y: unknown) {
+       const x = helpers.integer(ctx, "x", _x);
+       const y = helpers.integer(ctx, "y", _y);
+       if (x < 0 || x > GRID_SIZE) {
+         throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${GRID_SIZE}`)
+       }
+       if (y < 0 || y > GRID_SIZE) {
+         throw new Error(`Invalid x coordinate (${y}): value must be between 0 and ${GRID_SIZE}`)
+       }
+       const entity = NetrunningState.grid[y]?.[x];
+       if (!entity) {
+         throw new Error(`No entity found at ${x},${y}`);
+       }
+       if (entity.type !== NetrunEntityVariant.ice) {
+         logger(ctx)(`Entity at ${x},${y} is type ${entity.type} - only ice can be flagged`);
+       }
+       flagEntity(entity);
       },
     },
     stats: {
@@ -566,6 +621,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           surroundings: getSurroundings(),
           threat: 0,
           threatCount: 0,
+          isNetrunning: NetrunningState.isNetrunning,
         };
         if (!CyberdeckState.hasDiscoveredGlitch) {
           ctx.workerScript.print(getCorruptedHint());
@@ -601,6 +657,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           threat,
           threatCount: signals,
           surroundings: getSurroundings(),
+          isNetrunning: NetrunningState.isNetrunning,
         };
       },
     },

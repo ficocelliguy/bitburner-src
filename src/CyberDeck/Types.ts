@@ -120,6 +120,7 @@ export type NetrunStatus = {
   threatCount: number;
   energy: number;
   score: number;
+  isNetrunning: boolean;
 };
 
 export type ModKey =
