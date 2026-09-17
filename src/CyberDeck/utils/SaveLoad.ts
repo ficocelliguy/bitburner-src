@@ -111,6 +111,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     CyberdeckState.serverRamUpgrades = serverRamUpgrades;
     if (typeof serverCoreUpgrades !== "number")
       throw new Error("Invalid cyberdeck savestring value: serverCoreUpgrades");
+    CyberdeckState.serverCoreUpgrades = serverCoreUpgrades;
     if (typeof lastNetrunningTimestamp !== "number")
       throw new Error("Invalid cyberdeck savestring value: lastNetrunningTimestamp");
     CyberdeckState.lastNetrunningTimestamp = lastNetrunningTimestamp;

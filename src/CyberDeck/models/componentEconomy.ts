@@ -35,8 +35,8 @@ export function gainCyberdeckComponents(cycles: number) {
 
   const stats = getCyberdeckStatBonuses();
   CyberdeckState.components.chips += Math.max(stats.otherMults.chipProduction, 0);
-  CyberdeckState.components.neurodes += Math.max(stats.otherMults.neurodeProduction);
-  CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction);
+  CyberdeckState.components.neurodes += Math.max(stats.otherMults.neurodeProduction, 0);
+  CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction, 0);
 
   // Violent crime gives neurodes
   if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {

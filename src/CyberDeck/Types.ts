@@ -9,6 +9,7 @@ export type DeckMod = {
   stats: ModStats;
   favorite?: boolean;
   corrupted?: boolean;
+  charged?: boolean
 };
 export type SocketList = [boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean];
 export type Connection = [Socket, Socket];

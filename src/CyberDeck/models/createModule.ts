@@ -17,7 +17,7 @@ import {
   getNextCraftingPowerSupplyWHRNG,
   getNextCraftingProcessingModWHRNG,
   getNextCraftingUplinkWHRNG,
-  getNextNetrunningWHRNG, getOtherStatBuff,
+  getOtherStatBuff,
   getOtherStatDebuff,
   getPlayerStatBuff,
 } from "../utils/statRng";
@@ -36,6 +36,7 @@ export const getCyberdeckIOPanel = (): DeckMod => {
     sockets: [false, true, false, true, false, true, false, false],
     rarity: 10,
     stats: {},
+    charged: true,
   };
 };
 
@@ -249,6 +250,7 @@ export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1
   if (CyberdeckState.components.chips < (cost.chips ?? 0) * count) return false;
   if (CyberdeckState.components.rom < (cost.rom ?? 0) * count) return false;
   if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0) * count) return false;
+  if (CyberdeckState.components.cores < (cost.cores ?? 0) * count) return false;
   if (CyberdeckState.components.iceBreakers < (cost.iceBreakers ?? 0) * count) return false;
   return true;
 }

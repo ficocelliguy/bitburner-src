@@ -22,9 +22,9 @@ import {
   uplinkCraftingCost,
 } from "./models/constants";
 import { logger } from "../DarkNet/effects/offlineServerHandling";
-import { createConnection, disconnectConnection, moveModule } from "./models/moduleMutation";
+import { createConnection, disconnectConnection, moveModule, wireOverlapsSocket } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
-import { getCurrentNetrunningIceCost, getNetrunningTraceFraction, netrunRewards } from "./models/netrunRewards";
+import { getCurrentNetrunningIceCost, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
 import { ComponentCounts, NetrunningRewards, NetrunStatus } from "./Types";
 import {
@@ -55,18 +55,27 @@ function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   return mod;
 }
 
+function checkCyberdeckAccess() {
+  if (!hasCyberdeck()) {
+    throw new Error("You must make or purchase a cyberdeck before using the API.")
+  }
+}
+
 export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
   return {
     hasCyberdeck: () => {
       return hasCyberdeck();
     },
     getComponentCounts: () => {
+      checkCyberdeckAccess();
       return { ...CyberdeckState.components };
     },
     getStoredMods: (): DeckMod[] => {
+      checkCyberdeckAccess();
       return CyberdeckState.storedModules.map((mod) => structuredClone(mod));
     },
-    getInstalledMods: (): (DeckMod & { charged: boolean })[] => {
+    getInstalledMods: (): DeckMod[] => {
+      checkCyberdeckAccess();
       const chargedMods = getChargedModules();
       return CyberdeckState.installedModules.map((mod) => ({
         ...structuredClone(mod),
@@ -74,12 +83,15 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       }));
     },
     getCyberdeckIOPanel: (): DeckMod => {
+      checkCyberdeckAccess();
       return structuredClone(getCyberdeckIOPanel());
     },
     getConnections: () => {
+      checkCyberdeckAccess();
       return CyberdeckState.connections.map((conn) => structuredClone(conn));
     },
     favoriteMod: (ctx: NetscriptContext, moduleId: unknown, favorite: unknown = true) => {
+      checkCyberdeckAccess();
       const modId = helpers.string(ctx, "modId", moduleId);
       const fav = helpers.boolean(ctx, "favorite", favorite);
       const mod = getModOrThrow(modId, true);
@@ -88,6 +100,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       logger(ctx)(`Mod ${modId} is now ${fav ? "favorited" : "unfavorited"}`);
     },
     installMod: (ctx: NetscriptContext, moduleId: unknown, modIndex: unknown = 1e10): Promise<boolean> => {
+      checkCyberdeckAccess();
       const modId = helpers.string(ctx, "modId", moduleId);
       if (modId === LocationName.IshimaGlitch && !getModuleById(modId)) {
         CyberdeckState.storedModules.unshift(getEasterEggModule());
@@ -110,11 +123,18 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         moveModule(mod, sourceIsStorage, false, newIndex);
 
+        if (CyberdeckState.connections.find(([s, d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
+          moveModule(mod, false, sourceIsStorage, newIndex);
+          logger(ctx)(`Failed to move module: wires cannot overlap.`);
+          return false;
+        }
+
         logger(ctx)(`Mod ${modId} installed on rack #${newIndex}`);
         return true;
       });
     },
     storeMod(ctx: NetscriptContext, moduleId: unknown, modIndex: unknown = 0) {
+      checkCyberdeckAccess();
       const modId = helpers.string(ctx, "modId", moduleId);
       const mod = getModOrThrow(modId);
       const locationIndex = helpers.integer(ctx, "modIndex", modIndex);
@@ -128,11 +148,12 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       moveModule(mod, sourceIsStorage, true, newIndex);
     },
     addConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
+      checkCyberdeckAccess();
       const modId1 = helpers.string(ctx, "modId", moduleId1);
       getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
       getModOrThrow(modId2, true);
-      const socketIndex = helpers.number(ctx, "socketIndex", socket);
+      const socketIndex = helpers.integer(ctx, "socketIndex", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
@@ -145,6 +166,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return result.success;
     },
     removeConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
+      checkCyberdeckAccess();
       const modId1 = helpers.string(ctx, "modId", moduleId1);
       const mod1 = getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
@@ -175,6 +197,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
 
     cortexShare: (ctx: NetscriptContext) => {
+      checkCyberdeckAccess();
       const threads = ctx.workerScript.scriptRef.threads;
       const hostname = ctx.workerScript.hostname;
       helpers.log(ctx, () => `Loaning neural activity with ${threads} threads on ${hostname}.`);
@@ -186,6 +209,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     netrun: {
       start(ctx: NetscriptContext): NetrunStatus {
+        checkCyberdeckAccess();
         const failedToStartResponse = {
           success: false,
           coordinates: [0, 0],
@@ -228,22 +252,40 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         };
       },
       move(ctx: NetscriptContext, _direction: unknown): Promise<NetrunStatus> {
+        checkCyberdeckAccess();
         const direction = getEnumHelper("NetrunDirection").nsGetMember(ctx, _direction, "direction");
+        const failureReult = {
+          success: false,
+          coordinates: [0, 0],
+          energy: 0,
+          score: 0,
+          surroundings: getSurroundings(),
+          threat: 0,
+          threatCount: 0,
+        };
         if (!NetrunningState.isNetrunning) {
-          return Promise.resolve({
-            success: false,
-            coordinates: [0, 0],
-            energy: 0,
-            score: 0,
-            surroundings: getSurroundings(),
-            threat: 0,
-            threatCount: 0,
-          });
+          logger(ctx)("Failed to move - no netrun has been started.");
+          return Promise.resolve(failureReult);
         }
-        // TODO-fico: log feedback - OOM, off the map, broke ice, etc
-        return helpers.netscriptDelay(ctx, 500).then(() => {
+        return helpers.netscriptDelay(ctx, 400).then(() => {
+          if (!NetrunningState.isNetrunning) {
+            logger(ctx)("Fail to move - no netrun has been started.");
+            return failureReult;
+          }
+          const [x, y] = NetrunningState.location;
           const result = move(direction);
-          const {threat, signals} = getThreatSignalStrength();
+          const newX = NetrunningState.location[0];
+          const newY = NetrunningState.location[1];
+
+          // TODO-fico: log feedback - OOM, off the map, broke ice, etc
+          if (result && newX !== x && newY !== y) {
+            logger(ctx)(`Moved to ${x},${y}`);
+          } else if (result) {
+            logger(ctx)(`Interacted! Still at ${x},${y}`);
+          } else {
+            logger(ctx)(`Failed to move. Still at ${x},${y}`);
+          }
+          const { threat, signals } = getThreatSignalStrength();
           return {
             success: result,
             coordinates: structuredClone(NetrunningState.location),
@@ -256,6 +298,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         });
       },
       finish(ctx: NetscriptContext): NetrunningRewards {
+        checkCyberdeckAccess();
         if (!NetrunningState.isNetrunning) {
           throw new Error("Failed to complete netrun - no run in progress.");
         }
@@ -269,10 +312,12 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     stats: {
       getStatBonuses: () => {
+        checkCyberdeckAccess();
         const state = getCyberdeckStatBonuses();
         return structuredClone(state);
       },
       getLevels: () => {
+        checkCyberdeckAccess();
         return {
           netrunningLevel: CyberdeckState.netrunningLevel,
           craftingLevel: CyberdeckState.craftingLevel,
@@ -283,11 +328,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         };
       },
       getComponentStats: () => {
+        checkCyberdeckAccess();
         return structuredClone(CyberdeckState.componentStats);
       },
     },
     server: {
       getRamUpgradeCost(): ComponentCounts & { money: number } {
+        checkCyberdeckAccess();
         const cost = getCyberdeckServerRamUpgradeCost();
         return {
           ...cost.componentCost,
@@ -295,6 +342,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         };
       },
       getCoreUpgradeCost(): ComponentCounts & { money: number } {
+        checkCyberdeckAccess();
         const cost = getCyberdeckServerCoreUpgradeCost();
         return {
           ...cost.componentCost,
@@ -302,6 +350,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         };
       },
       upgradeRam(ctx: NetscriptContext): boolean {
+        checkCyberdeckAccess();
         const cost = getCyberdeckServerRamUpgradeCost();
         if (CyberdeckState.components.rom < cost.componentCost.rom) {
           logger(ctx)(
@@ -328,6 +377,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return upgradeCyberdeckServerRam();
       },
       upgradeCores(ctx: NetscriptContext): boolean {
+        checkCyberdeckAccess();
         const cost = getCyberdeckServerCoreUpgradeCost();
         if (CyberdeckState.components.rom < cost.componentCost.rom) {
           logger(ctx)(
@@ -361,6 +411,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       getProcessingModCraftingCost: () => structuredClone(processingModuleCraftingCost),
       getUplinkModCraftingCost: () => structuredClone(uplinkCraftingCost),
       craftICEBreaker: (ctx: NetscriptContext, count: unknown = 1) => {
+        checkCyberdeckAccess();
         const numberToCraft = helpers.positiveInteger(ctx, "count", count);
         if (CyberdeckState.components.rom < ICEBreakerCraftingCost.rom * numberToCraft) {
           logger(ctx)(
@@ -391,6 +442,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftPowerSupplyMod: (ctx: NetscriptContext) => {
+        checkCyberdeckAccess();
         if (CyberdeckState.components.rom < powerSupplyCraftingCost.rom) {
           logger(ctx)(
             `Not enough ROM to craft Power Supply Mod. Need ${powerSupplyCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
@@ -420,6 +472,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftProcessingMod: (ctx: NetscriptContext) => {
+        checkCyberdeckAccess();
         if (CyberdeckState.components.rom < processingModuleCraftingCost.rom) {
           logger(ctx)(
             `Not enough ROM to craft Processing Mod. Need ${processingModuleCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
@@ -449,6 +502,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       craftUplinkMod(ctx: NetscriptContext): DeckMod | null {
+        checkCyberdeckAccess();
         if (CyberdeckState.components.rom < uplinkCraftingCost.rom) {
           logger(ctx)(
             `Not enough ROM to craft Uplink Mod. Need ${uplinkCraftingCost.rom}, have ${CyberdeckState.components.rom}`,
@@ -478,6 +532,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       },
 
       recycleMod: (ctx: NetscriptContext, moduleId: unknown) => {
+        checkCyberdeckAccess();
         const modId = helpers.string(ctx, "modId", moduleId);
         const mod =
           CyberdeckState.storedModules.find((mod) => mod.id === modId) ||
@@ -494,6 +549,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     legacy: {
       getCost: (ctx: NetscriptContext) => {
+        checkCyberdeckAccess();
         if (!CyberdeckState.hasDiscoveredGlitch) {
           ctx.workerScript.print(getCorruptedHint("The cost is far too great"));
           return Infinity;
@@ -501,6 +557,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return getCurrentNetrunningIceCost(true);
       },
       delve: (ctx: NetscriptContext) => {
+        checkCyberdeckAccess();
         const failedToStartResponse = {
           success: false,
           coordinates: [0, 0],

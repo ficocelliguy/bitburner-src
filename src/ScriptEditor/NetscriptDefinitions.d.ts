@@ -4410,6 +4410,7 @@ type DeckMod = {
   stats: ModStats;
   favorite?: boolean;
   corrupted?: boolean;
+  charged?: boolean;
 };
 
 type CyberdeckStats = {
@@ -4573,7 +4574,7 @@ export interface Cyberdeck {
    * @remarks
    * RAM cost: 0.05 GB
    */
-  getInstalledMods(): (DeckMod & { charged: boolean })[];
+  getInstalledMods(): DeckMod[];
 
   /**
    * Gets information about the base connection point of the cyberdeck itself. All mods need to be connected
@@ -4682,7 +4683,8 @@ export interface Cyberdeck {
   getRackCapacity(): number;
 
   /**
-   * Loans neural bandwidth (and ram) to produce neurodes.
+   * Loans neural bandwidth (and ram) to produce neurodes. Effect increases with the number
+   * of threads the current script is launched with.
    *
    * @remarks
    * RAM cost: 2.4 GB
@@ -4710,6 +4712,7 @@ export interface Cyberdeck {
 
     /**
      * Attemts to move to an adjacent nearby empty space, or interact with an adgacent entity.
+     * This method must be awaited - netrunning takes time!
      *
      * @param direction - the direction to move
      *

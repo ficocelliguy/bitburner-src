@@ -21,6 +21,15 @@ NETRUNNING MINIGAME:
 
 - API - test
   - add location info / map api
+  - toggleFlag()
+  - getGrid()
+  - getStatus()
+  - getMod(id)
+  - getAllMods()
+
+- Docs
+  - add simple code examples
+  - explain entity types
 
 
 Corrupted variant:
@@ -33,10 +42,13 @@ Corrupted variant:
 
 TODO:
 
-!!
+- method to detect if a move would cause overlaps
+  - Reject moves ahead of time instead of partial rollbacks
 
 TODO LATER:
 
+- save netrun mid-run?
+- seed netrun?
 
 - add notification for all dev buttons
 

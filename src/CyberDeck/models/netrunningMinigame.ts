@@ -89,8 +89,6 @@ export function initNetrunGrid(corrupted: boolean) {
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 1;
 
-  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
-
   // Add firewalls
   const firewallCount = Math.random() * 3 + 5;
   for (let i = 0; i < firewallCount; i++) {
@@ -207,7 +205,7 @@ export function initNetrunGrid(corrupted: boolean) {
 function breakEntity(entity: NetrunEntity) {
   emitSparklesOnEntity(entity);
 
-  const group = NetrunningState.groups[entity.group];
+  const group = NetrunningState.groups[entity.group] ?? [];
   const originalType = entity.type;
   entity.type = NetrunEntityVariant.empty;
   revealGroup(entity);
@@ -389,9 +387,9 @@ export function flagEntity(entity:NetrunEntity) {
 export function getSurroundings(): Record<NetrunDirection, NetrunEntityVariant> {
   const [x, y] = NetrunningState.location;
   return {
-    [NetrunDirection.up]: NetrunningState.grid[y - 1]?.[x]?.type,
-    [NetrunDirection.down]: NetrunningState.grid[y + 1]?.[x]?.type,
-    [NetrunDirection.left]: NetrunningState.grid[y]?.[x - 1]?.type,
-    [NetrunDirection.right]: NetrunningState.grid[y]?.[x + 1]?.type,
+    [NetrunDirection.up]: NetrunningState.grid[y - 1]?.[x]?.type ?? null,
+    [NetrunDirection.down]: NetrunningState.grid[y + 1]?.[x]?.type ?? null,
+    [NetrunDirection.left]: NetrunningState.grid[y]?.[x - 1]?.type ?? null,
+    [NetrunDirection.right]: NetrunningState.grid[y]?.[x + 1]?.type ?? null,
   };
 }

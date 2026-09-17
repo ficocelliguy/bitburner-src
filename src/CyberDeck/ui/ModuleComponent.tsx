@@ -51,7 +51,7 @@ export function ModuleComponent({
     draggingWireEnded?.(module.id);
   }
 
-  function openTooltipOnRightClick(e: React.MouseEvent<HTMLDivElement>) {
+  function toggleFavorite(e: React.MouseEvent<HTMLDivElement>) {
     if (e.button === 2) {
       e.preventDefault();
       e.stopPropagation();
@@ -91,7 +91,7 @@ export function ModuleComponent({
           }}
           sx={styles.modulePanel}
           onMouseUp={() => socketDragEnd()}
-          onMouseDown={openTooltipOnRightClick}
+          onMouseDown={toggleFavorite}
           onContextMenu={(e) => e.preventDefault()}
         >
           <Tooltip

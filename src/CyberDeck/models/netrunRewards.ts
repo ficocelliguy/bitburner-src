@@ -41,12 +41,10 @@ function getNetrunningCost(timeSinceLastRun: number, corrupted = false): number 
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-
-  getNetrunningCost(Date.now() - CyberdeckState.lastNetrunningTimestamp, corrupted) / 10 - 1;
   if (corrupted) {
     const timeSinceLastRun = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
     if (timeSinceLastRun <= corruptedNetrunningHardCooldownMs) {
-      const timeFactor = (corruptedNetrunningHardCooldownMs - timeSinceLastRun) / 1000;
+      const timeFactor = (corruptedNetrunningHardCooldownMs - timeSinceLastRun) / 100;
       return getNetrunningCost(timeFactor, true) / 10 - 1;
     }
     const timeFactor = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp
@@ -64,11 +62,12 @@ export function canNetrun(corrupted = false): boolean {
 
 export function netrunRewards(corrupted: boolean): NetrunningRewards {
   NetrunningState.isNetrunning = false;
+  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
+  completeNetrunTutorial();
 
   if (corrupted) {
     return corruptedNetrun();
   }
-  completeNetrunTutorial();
 
   const rng = getNextNetrunningWHRNG();
 
@@ -104,7 +103,7 @@ export function netrunRewards(corrupted: boolean): NetrunningRewards {
 export function getNetrunningRewards(rng: WHRNG, score: number) {
   const isEarlyRun = CyberdeckState.netrunningSeedUsages <= 2;
   const hasRareMod = [...CyberdeckState.storedModules, ...CyberdeckState.installedModules].some(m => m.rarity >= 5);
-  const eligibleForSpecialReward = score > 60 && isEarlyRun && hasRareMod;
+  const eligibleForSpecialReward = score > 70 && isEarlyRun && !hasRareMod;
   const specialReward = eligibleForSpecialReward ? createModule(rng, ModType.ProcessingMod, 5) : createModule(rng);
   const rewards = [specialReward];
 
