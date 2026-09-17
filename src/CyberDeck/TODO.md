@@ -1,6 +1,7 @@
 REQUIRED FOR MVP
 
 - code review
+- docs
 - unit tests
 - lint
 
@@ -15,22 +16,12 @@ REQUIRED FOR MVP
 NETRUNNING MINIGAME:
 
 - expose enums - test
-  - directions
   - module types
   - entity types
 
 - API - test
-  - update netrun() and delve()
-    - no longer async
-    - starts netrun
-    - consumes ICEBreakers, if the player has enough
-  - add movement api
   - add location info / map api
 
-- colors on icons
-  - battery gets more red
-  - gold rewards
-  - threat level matches threat color
 
 Corrupted variant:
   - offline nodes spreading from one corner
@@ -42,24 +33,29 @@ Corrupted variant:
 
 TODO:
 
-- add notification for all dev buttons
+!!
 
-- random character art as player for netrunning
+TODO LATER:
+
+
+- add notification for all dev buttons
 
 - let player choose color of each stat key and value, to hilight or hide stats
 
 - tooltips for stats page
 
 - filter box help text
-
   - more search options? > and < ?
 
-- netrunning
-  - animated background
+- netrunning portal animated background / matrix text
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 
-TODO LATER:
+
+- colors on icons
+  - battery gets more red
+  - gold rewards
+  - threat level matches threat color
 
 - BN
 

@@ -19,7 +19,7 @@ export function getCurrentNetrunningIceCost(corrupted = false): number {
     return getCorruptedNetrunningIceCost();
   }
   const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
-  return Math.floor(getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun));
+  return Math.floor(getNetrunningCost(timeSinceLastRun));
 }
 
 function getCorruptedNetrunningIceCost(): number {
@@ -28,10 +28,10 @@ function getCorruptedNetrunningIceCost(): number {
   if (timeSinceLastRun <= 0) {
     return Infinity;
   }
-  return Math.floor(getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun, true) * 4);
+  return Math.floor(getNetrunningCost(timeSinceLastRun, true) * 4);
 }
 
-function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corrupted = false): number {
+function getNetrunningCost(timeSinceLastRun: number, corrupted = false): number {
   const traceDecay = netrunningTraceDecayMs * (corrupted ? 2 : 1);
   const diminishingCosts = 0.95 + traceDecay / timeSinceLastRun;
   const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
@@ -41,11 +41,18 @@ function getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun: number, corr
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-  const timeSinceLastRun =  corrupted ?
-    CyberdeckState.lastCorruptedNetrunningTimestamp - corruptedNetrunningHardCooldownMs :
-    Date.now() - CyberdeckState.lastNetrunningTimestamp;
-  const cost = getNetrunningCostBasedOnTimeSinceLastRun(timeSinceLastRun, corrupted);
-  return cost / 10 - 1;
+
+  getNetrunningCost(Date.now() - CyberdeckState.lastNetrunningTimestamp, corrupted) / 10 - 1;
+  if (corrupted) {
+    const timeSinceLastRun = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
+    if (timeSinceLastRun <= corruptedNetrunningHardCooldownMs) {
+      const timeFactor = (corruptedNetrunningHardCooldownMs - timeSinceLastRun) / 1000;
+      return getNetrunningCost(timeFactor, true) / 10 - 1;
+    }
+    const timeFactor = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp
+    return getNetrunningCost(timeFactor, true) / 10 - 1;
+  }
+  return getNetrunningCost(Date.now() - CyberdeckState.lastNetrunningTimestamp, corrupted) / 10 - 1;
 }
 
 export function canNetrun(corrupted = false): boolean {
@@ -55,7 +62,9 @@ export function canNetrun(corrupted = false): boolean {
   );
 }
 
-export function netrunRewards(corrupted = false): NetrunningRewards {
+export function netrunRewards(corrupted: boolean): NetrunningRewards {
+  NetrunningState.isNetrunning = false;
+
   if (corrupted) {
     return corruptedNetrun();
   }
@@ -115,7 +124,6 @@ export function getNetrunningRewards(rng: WHRNG, score: number) {
 }
 
 function corruptedNetrun(): NetrunningRewards {
-  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const rewards = getCorruptedNetrunningRewards(rng, NetrunningState.rewardScore);

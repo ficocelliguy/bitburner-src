@@ -10,7 +10,7 @@
  * This subcomponent creates all of the buttons for interacting with those special
  * properties
  */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
@@ -43,6 +43,8 @@ import { hasDarknetAccess } from "../../DarkNet/utils/darknetAuthUtils";
 import { DarknetConstants } from "../../DarkNet/Constants";
 import { formatMoney } from "../../ui/formatNumber";
 import { NetrunningPage } from "../../CyberDeck/ui/NetrunningPage";
+import { useCyberdeckStyles } from "../../CyberDeck/ui/cyberdeckStyles";
+import { CyberdeckEvents } from "../../CyberDeck/models/CyberdeckState";
 
 interface SpecialLocationProps {
   loc: Location;

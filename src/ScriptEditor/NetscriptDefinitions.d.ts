@@ -4916,7 +4916,7 @@ export interface Cyberdeck {
    */
   legacy: {
     /**
-     * Are you willing to pay the price?
+     * It's not paranoia if they're really after you
      */
     getCost(): number;
 
@@ -4927,12 +4927,7 @@ export interface Cyberdeck {
      * @remarks
      * RAM cost: 8 GB
      */
-    delve(): Promise<NetrunningRewards>;
-
-    /**
-     * It's not paranoia if they're really after you
-     */
-    trace(): number;
+    delve(): NetrunStatus;
   };
 }
 

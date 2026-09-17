@@ -36,7 +36,7 @@ import {
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
 import { NetrunningState } from "./models/NetrunningState";
-import { getSurroundings, getThreatSignalStrength, move } from "./models/netrunningMinigame";
+import { getSurroundings, getThreatSignalStrength, initNetrunGrid, move } from "./models/netrunningMinigame";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -215,6 +215,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
 
         logger(ctx)(`Starting netrun...`);
+        initNetrunGrid(false);
         const { threat, signals } = getThreatSignalStrength();
         return {
           success: true,
@@ -226,8 +227,8 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           surroundings: getSurroundings(),
         };
       },
-      move(ctx: NetscriptContext, directionInput: unknown): Promise<NetrunStatus> {
-        const direction = getEnumHelper("NetrunDirection").nsGetMember(ctx, directionInput, "direction");
+      move(ctx: NetscriptContext, _direction: unknown): Promise<NetrunStatus> {
+        const direction = getEnumHelper("NetrunDirection").nsGetMember(ctx, _direction, "direction");
         if (!NetrunningState.isNetrunning) {
           return Promise.resolve({
             success: false,
@@ -258,8 +259,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         if (!NetrunningState.isNetrunning) {
           throw new Error("Failed to complete netrun - no run in progress.");
         }
-        NetrunningState.isNetrunning = false;
-        const results = netrunRewards();
+        const results = netrunRewards(NetrunningState.corrupted);
         logger(ctx)(`Netrun completed. ${results.mods.length} new modules found.`);
         return results;
       },
@@ -500,38 +500,51 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
         return getCurrentNetrunningIceCost(true);
       },
-      delve: async (ctx: NetscriptContext) => {
+      delve: (ctx: NetscriptContext) => {
+        const failedToStartResponse = {
+          success: false,
+          coordinates: [0, 0],
+          energy: 0,
+          score: 0,
+          surroundings: getSurroundings(),
+          threat: 0,
+          threatCount: 0,
+        };
         if (!CyberdeckState.hasDiscoveredGlitch) {
           ctx.workerScript.print(getCorruptedHint());
-          return { success: false, mods: [], components: {} };
+          return failedToStartResponse;
+        }
+        if (NetrunningState.isNetrunning) {
+          logger(ctx)("Failed to start - a run is already in progress.");
+          return failedToStartResponse;
         }
         if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost(true)) {
           logger(ctx)(
             `Not enough ICEBreakers to breach the Blackwall. ${
               CyberdeckState.components.iceBreakers
-            }/${getCurrentNetrunningIceCost()}`,
+            }/${getCurrentNetrunningIceCost(true)}`,
           );
-          return { success: false, mods: [], components: {} };
+          return failedToStartResponse;
         }
         if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
           logger(ctx)(
-            `Not enough module storage space to delve. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
+            `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
           );
-          return { success: false, mods: [], components: {} };
+          return failedToStartResponse;
         }
 
-        ctx.workerScript.print(getCorruptedHint(`Leaving the protection of the Blackwall...`));
-        await helpers.netscriptDelay(ctx, 5000);
-        const results = netrunRewards(true);
-        logger(ctx)(`Returned successfully? ${results.mods.length} new modules found.`);
-        return results;
-      },
-      trace: (ctx: NetscriptContext) => {
-        if (!CyberdeckState.hasDiscoveredGlitch) {
-          ctx.workerScript.print(getCorruptedHint("The cost is far too great"));
-          return Infinity;
-        }
-        return getNetrunningTraceFraction(true);
+        logger(ctx)(`Starting netrun...`);
+        initNetrunGrid(true);
+        const { threat, signals } = getThreatSignalStrength();
+        return {
+          success: true,
+          coordinates: structuredClone(NetrunningState.location),
+          energy: NetrunningState.energy,
+          score: NetrunningState.rewardScore,
+          threat,
+          threatCount: signals,
+          surroundings: getSurroundings(),
+        };
       },
     },
   };
