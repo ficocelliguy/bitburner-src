@@ -316,6 +316,10 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     }
     return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
   }
+  if (!moduleExists(module.id)) {
+    console.error(`Attempted to disassemble nonexistent mod ${module.id}`);
+    return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
+  }
 
   disconnectModule(module);
   if (CyberdeckState.installedModules.includes(module)) {
@@ -364,4 +368,9 @@ export function getEasterEggModule(): DeckMod {
       },
     },
   };
+}
+
+export function moduleExists(id: string) {
+  return CyberdeckState.installedModules.some((m) => m.id === id) ||
+  CyberdeckState.storedModules.some((m) => m.id === id)
 }

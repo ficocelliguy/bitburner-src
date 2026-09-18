@@ -74,8 +74,6 @@ export function prestigeAugmentation(): void {
   // Delete all servers except home computer
   prestigeAllServers();
 
-  prestigeCyberdeck();
-
   prestigeDarknetState(false);
 
   // Reset home computer (only the programs) and add to AllServers
@@ -99,6 +97,8 @@ export function prestigeAugmentation(): void {
 
   // Re-create foreign servers
   initForeignServers(Player.getHomeComputer());
+
+  prestigeCyberdeck();
 
   if (canAccessBitNodeFeature(15)) {
     getDarkscapeNavigator();

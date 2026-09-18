@@ -65,6 +65,10 @@ export function moveModule(
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const sourceIndex = sourceLocation.indexOf(moduleToMove);
+  if (sourceIndex === -1) {
+    console.error(`Attempted to move module ${moduleToMove.id} but it was not found in ${sourceIsStorage ? "storage" : "the rack"}`);
+    return;
+  }
 
   sourceLocation.splice(sourceIndex, 1);
   destinationLocation.splice(destinationIndex, 0, moduleToMove);
@@ -81,7 +85,6 @@ export function moveModule(
 export function ejectOverloadedModules() {
   while (CyberdeckState.installedModules.length > getCurrentRackSize()) {
     const module = CyberdeckState.installedModules[CyberdeckState.installedModules.length - 1];
-    disconnectModule(module);
     moveModule(module, false, true);
   }
 }

@@ -7,7 +7,7 @@ import { ComponentSymbol } from "./ComponentCost";
 import { componentSymbols } from "../models/constants";
 import { Settings } from "../../Settings/Settings";
 import { TRASH_CAN } from "./ModuleRackAndInventoryPage";
-import { disassembleModule } from "../models/createModule";
+import { disassembleModule, moduleExists } from "../models/createModule";
 import { TrashCan } from "./TrashCan";
 
 type RewardsModalProps = {
@@ -18,7 +18,7 @@ type RewardsModalProps = {
   flavorText?: string;
 };
 
-export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "", title }: RewardsModalProps) {
+export function RewardsModal({ open, onClose, rewards, flavorText = "", title }: RewardsModalProps) {
   const [displayedModules, setDisplayedModules] = React.useState<DeckMod[]>(rewards.mods);
 
   React.useEffect(() => {
@@ -34,7 +34,9 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
     const moduleToTrash = displayedModules.find((m) => m.id === result.draggableId);
     if (!moduleToTrash) return;
     disassembleModule(moduleToTrash, true);
-    setDisplayedModules((mods) => mods.filter((m) => m.id !== moduleToTrash.id));
+    if (displayedModules.filter((m) => moduleExists(m.id)).length === 0) {
+      onClose();
+    }
   }
   const screenSizeIsTall = (window.visualViewport?.height ?? 999) > 750;
 
@@ -89,11 +91,13 @@ export function RewardsModal({ open, onClose = () => {}, rewards, flavorText = "
           <Droppable droppableId="modules">
             {(provided) => (
               <div {...provided.droppableProps} style={{ height: "300px", width: "470px" }} ref={provided.innerRef}>
-                {displayedModules.map((module, index) => (
-                  <div key={module.id} style={{ height: "80px" }}>
-                    <ModuleLootCover module={module} index={index} />
-                  </div>
-                ))}
+                {displayedModules
+                  .filter((m) => moduleExists(m.id))
+                  .map((module, index) => (
+                    <div key={module.id} style={{ height: "80px" }}>
+                      <ModuleLootCover module={module} index={index} />
+                    </div>
+                  ))}
                 {provided.placeholder}
               </div>
             )}

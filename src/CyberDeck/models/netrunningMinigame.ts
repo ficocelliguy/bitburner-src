@@ -28,8 +28,8 @@ export function move(direction: NetrunDirection, programmaticMove: boolean = fal
   } else if (newLocation.type === NetrunEntityVariant.dataStore) {
     breakEntity(newLocation);
     consumeEnergy(energyCost() * 0.3);
-    const groupSize = NetrunningState.groups[newLocation.group]?.length ?? 5;
-    NetrunningState.rewardScore += getIceReward(newLocation) * groupSize;
+    const groupSizeFactor = (NetrunningState.groups[newLocation.group]?.length ?? 5) * 0.5;
+    NetrunningState.rewardScore += getIceReward(newLocation) * groupSizeFactor;
   } else if (NetrunningState.energy <= 0) {
     shakePowerIndicator();
     return false;
@@ -72,7 +72,7 @@ function hitOfflineNode(programmaticMove: boolean) {
 
 function getIceReward(entity: NetrunEntity) {
   const entityDepth = (entity.x / NETRUNNING_WIDTH + entity.y / NETRUNNING_HEIGHT) * 0.6 + 0.2;
-  return 5 * entityDepth;
+  return 8 * entityDepth;
 }
 
 function energyCost() {
@@ -217,7 +217,11 @@ export function initNetrunGrid(corrupted: boolean) {
   for (let i = 0; i < rewardCount; i++) {
     const iceGroup = _.shuffle(
       Object.values(NetrunningState.groups).filter(
-        (g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb && (g[0]?.x > 10 || g[0]?.y > 10),
+        (g) =>
+          g[0]?.type === NetrunEntityVariant.ice &&
+          !g[0]?.hasBomb &&
+          (g[0]?.x > 8 || g[0]?.y > 8) &&
+          hasNoRewardGroupNeighbor(g),
       ),
     )[0];
     if (!iceGroup) {
@@ -238,6 +242,17 @@ export function initNetrunGrid(corrupted: boolean) {
 
   updateCurrentThreatSignalStrength();
   CyberdeckEvents.emit();
+}
+
+function hasNoRewardGroupNeighbor(group: NetrunEntity[]) {
+  for (const member of group) {
+    for (const neighbor of getNeighbors(member)) {
+      if (neighbor?.type === NetrunEntityVariant.dataStore && neighbor.group !== member.group) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 function offlineEntity(entity: NetrunEntity | null) {

@@ -1,6 +1,10 @@
 REQUIRED FOR MVP
 
-- recycling mods from crafting can be done infinitely?
+
+- kills from sleeves gives too many neurodes?
+- sleeve crime doesn't give rom
+
+- add stats for mod component production
 
 - code review
 - docs
