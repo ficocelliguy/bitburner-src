@@ -99,7 +99,8 @@ export function NetrunningPortal({
                       display: "flex",
                       width: "max-content",
                       whiteSpace: "nowrap",
-                      animation: `${tickerLoop} ${45 + (i % 4) * 12}s linear infinite`,
+                      animation: `${tickerLoop} ${(corrupted? 8 : 45) + (i % 4) * 12}s linear infinite`,
+                      animationDirection: `${!corrupted || (i % 4) ? "normal" : "reverse"}`,
                     }}
                   >
                     <Box component="span" sx={{ paddingRight: "2rem" }}>

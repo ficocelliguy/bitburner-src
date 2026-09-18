@@ -1,5 +1,12 @@
 TODO:
 
+- tooltips on crafting page buttons
+- min socket count on power supply
+- improve power supply tooltip
+- add section for icebreakers in docs?
+
+- dev menu - custom mod creation
+
 - rewards modal cleanup - do we need a state variable AND a prop?
 
 - kills from sleeves gives too many neurodes?

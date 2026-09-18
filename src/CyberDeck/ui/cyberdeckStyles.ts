@@ -38,7 +38,7 @@ const getSkewFrames = () => {
     const range = i > 94 ? 8 : 3;
     const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 5 + 70);
     const scale = Math.random() < 0.92 ? 1 : 1.3;
-    const invert = Math.random() < 0.92 ? 0 : 0.2;
+    const invert = Math.random() < 0.95 ? 0 : 0.2;
     const shouldSkew = Math.random() < 0.4;
     const skew1 = shouldSkew ? Math.random() * range - range / 2 : 0;
     const skew2 = shouldSkew ? Math.random() * 2 - 1 : 0;
@@ -163,18 +163,20 @@ export function usePortalStyles() {
       justifyContent: "center",
       alignItems: "center",
       transform: "scale(1)",
-      transition: "transform 0.5s ease-out",
+      transition: "transform 0.4s ease-out",
       isolation: "isolate",
       backgroundColor: "#000",
-      borderRadius: "50%",
       overflow: "hidden",
+      WebkitMaskImage: "radial-gradient(circle at center, #000 65%, rgba(0,0,0,0.9) 82%, transparent 90%)",
+      maskImage: "radial-gradient(circle at center, #000 65%, rgba(0,0,0,0.9) 82%, transparent 90%)",
+      borderRadius: "45%",
       "&:hover": {
         transform: "scale(1.08)",
       },
     },
     portalRing: {
       position: "absolute",
-      width: "100%",
+      width: "75%",
       height: "100%",
       borderRadius: "50%",
       border: "4px solid transparent",
@@ -184,14 +186,14 @@ export function usePortalStyles() {
       "&::after": {
         content: '""',
         position: "absolute",
-        height: "100%",
-        width: "100%",
+        height: "90%",
+        width: "90%",
         borderRadius: "50%",
         boxShadow: "0 0 40px rgba(189, 0, 255, 0.6), inset 0 0 30px rgba(189, 0, 255, 0.6)",
       },
     },
     portalRingReverse: {
-      width: "85%",
+      width: "65%",
       height: "85%",
       animation: `${spinReverse} 2s linear infinite`,
       background:
@@ -228,8 +230,8 @@ export function usePortalStyles() {
     },
     portalCore: {
       position: "absolute",
-      width: "50%",
-      height: "50%",
+      width: "40%",
+      height: "40%",
       borderRadius: "50%",
       background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(0,210,255,0) 100%)",
       animation: `${pulse} 1.5s ease-in-out infinite`,

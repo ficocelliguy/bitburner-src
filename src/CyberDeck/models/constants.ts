@@ -118,6 +118,7 @@ export function isCustomBuild() {
 
 export const MARQUEE_LINES = [
   "All information looks like noise until you break the code.",
+  "The truth can no longer hide from your gaze.",
   "Open up your eyes and look at the big picture. You're all puppets of corrupt politicians and capitalists. Don't you understand, it's utterly pointless to fight each other.",
   "The sky above the port was the color of television, tuned to a dead channel.",
   "01101010 01110101 01101101 01110000 00110011 01010010 00100000 01101001 01110011 00100000 01100001 00100000 01101100 01101001 01100001 01110010",
