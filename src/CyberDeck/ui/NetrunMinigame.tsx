@@ -4,12 +4,10 @@ import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sha
 import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
 import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorSharp";
 import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
+import NavigationSharpIcon from '@mui/icons-material/NavigationSharp';
 import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
 import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
-import purple from "../assets/ProcessingMod/Purple.png";
-import yellow from "../assets/Special/Yellow.png";
-import green from "../assets/PowerSupply/Green.png";
 import { NetrunGridEntity } from "./NetrunGridEntity";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { CyberdeckState } from "../models/CyberdeckState";
@@ -44,7 +42,16 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
     };
   }, []);
 
-  const char = [purple, yellow, green][CyberdeckState.netrunningSeedUsages % 3];
+  function getRotation() {
+    if (NetrunningState.lastMove === NetrunDirection.right) {
+      return 90;
+    } else if (NetrunningState.lastMove === NetrunDirection.down) {
+      return 180;
+    } else if (NetrunningState.lastMove === NetrunDirection.left) {
+      return 270;
+    }
+    return 0;
+  }
 
   const { threat, signals } = getThreatSignalStrength();
   const threatColor = getThreatColor(threat) || Settings.theme.button;
@@ -97,12 +104,10 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
             top: NetrunningState.location[0] * (GRID_SIZE + 2),
           }}
         >
-          <img
-            src={char}
-            style={{ position: "relative", top: "1px", left: "1px" }}
+          <NavigationSharpIcon
+            sx={{ position: "relative", top: "1px", left: "1px", transform: `rotate(${getRotation()}deg)`, color:Settings.theme.primary }}
             width={GRID_SIZE - 2}
             height={GRID_SIZE - 2}
-            alt="character"
           />
         </div>
         {NetrunningState.grid.map((row, rowIndex) => (

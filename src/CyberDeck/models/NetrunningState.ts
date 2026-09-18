@@ -1,4 +1,5 @@
 import { NetrunEntity } from "../Types";
+import { NetrunDirection } from "@enums";
 
 export const NETRUNNING_WIDTH = 20;
 export const NETRUNNING_HEIGHT = 15;
@@ -11,6 +12,7 @@ export const NetrunningState = {
   shaking: false,
   shakingBattery: false,
   location: [0, 0], // [y, x] — matches grid[y][x] indexing
+  lastMove: NetrunDirection.right,
 
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,

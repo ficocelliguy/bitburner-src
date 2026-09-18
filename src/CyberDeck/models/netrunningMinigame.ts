@@ -12,6 +12,7 @@ import { Router } from "../../ui/GameRoot";
 
 export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
   spreadOfflineNodes();
+  NetrunningState.lastMove = direction;
 
   const [y, x] = NetrunningState.location;
   const dx = direction === "left" ? -1 : direction === "right" ? 1 : 0;

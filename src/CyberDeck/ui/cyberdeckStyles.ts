@@ -57,6 +57,9 @@ const growAndFade = keyframes`
     opacity: 1;
     transform: scale(1);
   }
+  80% {
+    opacity: 0;
+  }
   100% {
     opacity: 0;
     transform: scale(20);
@@ -256,7 +259,7 @@ export function usePortalStyles() {
     enteringPortal: {
       zIndex: 9999,
       pointerEvents: "none",
-      animation: `${growAndFade} 1.5s ease-in forwards`,
+      animation: `${growAndFade} 1.2s ease-in forwards`,
     },
     corruptedSkew: {
       animation: `${skewFrames} 5s infinite steps(1)`,

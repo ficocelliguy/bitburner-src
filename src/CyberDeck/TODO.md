@@ -1,3 +1,7 @@
+Patch changes: 
+- make netrun portal text-based
+- make netrun character a better icon
+
 TODO:
 
 - tooltips on crafting page buttons
@@ -6,6 +10,7 @@ TODO:
 - add section for icebreakers in docs?
 
 - dev menu - custom mod creation
+- dev menu - set component counts
 
 - rewards modal cleanup - do we need a state variable AND a prop?
 

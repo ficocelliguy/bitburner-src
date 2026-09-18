@@ -68,7 +68,7 @@ export function NetrunningPortal({
         setShowPortal(false);
       }
       entered();
-    }, 1200);
+    }, 1000);
   }
 
   function minimumCost(corrupted: boolean) {
@@ -78,10 +78,10 @@ export function NetrunningPortal({
   return (
     <Container disableGutters maxWidth={false} sx={[{ m: 3 }, corrupted && styles.corruptedSkew]}>
       {showPortal && (
-        <>
+        <Box sx={[entering && styles.enteringPortal]}>
           <Box
             className={PORTAL_CONTAINER_CLASS}
-            sx={[styles.portalContainer, entering && styles.enteringPortal, disabled && styles.portalDisabled]}
+            sx={[styles.portalContainer, disabled && styles.portalDisabled]}
             onClick={() => void handlePortalClick()}
           >
             <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
@@ -99,8 +99,8 @@ export function NetrunningPortal({
                       display: "flex",
                       width: "max-content",
                       whiteSpace: "nowrap",
-                      animation: `${tickerLoop} ${(corrupted? 8 : 45) + (i % 4) * 12}s linear infinite`,
-                      animationDirection: `${!corrupted || (i % 4) ? "normal" : "reverse"}`,
+                      animation: `${tickerLoop} ${(corrupted ? 8 : 45) + (i % 4) * 12}s linear infinite`,
+                      animationDirection: `${!corrupted || i % 4 ? "normal" : "reverse"}`,
                     }}
                   >
                     <Box component="span" sx={{ paddingRight: "2rem" }}>
@@ -140,7 +140,7 @@ export function NetrunningPortal({
               )}
             </>
           )}
-        </>
+        </Box>
       )}
     </Container>
   );
