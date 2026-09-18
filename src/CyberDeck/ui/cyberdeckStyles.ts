@@ -39,9 +39,11 @@ const getSkewFrames = () => {
     const hueRotate = Math.random() < 0.8 ? 0 : Math.floor(Math.random() * 5 + 70);
     const scale = Math.random() < 0.92 ? 1 : 1.3;
     const invert = Math.random() < 0.92 ? 0 : 0.2;
-    const transform = ` { transform: skew(${Math.random() * range - range / 2}deg, ${
-      Math.random() * 2 - 1
-    }deg) scale(${scale}); filter: hue-rotate(${hueRotate}deg) invert(${invert}); }\n`;
+    const shouldSkew = Math.random() < 0.4;
+    const skew1 = shouldSkew ? Math.random() * range - range / 2 : 0;
+    const skew2 = shouldSkew ? Math.random() * 2 - 1 : 0;
+
+    const transform = ` { transform: skew(${skew1}deg, ${skew2}deg) scale(${scale}); filter: hue-rotate(${hueRotate}deg) invert(${invert}); }\n`;
     result += `${i}% ${transform}`;
     result += `${i + step - 0.1}% ${transform}`;
   }
@@ -64,6 +66,11 @@ const growAndFade = keyframes`
 const staticNoise = keyframes`
   0% { transform: translate(0, 0);  background-size: 100%}
   100% { transform: translate(-1%, 0.5%); background-size: 200%}
+`;
+
+export const tickerLoop = keyframes`
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 `;
 
 export const PORTAL_CONTAINER_CLASS = "portal-container";
@@ -157,6 +164,10 @@ export function usePortalStyles() {
       alignItems: "center",
       transform: "scale(1)",
       transition: "transform 0.5s ease-out",
+      isolation: "isolate",
+      backgroundColor: "#000",
+      borderRadius: "50%",
+      overflow: "hidden",
       "&:hover": {
         transform: "scale(1.08)",
       },
@@ -223,6 +234,22 @@ export function usePortalStyles() {
       background: "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(189,0,255,0.8) 50%, rgba(0,210,255,0) 100%)",
       animation: `${pulse} 1.5s ease-in-out infinite`,
       boxShadow: "0 0 80px #bd00ff",
+    },
+    portalTextMask: {
+      position: "absolute",
+      inset: 0,
+      background: "#000",
+      color: "#fff",
+      mixBlendMode: "multiply",
+      fontFamily: "monospace",
+      fontSize: "13px",
+      lineHeight: 1.4,
+      letterSpacing: "0.5px",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      pointerEvents: "none",
+      userSelect: "none",
     },
     enteringPortal: {
       zIndex: 9999,

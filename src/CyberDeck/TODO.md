@@ -1,5 +1,6 @@
-REQUIRED FOR MVP
+TODO:
 
+- rewards modal cleanup - do we need a state variable AND a prop?
 
 - kills from sleeves gives too many neurodes?
 - sleeve crime doesn't give rom
@@ -38,7 +39,6 @@ Corrupted variant:
   - disable movement for a moment after spreading
 - puts player in hospital if caught
 
-TODO:
 
 - method to detect if a move would cause overlaps
 

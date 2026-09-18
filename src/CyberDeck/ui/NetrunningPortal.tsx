@@ -5,6 +5,7 @@ import {
   PORTAL_CORE_CLASS,
   PORTAL_RING_CLASS,
   PORTAL_RING_REVERSE_CLASS,
+  tickerLoop,
   usePortalStyles,
 } from "./cyberdeckStyles";
 import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
@@ -17,6 +18,7 @@ import { dialogBoxCreate } from "../../ui/React/DialogBox";
 import { NetrunningState } from "../models/NetrunningState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
+import { MARQUEE_LINES } from "../models/constants";
 
 export function NetrunningPortal({
   entered,
@@ -89,6 +91,27 @@ export function NetrunningPortal({
             />
             <Box sx={styles.orbiter} />
             <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
+            <Box aria-hidden sx={styles.portalTextMask}>
+              {MARQUEE_LINES.map((line, i) => (
+                <Box key={i} sx={{ overflow: "hidden", width: "100%" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      width: "max-content",
+                      whiteSpace: "nowrap",
+                      animation: `${tickerLoop} ${45 + (i % 4) * 12}s linear infinite`,
+                    }}
+                  >
+                    <Box component="span" sx={{ paddingRight: "2rem" }}>
+                      {line}
+                    </Box>
+                    <Box component="span" sx={{ paddingRight: "2rem" }} aria-hidden>
+                      {line}
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
           </Box>
           {!entering && hasCyberdeck() && (
             <>
