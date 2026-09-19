@@ -57,16 +57,16 @@ export const uplinkCraftingCost: ComponentCounts = {
   iceBreakers: 0,
 };
 
-export function getModuleDescription(moduleType: ModType): string {
+export function getModuleDescription(moduleType: ModType, overrideCharacterDescription = false): string {
   if (moduleType === ModType.CyberdeckIOPanel) {
     return isCustomBuild() ? "Ono-Sendai Mk7, custom build." : "Hosaka Cyberdecks: The finest that money can buy.";
   }
-  if (Settings.CyberdeckWiFU) {
+  if (Settings.CyberdeckWiFU && !overrideCharacterDescription) {
     return getWifuDescription(moduleType);
   }
   switch (moduleType) {
     case ModType.PowerSupply:
-      return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be distributed to more modules. It does not create power itself, but it excels at distributing power to other mods.";
+      return "Power supply mods have extra sockets, allowing power from the Cyberdeck to be applied to more modules. It does not create power itself, but it excels at distributing power to other mods.";
     case ModType.ProcessingMod:
       return "Processing mods generally provide boosts to the cyberdeck itself, or to activities that a wearable computer can boost.";
     case ModType.Uplink:

@@ -3,45 +3,36 @@ Patch changes:
 - added the group an entity belongs in to the getGrid() details so you can see "connections"
 - make netrun portal text-based
 - make netrun character a better-themed icon
+- added tooltips to the buttons on the crafting page
 - removed toasts from a number of feedback locations
 - bugfix: prevent components from backdoor/nuke if server is already backdoored/nuked
 - bugfix: ensure crafted or regular netrun power supply mods always have a minimum of 2 sockets
 
 TODO:
 
-- add hard caps
-  - add support for lower bound cap
-
-- remove toast from consuming skillchip programatically
-- use pop-up numbers instead of toasts?
-
-- tooltips on crafting page buttons
-- improve power supply tooltip
-- add section for icebreakers in docs?
-
-- dev menu - custom mod creation
-- dev menu - set component counts
-
 - kills from sleeves gives too many neurodes?
 - sleeve crime doesn't give rom
 
 - add stats for mod component production
 
-- rewards modal cleanup - do we need a state variable AND a prop?
+- add hard caps
 
-- code review
-- docs
-- unit tests
-- lint
+  - add support for lower bound cap
 
-- make testing script
+- remove toast from consuming skillchip programatically
+- use pop-up numbers instead of toasts?
+
+- dev menu - custom mod creation
+- dev menu - set component counts
 
 NETRUNNING MINIGAME:
 
 - API - test
+
   - docs!
 
 - Docs
+
   - add simple code examples
   - explain entity types
 
@@ -55,6 +46,15 @@ TODO LATER:
 
 - save netrun mid-run?
 - seed netrun?
+
+- rewards modal cleanup - do we need a state variable AND a prop?
+
+- code review
+- docs
+- unit tests
+- lint
+
+- make testing script
 
 - add notification for all dev buttons
 
