@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, EntityInfo } from "@nsdefs";
 import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
-import { LocationName, NetrunEntityVariant } from "@enums";
+import { LocationName, NetrunEntityVariant, ToastVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
@@ -22,7 +22,13 @@ import {
   uplinkCraftingCost,
 } from "./models/constants";
 import { logger } from "../DarkNet/effects/offlineServerHandling";
-import { createConnection, disconnectConnection, moveModule, wireOverlapsSocket } from "./models/moduleMutation";
+import {
+  createConnection,
+  disconnectConnection,
+  moveModule,
+  wireOverlapsSocket,
+  wouldCauseOverlaps,
+} from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
@@ -42,6 +48,7 @@ import {
   initNetrunGrid,
   move,
 } from "./models/netrunningMinigame";
+import { SnackbarEvents } from "../ui/React/Snackbar";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -126,14 +133,14 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           logger(ctx)(`Failed to move mod ${modId}: cyberdeck mod rack is already full.`);
           return false;
         }
-        moveModule(mod, sourceIsStorage, false, newIndex);
 
-        if (CyberdeckState.connections.find(([s, d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
-          moveModule(mod, false, sourceIsStorage, newIndex);
+        // Prevent the move if it causes invalid wiring
+        if (wouldCauseOverlaps(CyberdeckState.installedModules.toSpliced(newIndex, 0, mod))) {
           logger(ctx)(`Failed to move module: wires cannot overlap.`);
           return false;
         }
 
+        moveModule(mod, sourceIsStorage, false, newIndex);
         logger(ctx)(`Mod ${modId} installed on rack #${newIndex}`);
         return true;
       });

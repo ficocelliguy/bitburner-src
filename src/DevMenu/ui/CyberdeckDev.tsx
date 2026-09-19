@@ -56,14 +56,14 @@ export function CyberdeckDev(): React.ReactElement {
   }
 
   function getNetrunRewards() {
-    const rewards = getNetrunningRewards(getNextNetrunningWHRNG(), 3);
+    const rewards = getNetrunningRewards(getNextNetrunningWHRNG(), 150);
     setCorrupted(false);
     setNetrunningModRewards({ mods: rewards, components: {} });
     setShowRewardsModal(true);
   }
 
   function getCorruptedNetrunRewards() {
-    const rewards = getCorruptedNetrunningRewards(getNextNetrunningCorruptedWHRNG(), 100);
+    const rewards = getCorruptedNetrunningRewards(getNextNetrunningCorruptedWHRNG(), 150);
     setCorrupted(true);
     setNetrunningModRewards({ mods: rewards, components: {} });
     setShowRewardsModal(true);

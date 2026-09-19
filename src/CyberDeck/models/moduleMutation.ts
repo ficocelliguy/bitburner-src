@@ -4,7 +4,7 @@ import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, getChargedModules
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { DeckMod, Socket } from "../Types";
+import { Connection, DeckMod, Socket } from "../Types";
 import { ModType } from "../Enums";
 import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
@@ -47,13 +47,16 @@ export function handleModuleMoved(result: DropResult) {
     return;
   }
 
-  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index);
-
-  // Undo the move if it causes invalid wiring
-  if (CyberdeckState.connections.find(([s, d]) => wireOverlapsSocket(s) || wireOverlapsSocket(d))) {
-    moveModule(moduleToMove, destinationIsStorage, sourceIsStorage, result.source.index);
-    SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
+  if (!destinationIsStorage) {
+    const newInstalledModsList = CyberdeckState.installedModules.toSpliced(result.destination.index, 0, moduleToMove);
+    // Prevent the move if it causes invalid wiring
+    if (wouldCauseOverlaps(newInstalledModsList)) {
+      SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
+      return;
+    }
   }
+
+  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index);
 }
 
 export function moveModule(
@@ -178,12 +181,20 @@ function getInstalledModule(moduleId: string) {
   );
 }
 
-export function wireOverlapsSocket(socket: Socket) {
-  const socketModuleIndex = getModuleIndex(socket.modId);
-  return CyberdeckState.connections.find(([s, d]) => {
+export function wouldCauseOverlaps(moduleList: DeckMod[], connections: Connection[] = CyberdeckState.connections) {
+  for (const [socket1, socket2] of connections) {
+    if (wireOverlapsSocket(socket1, moduleList, connections) || wireOverlapsSocket(socket2, moduleList, connections)) {
+      return true;
+    }
+  }
+}
+
+export function wireOverlapsSocket(socket: Socket, moduleList = CyberdeckState.installedModules, connections = CyberdeckState.connections) {
+  const socketModuleIndex = getModuleIndex(socket.modId, moduleList);
+  return connections.find(([s, d]) => {
     if (s.modId === socket.modId || d.modId === socket.modId) return false;
-    const sModuleIndex = getModuleIndex(s.modId);
-    const dModuleIndex = getModuleIndex(d.modId);
+    const sModuleIndex = getModuleIndex(s.modId, moduleList);
+    const dModuleIndex = getModuleIndex(d.modId, moduleList);
     return (
       s.socketIndex == socket.socketIndex &&
       sModuleIndex > socketModuleIndex !== dModuleIndex > socketModuleIndex && [s, d]
@@ -222,8 +233,8 @@ function determineIfSocketIsCovered(socket: Socket) {
   });
 }
 
-export function getModuleIndex(moduleId: string) {
-  return CyberdeckState.installedModules.findIndex((m) => m.id == moduleId);
+export function getModuleIndex(moduleId: string, moduleList: DeckMod[] = CyberdeckState.installedModules) {
+  return moduleList.findIndex((m) => m.id == moduleId);
 }
 
 export function disconnectSocket(source: Socket | undefined) {

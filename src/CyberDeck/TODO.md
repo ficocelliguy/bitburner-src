@@ -1,5 +1,6 @@
 Patch changes:
 - fixed styling issue preventing the mod rack from scrolling
+- fixed un-wiring caused by attempting an invalid mod move that would make wires overlap
 
 TODO:
 
@@ -25,9 +26,6 @@ NETRUNNING MINIGAME:
 - Docs
   - add simple code examples
   - explain entity types
-
-- method to detect if a move would cause overlaps
-  - Reject moves ahead of time instead of partial rollbacks
 
 - full docs for various types in the API
 
