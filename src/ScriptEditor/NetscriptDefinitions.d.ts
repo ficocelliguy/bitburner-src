@@ -4560,7 +4560,7 @@ type EntityInfo = {
   flagged: boolean;
   hits: number;
   /** The other entities in the same "block" as this one, as a list of [y, x] coordinates */
-  group: [number, number][];
+  group: [number, number][] | null;
   hasBomb?: boolean;
 };
 

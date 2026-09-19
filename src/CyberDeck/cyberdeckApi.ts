@@ -345,9 +345,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
               visible: entity.visible,
               flagged: entity.flagged,
               hits: entity.hits,
-              group: group.map((g) => [g.y, g.x]),
+              group: !entity.visible || entity.type === NetrunEntityVariant.empty ? null : group.map((g) => [g.y, g.x]),
             };
-            if (entity.visible && entity.hasBomb) {
+            if (entity.visible && entity.hasBomb && entity.hits) {
               entityInfo.hasBomb = true;
             }
             return entityInfo;

@@ -1,12 +1,6 @@
 Patch changes:
-- added soft caps to all stats (currently, each 100% bonus beyond the first is 60% as effective as the prior one - configurable)
-- added the group an entity belongs in to the getGrid() details so you can see "connections"
-- make netrun portal text-based
-- make netrun character a better-themed icon
-- added tooltips to the buttons on the crafting page
-- removed toasts from a number of feedback locations
-- bugfix: prevent components from backdoor/nuke if server is already backdoored/nuked
-- bugfix: ensure crafted or regular netrun power supply mods always have a minimum of 2 sockets
+- removed group info from empty or hidden entities in getGrid()
+- hide `hasBomb` property unless player has actually discovered a bomb in an ICE block
 
 TODO:
 
@@ -19,7 +13,7 @@ TODO:
 
   - add support for lower bound cap
 
-- remove toast from consuming skillchip programatically
+- remove toast from consuming skillchip programmatically
 - use pop-up numbers instead of toasts?
 
 - dev menu - custom mod creation
@@ -28,16 +22,13 @@ TODO:
 NETRUNNING MINIGAME:
 
 - API - test
-
   - docs!
 
 - Docs
-
   - add simple code examples
   - explain entity types
 
 - method to detect if a move would cause overlaps
-
   - Reject moves ahead of time instead of partial rollbacks
 
 - full docs for various types in the API

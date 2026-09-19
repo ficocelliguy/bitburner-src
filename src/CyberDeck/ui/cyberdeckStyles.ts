@@ -180,7 +180,7 @@ export function usePortalStyles() {
     portalRing: {
       position: "absolute",
       width: "75%",
-      height: "100%",
+      height: "95%",
       borderRadius: "50%",
       border: "4px solid transparent",
       animation: `${spin} 5s linear infinite`,
