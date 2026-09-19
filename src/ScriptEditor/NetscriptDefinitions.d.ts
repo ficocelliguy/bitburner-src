@@ -4559,6 +4559,8 @@ type EntityInfo = {
   visible: boolean;
   flagged: boolean;
   hits: number;
+  /** The other entities in the same "block" as this one, as a list of [y, x] coordinates */
+  group: [number, number][];
   hasBomb?: boolean;
 };
 

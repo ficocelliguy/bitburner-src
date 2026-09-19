@@ -371,6 +371,7 @@ export function getEasterEggModule(): DeckMod {
 }
 
 export function moduleExists(id: string) {
-  return CyberdeckState.installedModules.some((m) => m.id === id) ||
-  CyberdeckState.storedModules.some((m) => m.id === id)
+  return (
+    CyberdeckState.installedModules.some((m) => m.id === id) || CyberdeckState.storedModules.some((m) => m.id === id)
+  );
 }

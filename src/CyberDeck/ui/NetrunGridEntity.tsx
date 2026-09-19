@@ -43,6 +43,14 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
     flagEntity(entity);
   }
 
+  function getThreatIndicatorColor() {
+    const [y, x] = NetrunningState.location;
+    if (x === entity.x && y === entity.y) {
+      return "";
+    }
+    return getThreatColor(entity.threat);
+  }
+
   const northNeighbor = NetrunningState.grid[entity.y - 1]?.[entity.x];
   const borderTopColor = getBorderColor(northNeighbor);
 
@@ -57,7 +65,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
 
   const tooltip = !entity.visible
     ? "<unknown entity>"
-    : entity.hasBomb
+    : entity.hasBomb && entity.hits
     ? "Active countermeasures were triggered here! This can still be broken, but will take more ICEBreakers."
     : entity.type == NetrunEntityVariant.ice
     ? "ICE (Intrusion Countermeasure Executables): defensive programs found almost everywhere in modern cyberspace. May contain active countermeasures - watch your threat level! Can be broken, if there are ICEBreakers still available."
@@ -103,7 +111,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
               height: 10,
               minHeight: 10,
               margin: "5px",
-              backgroundColor: getThreatColor(entity.threat),
+              backgroundColor: getThreatIndicatorColor(),
               borderRadius: "2px",
             }}
           />

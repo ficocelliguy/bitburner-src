@@ -337,6 +337,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         checkCyberdeckAccess();
         return NetrunningState.grid.map((row) =>
           row.map((entity) => {
+            const group = NetrunningState.groups[entity.group] ?? [];
             const entityInfo: EntityInfo = {
               type: entity.visible ? entity.type : NetrunEntityVariant.unknown,
               x: entity.x,
@@ -344,6 +345,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
               visible: entity.visible,
               flagged: entity.flagged,
               hits: entity.hits,
+              group: group.map((g) => [g.y, g.x]),
             };
             if (entity.visible && entity.hasBomb) {
               entityInfo.hasBomb = true;

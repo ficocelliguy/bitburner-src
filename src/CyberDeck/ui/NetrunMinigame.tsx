@@ -4,7 +4,7 @@ import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sha
 import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
 import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorSharp";
 import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
-import NavigationSharpIcon from '@mui/icons-material/NavigationSharp';
+import NavigationSharpIcon from "@mui/icons-material/NavigationSharp";
 import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
 import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
@@ -105,7 +105,13 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
           }}
         >
           <NavigationSharpIcon
-            sx={{ position: "relative", top: "1px", left: "1px", transform: `rotate(${getRotation()}deg)`, color:Settings.theme.primary }}
+            sx={{
+              position: "relative",
+              top: "1px",
+              left: "1px",
+              transform: `rotate(${getRotation()}deg)`,
+              color: Settings.theme.primary,
+            }}
             width={GRID_SIZE - 2}
             height={GRID_SIZE - 2}
           />

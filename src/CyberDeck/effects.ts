@@ -26,7 +26,11 @@ export function gainCyberdeckComponentsFromSaveBackup() {
   gainComponentMessage({ chips: 100, rom: 100, neurodes: 100 });
 }
 
-export function gainCyberdeckComponentsFromNukeOrBackdoor(server: Server | DarknetServer, showToast = true, backdoor = false) {
+export function gainCyberdeckComponentsFromNukeOrBackdoor(
+  server: Server | DarknetServer,
+  showToast = true,
+  backdoor = false,
+) {
   if (!hasCyberdeck() || (backdoor && server.backdoorInstalled) || (!backdoor && server.hasAdminRights)) {
     return;
   }

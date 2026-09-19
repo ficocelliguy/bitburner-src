@@ -1,5 +1,6 @@
 
 Patch changes:
+- added the group an entity belongs in to the getGrid() details
 - make netrun portal text-based
 - make netrun character a better-themed icon
 - removed toasts from a number of feedback locations
@@ -9,7 +10,7 @@ Patch changes:
 
 TODO:
 
-- hide threat under player icon
+- add soft and hard caps
 
 - remove toast from consuming skillchip programatically
 
