@@ -508,7 +508,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           return false;
         }
         logger(ctx)(`Crafting ICEBreaker.`);
-        return craftICEBreaker();
+        return craftICEBreaker(numberToCraft);
       },
 
       craftPowerSupplyMod: (ctx: NetscriptContext) => {
