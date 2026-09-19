@@ -1,6 +1,5 @@
 Patch changes:
-- removed group info from empty or hidden entities in getGrid()
-- hide `hasBomb` property unless player has actually discovered a bomb in an ICE block
+- fixed styling issue preventing the mod rack from scrolling
 
 TODO:
 
@@ -10,7 +9,6 @@ TODO:
 - add stats for mod component production
 
 - add hard caps
-
   - add support for lower bound cap
 
 - remove toast from consuming skillchip programmatically
@@ -22,7 +20,7 @@ TODO:
 NETRUNNING MINIGAME:
 
 - API - test
-  - docs!
+  - docs for all the types etc
 
 - Docs
   - add simple code examples

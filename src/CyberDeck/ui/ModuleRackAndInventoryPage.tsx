@@ -163,6 +163,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                 maxHeight: "calc(100vh - 115px)",
                 width: "480px",
                 backgroundColor: Settings.theme.backgroundprimary,
+                overflowY: "scroll",
               }}
             >
               <Droppable droppableId={getCyberdeckIOPanel().id} direction="vertical" isDropDisabled>
