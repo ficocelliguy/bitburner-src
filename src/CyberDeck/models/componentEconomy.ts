@@ -84,7 +84,7 @@ export function gainCyberdeckComponents(cycles: number) {
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
     const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
     const magnitude = Math.log10(newIncome + 1);
-    const newChips = 0.1 + magnitude / 3;
+    const newChips = (0.1 + magnitude / 3) * 1.2;
     CyberdeckState.components.chips += newChips;
     CyberdeckState.componentStats.chips.hacknet += newChips;
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;

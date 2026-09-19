@@ -512,7 +512,8 @@ export function gainCodingContractReward(
   // The new standard is smaller, more frequent rewards - a third of the reward size of the previous
   const adjustedScaling = rewardScaling / 3;
 
-  gainCyberdeckComponentsFromCCT(difficulty);
+  const components = gainCyberdeckComponentsFromCCT(difficulty);
+  const componentRewardString = components ? ` Gained ${components} neurodes.` : "";
 
   switch (reward.type) {
     case CodingContractRewardType.FactionReputation: {
@@ -523,7 +524,7 @@ export function gainCodingContractReward(
       const randomFaction = factionsThatAllowHacking[getRandomIntInclusive(0, factionsThatAllowHacking.length - 1)];
       const repGain = CONSTANTS.CodingContractBaseFactionRepGain * difficulty * adjustedScaling;
       Factions[randomFaction].playerReputation += repGain;
-      return `Gained ${repGain} faction reputation for ${randomFaction}`;
+      return `Gained ${repGain} faction reputation for ${randomFaction}.${componentRewardString}`;
     }
     case CodingContractRewardType.FactionReputationAll: {
       const factionsThatAllowHacking = Player.factions.filter((fac) => Factions[fac].getInfo().offerHackingWork);
@@ -538,7 +539,7 @@ export function gainCodingContractReward(
       }
       return `Gained ${gainPerFaction} reputation for each of the following factions: ${factionsThatAllowHacking.join(
         ", ",
-      )}`;
+      )}.${componentRewardString}`;
     }
     case CodingContractRewardType.CompanyReputation: {
       const companies = getRecordKeys(Player.jobs);
@@ -557,7 +558,7 @@ export function gainCodingContractReward(
       const randomCompany = companies[getRandomIntInclusive(0, companies.length - 1)];
       const repGain = CONSTANTS.CodingContractBaseCompanyRepGain * difficulty * adjustedScaling;
       Companies[randomCompany].playerReputation += repGain;
-      return `Gained ${repGain} company reputation for ${randomCompany}`;
+      return `Gained ${repGain} company reputation for ${randomCompany}.${componentRewardString}`;
     }
     case CodingContractRewardType.Money: {
       const moneyGain =

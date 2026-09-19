@@ -54,6 +54,7 @@ export function backdoor(args: (string | number | boolean)[], server: BaseServer
     throw new Error("server should be normal server");
   }
   return Terminal.timedAction(calculateHackingTime(server, Player) / 4, "backdoor", () => {
+    gainCyberdeckComponentsFromNukeOrBackdoor(server, true, true);
     server.backdoorInstalled = true;
     if (SpecialServers.WorldDaemon === server.hostname) {
       if (Player.bitNodeN == null) {
@@ -67,7 +68,5 @@ export function backdoor(args: (string | number | boolean)[], server: BaseServer
     Engine.checkCounters();
 
     Terminal.print(`Backdoor on '${server.hostname}' successful!`);
-
-    gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill ?? 0, true, true);
   });
 }

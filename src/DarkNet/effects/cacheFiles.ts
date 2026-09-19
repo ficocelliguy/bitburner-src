@@ -48,7 +48,7 @@ export const getRewardFromCache = (server: DarknetServer, cacheName: string, sup
   const karmaLoss = difficulty + 1;
   Player.karma -= karmaLoss;
 
-  gainCyberdeckRomFromCache(false);
+  gainCyberdeckRomFromCache();
 
   if (isLabyrinthServer(server.hostname) && cacheName.includes(LAB_CACHE_NAME)) {
     const labReward = getLabReward();

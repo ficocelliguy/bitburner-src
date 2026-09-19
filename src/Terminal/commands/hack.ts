@@ -45,9 +45,7 @@ export function hack(args: (string | number | boolean)[], server: BaseServer): u
     const expGainedOnFailure = expGainedOnSuccess / 4;
     if (rand < hackChance) {
       // Success!
-      if (!server.backdoorInstalled) {
-        gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill, false, true);
-      }
+      gainCyberdeckComponentsFromNukeOrBackdoor(server, false, true);
       server.backdoorInstalled = true;
       if (SpecialServers.WorldDaemon === server.hostname) {
         Router.toPage(Page.BitVerse, { flume: false, quick: false });

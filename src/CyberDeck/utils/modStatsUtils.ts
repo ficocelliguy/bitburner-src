@@ -11,8 +11,7 @@ import {
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
-import { roundToFour } from "../../utils/helpers/roundToTwo";
-import { getAllStatRanges } from "./statRng";
+import { getFullStatRollRanges } from "./statRng";
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
   const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
@@ -117,20 +116,6 @@ export function getDefaultConsumableStats(): ConsumableStats {
   };
 }
 
-// At the max of level 12, the min is 0.7% and the max is 10%.
-// At 1 min and max scaling and growth scaling, the min is 0.1% + 0.1% per level and the max is 0.6% + 0.8% per level.
-export function getStatRollRange(
-  level: number,
-  minScaling: number = 1,
-  maxScaling: number = 1,
-  growthScaling: number = 1,
-): [number, number] {
-  return [
-    roundToFour(0.001 * minScaling + 0.002 * level * growthScaling),
-    roundToFour(0.006 * maxScaling + 0.008 * level * growthScaling),
-  ];
-}
-
 export function isBuff(key: ModKey, value: number): boolean {
   return key.includes("_cost") || key.includes("_fee") ? value < 0 : value > 0;
 }
@@ -205,18 +190,18 @@ export function mergeBuffs<T extends { [K in keyof T]: number }>(
 
 // TODO-fico: remove later after testing
 export function logStatRanges() {
-  const maxBonuses = getAllStatRanges(12);
+  const maxBonuses = getFullStatRollRanges();
   const statList = [
     ...Object.entries(maxBonuses.playerMults ?? {}),
     ...Object.entries(maxBonuses.otherMults ?? {}),
     ...Object.entries(maxBonuses.consumableStats ?? {}),
     ...Object.entries(maxBonuses.endgameStats ?? {}),
-  ] as [ModKey, [number, number]][];
+  ] as [ModKey, { minRoll: number; maxRoll: number }][];
 
   const stats = statList
     .map(
-      ([k, [v1, v2]]) =>
-        `${k.padEnd(30)} ${getFormattedStatBonus(k, v1).valueStr} ${getFormattedStatBonus(k, v2).valueStr}`,
+      ([k, { minRoll, maxRoll }]) =>
+        `${k.padEnd(30)} ${getFormattedStatBonus(k, minRoll).valueStr} ${getFormattedStatBonus(k, maxRoll).valueStr}`,
     )
     .join("\n");
   console.log(stats);

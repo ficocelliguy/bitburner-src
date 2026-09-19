@@ -98,7 +98,7 @@ export function endGoGame(boardState: BoardState) {
   GoEvents.emit();
 
   if (boardState.ai !== GoOpponent.none) {
-    gainCyberdeckChipsFromIPvGO(score[GoColor.black].sum, false);
+    gainCyberdeckChipsFromIPvGO(score[GoColor.black].sum);
   }
 
   // Update multipliers with new bonuses, once at the end of the game

@@ -1,11 +1,19 @@
-Patch changes: 
+
+Patch changes:
 - make netrun portal text-based
-- make netrun character a better icon
+- make netrun character a better-themed icon
+- removed toasts from a number of feedback locations
+- bugfix: prevent components from backdoor/nuke if server is already backdoored/nuked
+- bugfix: ensure crafted or regular netrun power supply mods always have a minimum of 2 sockets
+
 
 TODO:
 
+- hide threat under player icon
+
+- remove toast from consuming skillchip programatically
+
 - tooltips on crafting page buttons
-- min socket count on power supply
 - improve power supply tooltip
 - add section for icebreakers in docs?
 
@@ -26,17 +34,11 @@ TODO:
 
 - make testing script
 
-- test importing existing save
-
-- re-enable offline summary & beta text
-
 - remove tmp
 
 NETRUNNING MINIGAME:
 
 - API - test
-
-  - toggleFlag()
   - docs!
 
 - Docs

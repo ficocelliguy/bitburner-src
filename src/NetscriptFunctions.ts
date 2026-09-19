@@ -524,9 +524,9 @@ export const ns: InternalAPI<NSFull> = {
       helpers.log(ctx, () => "Not enough ports opened to use NUKE.exe virus.");
       return false;
     }
+    const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server, false);
     server.hasAdminRights = true;
     helpers.log(ctx, () => `Executed NUKE.exe virus on '${server.hostname}' to gain root access.`);
-    const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill, false);
     if (romGained) {
       helpers.log(ctx, () => `Gained ${romGained} ROM components.`);
     }

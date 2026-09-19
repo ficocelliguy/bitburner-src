@@ -5,6 +5,8 @@ import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 import { addCyberdeckServer } from "./models/cyberdeckServer";
 import { createInitialModules } from "./models/createModule";
+import { Server } from "../Server/Server";
+import { DarknetServer } from "../Server/DarknetServer";
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses(1);
@@ -24,11 +26,12 @@ export function gainCyberdeckComponentsFromSaveBackup() {
   gainComponentMessage({ chips: 100, rom: 100, neurodes: 100 });
 }
 
-export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number, showToast = true, backdoor = false) {
-  if (!hasCyberdeck()) {
+export function gainCyberdeckComponentsFromNukeOrBackdoor(server: Server | DarknetServer, showToast = true, backdoor = false) {
+  if (!hasCyberdeck() || (backdoor && server.backdoorInstalled) || (!backdoor && server.hasAdminRights)) {
     return;
   }
-  const romGained = backdoor ? Math.floor(requiredLevel / 5 + 30) : 25;
+  const difficulty = server instanceof Server ? server.requiredHackingSkill : server.requiredCharismaSkill;
+  const romGained = backdoor ? Math.floor(difficulty / 5 + 30) : 10;
   CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.ROM.backdoors += romGained;
   if (showToast) {
@@ -37,42 +40,33 @@ export function gainCyberdeckComponentsFromNukeOrBackdoor(requiredLevel: number,
   return romGained;
 }
 
-export function gainCyberdeckComponentsFromCCT(difficulty: number, showToast = true) {
+export function gainCyberdeckComponentsFromCCT(difficulty: number) {
   if (!hasCyberdeck()) {
     return;
   }
-  const neurodesGained = Math.floor(difficulty * 2 + 20);
+  const neurodesGained = Math.floor(difficulty * 2 + 5);
   CyberdeckState.components.neurodes += neurodesGained;
   CyberdeckState.componentStats.neurodes.codingContracts += neurodesGained;
-  if (showToast) {
-    gainComponentMessage({ neurodes: neurodesGained });
-  }
   return neurodesGained;
 }
 
-export function gainCyberdeckChipsFromIPvGO(nodesCaptured: number, showToast = true) {
+export function gainCyberdeckChipsFromIPvGO(nodesCaptured: number) {
   if (!hasCyberdeck()) {
     return;
   }
   const chipsGained = nodesCaptured * 2 + 2;
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.componentStats.chips.IPvGO += chipsGained;
-  if (showToast) {
-    gainComponentMessage({ chips: chipsGained });
-  }
   return chipsGained;
 }
 
-export function gainCyberdeckRomFromCache(showToast = true) {
+export function gainCyberdeckRomFromCache() {
   if (!hasCyberdeck()) {
     return;
   }
   const romGained = 20;
   CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.ROM.caches += romGained;
-  if (showToast) {
-    gainComponentMessage({ rom: romGained });
-  }
   return romGained;
 }
 

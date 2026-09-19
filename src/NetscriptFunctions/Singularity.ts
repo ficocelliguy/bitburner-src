@@ -542,7 +542,7 @@ export function NetscriptSingularity(): InternalAPI<ISingularity> {
 
       return helpers.netscriptDelay(ctx, installTime).then(function () {
         helpers.log(ctx, () => `Successfully installed backdoor on '${server.hostname}'`);
-        const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server.requiredHackingSkill ?? 0, false, true);
+        const romGained = gainCyberdeckComponentsFromNukeOrBackdoor(server, false, true);
         if (romGained) {
           helpers.log(ctx, () => `Gained ${romGained} ROM components.`);
         }

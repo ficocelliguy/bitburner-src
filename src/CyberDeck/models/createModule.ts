@@ -62,7 +62,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const extraSlotVariant = rng.random() < 0.1;
   const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng) : {};
   const extraSockets = rng.random() < 0.08 ? 1 : 0;
-  const bonus = (extraSlotVariant ? 2 : 1) + extraSockets;
+  const bonus = Math.min((extraSlotVariant ? 2 : 1) + extraSockets, 2);
 
   const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.5) : {};
 
