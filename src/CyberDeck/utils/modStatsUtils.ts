@@ -248,10 +248,11 @@ function applySoftCap(value: number, softCap: number = 1, hardCap: number = 1e10
     return basis + sign * Math.min(magnitude, hardCap);
   }
   const excess = magnitude - softCap;
-  const diminishedExcess =
-    (SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE *
-      (1 - Math.pow(SOFT_CAP_DECAY_RATIO, excess / SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE))) /
-    (1 - SOFT_CAP_DECAY_RATIO);
+
+  // Each additional chunk of raw bonus past softCap is SOFT_CAP_DECAY_RATIO as effective as the previous chunk
+  const ratio = SOFT_CAP_DECAY_RATIO;
+  const chunk = SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE;
+  const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
   const cappedMagnitude = Math.min(softCap + diminishedExcess, hardCap);
   return basis + sign * cappedMagnitude;
 }

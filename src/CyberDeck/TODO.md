@@ -1,5 +1,4 @@
 Patch changes:
-
 - added soft caps to all stats (currently, each 100% bonus beyond the first is 60% as effective as the prior one - configurable)
 - added the group an entity belongs in to the getGrid() details so you can see "connections"
 - make netrun portal text-based
