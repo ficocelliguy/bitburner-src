@@ -111,120 +111,95 @@ export function getFullStatRollRanges() {
 
 const EMPTY_BOUNDS: StatRollBounds = { minRoll: 0, maxRoll: 0 };
 
-export function getPlayerStatBuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-  const rng3 = rng.random();
-  const rng4 = rng.random();
+function getStatRoll(rng: WHRNG, valueRangeInfo: StatRollBounds, level: number, scalar: number) {
+  const totalValueRange = valueRangeInfo.maxRoll - valueRangeInfo.minRoll;
+  const scaledValueRange = totalValueRange / 12;
+  const minRoll = scaledValueRange * level * 0.4;
+  const maxRoll = scaledValueRange * level;
 
-  const fullStats = getFullStatRollRanges();
-
-  const playerMultKeys = getRecordKeys(fullStats.playerMults);
-  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
-  const valueRange = fullStats.playerMults[statToAdd] ?? EMPTY_BOUNDS;
   // Roll three times and take the sum of the two lowest rolls, to create a range that makes higher values more rare
-  const valueRoll1 = (valueRange.maxRoll - valueRange.minRoll) * scalar * rng2 * 0.5;
-  const valueRoll2 = (valueRange.maxRoll - valueRange.minRoll) * scalar * rng3 * 0.5;
-  const valueRoll3 = (valueRange.maxRoll - valueRange.minRoll) * scalar * rng4 * 0.5;
+  const valueRoll1 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
+  const valueRoll2 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
+  const valueRoll3 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
   const weightedSum = valueRoll1 + valueRoll2 + valueRoll3 - Math.max(valueRoll1, valueRoll2, valueRoll3);
 
-  const value = valueRange.minRoll + weightedSum;
-
-  return {
-    [statToAdd]: value,
-  };
+  return valueRangeInfo.minRoll + weightedSum;
 }
 
-export function getDebuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-
+export function getPlayerStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
   const fullStats = getFullStatRollRanges();
 
   const playerMultKeys = getRecordKeys(fullStats.playerMults);
-  const statToAdd = playerMultKeys[Math.floor(rng1 * playerMultKeys.length)];
-  const valueRange = fullStats.playerMults[statToAdd] ?? EMPTY_BOUNDS;
-  const value = ((valueRange.maxRoll - valueRange.minRoll) * scalar * rng2 + valueRange.minRoll) * -1;
+  const statToAdd = playerMultKeys[Math.floor(rng.random() * playerMultKeys.length)];
+  const valueRangeInfo = fullStats.playerMults[statToAdd] ?? EMPTY_BOUNDS;
 
   return {
-    [statToAdd]: value,
+    [statToAdd]: getStatRoll(rng, valueRangeInfo, level, scalar),
   };
 }
 
-export function getConsumableBuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<ConsumableStats> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
+export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
+}
+
+export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<ConsumableStats> {
   const fullStats = getFullStatRollRanges();
 
   const consumableKeys = getRecordKeys(fullStats.consumableStats);
-  const statToAdd = consumableKeys[Math.floor(rng1 * consumableKeys.length)];
+  const statToAdd = consumableKeys[Math.floor(rng.random() * consumableKeys.length)];
   const valueRange = fullStats.consumableStats[statToAdd];
-  const value = (valueRange.maxRoll - valueRange.minRoll) * rng2 * scalar + valueRange.minRoll;
 
   return {
-    [statToAdd]: value,
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
   };
 }
 
-export function getEndgameBuff(_level: number, rng: WHRNG): Partial<EndgameMults> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
+export function getEndgameBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
   const fullStats = getFullStatRollRanges();
 
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
-  const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
+  const statToAdd = endgameKeys[Math.floor(rng.random() * endgameKeys.length)];
   const valueRange = fullStats.endgameStats[statToAdd];
-  const value = (valueRange.maxRoll - valueRange.minRoll) * rng2 + valueRange.minRoll;
 
   return {
-    [statToAdd]: value,
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
   };
 }
 
-export function getOtherStatBuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-  const fullStats = getFullStatRollRanges();
-
-  const otherMultKeys = getRecordKeys(fullStats.otherMults);
-  const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
-  const valueRange = fullStats.otherMults[statToAdd];
-  const value = (valueRange.maxRoll - valueRange.minRoll) * rng2 * scalar + valueRange.minRoll;
-
-  return {
-    [statToAdd]: value,
-  };
-}
-
-export function getOtherStatDebuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-
-  const fullStats = getFullStatRollRanges();
-
-  const otherMultKeys = getRecordKeys(fullStats.otherMults);
-  const statToAdd = otherMultKeys[Math.floor(rng1 * otherMultKeys.length)];
-  const valueRange = fullStats.otherMults[statToAdd];
-  const value = ((valueRange.maxRoll - valueRange.minRoll) * scalar * rng2 + valueRange.minRoll) * -1;
-
-  return {
-    [statToAdd]: value,
-  };
-}
-
-export function getEndgameStatDebuff(_level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
-  const rng1 = rng.random();
-  const rng2 = rng.random();
-
+export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
   const fullStats = getFullStatRollRanges();
 
   const endgameKeys = getRecordKeys(fullStats.endgameStats);
-  const statToAdd = endgameKeys[Math.floor(rng1 * endgameKeys.length)];
+  const statToAdd = endgameKeys[Math.floor(rng.random() * endgameKeys.length)];
   const valueRange = fullStats.endgameStats[statToAdd];
-  const value = ((valueRange.maxRoll - valueRange.minRoll) * scalar * rng2 + valueRange.minRoll) * -1;
 
   return {
-    [statToAdd]: value,
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
+  };
+}
+
+export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
+  const fullStats = getFullStatRollRanges();
+
+  const otherMultKeys = getRecordKeys(fullStats.otherMults);
+  const statToAdd = otherMultKeys[Math.floor(rng.random() * otherMultKeys.length)];
+  const valueRange = fullStats.otherMults[statToAdd];
+
+  return {
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
+  };
+}
+
+export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
+  const fullStats = getFullStatRollRanges();
+
+  const otherMultKeys = getRecordKeys(fullStats.otherMults);
+  const statToAdd = otherMultKeys[Math.floor(rng.random() * otherMultKeys.length)];
+  const valueRange = fullStats.otherMults[statToAdd];
+
+  return {
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
   };
 }
 

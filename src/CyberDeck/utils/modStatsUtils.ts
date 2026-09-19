@@ -12,6 +12,7 @@ import {
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
 import { getFullStatRollRanges } from "./statRng";
+import { SOFT_CAP_DECAY_RATIO, SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE } from "../models/constants";
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
   const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
@@ -21,7 +22,7 @@ export function getFormattedStatBonus(keyName: ModKey, value: number, useShortNa
     ? Math.floor(value)
     : keyName.includes("Production") || keyName.includes("lvl") || keyName.includes("storage")
     ? value.toPrecision(3)
-    : formatAsPercent(value);
+    : formatAsPercent(value, useShortName);
 
   return {
     formattedKey,
@@ -120,8 +121,13 @@ export function isBuff(key: ModKey, value: number): boolean {
   return key.includes("_cost") || key.includes("_fee") ? value < 0 : value > 0;
 }
 
-export function formatAsPercent(value: number): string {
-  return `${(value * 100).toPrecision(3)}%`;
+export function formatAsPercent(value: number, shorten = true): string {
+  const precision = shorten ? 2 : 4;
+  const percent = value * 100;
+  if (percent > 100) {
+    return `${(value * 100).toPrecision(precision)}%`;
+  }
+  return `${(value * 100).toFixed(precision)}%`;
 }
 
 function getModStatString(module: DeckMod) {
@@ -158,13 +164,16 @@ export function getCyberdeckStatBonuses(basis = 0): CyberdeckStats {
   const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
   const endgameStats = mergeBuffs(getDefaultEndgameMults(basis), ...endgameMultsFromModules);
 
-  return {
-    playerMults,
-    otherMults,
-    endgameStats,
-    consumableStats: getDefaultConsumableStats(),
-    extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
-  };
+  return applyCaps(
+    {
+      playerMults,
+      otherMults,
+      endgameStats,
+      consumableStats: getDefaultConsumableStats(),
+      extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
+    },
+    basis,
+  );
 }
 
 export function mergeBuffs<T extends { [K in keyof T]: number }>(
@@ -186,6 +195,65 @@ export function mergeBuffs<T extends { [K in keyof T]: number }>(
   }
 
   return merged;
+}
+
+export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats {
+  const result: CyberdeckStats = structuredClone(stats);
+  const allStatRanges = getFullStatRollRanges();
+
+  for (const key of Object.keys(stats?.playerMults ?? {}) as Array<keyof Multipliers>) {
+    const value = stats.playerMults?.[key];
+    if (value == null) {
+      continue;
+    }
+    const { hardCap, softCap } = allStatRanges.playerMults[key] ?? {};
+    result.playerMults[key] = applySoftCap(value, softCap, hardCap, basis);
+  }
+
+  for (const key of Object.keys(stats?.otherMults ?? {}) as Array<keyof MiscMults>) {
+    const value = stats.otherMults?.[key];
+    if (value == null) {
+      continue;
+    }
+    const { hardCap, softCap } = allStatRanges.otherMults[key] ?? {};
+    result.otherMults[key] = applySoftCap(value, softCap, hardCap, basis);
+  }
+
+  for (const key of Object.keys(stats?.consumableStats ?? {}) as Array<keyof ConsumableStats>) {
+    const value = stats.consumableStats?.[key];
+    if (value == null) {
+      continue;
+    }
+    const { hardCap, softCap } = allStatRanges.consumableStats[key] ?? {};
+    result.consumableStats[key] = applySoftCap(value, softCap, hardCap, basis);
+  }
+
+  for (const key of Object.keys(stats?.endgameStats ?? {}) as Array<keyof EndgameMults>) {
+    const value = stats.endgameStats?.[key];
+    if (value == null) {
+      continue;
+    }
+    const { hardCap, softCap } = allStatRanges.endgameStats[key] ?? {};
+    result.endgameStats[key] = applySoftCap(value, softCap, hardCap, basis);
+  }
+
+  return result;
+}
+
+function applySoftCap(value: number, softCap: number = 1, hardCap: number = 1e10, basis: number = 0): number {
+  const bonus = value - basis;
+  const sign = Math.sign(bonus);
+  const magnitude = Math.abs(bonus);
+  if (magnitude <= softCap) {
+    return basis + sign * Math.min(magnitude, hardCap);
+  }
+  const excess = magnitude - softCap;
+  const diminishedExcess =
+    (SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE *
+      (1 - Math.pow(SOFT_CAP_DECAY_RATIO, excess / SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE))) /
+    (1 - SOFT_CAP_DECAY_RATIO);
+  const cappedMagnitude = Math.min(softCap + diminishedExcess, hardCap);
+  return basis + sign * cappedMagnitude;
 }
 
 // TODO-fico: remove later after testing

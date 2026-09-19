@@ -1,18 +1,20 @@
-
 Patch changes:
-- added the group an entity belongs in to the getGrid() details
+
+- added soft caps to all stats (currently, each 100% bonus beyond the first is 60% as effective as the prior one - configurable)
+- added the group an entity belongs in to the getGrid() details so you can see "connections"
 - make netrun portal text-based
 - make netrun character a better-themed icon
 - removed toasts from a number of feedback locations
 - bugfix: prevent components from backdoor/nuke if server is already backdoored/nuked
 - bugfix: ensure crafted or regular netrun power supply mods always have a minimum of 2 sockets
 
-
 TODO:
 
-- add soft and hard caps
+- add hard caps
+  - add support for lower bound cap
 
 - remove toast from consuming skillchip programatically
+- use pop-up numbers instead of toasts?
 
 - tooltips on crafting page buttons
 - improve power supply tooltip
@@ -21,12 +23,12 @@ TODO:
 - dev menu - custom mod creation
 - dev menu - set component counts
 
-- rewards modal cleanup - do we need a state variable AND a prop?
-
 - kills from sleeves gives too many neurodes?
 - sleeve crime doesn't give rom
 
 - add stats for mod component production
+
+- rewards modal cleanup - do we need a state variable AND a prop?
 
 - code review
 - docs
@@ -34,8 +36,6 @@ TODO:
 - lint
 
 - make testing script
-
-- remove tmp
 
 NETRUNNING MINIGAME:
 
@@ -45,15 +45,6 @@ NETRUNNING MINIGAME:
 - Docs
   - add simple code examples
   - explain entity types
-
-Corrupted variant:
-
-- offline nodes spreading from one corner
-- a delay before spreading?
-- spread every 3 steps?
-  - disable movement for a moment after spreading
-- puts player in hospital if caught
-
 
 - method to detect if a move would cause overlaps
 
@@ -70,13 +61,9 @@ TODO LATER:
 
 - let player choose color of each stat key and value, to hilight or hide stats
 
-- tooltips for stats page
-
 - filter box help text
 
   - more search options? > and < ?
-
-- netrunning portal animated background / matrix text
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 
@@ -92,8 +79,6 @@ TODO LATER:
     - starting netrunning level?
     - rack extension cap up?
 
-- Full docs
-
 - offline production?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
@@ -106,20 +91,14 @@ TODO LATER:
 - stats page
 
   - cleanup styling
+  - tooltips for stats page
 
 - Glitch netrunning
 
-  - bonus corruption effects?
+  - bonus corruption effects on mods?
     - can't be removed
     - health loss?
     - sockets in wrong order?
-
-- ram sink: farm neurodes?
-  - dermalease / cortex-share / braindance / trancecast name?
-
-"Underground biotech shops in the sprawl run cortex farms: vats of cultured neural tissue grown from aggregated human signal patterns. The tissue is what neurodes are cut from, and the farms are always hungry for fresh cognitive noise to seed the cultures. So they lease bandwidth off jockeys willing to leave their dermatrodes hot while they're doing other things — your deck slips into a shallow trance, streams a low-fidelity copy of your cortical activity up the pipe, and in return the farmer kicks back a cut of every neurode harvest your pattern helps culture.
-
-The catch: your consciousness is only mostly your own while you're wetjacked. Some part of you is always half in the tank. "
 
 Cyberdeck Expansion
 

@@ -14,6 +14,9 @@ export const CyberdeckPurchasePrice = 1_000_000_000;
 export const CyberdeckManualCreationHackLevel = 1000;
 export const CyberdeckRequiredWorkUnits = CONSTANTS.MillisecondsPerHour;
 
+export const SOFT_CAP_DECAY_RATIO = 0.6;
+export const SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE = 1;
+
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   rom: "⛃",
   neurodes: "⌬",

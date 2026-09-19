@@ -274,72 +274,109 @@ export function usePortalStyles() {
 
 /*
 
-marquee text
+pop-up number:
 
-<div class="ticker-wrap">
-  <div class="ticker-track">
-    <!-- Original text group -->
-    <div class="ticker-items">
-      <span>✦ BREAKING NEWS: CSS Marquees are back!</span>
-    </div>
-    <!-- Duplicate text group for seamless looping -->
-    <div class="ticker-items" aria-hidden="true">
-      <span>✦ BREAKING NEWS: CSS Marquees are back!</span>
-    </div>
-  </div>
-</div>
-
-
-
-.ticker-wrap {
-  width: 100%;
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  padding: 10px 0;
-  box-sizing: border-box;
-  width: 400px;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 10%,
-    black 90%,
-    transparent 100%
-);
 }
 
-.ticker-track {
-  display: flex;
-  width: max-content;
-  animation: ticker-loop 5s linear infinite;
-}
-
-.ticker-items {
-  display: flex;
-  justify-content: space-around;
-  justify-content: space-around;
-  white-space: nowrap;
-  padding-right: 2rem; /
-}
-
-.ticker-items span {
-  font-family: sans-serif;
+#hitButton {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   font-weight: bold;
-  padding: 0 2rem;
 }
 
-@keyframes ticker-loop {
+
+.damage-popup {
+  position: absolute;
+  font-family: monospace;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #ff3838;
+  text-shadow:
+  -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px  2px 0 #000,
+    2px  2px 0 #000;
+  pointer-events: none;
+  user-select: none;
+
+
+  animation: moba-damage 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+
+@keyframes moba-damage {
   0% {
-    transform: translateX(0);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+}
+  15% {
+    opacity: 1;
+    scale(1.4);
+  }
+  30% {scale(1);
+  }
+  70% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(-50%);
+    opacity: 0;
+    transform: translate(-50%, -220%) scale(0.8);
   }
 }
+
+const gameContainer = document.getElementById('gameContainer');
+const hitButton = document.getElementById('hitButton');
+
+hitButton.addEventListener('click', (e) => {
+  // 1. Generate random damage value
+  const damageAmount = Math.floor(Math.random() * 150) + 50;
+
+  // 2. Create the element
+  const damageText = document.createElement('div');
+  damageText.classList.add('damage-popup');
+  damageText.innerText = damageAmount;
+
+  // 3. Randomize critical hits occasionally
+  if (damageAmount > 170) {
+    damageText.innerText += '!';
+    damageText.style.color = '#ffa502';
+    damageText.style.fontSize = '3.5rem';
+  }
+
+  // 4. Position it near the click (or target) with a slight offset variance
+  const varianceX = (Math.random() - 0.5) * 40; // Max 20px left or right
+  const varianceY = (Math.random() - 0.5) * 20;
+
+  damageText.style.left = `${e.clientX + varianceX}px`;
+  damageText.style.top = `${e.clientY + varianceY}px`;
+
+  // 5. Append to container
+  gameContainer.appendChild(damageText);
+
+  // 6. Clean up DOM after animation completes
+  damageText.addEventListener('animationend', () => {
+    damageText.remove();
+  });
+});
+
 
  */
 
 // TODO-fico: remove once done
-// Reference: this is a snapshot of the Settings.theme color palette used for
-// styling this feature during development. Not consumed at runtime.
 const themeColors = {
   primarylight: "#0f0",
   primary: "#0c0",
@@ -380,5 +417,4 @@ const themeColors = {
   bnlvl2: "#48d1cc",
   bnlvl3: "#0000ff",
 };
-// Silence unused-variable warning without changing runtime behavior.
 void themeColors;
