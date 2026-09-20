@@ -189,7 +189,11 @@ export function wouldCauseOverlaps(moduleList: DeckMod[], connections: Connectio
   }
 }
 
-export function wireOverlapsSocket(socket: Socket, moduleList = CyberdeckState.installedModules, connections = CyberdeckState.connections) {
+export function wireOverlapsSocket(
+  socket: Socket,
+  moduleList = CyberdeckState.installedModules,
+  connections = CyberdeckState.connections,
+) {
   const socketModuleIndex = getModuleIndex(socket.modId, moduleList);
   return connections.find(([s, d]) => {
     if (s.modId === socket.modId || d.modId === socket.modId) return false;

@@ -37,7 +37,7 @@ export function gainCyberdeckComponentsFromNukeOrBackdoor(
   const difficulty = server instanceof Server ? server.requiredHackingSkill : server.requiredCharismaSkill;
   const romGained = backdoor ? Math.floor(difficulty / 5 + 30) : 10;
   CyberdeckState.components.rom += romGained;
-  CyberdeckState.componentStats.ROM.backdoors += romGained;
+  CyberdeckState.componentStats.rom.backdoors += romGained;
   if (showToast) {
     gainComponentMessage({ rom: romGained });
   }
@@ -70,7 +70,7 @@ export function gainCyberdeckRomFromCache() {
   }
   const romGained = 20;
   CyberdeckState.components.rom += romGained;
-  CyberdeckState.componentStats.ROM.caches += romGained;
+  CyberdeckState.componentStats.rom.caches += romGained;
   return romGained;
 }
 

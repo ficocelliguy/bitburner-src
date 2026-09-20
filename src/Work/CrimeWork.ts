@@ -11,6 +11,7 @@ import { scaleWorkStats, WorkStats } from "./WorkStats";
 import { calculateCrimeWorkStats } from "./Formulas";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
+import { gainCrimeComponentReward } from "../CyberDeck/models/componentEconomy";
 
 interface CrimeWorkParams {
   crimeType: CrimeType;
@@ -85,6 +86,7 @@ export class CrimeWork extends PlayerBaseWork {
     Player.gainAgilityExp(gains.agiExp);
     Player.gainCharismaExp(gains.chaExp);
     Player.karma -= karma * focusBonus;
+    gainCrimeComponentReward(crime);
     this.resolveNextCompletion();
   }
 

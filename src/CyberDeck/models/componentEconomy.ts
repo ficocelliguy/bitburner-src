@@ -2,13 +2,14 @@ import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
-import { minCyclesToProcess } from "./constants";
+import { minCyclesToProcess, NEURODES_PER_ASSASSINATION, NEURODES_PER_HOMICIDE } from "./constants";
 import { isClassWork } from "../../Work/ClassWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
-import { Crimes } from "../../Crime/Crimes";
-import { isCrimeWork } from "../../Work/CrimeWork";
+import { Crime } from "../../Crime/Crime";
+import { CrimeType } from "@enums";
+import { ComponentCounts } from "../Types";
 
 const lastStatsSnapshot = {
   killCount: null as number | null,
@@ -35,32 +36,16 @@ export function gainCyberdeckComponents(cycles: number) {
 
   const stats = getCyberdeckStatBonuses();
   CyberdeckState.components.chips += Math.max(stats.otherMults.chipProduction, 0);
+  CyberdeckState.componentStats.chips.mods += Math.max(stats.otherMults.chipProduction, 0);
   CyberdeckState.components.neurodes += Math.max(stats.otherMults.neurodeProduction, 0);
+  CyberdeckState.componentStats.neurodes.mods += Math.max(stats.otherMults.neurodeProduction, 0);
   CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction, 0);
+  CyberdeckState.componentStats.rom.mods += Math.max(stats.otherMults.romProduction, 0);
 
-  // Violent crime gives neurodes
-  if (Player.numPeopleKilled > lastStatsSnapshot.killCount) {
-    const factor = getCurrentCrimeDuration() > 10000 ? 5000 : 6;
-    const newNeurodes = (Player.numPeopleKilled - lastStatsSnapshot.killCount) * factor;
-    CyberdeckState.components.neurodes += newNeurodes;
-    CyberdeckState.componentStats.neurodes.kills += newNeurodes;
-    lastStatsSnapshot.killCount = Player.numPeopleKilled;
-    lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
-  }
-  // Petty crime gives ROM
-  else if (Player.moneySourceA.crime > lastStatsSnapshot.crimeMoney) {
-    const crimeMagnitude = getCurrentCrimeDuration() / 5000;
-    const newMoney = Player.moneySourceA.crime - lastStatsSnapshot.crimeMoney;
-    const newROM = 0.1 + ((10 * newMoney + 1e7) / (newMoney + 1e7)) * crimeMagnitude;
-
-    CyberdeckState.components.rom += newROM;
-    CyberdeckState.componentStats.ROM.pettyCrime += newROM;
-    lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
-  }
   // Making programs gives ROM
   if (isCreateProgramWork(Player.currentWork)) {
     CyberdeckState.components.rom += 3;
-    CyberdeckState.componentStats.ROM.programs += 3;
+    CyberdeckState.componentStats.rom.programs += 3;
   }
 
   // Classes give neurodes
@@ -97,6 +82,29 @@ export function gainCyberdeckComponents(cycles: number) {
     CyberdeckState.components.neurodes += newNeurodes;
     CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
   }
+}
+
+export function getCrimeComponentReward(crime: Crime, isSleeve = false): Partial<ComponentCounts> {
+  const scalar = isSleeve ? 0.4 : 1;
+  if (crime.type === CrimeType.homicide) {
+    return { neurodes: NEURODES_PER_HOMICIDE * scalar };
+  }
+  if (crime.type === CrimeType.assassination) {
+    return { neurodes: NEURODES_PER_ASSASSINATION * scalar };
+  }
+
+  const newRom = (0.1 + (10 * crime.money + 1e7) / (crime.money + 1e7)) * (crime.time / 10000) * scalar;
+  return { rom: newRom };
+}
+
+export function gainCrimeComponentReward(crime: Crime, isSleeve = false) {
+  const { neurodes = 0, rom = 0 } = getCrimeComponentReward(crime, isSleeve);
+
+  CyberdeckState.components.neurodes += neurodes;
+  CyberdeckState.componentStats.neurodes.kills += neurodes;
+
+  CyberdeckState.components.rom += rom;
+  CyberdeckState.componentStats.rom.pettyCrime += rom;
 }
 
 function initStats() {
@@ -140,18 +148,20 @@ export function prestigeCyberdeckComponents() {
     iceBreakers: 0,
   };
   CyberdeckState.componentStats = {
-    ROM: {
+    rom: {
       backdoors: 0,
       caches: 0,
       pettyCrime: 0,
       programs: 0,
       netrunning: 0,
+      mods: 0,
     },
     chips: {
       hacknet: 0,
       companyWork: 0,
       IPvGO: 0,
       netrunning: 0,
+      mods: 0,
     },
     neurodes: {
       kills: 0,
@@ -159,17 +169,10 @@ export function prestigeCyberdeckComponents() {
       codingContracts: 0,
       cortexShare: 0,
       netrunning: 0,
+      mods: 0,
     },
     cores: {
       netrunning: 0,
     },
   };
-}
-
-function getCurrentCrimeDuration() {
-  if (!Player.currentWork || !isCrimeWork(Player.currentWork)) {
-    return 30000;
-  }
-  const crimeType = Player.currentWork.crimeType;
-  return Object.values(Crimes).find((c) => c.type === crimeType)?.time ?? 30000;
 }

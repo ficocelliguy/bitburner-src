@@ -4430,18 +4430,20 @@ type ModStats = {
 };
 /** @public */
 type ComponentStats = {
-  ROM: {
+  rom: {
     backdoors: number;
     caches: number;
     pettyCrime: number;
     programs: number;
     netrunning: number;
+    mods: number;
   };
   chips: {
     hacknet: number;
     companyWork: number;
     IPvGO: number;
     netrunning: number;
+    mods: number;
   };
   neurodes: {
     kills: number;
@@ -4449,6 +4451,7 @@ type ComponentStats = {
     codingContracts: number;
     cortexShare: number;
     netrunning: number;
+    mods: number;
   };
   cores: {
     netrunning: number;

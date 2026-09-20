@@ -84,7 +84,7 @@ export function netrunRewards(corrupted: boolean): NetrunningRewards {
   CyberdeckState.componentStats.neurodes.netrunning += neurodesGained;
   const ROMGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.rom += ROMGained;
-  CyberdeckState.componentStats.ROM.netrunning += ROMGained;
+  CyberdeckState.componentStats.rom.netrunning += ROMGained;
   const coresGained = Math.floor(rng.random() * (scoreFactor + 1.5));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;

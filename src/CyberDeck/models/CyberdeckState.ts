@@ -34,18 +34,20 @@ export const CyberdeckState = {
     iceBreakers: 30,
   } as ComponentCounts,
   componentStats: {
-    ROM: {
+    rom: {
       backdoors: 0,
       caches: 0,
       pettyCrime: 0,
       programs: 0,
       netrunning: 0,
+      mods: 0,
     },
     chips: {
       hacknet: 0,
       companyWork: 0,
       IPvGO: 0,
       netrunning: 0,
+      mods: 0,
     },
     neurodes: {
       kills: 0,
@@ -53,6 +55,7 @@ export const CyberdeckState = {
       codingContracts: 0,
       cortexShare: 0,
       netrunning: 0,
+      mods: 0,
     },
     cores: {
       netrunning: 0,

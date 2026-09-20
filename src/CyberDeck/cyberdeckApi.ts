@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, EntityInfo } from "@nsdefs";
 import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
-import { LocationName, NetrunEntityVariant, ToastVariant } from "@enums";
+import { LocationName, NetrunEntityVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
@@ -26,7 +26,6 @@ import {
   createConnection,
   disconnectConnection,
   moveModule,
-  wireOverlapsSocket,
   wouldCauseOverlaps,
 } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
@@ -48,7 +47,6 @@ import {
   initNetrunGrid,
   move,
 } from "./models/netrunningMinigame";
-import { SnackbarEvents } from "../ui/React/Snackbar";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -362,6 +360,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         );
       },
       toggleFlag(ctx: NetscriptContext, _y: unknown, _x: unknown) {
+        checkCyberdeckAccess();
         const y = helpers.integer(ctx, "y", _y);
         const x = helpers.integer(ctx, "x", _x);
         if (y < 0 || y > GRID_SIZE) {

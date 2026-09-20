@@ -8,6 +8,7 @@ import { Crime } from "../../../Crime/Crime";
 import { scaleWorkStats, WorkStats } from "../../../Work/WorkStats";
 import { CONSTANTS } from "../../../Constants";
 import { calculateCrimeWorkStats } from "../../../Work/Formulas";
+import { gainCrimeComponentReward } from "../../../CyberDeck/models/componentEconomy";
 
 export const isSleeveCrimeWork = (w: SleeveBaseWork | null): w is SleeveCrimeWork =>
   w !== null && w.type === SleeveWorkType.CRIME;
@@ -45,6 +46,7 @@ export class SleeveCrimeWork extends SleeveBaseWork {
       if (success) {
         Player.karma -= crime.karma * sleeve.syncBonus();
         Player.numPeopleKilled += crime.kills;
+        gainCrimeComponentReward(crime, true);
       } else gains.money = 0;
       applySleeveGains(sleeve, gains, success ? 1 : 0.25);
       this.tasksCompleted++;

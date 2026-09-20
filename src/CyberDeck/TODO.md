@@ -2,13 +2,10 @@ Patch changes:
 - fix count input for crafting icebreakers not properly scaling the amount crafted
 - fixed styling issue preventing the mod rack from scrolling
 - fixed un-wiring caused by reverting after an invalid mod move that would make wires overlap
+- sleeve crime work now properly gives neurodes and rom
+- track stats for component production from mods
 
 TODO:
-
-- kills from sleeves gives too many neurodes?
-- sleeve crime doesn't give rom
-
-- add stats for mod component production
 
 - add hard caps
   - add support for lower bound cap
