@@ -224,7 +224,6 @@ export function prestigeSourceFile(isFlume: boolean): void {
   prestigeAllServers(); // Must be done before initForeignServers()
 
   prestigeDarknetState(true);
-  prestigeCyberdeck(true);
 
   // Reset home computer (only the programs) and add to AllServers
   AddToAllServers(homeComp);
@@ -238,6 +237,8 @@ export function prestigeSourceFile(isFlume: boolean): void {
 
   // Re-create foreign servers
   initForeignServers(Player.getHomeComputer());
+
+  prestigeCyberdeck(true);
 
   if (canAccessBitNodeFeature(15)) {
     getDarkscapeNavigator();

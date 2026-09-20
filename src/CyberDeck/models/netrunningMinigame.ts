@@ -10,6 +10,7 @@ import { Player } from "@player";
 import { Page } from "../../ui/Router";
 import { Router } from "../../ui/GameRoot";
 import { roundToFour } from "../utils/modStatsUtils";
+import { getCurrentNetrunningIceCost } from "./netrunRewards";
 
 export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
   spreadOfflineNodes();
@@ -64,6 +65,8 @@ function hitOfflineNode(programmaticMove: boolean) {
   emitSparklesOnEntity(entity);
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 0;
+  CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
+  CyberdeckState.lastNetrunningTimestamp = Date.now();
 
   setTimeout(() => {
     NetrunningState.isNetrunning = false;
@@ -399,12 +402,11 @@ function detonateBomb(entity: NetrunEntity) {
     entity.hits++;
   }
   revealGroup(entity);
-
+  consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
   if (entity.hits > 1) {
     return;
   }
 
-  consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
   shakeGrid();
   resetThreatLevels();
   updateCurrentThreatSignalStrength();

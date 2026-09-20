@@ -13,6 +13,7 @@ import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
 import { getFullStatRollRanges } from "./statRng";
 import { SOFT_CAP_DECAY_RATIO, SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE } from "../models/constants";
+import { clampNumber } from "../../utils/helpers/clampNumber";
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
   const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
@@ -206,8 +207,8 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, softCap } = allStatRanges.playerMults[key] ?? {};
-    result.playerMults[key] = applySoftCap(value, softCap, hardCap, basis);
+    const { hardCap, hardMin, softCap } = allStatRanges.playerMults[key] ?? {};
+    result.playerMults[key] = applySoftCap(value, softCap, hardCap, hardMin,  basis);
   }
 
   for (const key of Object.keys(stats?.otherMults ?? {}) as Array<keyof MiscMults>) {
@@ -215,8 +216,8 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, softCap } = allStatRanges.otherMults[key] ?? {};
-    result.otherMults[key] = applySoftCap(value, softCap, hardCap, basis);
+    const { hardCap, hardMin,  softCap } = allStatRanges.otherMults[key] ?? {};
+    result.otherMults[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
   for (const key of Object.keys(stats?.consumableStats ?? {}) as Array<keyof ConsumableStats>) {
@@ -224,8 +225,8 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, softCap } = allStatRanges.consumableStats[key] ?? {};
-    result.consumableStats[key] = applySoftCap(value, softCap, hardCap, basis);
+    const { hardCap, hardMin,  softCap } = allStatRanges.consumableStats[key] ?? {};
+    result.consumableStats[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
   for (const key of Object.keys(stats?.endgameStats ?? {}) as Array<keyof EndgameMults>) {
@@ -233,28 +234,37 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, softCap } = allStatRanges.endgameStats[key] ?? {};
-    result.endgameStats[key] = applySoftCap(value, softCap, hardCap, basis);
+    const { hardCap, hardMin, softCap } = allStatRanges.endgameStats[key] ?? {};
+    result.endgameStats[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
   return result;
 }
 
-function applySoftCap(value: number, softCap: number = 1, hardCap: number = 1e10, basis: number = 0): number {
+function applySoftCap(
+  value: number,
+  softCap: number = 1,
+  hardCap: number = 1e10,
+  hardMin: number = -1e10,
+  basis: number = 0,
+): number {
   const bonus = value - basis;
   const sign = Math.sign(bonus);
   const magnitude = Math.abs(bonus);
-  if (magnitude <= softCap) {
-    return basis + sign * Math.min(magnitude, hardCap);
-  }
-  const excess = magnitude - softCap;
 
-  // Each additional chunk of raw bonus past softCap is SOFT_CAP_DECAY_RATIO as effective as the previous chunk
-  const ratio = SOFT_CAP_DECAY_RATIO;
-  const chunk = SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE;
-  const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
-  const cappedMagnitude = Math.min(softCap + diminishedExcess, hardCap);
-  return basis + sign * cappedMagnitude;
+  let effectiveMagnitude: number;
+  if (magnitude <= softCap) {
+    effectiveMagnitude = magnitude;
+  } else {
+    const excess = magnitude - softCap;
+    // Each additional chunk of raw bonus past softCap is SOFT_CAP_DECAY_RATIO as effective as the previous chunk
+    const ratio = SOFT_CAP_DECAY_RATIO;
+    const chunk = SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE;
+    const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
+    effectiveMagnitude = softCap + diminishedExcess;
+  }
+
+  return basis + clampNumber(sign * effectiveMagnitude, hardMin, hardCap);
 }
 
 // TODO-fico: remove later after testing

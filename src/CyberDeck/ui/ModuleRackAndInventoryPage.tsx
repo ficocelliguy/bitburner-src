@@ -65,7 +65,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   }
 
   function onDragEnd(result: DropResult) {
-    handleModuleMoved(result);
+    handleModuleMoved(result, modFilter);
     setDraggingInstalledModule(false);
     setDraggingStoredModule(false);
     // Continue animating for a short time as dragged components settle

@@ -60,7 +60,8 @@ export function canNetrun(corrupted = false): boolean {
   );
 }
 
-export function netrunRewards(corrupted: boolean): NetrunningRewards {
+export function netrunRewards(): NetrunningRewards {
+  const corrupted = NetrunningState.corrupted;
   NetrunningState.isNetrunning = false;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
   completeNetrunTutorial();

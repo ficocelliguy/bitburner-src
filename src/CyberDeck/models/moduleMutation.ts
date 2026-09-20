@@ -15,8 +15,9 @@ import {
   completeMadeConnectionTutorial,
   hasConsumedSkillchipTutorial,
 } from "./tutorial";
+import { getFilteredStoredModules } from "../utils/modStatsUtils";
 
-export function handleModuleMoved(result: DropResult) {
+export function handleModuleMoved(result: DropResult, filter: string = "") {
   if (!result.destination) {
     return;
   }
@@ -24,7 +25,7 @@ export function handleModuleMoved(result: DropResult) {
   const sourceIsStorage = result.source.droppableId === MODULE_STORAGE;
   const destinationIsStorage = result.destination.droppableId === MODULE_STORAGE;
 
-  const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
+  const sourceLocation = sourceIsStorage ? getFilteredStoredModules(filter) : CyberdeckState.installedModules;
   const moduleToMove = sourceLocation[result.source.index];
 
   if (result.destination.droppableId == TRASH_CAN) {
@@ -48,7 +49,8 @@ export function handleModuleMoved(result: DropResult) {
   }
 
   if (!destinationIsStorage) {
-    const newInstalledModsList = CyberdeckState.installedModules.toSpliced(result.destination.index, 0, moduleToMove);
+    const sourceList = CyberdeckState.installedModules.filter(m => m.id !== moduleToMove.id);
+    const newInstalledModsList = sourceList.toSpliced(result.destination.index, 0, moduleToMove);
     // Prevent the move if it causes invalid wiring
     if (wouldCauseOverlaps(newInstalledModsList)) {
       SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);

@@ -42,9 +42,9 @@ export class CrimeWork extends PlayerBaseWork {
      */
     cycles = Math.min(cycles, 12960000);
     this.cyclesWorked += cycles;
-    const time =
+    const time = Math.max(
       (Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0) /
-      getCyberdeckStatBonuses(1).otherMults.crime_speed;
+      getCyberdeckStatBonuses(1).otherMults.crime_speed, 500);
     this.unitCompleted += CONSTANTS.MilliPerCycle * cycles;
     while (this.unitCompleted >= time) {
       this.commit();
@@ -75,6 +75,7 @@ export class CrimeWork extends PlayerBaseWork {
       Player.gainMoney(gains.money, "crime");
       Player.numPeopleKilled += crime.kills;
       Player.gainIntelligenceExp(gains.intExp);
+      gainCrimeComponentReward(crime);
     } else {
       gains = scaleWorkStats(gains, 0.25);
       karma /= 4;
@@ -86,7 +87,6 @@ export class CrimeWork extends PlayerBaseWork {
     Player.gainAgilityExp(gains.agiExp);
     Player.gainCharismaExp(gains.chaExp);
     Player.karma -= karma * focusBonus;
-    gainCrimeComponentReward(crime);
     this.resolveNextCompletion();
   }
 

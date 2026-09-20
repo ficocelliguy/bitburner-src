@@ -24,7 +24,7 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
   }, [rerender]);
 
   function endNetrun() {
-    const rewards = netrunRewards(corrupted);
+    const rewards = netrunRewards();
     setNetrunningModRewards(rewards);
     setShowRewardsModal(true);
   }

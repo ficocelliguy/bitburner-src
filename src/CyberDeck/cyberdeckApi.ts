@@ -311,9 +311,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         if (!NetrunningState.isNetrunning) {
           throw new Error("Failed to complete netrun - no run in progress.");
         }
-        const results = netrunRewards(NetrunningState.corrupted);
+        const results = netrunRewards();
         logger(ctx)(`Netrun completed. ${results.mods.length} new modules found.`);
-        return results;
+        return structuredClone(results);
       },
       getCost() {
         checkCyberdeckAccess();

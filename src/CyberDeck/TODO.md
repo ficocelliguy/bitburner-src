@@ -3,6 +3,7 @@ Patch changes:
 - updated energy calcs to avoid floating point strangeness in display
 - fixed issue where temporary testing routing was breaking focus when first loading the game while doing Work
 - fixed game load missing rom production statistics
+- ensure power supplies have at least 2 sockets (for real this time XD)
 
 TODO:
 
@@ -12,9 +13,6 @@ TODO:
 
 - API - test
   - docs for all the types etc
-
-- add hard caps
-  - add support for lower bound cap
 
 - remove toast from consuming skillchip programmatically
 - use pop-up numbers instead of toasts?

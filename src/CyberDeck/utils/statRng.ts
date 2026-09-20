@@ -48,7 +48,7 @@ function stringToSeed(str: string) {
   return Math.abs(hash); // Returns a positive integer seed
 }
 
-export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: number; hardCap?: number };
+export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: number; hardCap?: number, hardMin?: number };
 
 export function getFullStatRollRanges() {
   const playerMults: Partial<{ [K in keyof Multipliers]: StatRollBounds }> = {
@@ -79,11 +79,11 @@ export function getFullStatRollRanges() {
     chipProduction: { minRoll: 0.01, maxRoll: 4.1 },
     neurodeProduction: { minRoll: 0.01, maxRoll: 4.1 },
     program_creation_speed: { minRoll: 0.002, maxRoll: 0.17 },
-    crime_speed: { minRoll: 0.0015, maxRoll: 0.17 },
-    stock_fees: { minRoll: -0.0015, maxRoll: -0.17 },
+    crime_speed: { minRoll: 0.0015, maxRoll: 0.17, hardCap: 5 },
+    stock_fees: { minRoll: -0.0015, maxRoll: -0.17, hardMin: -0.9 },
     cct_money: { minRoll: 0.003, maxRoll: 0.22 },
     IPvGO_power: { minRoll: 0.001, maxRoll: 0.12 },
-    class_cost: { minRoll: -0.002, maxRoll: -0.32 },
+    class_cost: { minRoll: -0.002, maxRoll: -0.32, hardMin: -1 },
   };
   const consumableStats: { [K in keyof ConsumableStats]: StatRollBounds } = {
     netrunning_lvl: { minRoll: 0.01, maxRoll: 2.1 },
@@ -93,10 +93,10 @@ export function getFullStatRollRanges() {
   };
   const endgameStats: { [K in keyof EndgameMults]: StatRollBounds } = {
     stamina_gain: { minRoll: 0.001, maxRoll: 0.16 },
-    graft_speed: { minRoll: 0.0004, maxRoll: 0.13 },
+    graft_speed: { minRoll: 0.0004, maxRoll: 0.13, hardCap: 5 },
     sleeve_sync: { minRoll: 0.0008, maxRoll: 0.13 },
     stanek_charge: { minRoll: 0.0008, maxRoll: 0.13 },
-    equipment_cost: { minRoll: -0.0015, maxRoll: -0.17 },
+    equipment_cost: { minRoll: -0.0015, maxRoll: -0.17, hardMin: -0.9 },
     int_exp: { minRoll: 0.0012, maxRoll: 0.082 },
   };
 
@@ -168,15 +168,8 @@ export function getEndgameBuff(level: number, rng: WHRNG, scalar: number = 1): P
 }
 
 export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
-  const fullStats = getFullStatRollRanges();
-
-  const endgameKeys = getRecordKeys(fullStats.endgameStats);
-  const statToAdd = endgameKeys[Math.floor(rng.random() * endgameKeys.length)];
-  const valueRange = fullStats.endgameStats[statToAdd];
-
-  return {
-    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
-  };
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  return getEndgameBuff(debuffLevel, rng, scalar * -1);
 }
 
 export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
@@ -192,15 +185,8 @@ export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1):
 }
 
 export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const fullStats = getFullStatRollRanges();
-
-  const otherMultKeys = getRecordKeys(fullStats.otherMults);
-  const statToAdd = otherMultKeys[Math.floor(rng.random() * otherMultKeys.length)];
-  const valueRange = fullStats.otherMults[statToAdd];
-
-  return {
-    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
-  };
+  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  return getOtherStatBuff(debuffLevel, rng, scalar * -1);
 }
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
