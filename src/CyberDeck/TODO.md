@@ -1,5 +1,8 @@
 Patch changes:
+- updated netrun minigame generation to always have at least one reward group accessible without going through a bomb or firewall
+- updated energy calcs to avoid floating point strangeness in display
 - fixed issue where temporary testing routing was breaking focus when first loading the game while doing Work
+- fixed game load missing rom production statistics
 
 TODO:
 
@@ -26,7 +29,6 @@ NETRUNNING MINIGAME:
 - Docs
   - add simple code examples
   - explain entity types
-
 
 TODO LATER:
 
@@ -66,10 +68,8 @@ TODO LATER:
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 
 - deck upgrades?
-
   - boost connected mods?
   - improve sockets?
-
 
 - Glitch netrunning
 

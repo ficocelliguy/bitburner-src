@@ -9,6 +9,7 @@ import { NetrunDirection, NetrunEntityVariant } from "../Enums";
 import { Player } from "@player";
 import { Page } from "../../ui/Router";
 import { Router } from "../../ui/GameRoot";
+import { roundToFour } from "../utils/modStatsUtils";
 
 export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
   spreadOfflineNodes();
@@ -81,7 +82,7 @@ function energyCost() {
 }
 
 function consumeEnergy(amount: number) {
-  NetrunningState.energy = Math.max(NetrunningState.energy - amount, 0);
+  NetrunningState.energy = Math.max(roundToFour(NetrunningState.energy - amount), 0);
   if (!NetrunningState.energy) {
     resetThreatLevels();
   }
@@ -109,7 +110,7 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
   return grid;
 }
 
-export function initNetrunGrid(corrupted: boolean) {
+export function initNetrunGrid(corrupted: boolean, depth = 0) {
   NetrunningState.grid = getEmptyGrid(NETRUNNING_WIDTH, NETRUNNING_HEIGHT);
   NetrunningState.location = [0, 0];
   NetrunningState.groups = {};
@@ -241,8 +242,56 @@ export function initNetrunGrid(corrupted: boolean) {
     offlineEntity(NetrunningState.grid[y][x]);
   }
 
+  if (!validateAtLeastOneRewardGroupIsAccessible() && depth < 5) {
+    return initNetrunGrid(corrupted, depth + 1);
+  }
   updateCurrentThreatSignalStrength();
   CyberdeckEvents.emit();
+
+  console.log(
+    NetrunningState.grid
+      .map((row) =>
+        row
+          .map((e) =>
+            e.hasBomb
+              ? "B"
+              : e.type == NetrunEntityVariant.firewall
+              ? "F"
+              : e.type == NetrunEntityVariant.dataStore
+              ? "!"
+              : " ",
+          )
+          .join(""),
+      )
+      .join("\n"),
+  );
+}
+
+function validateAtLeastOneRewardGroupIsAccessible(): boolean {
+  const startingAreaGroup = NetrunningState.grid[0][0].group;
+  const accessibleGroupIDs = [startingAreaGroup];
+
+  for (const groupId of accessibleGroupIDs) {
+    const group = NetrunningState.groups[groupId];
+
+    for (const member of group) {
+      if (member.type === NetrunEntityVariant.dataStore) {
+        return true;
+      }
+
+      const neighborGroups = getNeighbors(member)
+        .map((m) => m?.group)
+        .filter((g) => g);
+
+      for (const id of neighborGroups) {
+        if (!accessibleGroupIDs.includes(id)) {
+          accessibleGroupIDs.push(id);
+        }
+      }
+    }
+  }
+
+  return false;
 }
 
 function hasNoRewardGroupNeighbor(group: NetrunEntity[]) {

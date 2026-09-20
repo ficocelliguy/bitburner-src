@@ -275,3 +275,11 @@ export function logStatRanges() {
     .join("\n");
   console.log(stats);
 }
+
+/**
+ * Rounds a number to four decimal places. NOT TO BE USED FOR RAM.
+ * @param decimal A decimal value to trim to four places.
+ */
+export function roundToFour(decimal: number): number {
+  return Math.round(decimal * 10000) / 10000;
+}

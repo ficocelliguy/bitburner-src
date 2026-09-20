@@ -22,12 +22,7 @@ import {
   uplinkCraftingCost,
 } from "./models/constants";
 import { logger } from "../DarkNet/effects/offlineServerHandling";
-import {
-  createConnection,
-  disconnectConnection,
-  moveModule,
-  wouldCauseOverlaps,
-} from "./models/moduleMutation";
+import { createConnection, disconnectConnection, moveModule, wouldCauseOverlaps } from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";

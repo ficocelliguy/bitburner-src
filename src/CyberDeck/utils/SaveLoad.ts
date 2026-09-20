@@ -189,11 +189,11 @@ function isComponentStats(obj: unknown): obj is ComponentStats {
   return (
     typeof obj === "object" &&
     obj !== null &&
-    "ROM" in obj &&
+    "rom" in obj &&
     "chips" in obj &&
     "neurodes" in obj &&
     "cores" in obj &&
-    typeof obj.ROM === "object" &&
+    typeof obj.rom === "object" &&
     typeof obj.chips === "object" &&
     typeof obj.neurodes === "object" &&
     typeof obj.cores === "object"
