@@ -34,7 +34,7 @@ import {
 } from "./models/cyberdeckServer";
 import { Player } from "@player";
 import { ShareBonusTime } from "../NetworkShare/Share";
-import { GRID_SIZE, NetrunningState } from "./models/NetrunningState";
+import { NETRUNNING_HEIGHT, NETRUNNING_WIDTH, NetrunningState } from "./models/NetrunningState";
 import {
   flagEntity,
   getSurroundings,
@@ -155,12 +155,20 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     addConnection(ctx: NetscriptContext, moduleId1: unknown, moduleId2: unknown, socket: unknown): boolean {
       checkCyberdeckAccess();
       const modId1 = helpers.string(ctx, "modId", moduleId1);
-      getModOrThrow(modId1, true);
+      const mod1 = getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
-      getModOrThrow(modId2, true);
+      const mod2 = getModOrThrow(modId2, true);
       const socketIndex = helpers.integer(ctx, "socketIndex", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
+      }
+      if (!CyberdeckState.installedModules.includes(mod1)) {
+        logger(ctx)(`Cannot add connection: mod ${modId1} is not installed on the deck rack.`);
+        return false;
+      }
+      if (!CyberdeckState.installedModules.includes(mod2)) {
+        logger(ctx)(`Cannot add connection: mod ${modId2} is not installed on the deck rack.`);
+        return false;
       }
       const result = createConnection({ modId: modId1, socketIndex }, { modId: modId2, socketIndex });
       if (result.error) {
@@ -358,11 +366,11 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         checkCyberdeckAccess();
         const y = helpers.integer(ctx, "y", _y);
         const x = helpers.integer(ctx, "x", _x);
-        if (y < 0 || y > GRID_SIZE) {
-          throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${GRID_SIZE}`);
+        if (y < 0 || y > NETRUNNING_HEIGHT) {
+          throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${NETRUNNING_HEIGHT}`);
         }
-        if (x < 0 || x > GRID_SIZE) {
-          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${GRID_SIZE}`);
+        if (x < 0 || x > NETRUNNING_WIDTH) {
+          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${NETRUNNING_WIDTH}`);
         }
         const entity = NetrunningState.grid[y]?.[x];
         if (!entity) {

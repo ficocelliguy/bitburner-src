@@ -57,7 +57,6 @@ import { processDarknet } from "./DarkNet/controllers/NetworkMovement";
 import { hasDarknetAccess } from "./DarkNet/utils/darknetAuthUtils";
 import { initForeignServers } from "./Server/ServerHelpers";
 import { apr1 } from "./Terminal/commands/apr1";
-import { CyberdeckState } from "./CyberDeck/models/CyberdeckState";
 import { gainCyberdeckComponents } from "./CyberDeck/models/componentEconomy";
 import { LastExportBonus } from "./ExportBonus";
 import { hasDevQueryParam } from "./utils/Utility";
@@ -127,9 +126,8 @@ const Engine = {
       processDarknet(numCycles);
     }
 
-    if (CyberdeckState) {
-      gainCyberdeckComponents(numCycles);
-    }
+    // Cyberdeck
+    gainCyberdeckComponents(numCycles);
 
     // Update the running time of all active scripts
     updateOnlineScriptTimes(numCycles);

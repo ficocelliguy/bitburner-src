@@ -6,7 +6,7 @@ import WifiTetheringErrorSharpIcon from "@mui/icons-material/WifiTetheringErrorS
 import AutoAwesomeSharpIcon from "@mui/icons-material/AutoAwesomeSharp";
 import NavigationSharpIcon from "@mui/icons-material/NavigationSharp";
 import { getThreatColor, getThreatSignalStrength, move } from "../models/netrunningMinigame";
-import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
+import { GRID_SIZE_PX, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { NetrunGridEntity } from "./NetrunGridEntity";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
@@ -100,8 +100,8 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
         <div
           style={{
             position: "absolute",
-            left: NetrunningState.location[1] * (GRID_SIZE + 2),
-            top: NetrunningState.location[0] * (GRID_SIZE + 2),
+            left: NetrunningState.location[1] * (GRID_SIZE_PX + 2),
+            top: NetrunningState.location[0] * (GRID_SIZE_PX + 2),
           }}
         >
           <NavigationSharpIcon
@@ -112,8 +112,8 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
               transform: `rotate(${getRotation()}deg)`,
               color: Settings.theme.primary,
             }}
-            width={GRID_SIZE - 2}
-            height={GRID_SIZE - 2}
+            width={GRID_SIZE_PX - 2}
+            height={GRID_SIZE_PX - 2}
           />
         </div>
         {NetrunningState.grid.map((row, rowIndex) => (

@@ -69,7 +69,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   return {
     type: ModType.PowerSupply,
     id: getID(rng),
-    sockets: getRandomSockets(rng, 2 + level / 3, bonus),
+    sockets: getRandomSockets(rng, 2 + level / 3, bonus, true),
     rarity: level,
     stats: {
       playerMults: mergeBuffs(debuff, buff),

@@ -63,13 +63,15 @@ function hitOfflineNode(programmaticMove: boolean) {
   emitSparklesOnEntity(entity);
   emitSparklesOnEntity(entity);
   emitSparklesOnEntity(entity);
-  NetrunningState.rewardScore = 0;
-  NetrunningState.energy = 0;
+  NetrunningState.isNetrunning = false;
+  NetrunningState.showNetrunOverride = true;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
+  NetrunningState.rewardScore = 0;
+  NetrunningState.energy = 0;
 
   setTimeout(() => {
-    NetrunningState.isNetrunning = false;
+    NetrunningState.showNetrunOverride = false;
     Player.hospitalize(programmaticMove);
     Router.toPage(Page.City);
   }, 500);
@@ -250,24 +252,6 @@ export function initNetrunGrid(corrupted: boolean, depth = 0) {
   }
   updateCurrentThreatSignalStrength();
   CyberdeckEvents.emit();
-
-  console.log(
-    NetrunningState.grid
-      .map((row) =>
-        row
-          .map((e) =>
-            e.hasBomb
-              ? "B"
-              : e.type == NetrunEntityVariant.firewall
-              ? "F"
-              : e.type == NetrunEntityVariant.dataStore
-              ? "!"
-              : " ",
-          )
-          .join(""),
-      )
-      .join("\n"),
-  );
 }
 
 function validateAtLeastOneRewardGroupIsAccessible(): boolean {

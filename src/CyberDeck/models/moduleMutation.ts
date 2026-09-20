@@ -49,7 +49,7 @@ export function handleModuleMoved(result: DropResult, filter: string = "") {
   }
 
   if (!destinationIsStorage) {
-    const sourceList = CyberdeckState.installedModules.filter(m => m.id !== moduleToMove.id);
+    const sourceList = CyberdeckState.installedModules.filter((m) => m.id !== moduleToMove.id);
     const newInstalledModsList = sourceList.toSpliced(result.destination.index, 0, moduleToMove);
     // Prevent the move if it causes invalid wiring
     if (wouldCauseOverlaps(newInstalledModsList)) {
@@ -58,7 +58,7 @@ export function handleModuleMoved(result: DropResult, filter: string = "") {
     }
   }
 
-  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index);
+  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index, filter);
 }
 
 export function moveModule(
@@ -66,10 +66,15 @@ export function moveModule(
   sourceIsStorage: boolean,
   destinationIsStorage: boolean,
   destinationIndex = 0,
+  filter = "",
 ) {
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const sourceIndex = sourceLocation.indexOf(moduleToMove);
+  const modAtFilteredIndex = getFilteredStoredModules(filter)[destinationIndex];
+  const adjustedDestinationIndex = destinationIsStorage
+    ? CyberdeckState.storedModules.findIndex((m) => m.id == modAtFilteredIndex.id)
+    : destinationIndex;
   if (sourceIndex === -1) {
     console.error(
       `Attempted to move module ${moduleToMove.id} but it was not found in ${sourceIsStorage ? "storage" : "the rack"}`,
@@ -78,7 +83,7 @@ export function moveModule(
   }
 
   sourceLocation.splice(sourceIndex, 1);
-  destinationLocation.splice(destinationIndex, 0, moduleToMove);
+  destinationLocation.splice(adjustedDestinationIndex, 0, moduleToMove);
 
   if (destinationIsStorage) {
     disconnectModule(moduleToMove);

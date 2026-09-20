@@ -1,4 +1,4 @@
-import { CyberdeckState } from "./CyberdeckState";
+import { CyberdeckState, hasCyberdeck } from "./CyberdeckState";
 import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
@@ -12,22 +12,20 @@ import { CrimeType } from "@enums";
 import { ComponentCounts } from "../Types";
 
 const lastStatsSnapshot = {
-  killCount: null as number | null,
-  crimeMoney: null as number | null,
-
   totalWorkRep: null as number | null,
   totalHacknetIncome: null as number | null,
 };
 
 export function gainCyberdeckComponents(cycles: number) {
+  if (!hasCyberdeck()) {
+    return;
+  }
   CyberdeckState.storedCycles += cycles;
   initStats();
 
   if (
     CyberdeckState.storedCycles < minCyclesToProcess ||
-    lastStatsSnapshot.killCount === null ||
     lastStatsSnapshot.totalWorkRep === null ||
-    lastStatsSnapshot.crimeMoney === null ||
     lastStatsSnapshot.totalHacknetIncome === null
   ) {
     return;
@@ -62,8 +60,8 @@ export function gainCyberdeckComponents(cycles: number) {
     const newChips = 0.1 + (10 * newRep + 1000) / (newRep + 1000);
     CyberdeckState.components.chips += newChips;
     CyberdeckState.componentStats.chips.companyWork += newChips;
-    lastStatsSnapshot.totalWorkRep = getAllWorkRep();
   }
+  lastStatsSnapshot.totalWorkRep = getAllWorkRep();
 
   // Hacknet gives chips
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
@@ -108,12 +106,6 @@ export function gainCrimeComponentReward(crime: Crime, isSleeve = false) {
 }
 
 function initStats() {
-  if (lastStatsSnapshot.killCount === null) {
-    lastStatsSnapshot.killCount = Player.numPeopleKilled;
-  }
-  if (lastStatsSnapshot.crimeMoney === null) {
-    lastStatsSnapshot.crimeMoney = Player.moneySourceA.crime;
-  }
   if (lastStatsSnapshot.totalWorkRep === null) {
     lastStatsSnapshot.totalWorkRep = getAllWorkRep();
   }
@@ -135,8 +127,6 @@ function getAllWorkRep() {
 }
 
 export function prestigeCyberdeckComponents() {
-  lastStatsSnapshot.killCount = null;
-  lastStatsSnapshot.crimeMoney = null;
   lastStatsSnapshot.totalWorkRep = null;
   lastStatsSnapshot.totalHacknetIncome = null;
 

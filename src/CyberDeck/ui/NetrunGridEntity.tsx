@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Tooltip } from "@mui/material";
-import { GRID_SIZE, NetrunningState } from "../models/NetrunningState";
+import { GRID_SIZE_PX, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
 import { NetrunEntity } from "../Types";
@@ -75,15 +75,15 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
     ? "Firewalls are fully passive defenses. They take multiple ICEBreakers to pierce"
     : "";
 
-  const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE : (1 - entity.hits * 0.1) * GRID_SIZE;
+  const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE_PX : (1 - entity.hits * 0.1) * GRID_SIZE_PX;
 
   return (
     <Tooltip title={tooltip}>
       <Box
         sx={{
-          width: GRID_SIZE,
-          height: GRID_SIZE,
-          minHeight: GRID_SIZE,
+          width: GRID_SIZE_PX,
+          height: GRID_SIZE_PX,
+          minHeight: GRID_SIZE_PX,
           border: `1px solid transparent`,
           alignContent: "center",
         }}

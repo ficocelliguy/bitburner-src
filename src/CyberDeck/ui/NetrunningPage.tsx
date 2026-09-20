@@ -38,7 +38,7 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
         title={"Netrunning Results"}
         flavorText={netrunFlavorText}
       />
-      {NetrunningState.isNetrunning ? (
+      {NetrunningState.isNetrunning || NetrunningState.showNetrunOverride ? (
         <NetrunMinigame complete={endNetrun}></NetrunMinigame>
       ) : (
         <NetrunningPortal entered={() => initNetrunGrid(corrupted)} corrupted={corrupted} />

@@ -42,9 +42,9 @@ export class CrimeWork extends PlayerBaseWork {
      */
     cycles = Math.min(cycles, 12960000);
     this.cyclesWorked += cycles;
-    const time = Math.max(
+    const time =
       (Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0) /
-      getCyberdeckStatBonuses(1).otherMults.crime_speed, 500);
+      Math.max(getCyberdeckStatBonuses(1).otherMults.crime_speed, 0.1);
     this.unitCompleted += CONSTANTS.MilliPerCycle * cycles;
     while (this.unitCompleted >= time) {
       this.commit();

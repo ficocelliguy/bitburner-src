@@ -208,7 +208,7 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
       continue;
     }
     const { hardCap, hardMin, softCap } = allStatRanges.playerMults[key] ?? {};
-    result.playerMults[key] = applySoftCap(value, softCap, hardCap, hardMin,  basis);
+    result.playerMults[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
   for (const key of Object.keys(stats?.otherMults ?? {}) as Array<keyof MiscMults>) {
@@ -216,7 +216,7 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, hardMin,  softCap } = allStatRanges.otherMults[key] ?? {};
+    const { hardCap, hardMin, softCap } = allStatRanges.otherMults[key] ?? {};
     result.otherMults[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
@@ -225,7 +225,7 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     if (value == null) {
       continue;
     }
-    const { hardCap, hardMin,  softCap } = allStatRanges.consumableStats[key] ?? {};
+    const { hardCap, hardMin, softCap } = allStatRanges.consumableStats[key] ?? {};
     result.consumableStats[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 

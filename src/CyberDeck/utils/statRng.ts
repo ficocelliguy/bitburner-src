@@ -48,7 +48,7 @@ function stringToSeed(str: string) {
   return Math.abs(hash); // Returns a positive integer seed
 }
 
-export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: number; hardCap?: number, hardMin?: number };
+export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: number; hardCap?: number; hardMin?: number };
 
 export function getFullStatRollRanges() {
   const playerMults: Partial<{ [K in keyof Multipliers]: StatRollBounds }> = {
@@ -139,7 +139,7 @@ export function getPlayerStatBuff(level: number, rng: WHRNG, scalar: number = 1)
 }
 
 export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
   return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
 }
 
@@ -168,7 +168,7 @@ export function getEndgameBuff(level: number, rng: WHRNG, scalar: number = 1): P
 }
 
 export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
   return getEndgameBuff(debuffLevel, rng, scalar * -1);
 }
 
@@ -185,7 +185,7 @@ export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1):
 }
 
 export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 2) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
   return getOtherStatBuff(debuffLevel, rng, scalar * -1);
 }
 
