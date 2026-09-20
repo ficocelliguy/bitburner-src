@@ -1,11 +1,14 @@
 Patch changes:
-- fix count input for crafting icebreakers not properly scaling the amount crafted
-- fixed styling issue preventing the mod rack from scrolling
-- fixed un-wiring caused by reverting after an invalid mod move that would make wires overlap
-- sleeve crime work now properly gives neurodes and rom
-- track stats for component production from mods
+- fixed issue where temporary testing routing was breaking focus when first loading the game while doing Work
 
 TODO:
+
+- stats page
+  - cleanup styling
+  - tooltips for stats page
+
+- API - test
+  - docs for all the types etc
 
 - add hard caps
   - add support for lower bound cap
@@ -13,19 +16,17 @@ TODO:
 - remove toast from consuming skillchip programmatically
 - use pop-up numbers instead of toasts?
 
+- add notification for all dev buttons
+
 - dev menu - custom mod creation
 - dev menu - set component counts
 
 NETRUNNING MINIGAME:
 
-- API - test
-  - docs for all the types etc
-
 - Docs
   - add simple code examples
   - explain entity types
 
-- full docs for various types in the API
 
 TODO LATER:
 
@@ -41,8 +42,6 @@ TODO LATER:
 
 - make testing script
 
-- add notification for all dev buttons
-
 - let player choose color of each stat key and value, to hilight or hide stats
 
 - filter box help text
@@ -52,7 +51,6 @@ TODO LATER:
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 
 - colors on icons
-
   - battery gets more red
   - gold rewards
   - threat level matches threat color
@@ -72,10 +70,6 @@ TODO LATER:
   - boost connected mods?
   - improve sockets?
 
-- stats page
-
-  - cleanup styling
-  - tooltips for stats page
 
 - Glitch netrunning
 

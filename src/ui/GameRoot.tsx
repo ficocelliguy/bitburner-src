@@ -156,6 +156,7 @@ function determineStartPage(): PageWithContext {
   }
   // TODO-fico - remove after testing phase
   if (hasDevQueryParam()) {
+    Player.stopFocusing();
     return { page: Page.CyberDeck };
   }
   /**
