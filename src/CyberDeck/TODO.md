@@ -1,7 +1,7 @@
 Patch changes:
 - fix count input for crafting icebreakers not properly scaling the amount crafted
 - fixed styling issue preventing the mod rack from scrolling
-- fixed un-wiring caused by attempting an invalid mod move that would make wires overlap
+- fixed un-wiring caused by reverting after an invalid mod move that would make wires overlap
 
 TODO:
 
