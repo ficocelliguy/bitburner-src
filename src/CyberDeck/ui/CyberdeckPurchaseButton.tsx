@@ -8,7 +8,7 @@ import { Player } from "@player";
 import { Money } from "../../ui/React/Money";
 import { hasCyberdeck } from "../models/CyberdeckState";
 import { CyberdeckPurchasePrice } from "../models/constants";
-import { gainCyberdeck } from "../effects";
+import { gainCyberdeck } from "../models/cyberdeckServer";
 
 /** Attempt to purchase a Cyberdeck using the button. */
 export function purchaseCyberdeck(): void {

@@ -54,7 +54,8 @@ import { Crimes } from "../Crime/Crimes";
 import { DarknetServer } from "../Server/DarknetServer";
 import { populateDarknet } from "../DarkNet/controllers/NetworkGenerator";
 import { deprecationWarning } from "../utils/DeprecationHelper";
-import { gainCyberdeck, gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
+import { gainCyberdeckComponentsFromNukeOrBackdoor } from "../CyberDeck/effects";
+import { gainCyberdeck } from "../CyberDeck/models/cyberdeckServer";
 import { hasCyberdeck } from "../CyberDeck/models/CyberdeckState";
 import { CyberdeckPurchasePrice } from "../CyberDeck/models/constants";
 

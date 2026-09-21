@@ -1,5 +1,4 @@
 import { DropResult } from "react-beautiful-dnd";
-import { MODULE_STORAGE, TRASH_CAN } from "../ui/ModuleRackAndInventoryPage";
 import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, getChargedModules } from "./CyberdeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -16,6 +15,7 @@ import {
   hasConsumedSkillchipTutorial,
 } from "./tutorial";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
+import { MODULE_STORAGE, TRASH_CAN } from "./constants";
 
 export function handleModuleMoved(result: DropResult, filter: string = "") {
   if (!result.destination) {

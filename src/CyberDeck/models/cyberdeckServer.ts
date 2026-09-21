@@ -10,6 +10,13 @@ import { Server } from "../../Server/Server";
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { ComponentCounts } from "../Types";
 import { Player } from "@player";
+import { createInitialModules } from "./createModule";
+
+export function gainCyberdeck() {
+  CyberdeckState.hasCyberdeck = true;
+  addCyberdeckServer();
+  createInitialModules();
+}
 
 export function addCyberdeckServer() {
   if (GetServer(SpecialServers.Cyberdeck)) {

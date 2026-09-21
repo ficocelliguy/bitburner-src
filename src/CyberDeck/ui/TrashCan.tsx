@@ -3,7 +3,8 @@ import { Typography, Tooltip } from "@mui/material";
 import RecyclingOutlinedIcon from "@mui/icons-material/RecyclingOutlined";
 import { Droppable } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
-import { TRASH_CAN } from "./ModuleRackAndInventoryPage";
+
+import { TRASH_CAN } from "../models/constants";
 
 export function TrashCan() {
   return (

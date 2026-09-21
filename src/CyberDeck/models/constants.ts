@@ -124,7 +124,7 @@ export function isCustomBuild() {
 
 export const MARQUEE_LINES = [
   "All information looks like noise until you break the code.",
-  "The truth can no longer hide from your gaze.",
+  "The Truth™ can no longer hide from your gaze.",
   "Open up your eyes and look at the big picture. You're all puppets of corrupt politicians and capitalists. Don't you understand, it's utterly pointless to fight each other.",
   "The sky above the port was the color of television, tuned to a dead channel.",
   "01110011 01100101 01100011 01110100 01101111 01110010 00100000 00110001 00110010 00100000 01101001 01110011 00100000 01100001 00100000 01110000 01110010 01101001 01110011 01101111 01101110",
@@ -143,3 +143,6 @@ export const MARQUEE_LINES = [
   "There's nothing sadder than a puppet without a ghost, especially the kind with red blood running through them.",
   "I just wanna tell you how I'm feeling Gotta make you understand Never gonna give you up Never gonna let you down Never gonna run around And desert you Never gonna make you cry Never gonna say goodbye Never gonna tell a lie And hurt you",
 ];
+export const MODULE_STORAGE = "moduleStorage";
+export const INSTALLED_MODULES = "installedModules";
+export const TRASH_CAN = "trashcan";

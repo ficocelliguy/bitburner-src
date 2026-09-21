@@ -1,8 +1,7 @@
 import { CyberdeckState, getRackExtensionCap, hasCyberdeck } from "../models/CyberdeckState";
-import { addCyberdeckServer } from "../models/cyberdeckServer";
+import { addCyberdeckServer, gainCyberdeck } from "../models/cyberdeckServer";
 import { prestigeCyberdeckComponents } from "../models/componentEconomy";
 import { Player } from "@player";
-import { gainCyberdeck } from "../effects";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
   if (prestigeBitnode) {

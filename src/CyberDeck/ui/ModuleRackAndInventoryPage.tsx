@@ -21,11 +21,9 @@ import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils"
 import { ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { TutorialChecklist } from "./TutorialChecklist";
-import { gainCyberdeck } from "../effects";
+import { gainCyberdeck } from "../models/cyberdeckServer";
 
-export const MODULE_STORAGE = "moduleStorage";
-export const INSTALLED_MODULES = "installedModules";
-export const TRASH_CAN = "trashcan";
+import { INSTALLED_MODULES, MODULE_STORAGE } from "../models/constants";
 
 export function ModuleRackAndInventoryPage(): React.ReactElement {
   const render = useRerender();

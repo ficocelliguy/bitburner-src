@@ -4,9 +4,8 @@ import { ComponentCounts, DeckMod, NetrunningRewards } from "../Types";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { ModuleLootCover } from "./ModuleLootCover";
 import { ComponentSymbol } from "./ComponentCost";
-import { componentSymbols } from "../models/constants";
+import { componentSymbols, TRASH_CAN } from "../models/constants";
 import { Settings } from "../../Settings/Settings";
-import { TRASH_CAN } from "./ModuleRackAndInventoryPage";
 import { disassembleModule, moduleExists } from "../models/createModule";
 import { TrashCan } from "./TrashCan";
 

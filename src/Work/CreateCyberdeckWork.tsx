@@ -2,7 +2,7 @@ import { PlayerBaseWork, WorkType } from "./Work";
 import { CONSTANTS } from "../Constants";
 import { Player } from "@player";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
-import { gainCyberdeck } from "../CyberDeck/effects";
+import { gainCyberdeck } from "../CyberDeck/models/cyberdeckServer";
 import { constructorsForReviver, Generic_fromJSON, Generic_toJSON, IReviverValue } from "../utils/JSONReviver";
 import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
 import { CyberdeckRequiredWorkUnits } from "../CyberDeck/models/constants";

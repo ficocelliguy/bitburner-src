@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { CyberdeckState, hasCyberdeck } from "../../CyberDeck/models/CyberdeckState";
-import { gainCyberdeck } from "../../CyberDeck/effects";
+import { gainCyberdeck } from "../../CyberDeck/models/cyberdeckServer";
 import { gainComponentMessage } from "../../CyberDeck/ui/gainComponentToast";
 import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../CyberDeck/models/netrunRewards";
 import { NetrunningRewards } from "../../CyberDeck/Types";

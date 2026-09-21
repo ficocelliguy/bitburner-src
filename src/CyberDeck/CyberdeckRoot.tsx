@@ -10,7 +10,7 @@ import { useRerender } from "../ui/React/hooks";
 import { CraftingPage } from "./ui/CraftingPage";
 import { StatsPage } from "./ui/StatsPage";
 import { ComponentInventoryCount } from "./ui/ComponentInventoryCount";
-import { gainCyberdeck } from "./effects";
+import { gainCyberdeck } from "./models/cyberdeckServer";
 import { CyberdeckEvents, hasCyberdeck } from "./models/CyberdeckState";
 import { DocumentationLink } from "../ui/React/DocumentationLink";
 import { Settings } from "../Settings/Settings";

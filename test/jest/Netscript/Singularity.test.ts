@@ -1088,6 +1088,9 @@ async function testNextCompletion(
     case "SYNCHRO":
       isCompletable = false;
       break;
+    case "CREATE_CYBERDECK":
+      isCompletable = true;
+      break;
     default: {
       // Verify type switch statement is exhaustive
       const __a: never = taskType;
