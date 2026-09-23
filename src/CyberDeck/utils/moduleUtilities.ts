@@ -2,6 +2,8 @@ import { CyberdeckState, getChargedModuleIDs } from "../models/CyberdeckState";
 import { clampInteger } from "../../utils/helpers/clampNumber";
 import { Socket, SocketList } from "../Types";
 import { WHRNG } from "../../Casino/RNG";
+import { socketIsCovered } from "../models/moduleMutation";
+import { Settings } from "../../Settings/Settings";
 
 export function getCurrentRackSize() {
   const chargedModules = getChargedModuleIDs();
@@ -52,3 +54,12 @@ export function getModuleById(modId: string) {
     CyberdeckState.storedModules.find((m) => m.id === modId)
   );
 }
+
+export const getSocketColor = (index: number, moduleId: string = "") => {
+  if (socketIsCovered({ socketIndex: index, modId: moduleId })) {
+    return Settings.theme.welllight;
+  }
+  const t = Settings.theme;
+  const colors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
+  return colors[index];
+};

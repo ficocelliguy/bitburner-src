@@ -1,7 +1,6 @@
 import { CyberdeckState } from "../models/CyberdeckState";
-import { getSocketId } from "../utils/moduleUtilities";
+import { getSocketColor, getSocketId } from "../utils/moduleUtilities";
 import { Socket } from "../Types";
-import { getSocketColor } from "../models/constants";
 
 export function DrawWiresOnCanvas(
   canvas: HTMLCanvasElement | null,

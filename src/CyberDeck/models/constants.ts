@@ -106,16 +106,10 @@ export const netrunFlavorText =
 export const corruptedNetrunFlavorText =
   "You step beyond the Blackwall, the last line of defense that maintains cyberspace from the old net that fell long ago. Outside of that firewall, beyond its protection, the deep ICE holds... something. You grab what you can before the connection collapses.";
 
-export const getSocketColor = (index: number) => {
-  const t = Settings.theme;
-  const colors = [t.rep, t.cha, t.primary, t.hp, t.info, t.warning, t.bnlvl2, t.secondarylight];
-  return colors[index];
-};
-
 export const corruptedNetrunHintTexts = [
   `There is a place, somewhere out there, where the barrier is thin...`,
   `Your world has not yet been turned upside down.`,
-  `Is more than a simple glitch?`,
+  `Is it more than a simple glitch?`,
 ];
 
 export function isCustomBuild() {

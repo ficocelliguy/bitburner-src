@@ -1,7 +1,13 @@
 Patch changes:
+- make socket gray out when covered instead of disappearing entirely
+- fixed case where netrunning could generate with no reasonable path
+- fixed case where breaking firewalls would reveal more than it should
 
 
 TODO:
+
+- junk power supply casing issues, can't be dragged?
+  - see zip save
 
 - stats page
   - cleanup styling
@@ -14,6 +20,8 @@ TODO:
 - use pop-up numbers instead of toasts?
 
 - add notification for all dev buttons
+
+- golden shine on reward blocks
 
 - dev menu - custom mod creation
 - dev menu - set component counts

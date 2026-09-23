@@ -265,6 +265,9 @@ function validateAtLeastOneRewardGroupIsAccessible(): boolean {
       if (member.type === NetrunEntityVariant.dataStore) {
         return true;
       }
+      if (member.type === NetrunEntityVariant.firewall || member.hasBomb) {
+        break;
+      }
 
       const neighborGroups = getNeighbors(member)
         .map((m) => m?.group)
@@ -301,9 +304,18 @@ function offlineEntity(entity: NetrunEntity | null) {
     return offlineEntity(NetrunningState.grid[y + 1]?.[x + 1]);
   }
   entity.type = NetrunEntityVariant.offline;
-  entity.group = -1;
+  updateGroup(entity, -1);
+  // TODO-fico: remove from old group inside offlineEntity
   NetrunningState.groups[-1] ??= [];
   NetrunningState.groups[-1].unshift(entity);
+}
+
+function updateGroup(entity: NetrunEntity, newGroup: number) {
+  const oldGroupId = entity.group;
+  NetrunningState.groups[oldGroupId] = NetrunningState.groups[oldGroupId]?.filter((e) => e !== entity) ?? [];
+  entity.group = newGroup;
+  NetrunningState.groups[newGroup] ??= [];
+  NetrunningState.groups[newGroup].push(entity);
 }
 
 function spreadOfflineNodes() {
@@ -348,6 +360,7 @@ function breakEntity(entity: NetrunEntity) {
   entity.type = NetrunEntityVariant.empty;
   revealGroup(entity);
   if (originalType === NetrunEntityVariant.firewall) {
+    updateGroup(entity, -2);
     return;
   }
   for (const member of group) {
@@ -361,13 +374,14 @@ function breakEntity(entity: NetrunEntity) {
 function revealGroup(entity: NetrunEntity | undefined) {
   if (!entity) return;
   entity.visible = true;
-  const group = NetrunningState.groups[entity.group] ?? [];
-  for (const member of group) {
+  const entitiesToReveal =
+    entity.type === NetrunEntityVariant.firewall ? [entity] : NetrunningState.groups[entity.group] ?? [];
+  for (const member of entitiesToReveal) {
     member.visible = true;
   }
   if (entity.type !== NetrunEntityVariant.empty) return;
 
-  for (const entity of group) {
+  for (const entity of entitiesToReveal) {
     for (const neighbor of getNeighbors(entity)) {
       if (neighbor && neighbor.group !== entity.group && !neighbor.visible) {
         revealGroup(neighbor);

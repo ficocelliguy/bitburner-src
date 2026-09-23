@@ -1,12 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { Socket, SocketList } from "../Types";
-import { socketIsCovered } from "../models/moduleMutation";
-import { getSocketId } from "../utils/moduleUtilities";
+import { getSocketColor, getSocketId } from "../utils/moduleUtilities";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { Settings } from "../../Settings/Settings";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
-import { getSocketColor } from "../models/constants";
 
 export type SocketIOPanelProps = {
   moduleId: string;
@@ -47,15 +45,17 @@ export function SocketIOPanel({
     <Box sx={styles.socketIOPanel}>
       {sockets.map((isSocket, index) => (
         <div key={index} style={{ width: "24px", height: "24px", margin: "auto 5px" }}>
-          {isSocket && (!socketIsCovered({ socketIndex: index, modId: moduleId }) || draggingInstalledModule) ? (
+          {isSocket ? (
             <Box
               component="button"
               id={getSocketId({ modId: moduleId, socketIndex: index })}
               sx={styles.socket}
               onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => socketDragStart(e, index)}
               style={{
-                border: `6px solid ${getSocketColor(index)}`,
-                background: isConnected(index) ? getSocketColor(index) : Settings.theme.backgroundprimary,
+                border: `6px solid ${getSocketColor(index, draggingInstalledModule ? "" : moduleId)}`,
+                background: isConnected(index)
+                  ? getSocketColor(index, draggingInstalledModule ? "" : moduleId)
+                  : Settings.theme.backgroundprimary,
                 pointerEvents: draggingWireStarted ? "auto" : "none",
               }}
             />

@@ -214,6 +214,9 @@ export function wireOverlapsSocket(
 }
 
 export function socketIsCovered(socket: Socket) {
+  if (!socket.modId) {
+    return false;
+  }
   return CyberdeckState.coveredSockets.find((s) => s.modId === socket.modId && s.socketIndex === socket.socketIndex);
 }
 

@@ -376,6 +376,42 @@ hitButton.addEventListener('click', (e) => {
 
  */
 
+/*
+Shine Effect
+
+.gold-shine-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+
+
+  animation: shine-sweep 6s infinite ease-in-out;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -200%;
+  }
+  30% {
+    left: 150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+ */
+
 // TODO-fico: remove once done
 const themeColors = {
   primarylight: "#0f0",
