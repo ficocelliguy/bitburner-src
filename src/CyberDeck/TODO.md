@@ -1,7 +1,5 @@
 Patch changes:
-- make socket gray out when covered instead of disappearing entirely
-- fixed case where netrunning could generate with no reasonable path
-- fixed case where breaking firewalls would reveal more than it should
+- fix scenario where an empty or filtered storage would prevent dragging mods
 
 
 TODO:
