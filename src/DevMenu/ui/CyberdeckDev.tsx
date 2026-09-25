@@ -72,6 +72,8 @@ export function CyberdeckDev(): React.ReactElement {
   function clearMods() {
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
+    CyberdeckState.connections = [];
+    CyberdeckState.coveredSockets = [];
     SnackbarEvents.emit("Cleared all mods from your cyberdeck.", ToastVariant.SUCCESS, 2000);
   }
 
@@ -85,6 +87,7 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.installedModules = [];
     CyberdeckState.storedModules = [];
     CyberdeckState.connections = [];
+    CyberdeckState.coveredSockets = [];
     CyberdeckState.netrunningLevel += 18;
     for (let i = 0; i < 4; i++) {
       CyberdeckState.installedModules.push(createModule(getNextNetrunningWHRNG()));

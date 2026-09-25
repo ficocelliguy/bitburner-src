@@ -1,7 +1,7 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, EntityInfo } from "@nsdefs";
 import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
-import { LocationName, NetrunEntityVariant } from "@enums";
+import { LocationName, ModType, NetrunEntityVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
 import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
 import {
@@ -22,7 +22,13 @@ import {
   uplinkCraftingCost,
 } from "./models/constants";
 import { logger } from "../DarkNet/effects/offlineServerHandling";
-import { createConnection, disconnectConnection, moveModule, wouldCauseOverlaps } from "./models/moduleMutation";
+import {
+  createConnection,
+  disconnectConnection,
+  getInstalledRackExtensionCount,
+  moveModule,
+  wouldCauseOverlaps,
+} from "./models/moduleMutation";
 import { getCurrentRackSize, getModuleById } from "./utils/moduleUtilities";
 import { getCurrentNetrunningIceCost, netrunRewards } from "./models/netrunRewards";
 import { getCorruptedHint } from "./ui/gainComponentToast";
@@ -118,7 +124,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       logger(ctx)(`Installing mod ${modId}...`);
 
       return helpers.netscriptDelay(ctx, 1000).then(() => {
-        getModOrThrow(modId);
+        const modToMove = getModOrThrow(modId);
         const storageIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === modId);
         const sourceIsStorage = storageIndex !== -1;
         const newIndex = Math.min(locationIndex, CyberdeckState.installedModules.length);
@@ -126,9 +132,18 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           logger(ctx)(`Failed to move mod ${modId}: cyberdeck mod rack is already full.`);
           return false;
         }
-
+        if (
+          getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions &&
+          modToMove.type === ModType.RackExtension
+        ) {
+          logger(ctx)(
+            `Failed to move mod ${modId}: there are already the max of rack extensions installed (${CyberdeckState.maxInstalledRackExtensions}).`,
+          );
+          return false;
+        }
         // Prevent the move if it causes invalid wiring
-        if (wouldCauseOverlaps(CyberdeckState.installedModules.toSpliced(newIndex, 0, mod))) {
+        const sourceList = CyberdeckState.installedModules.filter((m) => m.id !== mod.id);
+        if (wouldCauseOverlaps(sourceList.toSpliced(newIndex, 0, mod))) {
           logger(ctx)(`Failed to move module: wires cannot overlap.`);
           return false;
         }
@@ -162,11 +177,11 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
-      if (!CyberdeckState.installedModules.includes(mod1)) {
+      if (!CyberdeckState.installedModules.includes(mod1) && mod1.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot add connection: mod ${modId1} is not installed on the deck rack.`);
         return false;
       }
-      if (!CyberdeckState.installedModules.includes(mod2)) {
+      if (!CyberdeckState.installedModules.includes(mod2) && mod1.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot add connection: mod ${modId2} is not installed on the deck rack.`);
         return false;
       }
@@ -184,15 +199,15 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       const mod1 = getModOrThrow(modId1, true);
       const modId2 = helpers.string(ctx, "modId", moduleId2);
       const mod2 = getModOrThrow(modId2, true);
-      const socketIndex = helpers.number(ctx, "socketIndex", socket);
+      const socketIndex = helpers.integer(ctx, "socketIndex", socket);
       if (socketIndex < 0 || socketIndex > 7) {
         throw new Error(`Invalid socket index (${socket}). Socket must be in the range [0,7]`);
       }
-      if (!CyberdeckState.installedModules.includes(mod1)) {
+      if (!CyberdeckState.installedModules.includes(mod1) && mod1.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot remove connection: mod ${modId1} is not installed on the deck rack.`);
         return false;
       }
-      if (!CyberdeckState.installedModules.includes(mod2)) {
+      if (!CyberdeckState.installedModules.includes(mod2) && mod1.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot remove connection: mod ${modId2} is not installed on the deck rack.`);
         return false;
       }
@@ -366,11 +381,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         checkCyberdeckAccess();
         const y = helpers.integer(ctx, "y", _y);
         const x = helpers.integer(ctx, "x", _x);
-        if (y < 0 || y > NETRUNNING_HEIGHT) {
-          throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${NETRUNNING_HEIGHT}`);
+        const maxHeight = NETRUNNING_HEIGHT - 1;
+        const maxWidth = NETRUNNING_WIDTH - 1;
+        if (y < 0 || y > maxHeight) {
+          throw new Error(`Invalid y coordinate (${y}): value must be between 0 and ${maxHeight}`);
         }
-        if (x < 0 || x > NETRUNNING_WIDTH) {
-          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${NETRUNNING_WIDTH}`);
+        if (x < 0 || x > maxWidth) {
+          throw new Error(`Invalid x coordinate (${x}): value must be between 0 and ${maxWidth}`);
         }
         const entity = NetrunningState.grid[y]?.[x];
         if (!entity) {

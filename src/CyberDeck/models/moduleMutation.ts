@@ -71,7 +71,9 @@ export function moveModule(
   const sourceLocation = sourceIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const destinationLocation = destinationIsStorage ? CyberdeckState.storedModules : CyberdeckState.installedModules;
   const sourceIndex = sourceLocation.indexOf(moduleToMove);
-  const adjustedDestinationIndex = destinationIsStorage ? getDestinationIndex(filter, destinationIndex) : destinationIndex;
+  const adjustedDestinationIndex = destinationIsStorage
+    ? getDestinationIndex(filter, destinationIndex)
+    : destinationIndex;
   if (sourceIndex === -1) {
     console.error(
       `Attempted to move module ${moduleToMove.id} but it was not found in ${sourceIsStorage ? "storage" : "the rack"}`,
@@ -93,7 +95,7 @@ export function moveModule(
 
 function getDestinationIndex(filter: string, destinationIndex: number) {
   const modAtFilteredIndex = getFilteredStoredModules(filter)[destinationIndex];
-  const targetLocation = CyberdeckState.storedModules.findIndex((m) => m.id == modAtFilteredIndex.id);
+  const targetLocation = CyberdeckState.storedModules.findIndex((m) => m.id == modAtFilteredIndex?.id);
   if (targetLocation === -1) {
     return CyberdeckState.storedModules.length;
   }
@@ -108,8 +110,8 @@ export function ejectOverloadedModules() {
 }
 
 export function createConnection(source: Socket, destination: Socket) {
-  const sourceModule = getInstalledModule(source.modId);
-  const destinationModule = getInstalledModule(destination.modId);
+  const sourceModule = getModule(source.modId);
+  const destinationModule = getModule(destination.modId);
   if (!sourceModule) {
     return {
       success: false,
@@ -173,8 +175,8 @@ export function createConnection(source: Socket, destination: Socket) {
   };
 }
 
-function updateConnectedModules() {
-  consumeSkillChips();
+function updateConnectedModules(consumeSkillchips = true) {
+  consumeSkillchips && consumeSkillChips();
   ejectOverloadedModules();
   updateCoveredSockets();
 
@@ -184,7 +186,7 @@ function updateConnectedModules() {
   CyberdeckEvents.emit();
 }
 
-function getInstalledModule(moduleId: string) {
+function getModule(moduleId: string) {
   if (moduleId == getCyberdeckIOPanel().id) {
     return getCyberdeckIOPanel();
   }
@@ -267,7 +269,7 @@ export function disconnectSocket(source: Socket | undefined) {
   if (sourceConnectionIndex !== -1) {
     CyberdeckState.connections.splice(sourceConnectionIndex, 1);
   }
-  updateConnectedModules();
+  updateConnectedModules(false);
 }
 
 export function disconnectConnection(moduleId1: string, moduleId2: string, socketIndex: number) {
@@ -338,6 +340,6 @@ function consumeSkillChips() {
   CyberdeckEvents.emit();
 }
 
-function getInstalledRackExtensionCount() {
+export function getInstalledRackExtensionCount() {
   return CyberdeckState.installedModules.filter((m) => m.type === ModType.RackExtension).length;
 }

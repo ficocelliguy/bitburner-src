@@ -2,7 +2,7 @@ import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod } from "../Types";
 import { ModType } from "../Enums";
-import { createConnection, disconnectModule, moveModule } from "./moduleMutation";
+import { createConnection, moveModule } from "./moduleMutation";
 import {
   ICEBreakerCraftingCost,
   powerSupplyCraftingCost,
@@ -321,7 +321,6 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
   }
 
-  disconnectModule(module);
   if (CyberdeckState.installedModules.includes(module)) {
     moveModule(module, false, true);
   }
