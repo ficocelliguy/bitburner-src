@@ -184,7 +184,7 @@ export abstract class Person implements IPerson {
      * a permanent benefit.
      */
     if (Player.sourceFileLvl(5) > 0 || Player.bitNodeN === 5) {
-      this.exp.intelligence += exp * getCyberdeckStatBonuses(1).endgameStats.int_exp;
+      this.exp.intelligence += exp * getCyberdeckStatBonuses(1).endgameMults.int_exp;
       this.skills.intelligence = Math.floor(this.calculateSkill(this.exp.intelligence, 1));
       this.persistentIntelligenceData.exp += exp;
     }

@@ -4436,7 +4436,7 @@ type CyberdeckStats = {
   /** Cyberdeck mechanic levels that are gained permanently upon charging the mod. */
   consumableStats: ConsumableStats;
   /** Stats affecting mechanics you can unlock after completing fl1ght.exe - contains spoilers. */
-  endgameStats: EndgameMults;
+  endgameMults: EndgameMults;
 };
 /** @public */
 type ModStats = {
@@ -4449,7 +4449,7 @@ type ModStats = {
   /** Cyberdeck mechanic levels that are gained permanently upon charging the mod. */
   consumableStats?: Partial<ConsumableStats>;
   /** Stats affecting mechanics you can unlock after completing fl1ght.exe - contains spoilers. */
-  endgameStats?: Partial<EndgameMults>;
+  endgameMults?: Partial<EndgameMults>;
 };
 /** @public */
 type ComponentStats = {

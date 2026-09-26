@@ -1,5 +1,7 @@
 Patch changes:
-
+- Added dev tool to create custom mod
+- Removed toast feedback from everything that isn't a manual UI interaction
+- Added API documentation for return types' values
 
 TODO:
 
@@ -17,8 +19,9 @@ TODO:
 
 - golden shine on reward blocks
 
-- dev menu - custom mod creation
 - dev menu - set component counts
+
+- tutorial netrun
 
 NETRUNNING MINIGAME:
 

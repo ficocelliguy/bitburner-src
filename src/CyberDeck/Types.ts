@@ -29,7 +29,7 @@ export type ModStats = {
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
   consumableStats?: Partial<ConsumableStats>;
-  endgameStats?: Partial<EndgameMults>;
+  endgameMults?: Partial<EndgameMults>;
 };
 
 export type ComponentCounts = {
@@ -45,7 +45,7 @@ export type CyberdeckStats = {
   otherMults: MiscMults;
   extraRackSlots: number;
   consumableStats: ConsumableStats;
-  endgameStats: EndgameMults;
+  endgameMults: EndgameMults;
 };
 
 export type MiscMults = {
@@ -129,7 +129,7 @@ export type NetrunStatus = {
 export type ModKey =
   | keyof CyberdeckStats["playerMults"]
   | keyof CyberdeckStats["otherMults"]
-  | keyof CyberdeckStats["endgameStats"]
+  | keyof CyberdeckStats["endgameMults"]
   | keyof CyberdeckStats["consumableStats"]
   | "extraRackSlots";
 
@@ -194,17 +194,17 @@ export const statBonusShortNames: {
   hacking_grow: "Hack Grow",
   hacknet_node_purchase_cost: "Hacknet Node Purchase Cost",
   dnet_money: "Darknet Money",
-  bladeburner_max_stamina: "Bladeburner Max Stamina",
-  bladeburner_stamina_gain: "Bladeburner Stamina Gain",
-  bladeburner_analysis: "Bladeburner Analysis",
-  bladeburner_success_chance: "Bladeburner Success Chance",
+  bladeburner_max_stamina: "BB Max Stamina",
+  bladeburner_stamina_gain: "BB Stamina Gain",
+  bladeburner_analysis: "BB Analysis",
+  bladeburner_success_chance: "BB Success",
 } as const;
 
 export const statBonusLongNames: {
   [key in
     | keyof CyberdeckStats["playerMults"]
     | keyof CyberdeckStats["otherMults"]
-    | keyof CyberdeckStats["endgameStats"]
+    | keyof CyberdeckStats["endgameMults"]
     | keyof CyberdeckStats["consumableStats"]
     | "extraRackSlots"]: string;
 } = {

@@ -36,7 +36,7 @@ export class StaneksGift extends BaseGift {
       af.numCharge = (af.highestCharge * af.numCharge) / threads + 1;
       af.highestCharge = threads;
     } else {
-      const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.stanek_charge;
+      const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameMults.stanek_charge;
       af.numCharge += (threads * cyberdeckBonus) / af.highestCharge;
     }
 

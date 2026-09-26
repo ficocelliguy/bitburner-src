@@ -36,7 +36,7 @@ export function getStatBonusList(stats: ModStats = {}) {
     ...Object.entries(stats.playerMults ?? {}),
     ...Object.entries(stats.otherMults ?? {}),
     ...Object.entries(stats.consumableStats ?? {}),
-    ...Object.entries(stats.endgameStats ?? {}),
+    ...Object.entries(stats.endgameMults ?? {}),
   ] as [ModKey, number][];
 
   if (stats.extraRackSlots) {
@@ -162,14 +162,14 @@ export function getCyberdeckStatBonuses(basis = 0): CyberdeckStats {
   const miscMultsFromModules = chargedModules.map((m) => m.stats?.otherMults);
   const otherMults = mergeBuffs(getDefaultMiscMults(basis), ...miscMultsFromModules);
 
-  const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameStats);
+  const endgameMultsFromModules = chargedModules.map((m) => m.stats?.endgameMults);
   const endgameStats = mergeBuffs(getDefaultEndgameMults(basis), ...endgameMultsFromModules);
 
   return applyCaps(
     {
       playerMults,
       otherMults,
-      endgameStats,
+      endgameMults: endgameStats,
       consumableStats: getDefaultConsumableStats(),
       extraRackSlots: chargedModules.reduce((sum, m) => sum + (m.stats?.extraRackSlots ?? 0), 0),
     },
@@ -229,13 +229,13 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
     result.consumableStats[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
-  for (const key of Object.keys(stats?.endgameStats ?? {}) as Array<keyof EndgameMults>) {
-    const value = stats.endgameStats?.[key];
+  for (const key of Object.keys(stats?.endgameMults ?? {}) as Array<keyof EndgameMults>) {
+    const value = stats.endgameMults?.[key];
     if (value == null) {
       continue;
     }
     const { hardCap, hardMin, softCap } = allStatRanges.endgameStats[key] ?? {};
-    result.endgameStats[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
+    result.endgameMults[key] = applySoftCap(value, softCap, hardCap, hardMin, basis);
   }
 
   return result;

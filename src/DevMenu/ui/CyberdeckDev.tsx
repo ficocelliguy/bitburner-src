@@ -1,7 +1,18 @@
 import React from "react";
 import { AutoExpandAccordion } from "../../ui/AutoExpand/AutoExpandAccordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { AccordionSummary, Button, Tooltip, Typography } from "@mui/material";
+import {
+  AccordionSummary,
+  Button,
+  Dialog,
+  Tooltip,
+  Typography,
+  FormControl,
+  InputLabel,
+  Checkbox,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -9,17 +20,39 @@ import { CyberdeckState, hasCyberdeck } from "../../CyberDeck/models/CyberdeckSt
 import { gainCyberdeck } from "../../CyberDeck/models/cyberdeckServer";
 import { gainComponentMessage } from "../../CyberDeck/ui/gainComponentToast";
 import { getCorruptedNetrunningRewards, getNetrunningRewards } from "../../CyberDeck/models/netrunRewards";
-import { NetrunningRewards } from "../../CyberDeck/Types";
+import {
+  ConsumableStats,
+  DeckMod,
+  EndgameMults,
+  MiscMults,
+  NetrunningRewards,
+  SocketList,
+} from "../../CyberDeck/Types";
 import { ModType } from "@enums";
 import { RewardsModal } from "../../CyberDeck/ui/RewardsModal";
 import { corruptedNetrunFlavorText, netrunFlavorText } from "../../CyberDeck/models/constants";
 import { prestigeCyberdeck } from "../../CyberDeck/utils/prestigeCyberdeck";
-import { getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../../CyberDeck/utils/statRng";
+import {
+  getID,
+  getNextCraftingPowerSupplyWHRNG,
+  getNextNetrunningCorruptedWHRNG,
+  getNextNetrunningWHRNG,
+} from "../../CyberDeck/utils/statRng";
 import { createModule } from "../../CyberDeck/models/createModule";
+import { Settings } from "../../Settings/Settings";
+import { Multipliers } from "../../PersonObjects/Multipliers";
+import {
+  getDefaultConsumableStats,
+  getDefaultEndgameMults,
+  getDefaultMiscMults,
+  getDefaultPlayerMults,
+} from "../../CyberDeck/utils/modStatsUtils";
+import { NumberInput } from "../../ui/React/NumberInput";
 
 export function CyberdeckDev(): React.ReactElement {
   const [corrupted, setCorrupted] = React.useState(false);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
+  const [showCustomModModal, setShowCustomModModal] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
     mods: [],
     components: {},
@@ -105,6 +138,15 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.components.cores = 4;
   }
 
+  function addCustomMod(mod?: DeckMod | undefined) {
+    setShowCustomModModal(false);
+    if (mod) {
+      CyberdeckState.storedModules.unshift(mod);
+      setNetrunningModRewards({ mods: [mod], components: {} });
+      setShowRewardsModal(true);
+    }
+  }
+
   return (
     <>
       <RewardsModal
@@ -114,6 +156,7 @@ export function CyberdeckDev(): React.ReactElement {
         title={"Netrunning Results"}
         flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
       />
+      <CreateCustomModModal open={showCustomModModal} onClose={addCustomMod} />
       <AutoExpandAccordion cacheKey="DEVMENU_CyberdeckDev" unmountOnExit={true}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Cyberdeck</Typography>
@@ -225,8 +268,203 @@ export function CyberdeckDev(): React.ReactElement {
               </Button>
             </span>
           </Tooltip>
+          <br />
+          <br />
+          <Tooltip title={<Typography>Build-a-bear, but way more cyberpunk</Typography>}>
+            <span>
+              <Button onClick={() => setShowCustomModModal(true)}>Create Custom Mod</Button>
+            </span>
+          </Tooltip>
         </AccordionDetails>
       </AutoExpandAccordion>
     </>
+  );
+}
+
+function CreateCustomModModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: (d?: DeckMod | undefined) => void;
+}): React.ReactElement {
+  const [type, setType] = React.useState<ModType>(ModType.ProcessingMod);
+  const [sockets, setSockets] = React.useState<SocketList>([false, false, false, false, false, false, false, false]);
+  const [playerMults, setPlayerMults] = React.useState<Multipliers>(getDefaultPlayerMults());
+  const [otherMults, setOtherMults] = React.useState<MiscMults>(getDefaultMiscMults());
+  const [consumables, setConsumables] = React.useState<ConsumableStats>(getDefaultConsumableStats());
+  const [endgameMults, setEndgameMults] = React.useState<EndgameMults>(getDefaultEndgameMults());
+  const [rackSlots, setRackSlots] = React.useState(0);
+
+  function create() {
+    onClose({
+      type,
+      id: getID(getNextCraftingPowerSupplyWHRNG()),
+      rarity: 0,
+      sockets,
+      stats: {
+        playerMults,
+        otherMults,
+        endgameMults,
+        consumableStats: consumables,
+        extraRackSlots: rackSlots,
+      },
+    });
+  }
+
+  function updateSockets(i: number) {
+    sockets[i] = !sockets[i];
+    setSockets([...sockets]);
+  }
+
+  function updatePlayerMult(key: string, value: number) {
+    if (!Object.hasOwn(playerMults, key)) {
+      throw new Error(`Invalid player mult key provided: ${key}`);
+    }
+    playerMults[key as keyof Multipliers] = value;
+    setPlayerMults({ ...playerMults });
+  }
+
+  function updateOtherMult(key: string, value: number) {
+    if (!Object.hasOwn(otherMults, key)) {
+      throw new Error(`Invalid other mult key provided: ${key}`);
+    }
+    otherMults[key as keyof MiscMults] = value;
+    setOtherMults({ ...otherMults });
+  }
+
+  function updateConsumables(key: string, value: number) {
+    if (!Object.hasOwn(consumables, key)) {
+      throw new Error(`Invalid consumable key provided: ${key}`);
+    }
+    consumables[key as keyof ConsumableStats] = value;
+    setConsumables({ ...consumables });
+  }
+
+  function updateEndgameMults(key: string, value: number) {
+    if (!Object.hasOwn(endgameMults, key)) {
+      throw new Error(`Invalid endgame mult key provided: ${key}`);
+    }
+    endgameMults[key as keyof EndgameMults] = value;
+    setEndgameMults({ ...endgameMults });
+  }
+
+  return (
+    <Dialog open={open} onClose={() => onClose()} maxWidth="sm" sx={{ padding: "10px" }}>
+      <div
+        style={{
+          width: "600px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          maxHeight: "60vh",
+          overflow: "scroll",
+        }}
+      >
+        <Typography>Create custom mod</Typography>
+        <FormControl>
+          <InputLabel id="type-select">Mod Type</InputLabel>
+          <Select
+            labelId="type-select"
+            id="type-dropdown"
+            onChange={(e) => setType(e.target.value as ModType)}
+            value={type}
+          >
+            {Object.values(ModType).map((modType) => (
+              <MenuItem key={modType} value={modType}>
+                {modType}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <Typography id="sockets-select">Select Sockets</Typography>
+          <div style={{ display: "inline-flex" }}>
+            {sockets.map((_, index) => (
+              <Checkbox
+                key={index}
+                value={sockets[index]}
+                onChange={() => updateSockets(index)}
+                sx={{
+                  color: Settings.theme.secondary,
+                  "&.Mui-checked": {
+                    color: Settings.theme.primary,
+                  },
+                }}
+              />
+            ))}
+          </div>
+        </FormControl>
+
+        {type === ModType.SkillChip ? (
+          <AutoExpandAccordion cacheKey={"consumable mults"} unmountOnExit={true}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Edit Consumable Stats...</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {Object.keys(consumables).map((key, index) => (
+                <div style={{ display: "inline-flex" }} key={index}>
+                  <Typography sx={{ width: "260px" }}>{key}</Typography>
+                  <NumberInput placeholder={key} onChange={(n) => updateConsumables(key, n)} />
+                </div>
+              ))}
+            </AccordionDetails>
+          </AutoExpandAccordion>
+        ) : (
+          <>
+            <AutoExpandAccordion cacheKey={"player mults"} unmountOnExit={true}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>Edit Player Mults...</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {Object.keys(playerMults).map((key, index) => (
+                  <div style={{ display: "inline-flex" }} key={index}>
+                    <Typography sx={{ width: "260px" }}>{key}</Typography>
+                    <NumberInput placeholder={key} onChange={(n) => updatePlayerMult(key, n)} />
+                  </div>
+                ))}
+              </AccordionDetails>
+            </AutoExpandAccordion>
+
+            <AutoExpandAccordion cacheKey={"other mults"} unmountOnExit={true}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>Edit Other Mults...</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {Object.keys(otherMults).map((key, index) => (
+                  <div style={{ display: "inline-flex" }} key={index}>
+                    <Typography sx={{ width: "260px" }}>{key}</Typography>
+                    <NumberInput placeholder={key} onChange={(n) => updateOtherMult(key, n)} />
+                  </div>
+                ))}
+              </AccordionDetails>
+            </AutoExpandAccordion>
+
+            <AutoExpandAccordion cacheKey={"endgame mults"} unmountOnExit={true}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>Edit Endgame Mults...</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {Object.keys(endgameMults).map((key, index) => (
+                  <div style={{ display: "inline-flex" }} key={index}>
+                    <Typography sx={{ width: "260px" }}>{key}</Typography>
+                    <NumberInput placeholder={key} onChange={(n) => updateEndgameMults(key, n)} />
+                  </div>
+                ))}
+              </AccordionDetails>
+            </AutoExpandAccordion>
+
+            <div style={{ display: "inline-flex", margin: "10px" }}>
+              <Typography sx={{ width: "260px" }}>Extra Rack SLots</Typography>
+              <NumberInput placeholder={"Rack Slots"} onChange={(n) => setRackSlots(n)} />
+            </div>
+          </>
+        )}
+      </div>
+      <div style={{ display: "inline-flex" }}>
+        <Button onClick={create}>Create</Button>
+        <Button onClick={() => onClose()}>Cancel</Button>
+      </div>
+    </Dialog>
   );
 }

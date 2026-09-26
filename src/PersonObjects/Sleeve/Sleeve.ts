@@ -267,7 +267,7 @@ export class Sleeve extends Person implements SleevePerson {
     this.storedCycles += numCycles;
     if (this.storedCycles < CyclesPerSecond || !this.currentWork) return;
     const cyclesUsed = Math.min(this.storedCycles, 15);
-    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.sleeve_sync;
+    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameMults.sleeve_sync;
     this.shock = Math.max(
       0,
       this.shock - 0.0001 * calculateIntelligenceBonus(this.skills.intelligence, 0.75) * cyclesUsed * cyberdeckBonus,

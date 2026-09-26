@@ -431,7 +431,7 @@ export class Gang {
     if (upg == null) {
       return Infinity;
     }
-    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.equipment_cost;
+    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameMults.equipment_cost;
     return (upg.cost * cyberdeckBonus) / this.getDiscount();
   }
 

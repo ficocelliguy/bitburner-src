@@ -159,7 +159,7 @@ export const getEndgameStatModule = (rng: WHRNG): DeckMod => {
     rarity: level,
     stats: {
       playerMults: standardDebuff,
-      endgameStats: effects,
+      endgameMults: effects,
     },
   };
 };

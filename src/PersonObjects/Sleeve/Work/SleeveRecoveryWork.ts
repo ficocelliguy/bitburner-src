@@ -11,7 +11,7 @@ export class SleeveRecoveryWork extends SleeveBaseWork {
   type: SleeveWorkType.RECOVERY = SleeveWorkType.RECOVERY;
 
   process(sleeve: Sleeve, cycles: number) {
-    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameStats.sleeve_sync;
+    const cyberdeckBonus = getCyberdeckStatBonuses(1).endgameMults.sleeve_sync;
     sleeve.shock = Math.max(
       0,
       sleeve.shock - 0.0002 * calculateIntelligenceBonus(sleeve.skills.intelligence, 0.75) * cycles * cyberdeckBonus,
