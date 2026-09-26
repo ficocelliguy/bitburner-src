@@ -1,6 +1,7 @@
 import { keyframes } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
 import { fadeLoop } from "../../Go/boardState/goStyles";
+import { Settings } from "../../Settings/Settings";
 
 const spin = keyframes`
    0% { transform: rotate(0deg) scale(1); }
@@ -29,6 +30,17 @@ const shake = keyframes`
   65% { transform: translateY(-1px) rotate(1deg) }
   75% { transform: translateY(0px) rotate(-0.5deg) }
   100% { transform: translateY(0) rotate(0) }
+`;
+const shine = keyframes`
+  0% {
+    left: -200%;
+  }
+  40% {
+    left: 150%;
+  }
+  100% {
+    left: 150%;
+  }
 `;
 
 const getSkewFrames = () => {
@@ -136,6 +148,29 @@ export function useCyberdeckStyles() {
     shake: {
       animation: `${shake} 0.3s steps(1)`,
     },
+    shine: (delaySeconds: number) => ({
+      position: "relative",
+      overflow: "hidden",
+      borderColor: Settings.theme.money,
+      ["&::after"]: {
+        content: "''",
+        position: "absolute",
+        top: 0,
+        left: "-150%",
+        width: "50%",
+        height: "100%",
+
+        background: `linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0) 100%
+        )`,
+        transform: "skewX(-20deg)",
+        animation: `${shine} 3s infinite ease-in-out`,
+        animationDelay: `${delaySeconds}s`,
+      },
+    }),
     buttonHighlight: {
       borderStyle: "solid",
       borderWidth: "6px",
@@ -374,42 +409,6 @@ hitButton.addEventListener('click', (e) => {
 });
 
 
- */
-
-/*
-Shine Effect
-
-.gold-shine-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 50%;
-  height: 100%;
-
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: skewX(-20deg);
-
-
-  animation: shine-sweep 6s infinite ease-in-out;
-}
-
-@keyframes shine-sweep {
-  0% {
-    left: -200%;
-  }
-  30% {
-    left: 150%;
-  }
-  100% {
-    left: 150%;
-  }
-}
  */
 
 // TODO-fico: remove once done

@@ -111,6 +111,7 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
               left: "1px",
               transform: `rotate(${getRotation()}deg)`,
               color: Settings.theme.primary,
+              zIndex: 1,
             }}
             width={GRID_SIZE_PX - 2}
             height={GRID_SIZE_PX - 2}

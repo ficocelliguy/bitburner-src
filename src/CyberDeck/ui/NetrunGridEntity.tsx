@@ -7,6 +7,11 @@ import { NetrunEntity } from "../Types";
 import { NetrunEntityVariant } from "../Enums";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 
+// Seconds for the shine sweep to traverse one cell width in local coords.
+const SHINE_CELL_CROSS_TIME_S = 0.27;
+// Used to offset each row so the shine animation appears to continue at the correct tilt across cells.
+const SHINE_SKEW_TAN = Math.tan((20 * Math.PI) / 180) * 0.9;
+
 export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
   const styles = useCyberdeckStyles();
   const color = getEntityColor(entity);
@@ -76,6 +81,8 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
     : "";
 
   const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE_PX : (1 - entity.hits * 0.1) * GRID_SIZE_PX;
+  const shouldShine = entity.type === NetrunEntityVariant.dataStore && entity.visible;
+  const shineDelay = (entity.x + entity.y * SHINE_SKEW_TAN) * SHINE_CELL_CROSS_TIME_S - 3;
 
   return (
     <Tooltip title={tooltip}>
@@ -86,6 +93,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
           minHeight: GRID_SIZE_PX,
           border: `1px solid transparent`,
           alignContent: "center",
+          ...(shouldShine ? styles.shine(shineDelay) : {}),
         }}
         onClick={flag}
       >
@@ -102,7 +110,7 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
             margin: "auto",
             backgroundColor: color,
             opacity: getOpacity(),
-            ...(entity.type === NetrunEntityVariant.offline /* && entity.visible */ ? styles.offlineNode : {}),
+            ...(entity.type === NetrunEntityVariant.offline && entity.visible ? styles.offlineNode : {}),
           }}
         >
           <Box

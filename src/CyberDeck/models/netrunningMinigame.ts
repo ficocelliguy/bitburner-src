@@ -357,8 +357,8 @@ function breakEntity(entity: NetrunEntity) {
 
   const group = NetrunningState.groups[entity.group] ?? [];
   const originalType = entity.type;
-  entity.type = NetrunEntityVariant.empty;
   revealGroup(entity);
+  entity.type = NetrunEntityVariant.empty;
   if (originalType === NetrunEntityVariant.firewall) {
     updateGroup(entity, -2);
     return;
@@ -374,8 +374,7 @@ function breakEntity(entity: NetrunEntity) {
 function revealGroup(entity: NetrunEntity | undefined) {
   if (!entity) return;
   entity.visible = true;
-  const entitiesToReveal =
-    entity.type === NetrunEntityVariant.firewall ? [entity] : NetrunningState.groups[entity.group] ?? [];
+  const entitiesToReveal = NetrunningState.groups[entity.group] ?? [];
   for (const member of entitiesToReveal) {
     member.visible = true;
   }
