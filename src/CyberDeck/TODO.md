@@ -1,6 +1,7 @@
 Patch changes:
 - Added dev tool to create custom mod
 - Removed toast feedback from everything that isn't a manual UI interaction
+- Added shine fx to golden reward blocks in netrun minigame
 - Added API documentation for return types' values
 
 TODO:
