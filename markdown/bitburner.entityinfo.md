@@ -15,7 +15,7 @@ type EntityInfo = {
   visible: boolean;
   flagged: boolean;
   hits: number;
-  group: [number, number][];
+  group: [number, number][] | null;
   hasBomb?: boolean;
 };
 ```

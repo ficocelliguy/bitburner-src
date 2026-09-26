@@ -4,6 +4,7 @@
 
 ## MiscMults type
 
+Stats affecting component production, fee reduction, and activity speed.
 
 **Signature:**
 

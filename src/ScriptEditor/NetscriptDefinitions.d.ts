@@ -4395,37 +4395,60 @@ export interface Cloud {
  * @public
  */
 type ComponentCounts = {
+  /** Crafting component used for making ICEBreakers and mods. */
   rom: number;
+  /** Crafting component used for making ICEBreakers and mods. */
   neurodes: number;
+  /** Crafting component used for making ICEBreakers and mods. */
   chips: number;
+  /** Crafting component used for making mods. */
   cores: number;
+  /** Digital defense-breakers used for netrunning. */
   iceBreakers: number;
 };
 /** @public */
 type DeckMod = {
+  /** Deck mod ID - usually a binary, octal, dozenal, or hex string. */
   id: string;
+  /** The rarity level of the mod. Higher rarities unlock higher potential rolls. */
   rarity: number;
+  /** The available connection points on the mod. Mods can only be connected if they share a socket index. */
   sockets: SocketList;
+  /** The category of mod. It indicates the types of stats the mod can roll. */
   type: ModType;
+  /** An object containing all of the stat buffs and debuffs on the mod. e.g. 0.09 would indicate a 9% increase, -0.2 would be a 20% decrease. */
   stats: ModStats;
+  /** True if the mod has been "favorited." Favorite mods cannot be recycled. */
   favorite?: boolean;
+  /** True if the mod has unique properties. */
   corrupted?: boolean;
+  /** True if the mod has a connection to the Deck I/O Panel through some chain of socket connections. */
   charged?: boolean;
 };
 /** @public */
 type CyberdeckStats = {
+  /** An object with mults affecting the player's stats directly. */
   playerMults: Multipliers;
+  /** An object with stats affecting component production, fee reduction, and activity speed. */
   otherMults: MiscMults;
+  /** The number of additional deck rack slots provided when charged, if any. */
   extraRackSlots: number;
+  /** Cyberdeck mechanic levels that are gained permanently upon charging the mod. */
   consumableStats: ConsumableStats;
+  /** Stats affecting mechanics you can unlock after completing fl1ght.exe - contains spoilers. */
   endgameStats: EndgameMults;
 };
 /** @public */
 type ModStats = {
+  /** An object with mults affecting the player's stats directly. */
   playerMults?: Partial<Multipliers> | null;
+  /** An object with stats affecting component production, fee reduction, and activity speed. */
   otherMults?: Partial<MiscMults> | null;
+  /** The number of additional deck rack slots provided when charged, if any. */
   extraRackSlots?: number;
+  /** Cyberdeck mechanic levels that are gained permanently upon charging the mod. */
   consumableStats?: Partial<ConsumableStats>;
+  /** Stats affecting mechanics you can unlock after completing fl1ght.exe - contains spoilers. */
   endgameStats?: Partial<EndgameMults>;
 };
 /** @public */
@@ -4469,45 +4492,78 @@ type Socket = {
 
 /** @public */
 type CyberdeckModEnumType = {
+  /** The connection point to the cyberdeck itself, used to power mods. */
   CyberdeckIOPanel: "Deck I/O Panel";
+  /** Power supply mods have extra sockets, allowing power from the I/O panel to be applied to more modules. */
   PowerSupply: "Power Supply";
+  /** Processing mods typically buff the cyberdeck itself, or player activities. */
   ProcessingMod: "Processing Mod";
+  /** Uplink mods typically buff various stats related to the player.*/
   Uplink: "Uplink";
+  /** Rack extensions rarely have useful stat boosts, but they increase the number of mod slots on the cyberdeck. */
   RackExtension: "Rack Extension";
+  /** Skill chips are consumed and provide permanent increases to Cyberdeck mechanic levels. */
   SkillChip: "SkillChip";
 };
 
 /** @public */
 type ModType = _ValueOf<CyberdeckModEnumType>;
 
-/** @public */
+/**
+ * Stats affecting component production, fee reduction, and activity speed.
+ * @public
+ * */
 type MiscMults = {
+  /** Additional ROM components produced each update cycle */
   romProduction: number;
+  /** Additional chip components produced each update cycle */
   chipProduction: number;
+  /** Additional neurode components produced each update cycle */
   neurodeProduction: number;
+  /** Additional speed of creating programs manually. e.g. 100% increase would double the speed, or halve the time required. */
   program_creation_speed: number;
+  /** Additional speed of committing crimes. e.g. 100% increase would double the speed, or halve the time required. */
   crime_speed: number;
+  /** Increase or reduction to commission fees incurred from buying or selling stock. */
   stock_fees: number;
+  /** Increase or reduction to money rewarded from completing .cct coding contracts */
   cct_money: number;
+  /** Increase to Node Power for IPvGO, used for calculating reward bonuses. */
   IPvGO_power: number;
+  /** Increase or decrease to cost of gym or university training. */
   class_cost: number;
 };
 
-/** @public */
+/**
+ * Cyberdeck mechanic levels that are gained permanently upon mod charge.
+ * @public
+ */
 type ConsumableStats = {
+  /** Stat that increases the potential rarity of mods found while netrunning. */
   netrunning_lvl: number;
+  /** Stat that increases the speed that the ICEBreaker cost returns to minimum for netrunning. */
   netrun_cooldown_lvl: number;
+  /** Increases the number of mods that can be kept in storage. */
   mod_storage: number;
+  /** Stat that increases the potential rarity of mods created in the crafting screen. */
   crafting_lvl: number;
 };
 
-/** @public */
+/**
+ * Stats affecting mechanics you can unlock after completing fl1ght.exe. Contains spoilers.
+ * @public */
 type EndgameMults = {
+  /** Multiplier to Bladeburner stamina gain rate */
   stamina_gain: number;
+  /** Additional speed of grafting augs. e.g. 100% increase would double the speed, or halve the time required. */
   graft_speed: number;
+  /** Additional sleeve sync rate. */
   sleeve_sync: number;
+  /** Additional boost to charging Stanek fragments. */
   stanek_charge: number;
+  /** Increase or decrease to the cost of equipment for gang members. */
   equipment_cost: number;
+  /** Increase or decrease to xp gained for intelligence */
   int_exp: number;
 };
 
@@ -4543,27 +4599,41 @@ type NetrunDirection = _ValueOf<NetrunDirectionEnumType>;
 
 /** @public */
 type NetrunStatus = {
+  /** True if the start or move was successful */
   success: boolean;
-  /** the current coordinates as [y, x] */
+  /** Your current coordinates on the netrunning grid as [y, x] */
   coordinates: number[];
+  /** The type of entity directly adjacent to you in each direction */
   surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
+  /** The threat level rating at your current position. A threat of 1.0 indicates there is a bomb in one of the groups within 1 tile of you, or perhaps there are 2 that are each 3 tiles away... */
   threat: number;
+  /** The number of groups containing bombs within 5 tiles of your current position */
   threatCount: number;
+  /** The amount of energy remaining, in the range [1,0]. Once energy is zero you can no longer break ICE. */
   energy: number;
+  /** A number representing the quality of rewards accumulated during the netrun. */
   score: number;
+  /** True if a netrun is currently ongoing, false otherwise. */
   isNetrunning: boolean;
 };
 
 /** @public */
 type EntityInfo = {
+  /** Which entity variant is at this coordinates */
   type: NetrunEntityVariant;
+  /** x coordinate on the grid. */
   x: number;
+  /** y coordinate on the grid. */
   y: number;
+  /** True if the entity has been revealed. */
   visible: boolean;
+  /** True if the entity has been marked with right-click or toggleFlag(). */
   flagged: boolean;
+  /** The number of times the player has collided with the group. Some entities take multiple hits to break. */
   hits: number;
   /** The other entities in the same "block" as this one, as a list of [y, x] coordinates */
   group: [number, number][] | null;
+  /** Will be true if the player has already set off the trap in the ICE group, otherwise omitted. */
   hasBomb?: boolean;
 };
 

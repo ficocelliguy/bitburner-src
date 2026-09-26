@@ -1,11 +1,7 @@
 Patch changes:
-- fix scenario where an empty or filtered storage would prevent dragging mods
 
 
 TODO:
-
-- junk power supply casing issues, can't be dragged?
-  - see zip save
 
 - stats page
   - cleanup styling

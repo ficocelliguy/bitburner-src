@@ -4,6 +4,7 @@
 
 ## EndgameMults type
 
+Stats affecting mechanics you can unlock after completing fl1ght.exe. Contains spoilers.
 
 **Signature:**
 

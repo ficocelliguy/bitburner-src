@@ -4,6 +4,7 @@
 
 ## ConsumableStats type
 
+Cyberdeck mechanic levels that are gained permanently upon mod charge.
 
 **Signature:**
 

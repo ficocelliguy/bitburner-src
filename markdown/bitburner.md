@@ -1901,6 +1901,7 @@ Count of various cyberdeck component types.
 
 </td><td>
 
+Cyberdeck mechanic levels that are gained permanently upon mod charge.
 
 
 </td></tr>
@@ -2102,6 +2103,7 @@ Errors:
 
 </td><td>
 
+Stats affecting mechanics you can unlock after completing fl1ght.exe. Contains spoilers.
 
 
 </td></tr>
@@ -2347,6 +2349,7 @@ Names of all locations
 
 </td><td>
 
+Stats affecting component production, fee reduction, and activity speed.
 
 
 </td></tr>
