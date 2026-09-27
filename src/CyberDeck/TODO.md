@@ -1,10 +1,12 @@
 Patch changes:
-- Added dev tool to create custom mod
+- Added a dev tool to create custom mods
 - Removed toast feedback from everything that isn't a manual UI interaction
 - Added shine fx to golden reward blocks in netrun minigame
 - Added API documentation for return types' values
 
 TODO:
+
+- identify nested droppable?
 
 - stats page
   - cleanup styling
@@ -13,16 +15,11 @@ TODO:
 - API - test
   - docs for all the types etc
 
-- remove toast from consuming skillchip programmatically
 - use pop-up numbers instead of toasts?
 
 - add notification for all dev buttons
 
-- golden shine on reward blocks
-
 - dev menu - set component counts
-
-- tutorial netrun
 
 NETRUNNING MINIGAME:
 
@@ -47,7 +44,6 @@ TODO LATER:
 - let player choose color of each stat key and value, to hilight or hide stats
 
 - filter box help text
-
   - more search options? > and < ?
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
@@ -58,7 +54,6 @@ TODO LATER:
   - threat level matches threat color
 
 - BN
-
   - rewards
     - starting netrunning level?
     - rack extension cap up?
@@ -72,7 +67,6 @@ TODO LATER:
   - improve sockets?
 
 - Glitch netrunning
-
   - bonus corruption effects on mods?
     - can't be removed
     - health loss?
