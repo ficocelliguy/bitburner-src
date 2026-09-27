@@ -13,7 +13,7 @@ type ModStats = {
   otherMults?: Partial<MiscMults> | null;
   extraRackSlots?: number;
   consumableStats?: Partial<ConsumableStats>;
-  endgameStats?: Partial<EndgameMults>;
+  endgameMults?: Partial<EndgameMults>;
 };
 ```
 **References:** [Multipliers](./bitburner.multipliers.md)<!-- -->, [MiscMults](./bitburner.miscmults.md)<!-- -->, [ConsumableStats](./bitburner.consumablestats.md)<!-- -->, [EndgameMults](./bitburner.endgamemults.md)

@@ -13,7 +13,7 @@ type CyberdeckStats = {
   otherMults: MiscMults;
   extraRackSlots: number;
   consumableStats: ConsumableStats;
-  endgameStats: EndgameMults;
+  endgameMults: EndgameMults;
 };
 ```
 **References:** [Multipliers](./bitburner.multipliers.md)<!-- -->, [MiscMults](./bitburner.miscmults.md)<!-- -->, [ConsumableStats](./bitburner.consumablestats.md)<!-- -->, [EndgameMults](./bitburner.endgamemults.md)
