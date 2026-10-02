@@ -1,10 +1,11 @@
 import { Multipliers } from "../PersonObjects/Multipliers";
-import { ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
+import { Brand, ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
 
 export type DeckMod = {
   id: string;
   rarity: number;
   sockets: SocketList;
+  brand: Brand,
   type: ModType;
   stats: ModStats;
   favorite?: boolean;

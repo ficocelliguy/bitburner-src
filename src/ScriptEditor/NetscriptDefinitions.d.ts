@@ -4412,6 +4412,8 @@ type DeckMod = {
   id: string;
   /** The rarity level of the mod. Higher rarities unlock higher potential rolls. */
   rarity: number;
+  /** The manufacturer of the mod. Or at least, whoever stamped their logo on it most recently. */
+  brand: string;
   /** The available connection points on the mod. Mods can only be connected if they share a socket index. */
   sockets: SocketList;
   /** The category of mod. It indicates the types of stats the mod can roll. */

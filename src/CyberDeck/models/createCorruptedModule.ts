@@ -1,6 +1,6 @@
 import { WHRNG } from "../../Casino/RNG";
 import { DeckMod } from "../Types";
-import { ModType } from "../Enums";
+import { Brand, ModType } from "../Enums";
 import {
   getConsumableBuff,
   getDebuff,
@@ -76,6 +76,7 @@ export const getJunkModule = (rng: WHRNG) => {
     {
       type: ModType.RackExtension,
       id: getID(rng),
+      brand: Brand.Unknown,
       sockets: oneSocket,
       rarity: 0,
       stats: {
@@ -85,6 +86,7 @@ export const getJunkModule = (rng: WHRNG) => {
     {
       type: ModType.ProcessingMod,
       id: getID(rng),
+      brand: Brand.Unknown,
       sockets: twoSocket,
       rarity: 0,
       stats: {
@@ -94,6 +96,7 @@ export const getJunkModule = (rng: WHRNG) => {
     {
       type: ModType.Uplink,
       id: getID(rng),
+      brand: Brand.Unknown,
       sockets: twoSocket,
       rarity: 0,
       stats: {
@@ -103,6 +106,7 @@ export const getJunkModule = (rng: WHRNG) => {
     {
       type: ModType.PowerSupply,
       id: getID(rng),
+      brand: Brand.Unknown,
       sockets: twoSocket,
       rarity: 0,
       stats: {},
@@ -120,6 +124,7 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   return {
     type: ModType.RackExtension,
     id: getID(rng),
+    brand: Brand.Unknown,
     sockets: getRandomSockets(rng, 1),
     rarity: Math.floor(extraSlots * 2),
     corrupted: true,
@@ -136,6 +141,7 @@ export const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
   return {
     type: ModType.SkillChip,
     id: getID(rng),
+    brand: Brand.Unknown,
     sockets: getRandomSockets(rng, 1),
     rarity: 5,
     corrupted: true,
@@ -155,6 +161,7 @@ export const getEndgameStatModule = (rng: WHRNG): DeckMod => {
   return {
     type: ModType.ProcessingMod,
     id: getID(rng),
+    brand: Brand.ChurchOfTheMachineGod,
     sockets: getRandomSockets(rng, 1),
     rarity: level,
     stats: {

@@ -209,7 +209,8 @@ export function initNetrunGrid(corrupted: boolean, depth = 0) {
   const bombCount = Math.random() * 2 + 4;
   for (let i = 0; i < bombCount; i++) {
     const iceGroup = _.shuffle(
-      Object.values(NetrunningState.groups).filter((g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb),
+      Object.values(NetrunningState.groups).filter(
+        (g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb && g[0]?.x > 8 && g[0]?.y > 8)
     )[0];
     if (!iceGroup) {
       break;
@@ -304,6 +305,7 @@ function offlineEntity(entity: NetrunEntity | null) {
     return offlineEntity(NetrunningState.grid[y + 1]?.[x + 1]);
   }
   entity.type = NetrunEntityVariant.offline;
+  entity.hits = 0;
   updateGroup(entity, -1);
   // TODO-fico: remove from old group inside offlineEntity
   NetrunningState.groups[-1] ??= [];

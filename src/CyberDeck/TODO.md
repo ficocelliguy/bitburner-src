@@ -1,10 +1,41 @@
 Patch changes:
-- Added a dev tool to create custom mods
-- Removed toast feedback from everything that isn't a manual UI interaction
-- Added shine fx to golden reward blocks in netrun minigame
-- Added API documentation for return types' values
+- limit bombs in starting area to prevent getting walled in too much early
 
 TODO:
+
+- choose a target to netrun against when starting
+- Use target to generate some mods in reward pool
+
+- make early rolls more attractive
+- remove some useless rolls
+- reduce early debuffs
+- hint at glitch
+
+- hint to the player at some of the better possibilities
+  - Give them a few starter items that are a bit stronger ?
+  - rig the generation to give the 1st crafted or netrun item good stats ?
+
+- Prevent queueing moves in netrunning minigame
+
+- dragging a wire and stopping your mouse freezes the line for a second
+
+- breaking a firewall doesn't reveal what's around it?
+
+- make junk mods more clearly labelled
+
+- After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
+
+- require at least one free space to netrun
+
+- remove mod level cap now that there are soft caps on stats?
+
+- hacknet ram cost buff is too low?
+
+- having the option to have different "pull pools" to prioritize specific types is interesting
+- maybe you get tickets or something from netrunning and you can choose which of several loot box types to spend them on
+- better run gives better mod within some range set by running level rather than bigger pool of crap you don't care about
+- choose a target when netrunning- different companies specialize in different mod types
+
 
 - identify nested droppable?
 

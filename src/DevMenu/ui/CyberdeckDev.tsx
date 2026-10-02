@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
-import { ToastVariant } from "@enums";
+import { Brand, ToastVariant } from "@enums";
 import { CyberdeckState, hasCyberdeck } from "../../CyberDeck/models/CyberdeckState";
 import { gainCyberdeck } from "../../CyberDeck/models/cyberdeckServer";
 import { gainComponentMessage } from "../../CyberDeck/ui/gainComponentToast";
@@ -300,6 +300,7 @@ function CreateCustomModModal({
     onClose({
       type,
       id: getID(getNextCraftingPowerSupplyWHRNG()),
+      brand: Brand.OnoSendai,
       rarity: 0,
       sockets,
       stats: {

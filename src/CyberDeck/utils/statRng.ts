@@ -52,52 +52,63 @@ export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: numbe
 
 export function getFullStatRollRanges() {
   const playerMults: Partial<{ [K in keyof Multipliers]: StatRollBounds }> = {
-    hacking_chance: { minRoll: 0.0012, maxRoll: 0.16 },
-    hacking_exp: { minRoll: 0.0008, maxRoll: 0.16 },
-    hacking: { minRoll: 0.0005, maxRoll: 0.11 },
-    strength: { minRoll: 0.0016, maxRoll: 0.19 },
-    strength_exp: { minRoll: 0.0016, maxRoll: 0.19 },
-    defense: { minRoll: 0.0016, maxRoll: 0.19 },
-    defense_exp: { minRoll: 0.0016, maxRoll: 0.19 },
-    dexterity: { minRoll: 0.0016, maxRoll: 0.19 },
-    dexterity_exp: { minRoll: 0.0016, maxRoll: 0.19 },
-    agility: { minRoll: 0.0016, maxRoll: 0.19 },
-    agility_exp: { minRoll: 0.0016, maxRoll: 0.19 },
-    charisma: { minRoll: 0.001, maxRoll: 0.15 },
-    charisma_exp: { minRoll: 0.001, maxRoll: 0.15 },
-    hacknet_node_money: { minRoll: 0.0012, maxRoll: 0.22 },
-    hacknet_node_ram_cost: { minRoll: -0.0012, maxRoll: -0.16 },
-    hacknet_node_level_cost: { minRoll: -0.0012, maxRoll: -0.16 },
-    company_rep: { minRoll: 0.001, maxRoll: 0.21 },
-    faction_rep: { minRoll: 0.0005, maxRoll: 0.11 },
-    work_money: { minRoll: 0.001, maxRoll: 0.54 },
-    crime_success: { minRoll: 0.002, maxRoll: 0.23 },
-    crime_money: { minRoll: 0.002, maxRoll: 0.17 },
+    /* mental mods */
+    hacking_chance: { minRoll: 0.03, maxRoll: 0.22 },
+    hacking_exp: { minRoll: 0.03, maxRoll: 0.22 },
+    hacking: { minRoll: 0.03, maxRoll: 0.15 },
+    hacking_speed: { minRoll: 0.02, maxRoll: 0.15 },
+    hacknet_node_money: { minRoll: 0.05, maxRoll: 0.3 },
+    hacknet_node_ram_cost: { minRoll: -0.05, maxRoll: -0.3 },
+    hacknet_node_level_cost: { minRoll: -0.05, maxRoll: -0.3 },
+
+    /* physical and crime mods */
+    strength: { minRoll: 0.05, maxRoll: 0.26 },
+    defense: { minRoll: 0.05, maxRoll: 0.26 },
+    dexterity: { minRoll: 0.05, maxRoll: 0.26 },
+    agility: { minRoll: 0.05, maxRoll: 0.26 },
+    crime_success: { minRoll: 0.05, maxRoll: 0.31 },
+    crime_money: { minRoll: 0.05, maxRoll: 0.23 },
+
+    /* work and soft skills mods */
+    charisma: { minRoll: 0.03, maxRoll: 0.2025 },
+    charisma_exp: { minRoll: 0.03, maxRoll: 0.21 },
+    company_rep: { minRoll: 0.03, maxRoll: 0.28 },
+    faction_rep: { minRoll: 0.03, maxRoll: 0.14 },
+    work_money: { minRoll: 0.1, maxRoll: 0.72 },
   };
-  const otherMults: { [K in keyof MiscMults]: StatRollBounds } = {
-    romProduction: { minRoll: 0.01, maxRoll: 4.1 },
-    chipProduction: { minRoll: 0.01, maxRoll: 4.1 },
-    neurodeProduction: { minRoll: 0.01, maxRoll: 4.1 },
-    program_creation_speed: { minRoll: 0.002, maxRoll: 0.17 },
-    crime_speed: { minRoll: 0.0015, maxRoll: 0.17, hardCap: 5 },
-    stock_fees: { minRoll: -0.0015, maxRoll: -0.17, hardMin: -0.9 },
-    cct_money: { minRoll: 0.003, maxRoll: 0.22 },
-    IPvGO_power: { minRoll: 0.001, maxRoll: 0.12 },
-    class_cost: { minRoll: -0.002, maxRoll: -0.32, hardMin: -1 },
+  const otherMults: Partial<{ [K in keyof MiscMults]: StatRollBounds }> = {
+    /* mental mods */
+    program_creation_speed: { minRoll: 0.1, maxRoll: 0.30 },
+
+    /* physical and crime mods */
+    crime_speed: { minRoll: 0.0375, maxRoll: 0.23, hardCap: 5 },
+
+    /* work and soft skills mods */
+    stock_fees: { minRoll: -0.0375, maxRoll: -0.23, hardMin: -0.9 },
+    cct_money: { minRoll: 0.075, maxRoll: 0.3 },
+    class_cost: { minRoll: -0.05, maxRoll: -0.44, hardMin: -1 },
+    IPvGO_power: { minRoll: 0.03, maxRoll: 0.20 },
+
+    /* cyberdeck mods */
+    romProduction: { minRoll: 0.25, maxRoll: 5.5 },
+    chipProduction: { minRoll: 0.25, maxRoll: 5.5 },
+    neurodeProduction: { minRoll: 0.25, maxRoll: 5.5 },
   };
   const consumableStats: { [K in keyof ConsumableStats]: StatRollBounds } = {
-    netrunning_lvl: { minRoll: 0.01, maxRoll: 2.1 },
-    crafting_lvl: { minRoll: 0.01, maxRoll: 2.1 },
-    netrun_cooldown_lvl: { minRoll: 0.01, maxRoll: 2.1 },
-    mod_storage: { minRoll: 0.02, maxRoll: 1.7 },
+    /* cyberdeck mods */
+    netrunning_lvl: { minRoll: 0.25, maxRoll: 2.83 },
+    crafting_lvl: { minRoll: 0.25, maxRoll: 2.83 },
+    netrun_cooldown_lvl: { minRoll: 0.25, maxRoll: 2.83 },
+    mod_storage: { minRoll: 0.2, maxRoll: 2.3 },
   };
   const endgameStats: { [K in keyof EndgameMults]: StatRollBounds } = {
-    stamina_gain: { minRoll: 0.001, maxRoll: 0.16 },
-    graft_speed: { minRoll: 0.0004, maxRoll: 0.13, hardCap: 5 },
-    sleeve_sync: { minRoll: 0.0008, maxRoll: 0.13 },
-    stanek_charge: { minRoll: 0.0008, maxRoll: 0.13 },
-    equipment_cost: { minRoll: -0.0015, maxRoll: -0.17, hardMin: -0.9 },
-    int_exp: { minRoll: 0.0012, maxRoll: 0.082 },
+    /* endgame mods */
+    stamina_gain: { minRoll: 0.03, maxRoll: 0.22 },
+    graft_speed: { minRoll: 0.03, maxRoll: 0.17, hardCap: 5 },
+    sleeve_sync: { minRoll: 0.03, maxRoll: 0.17 },
+    stanek_charge: { minRoll: 0.03, maxRoll: 0.17 },
+    equipment_cost: { minRoll: -0.0375, maxRoll: -0.22, hardMin: -0.9 },
+    int_exp: { minRoll: 0.03, maxRoll: 0.11 },
   };
 
   return {
@@ -108,6 +119,84 @@ export function getFullStatRollRanges() {
     extraRackSlots: 0,
   } as const;
 }
+
+export function getHackingModStatRanges() {
+  const { playerMults, otherMults } = getFullStatRollRanges();
+
+  return {
+    playerMults: {
+      hacking_chance: playerMults.hacking_chance,
+      hacking_exp: playerMults.hacking_exp,
+      hacking: playerMults.hacking,
+      hacking_speed: playerMults.hacking_speed,
+
+      hacknet_node_money: playerMults.hacknet_node_money,
+      hacknet_node_ram_cost: playerMults.hacknet_node_ram_cost,
+      hacknet_node_level_cost: playerMults.hacknet_node_level_cost,
+    },
+    otherMults: {
+      program_creation_speed: otherMults.program_creation_speed,
+    },
+  } as const;
+}
+
+export function getPhysicalModStatRanges() {
+  const { playerMults, otherMults } = getFullStatRollRanges();
+
+  return {
+    playerMults: {
+      strength: playerMults.strength,
+      defense: playerMults.defense,
+      dexterity: playerMults.dexterity,
+      agility: playerMults.agility,
+      crime_success: playerMults.crime_success,
+      crime_money: playerMults.crime_money,
+    },
+    otherMults: {
+      crime_speed: otherMults.crime_speed,
+    },
+  };
+}
+
+export function getWorkModStatRanges() {
+  const { playerMults, otherMults } = getFullStatRollRanges();
+
+  return {
+    playerMults: {
+      charisma: playerMults.charisma,
+      charisma_exp: playerMults.charisma_exp,
+      company_rep: playerMults.company_rep,
+      faction_rep: playerMults.faction_rep,
+      work_money: playerMults.work_money,
+    },
+    otherMults: {
+      stock_fees: otherMults.stock_fees,
+      cct_money: otherMults.cct_money,
+      class_cost: otherMults.class_cost,
+      IPvGO_power: otherMults.IPvGO_power,
+    },
+  };
+}
+
+export function getCyberdeckModStatRanges() {
+  const { otherMults, consumableStats } = getFullStatRollRanges();
+
+  return {
+    otherMults: {
+      romProduction: otherMults.romProduction,
+      chipProduction: otherMults.chipProduction,
+      neurodeProduction: otherMults.neurodeProduction,
+    },
+    consumableStats: {
+      netrunning_lvl: consumableStats.netrunning_lvl,
+      crafting_lvl: consumableStats.crafting_lvl,
+      netrun_cooldown_lvl: consumableStats.netrun_cooldown_lvl,
+      mod_storage: consumableStats.mod_storage,
+    },
+  };
+}
+
+
 
 const EMPTY_BOUNDS: StatRollBounds = { minRoll: 0, maxRoll: 0 };
 
@@ -126,12 +215,15 @@ function getStatRoll(rng: WHRNG, valueRangeInfo: StatRollBounds, level: number, 
   return valueRangeInfo.minRoll + weightedSum;
 }
 
-export function getPlayerStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
-  const fullStats = getFullStatRollRanges();
-
-  const playerMultKeys = getRecordKeys(fullStats.playerMults);
+export function getPlayerStatBuff(
+  level: number,
+  rng: WHRNG,
+  scalar: number = 1,
+  playerMults = getFullStatRollRanges().playerMults,
+): Partial<Multipliers> {
+  const playerMultKeys = getRecordKeys(playerMults);
   const statToAdd = playerMultKeys[Math.floor(rng.random() * playerMultKeys.length)];
-  const valueRangeInfo = fullStats.playerMults[statToAdd] ?? EMPTY_BOUNDS;
+  const valueRangeInfo = playerMults[statToAdd] ?? EMPTY_BOUNDS;
 
   return {
     [statToAdd]: getStatRoll(rng, valueRangeInfo, level, scalar),
@@ -143,12 +235,11 @@ export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partia
   return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
 }
 
-export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<ConsumableStats> {
-  const fullStats = getFullStatRollRanges();
+export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1, consumableStats = getFullStatRollRanges().consumableStats): Partial<ConsumableStats> {
 
-  const consumableKeys = getRecordKeys(fullStats.consumableStats);
+  const consumableKeys = getRecordKeys(consumableStats);
   const statToAdd = consumableKeys[Math.floor(rng.random() * consumableKeys.length)];
-  const valueRange = fullStats.consumableStats[statToAdd];
+  const valueRange = consumableStats[statToAdd] ?? EMPTY_BOUNDS;
 
   return {
     [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
@@ -172,12 +263,10 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
   return getEndgameBuff(debuffLevel, rng, scalar * -1);
 }
 
-export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const fullStats = getFullStatRollRanges();
-
-  const otherMultKeys = getRecordKeys(fullStats.otherMults);
+export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1, otherMults = getFullStatRollRanges().otherMults): Partial<MiscMults> {
+  const otherMultKeys = getRecordKeys(otherMults);
   const statToAdd = otherMultKeys[Math.floor(rng.random() * otherMultKeys.length)];
-  const valueRange = fullStats.otherMults[statToAdd];
+  const valueRange = otherMults[statToAdd] ?? EMPTY_BOUNDS;
 
   return {
     [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
@@ -191,15 +280,20 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
   const bonusAttempts = rng.random() < 0.08 ? 2 : 0;
-  const levelUpAttempts = (levelBoost / (levelBoost + 1)) * 16 + 4 + bonusAttempts;
+  const excess = Math.max(levelBoost - 10, 0);
+  const ratio = 0.75;
+  const chunk = 10;
+  const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
+
+  const levelUpAttempts = (excess + diminishedExcess) * 0.6 + 4 + bonusAttempts;
   const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;
   for (let i = 0; i < levelUpAttempts; i++) {
-    if (rng.random() < startingValue - i / 20) {
+    if (rng.random() < Math.max(startingValue - i / 20, 0.1)) {
       level++;
     }
   }
-  return Math.min(level, 12);
+  return level;
 }
 
 export function getID(rng: WHRNG) {
