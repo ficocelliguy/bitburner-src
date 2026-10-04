@@ -229,7 +229,7 @@ export function getPlayerStatBuff(
 }
 
 export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
   return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
 }
 
@@ -261,7 +261,7 @@ export function getEndgameBuff(level: number, rng: WHRNG, scalar: number = 1): P
 }
 
 export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
   return getEndgameBuff(debuffLevel, rng, scalar * -1);
 }
 
@@ -281,18 +281,18 @@ export function getOtherStatBuff(
 }
 
 export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
-  const debuffLevel = rng.random() * Math.max(8 - level, 3) + Math.max(2 - level / 3, 0);
+  const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
   return getOtherStatBuff(debuffLevel, rng, scalar * -1);
 }
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
-  const bonusAttempts = rng.random() < 0.08 ? 2 : 0;
+  const bonusAttempts = rng.random() < 0.1 ? 9 : 6;
   const excess = Math.max(levelBoost - 10, 0);
   const ratio = 0.75;
   const chunk = 10;
   const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
 
-  const levelUpAttempts = (excess + diminishedExcess) * 0.6 + 4 + bonusAttempts;
+  const levelUpAttempts = (excess + diminishedExcess) * 0.6 + bonusAttempts;
   const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;
   for (let i = 0; i < levelUpAttempts; i++) {

@@ -7,7 +7,7 @@ import {
 import { NetrunningRewards } from "../Types";
 import { Brand, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
-import { createModule, getBrandedModMaker } from "./createModule";
+import { createHackingMod, createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 import { completeNetrunTutorial } from "./tutorial";
@@ -114,7 +114,8 @@ export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand: Br
     return getGenericNetrunningRewards(rng, score);
   }
   const rewards = [modMaker(rng, 2, 1.2)];
-  rewards.push(score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng));
+  const boost = isEligibleForSpecialReward(score);
+  rewards.push(boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng));
   rewards.push(createModule(rng));
   if (score > 120) {
     rewards.push(createModule(rng));
@@ -141,7 +142,7 @@ export function getGenericNetrunningRewards(rng: WHRNG, score: number) {
 }
 
 function isEligibleForSpecialReward(score: number) {
-  const isEarlyRun = CyberdeckState.netrunningSeedUsages <= 2;
+  const isEarlyRun = CyberdeckState.netrunningSeedUsages <= 3;
   const hasRareMod = [...CyberdeckState.storedModules, ...CyberdeckState.installedModules].some((m) => m.rarity >= 5);
   return score > 70 && isEarlyRun && !hasRareMod;
 }

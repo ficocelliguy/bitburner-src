@@ -190,7 +190,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
 
   const extraSlotVariant = rng.random() < 0.1;
-  const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng) : {};
+  const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng, 0.7) : {};
   const extraSockets = rng.random() < 0.08 ? 1 : 0;
   const bonus = Math.max((extraSlotVariant ? 2 : 1) + extraSockets, 2);
 
@@ -214,7 +214,7 @@ export function createProcessingModule(
   rng: WHRNG,
   addDebuff = true,
   scalar = 1,
-  debuffScalar = 1,
+  debuffScalar = 0.7,
 ): DeckMod {
   const buff = getOtherStatBuff(level, rng, scalar);
 
@@ -236,7 +236,7 @@ export function createProcessingModule(
   };
 }
 
-export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 1): DeckMod {
+export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 0.7): DeckMod {
   const buff = getPlayerStatBuff(level, rng, scalar);
 
   const applyStandardDebuff = rng.random() < 0.8;
@@ -288,16 +288,16 @@ function createSkillChip(level: number, rng: WHRNG): DeckMod {
 
 function getRandomModuleType(rng: WHRNG) {
   const roll = rng.random();
-  if (roll < 0.2) {
+  if (roll < 0.3) {
     return ModType.PowerSupply;
   }
-  if (roll < 0.3) {
+  if (roll < 0.4) {
     return ModType.RackExtension;
   }
   if (roll < 0.6) {
     return ModType.ProcessingMod;
   }
-  if (roll < 0.9) {
+  if (roll < 0.8) {
     return ModType.Uplink;
   }
   return ModType.SkillChip;
@@ -316,18 +316,18 @@ export function createInitialModules() {
     sockets: [true, false, false, true, false, false, true, false],
     stats: {
       playerMults: {
-        charisma: -0.03,
+        charisma_exp: -0.03,
       },
     },
   };
   const processingModule: DeckMod = {
     type: ModType.ProcessingMod,
     id: getID(rng),
-    brand: Brand.BladeIndustries,
+    brand: Brand.OmniaCybersystems,
     rarity: 3,
     sockets: [true, false, false, false, false, false, false, false],
     stats: {
-      playerMults: getDebuff(2, rng),
+      playerMults: getDebuff(2, rng, 0.4),
       otherMults: {
         neurodeProduction: 0.15,
       },
@@ -336,14 +336,14 @@ export function createInitialModules() {
   const uplinkModule: DeckMod = {
     type: ModType.Uplink,
     id: getID(rng),
-    brand: Brand.OnoSendai,
+    brand: Brand.OmegaSoftware,
     rarity: 0,
     sockets: [false, false, false, false, false, false, true, false],
     stats: {
       playerMults: {
-        hacknet_node_money: 0.05,
+        hacking: 0.05,
       },
-      otherMults: getOtherStatDebuff(0, rng, 0.5),
+      otherMults: getOtherStatDebuff(4, rng, 0.5),
     },
   };
   const skillChip: DeckMod = {
@@ -361,14 +361,14 @@ export function createInitialModules() {
   const uplinkModule2: DeckMod = {
     type: ModType.Uplink,
     id: getID(rng),
-    brand: Brand.OnoSendai,
+    brand: Brand.BladeIndustries,
     rarity: 3,
     sockets: [false, false, false, false, false, true, false, false],
     stats: {
       playerMults: {
-        crime_success: 0.1,
+        faction_rep: 0.035,
       },
-      otherMults: getOtherStatDebuff(0, rng, 0.5),
+      otherMults: getOtherStatDebuff(1, rng, 0.4),
     },
   };
 
@@ -384,6 +384,24 @@ export function createInitialModules() {
 
   CyberdeckState.tutorialSteps.hasMadeConnection = false;
   CyberdeckState.tutorialSteps.hasChargedModule = false;
+}
+
+export function createSpecialFirstTimeMod(rng: WHRNG): DeckMod {
+  return {
+    brand: Brand.OmegaSoftware,
+    id: getID(rng),
+    rarity: 5,
+    sockets: getRandomSockets(rng, 1),
+    stats: {
+      playerMults: {
+        hacking_speed: 0.031,
+      },
+      otherMults: {
+        crime_speed: -0.042
+      }
+    },
+    type: ModType.Uplink
+  }
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
@@ -419,7 +437,7 @@ export function craftPowerSupply() {
   }
   payComponentCost(powerSupplyCraftingCost);
   const rng = getNextCraftingPowerSupplyWHRNG();
-  const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel + 1), rng);
+  const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   return newComponent;
@@ -431,7 +449,7 @@ export function craftProcessingModule() {
   }
   payComponentCost(processingModuleCraftingCost);
   const rng = getNextCraftingProcessingModWHRNG();
-  const newComponent = createProcessingModule(getLevel(rng, CyberdeckState.craftingLevel), rng);
+  const newComponent = createProcessingModule(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   return newComponent;
@@ -443,7 +461,7 @@ export function craftUplink() {
   }
   payComponentCost(uplinkCraftingCost);
   const rng = getNextCraftingUplinkWHRNG();
-  const newComponent = createUplink(getLevel(rng, CyberdeckState.craftingLevel), rng);
+  const newComponent = createUplink(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   return newComponent;

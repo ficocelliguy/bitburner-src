@@ -1,16 +1,17 @@
 Patch changes:
 - Players now choose one of four companies to target in their netrun heist. 
 - Each company specializes in specific categories of mod rolls, allowing for more player influence over loot
+- Improved the possible level rolls of netrun and crafted mods at low levels
+- Improved the minimum part of the roll ranges for stats, to make early mods look more interesting
+- Re-worked starting modules to have more useful stats, to hint at the value that mods can have
 - Limit bombs in netrun starting area to prevent getting walled in too much early
 
 TODO:
 - Improve styling of target choice
 
-- reduce early debuffs
 - hint at glitch
 
 - hint to the player at some of the better possibilities
-  - Give them a few starter items that are a bit stronger ?
   - rig the generation to give the 1st crafted or netrun item good stats ?
 
 - Prevent queueing moves in netrunning minigame
@@ -19,20 +20,11 @@ TODO:
 
 - breaking a firewall doesn't reveal what's around it?
 
-- make junk mods more clearly labelled
+- make junk mods more clearly labeled
 
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 
 - require at least one free space to netrun
-
-- remove mod level cap now that there are soft caps on stats?
-
-- hacknet ram cost buff is too low?
-
-- having the option to have different "pull pools" to prioritize specific types is interesting
-- maybe you get tickets or something from netrunning and you can choose which of several loot box types to spend them on
-- better run gives better mod within some range set by running level rather than bigger pool of crap you don't care about
-- choose a target when netrunning- different companies specialize in different mod types
 
 
 - identify nested droppable?
