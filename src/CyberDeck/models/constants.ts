@@ -1,5 +1,5 @@
 import { ComponentCounts } from "../Types";
-import { ModType } from "../Enums";
+import { Brand, ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "./CyberdeckState";
 import { CONSTANTS } from "../../Constants";
@@ -99,6 +99,49 @@ function getWifuDescription(moduleType: ModType): string {
       return "";
   }
 }
+
+export const BRAND_DETAILS = {
+  [Brand.OmegaSoftware]: {
+    specialty: "Hacking and hacknet mods",
+    specialtyLong: "Specializes in mods that boost hack skills, program creation, and hacknet.",
+    tagline: "",
+  },
+  [Brand.BachmanAndAssociates]: {
+    specialty: "Faction and social mods",
+    specialtyLong: "Specializes in mods that boost fation and company work, and stock, cct, IPvGO, and classes.",
+    tagline: "",
+  },
+  [Brand.BladeIndustries]: {
+    specialty: "Crime and physical mods",
+    specialtyLong: "Specializes in mods that boost physical stats and crime.",
+    tagline: "",
+  },
+  [Brand.OmniaCybersystems]: {
+    specialty: "Cyberdeck and crafting mods",
+    specialtyLong: "Specializes in mods that boost crafting component production and cyberdeck levels.",
+    tagline: "",
+  },
+  [Brand.ChurchOfTheMachineGod]: {
+    specialty: "",
+    specialtyLong: "",
+    tagline: "",
+  },
+  [Brand.Hosaka]: {
+    specialty: "",
+    specialtyLong: "",
+    tagline: "",
+  },
+  [Brand.OnoSendai]: {
+    specialty: "",
+    specialtyLong: "",
+    tagline: "",
+  },
+  [Brand.Unknown]: {
+    specialty: "",
+    specialtyLong: "",
+    tagline: "",
+  },
+} as const;
 
 export const netrunFlavorText =
   "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEBreakers you brought pierce the digital defense, revealing the treasure you came here for.";

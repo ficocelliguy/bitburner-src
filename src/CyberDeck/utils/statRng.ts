@@ -53,7 +53,7 @@ export type StatRollBounds = { minRoll: number; maxRoll: number; softCap?: numbe
 export function getFullStatRollRanges() {
   const playerMults: Partial<{ [K in keyof Multipliers]: StatRollBounds }> = {
     /* mental mods */
-    hacking_chance: { minRoll: 0.03, maxRoll: 0.22 },
+    hacking_chance: { minRoll: 0.1, maxRoll: 0.4 },
     hacking_exp: { minRoll: 0.03, maxRoll: 0.22 },
     hacking: { minRoll: 0.03, maxRoll: 0.15 },
     hacking_speed: { minRoll: 0.02, maxRoll: 0.15 },
@@ -78,7 +78,7 @@ export function getFullStatRollRanges() {
   };
   const otherMults: Partial<{ [K in keyof MiscMults]: StatRollBounds }> = {
     /* mental mods */
-    program_creation_speed: { minRoll: 0.1, maxRoll: 0.30 },
+    program_creation_speed: { minRoll: 0.1, maxRoll: 0.3 },
 
     /* physical and crime mods */
     crime_speed: { minRoll: 0.0375, maxRoll: 0.23, hardCap: 5 },
@@ -87,7 +87,7 @@ export function getFullStatRollRanges() {
     stock_fees: { minRoll: -0.0375, maxRoll: -0.23, hardMin: -0.9 },
     cct_money: { minRoll: 0.075, maxRoll: 0.3 },
     class_cost: { minRoll: -0.05, maxRoll: -0.44, hardMin: -1 },
-    IPvGO_power: { minRoll: 0.03, maxRoll: 0.20 },
+    IPvGO_power: { minRoll: 0.03, maxRoll: 0.2 },
 
     /* cyberdeck mods */
     romProduction: { minRoll: 0.25, maxRoll: 5.5 },
@@ -196,23 +196,21 @@ export function getCyberdeckModStatRanges() {
   };
 }
 
-
-
 const EMPTY_BOUNDS: StatRollBounds = { minRoll: 0, maxRoll: 0 };
 
 function getStatRoll(rng: WHRNG, valueRangeInfo: StatRollBounds, level: number, scalar: number) {
   const totalValueRange = valueRangeInfo.maxRoll - valueRangeInfo.minRoll;
   const scaledValueRange = totalValueRange / 12;
   const minRoll = scaledValueRange * level * 0.4;
-  const maxRoll = scaledValueRange * level;
+  const maxRoll = scaledValueRange * (level + 1);
 
   // Roll three times and take the sum of the two lowest rolls, to create a range that makes higher values more rare
-  const valueRoll1 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
-  const valueRoll2 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
-  const valueRoll3 = (maxRoll - minRoll) * scalar * rng.random() * 0.5;
+  const valueRoll1 = (maxRoll - minRoll) * rng.random();
+  const valueRoll2 = (maxRoll - minRoll) * rng.random();
+  const valueRoll3 = (maxRoll - minRoll) * rng.random();
   const weightedSum = valueRoll1 + valueRoll2 + valueRoll3 - Math.max(valueRoll1, valueRoll2, valueRoll3);
 
-  return valueRangeInfo.minRoll + weightedSum;
+  return (valueRangeInfo.minRoll + weightedSum) * scalar;
 }
 
 export function getPlayerStatBuff(
@@ -235,8 +233,12 @@ export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partia
   return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
 }
 
-export function getConsumableBuff(level: number, rng: WHRNG, scalar: number = 1, consumableStats = getFullStatRollRanges().consumableStats): Partial<ConsumableStats> {
-
+export function getConsumableBuff(
+  level: number,
+  rng: WHRNG,
+  scalar: number = 1,
+  consumableStats = getFullStatRollRanges().consumableStats,
+): Partial<ConsumableStats> {
   const consumableKeys = getRecordKeys(consumableStats);
   const statToAdd = consumableKeys[Math.floor(rng.random() * consumableKeys.length)];
   const valueRange = consumableStats[statToAdd] ?? EMPTY_BOUNDS;
@@ -263,7 +265,12 @@ export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number =
   return getEndgameBuff(debuffLevel, rng, scalar * -1);
 }
 
-export function getOtherStatBuff(level: number, rng: WHRNG, scalar: number = 1, otherMults = getFullStatRollRanges().otherMults): Partial<MiscMults> {
+export function getOtherStatBuff(
+  level: number,
+  rng: WHRNG,
+  scalar: number = 1,
+  otherMults = getFullStatRollRanges().otherMults,
+): Partial<MiscMults> {
   const otherMultKeys = getRecordKeys(otherMults);
   const statToAdd = otherMultKeys[Math.floor(rng.random() * otherMultKeys.length)];
   const valueRange = otherMults[statToAdd] ?? EMPTY_BOUNDS;

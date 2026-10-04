@@ -5,7 +5,7 @@ export type DeckMod = {
   id: string;
   rarity: number;
   sockets: SocketList;
-  brand: Brand,
+  brand: Brand;
   type: ModType;
   stats: ModStats;
   favorite?: boolean;

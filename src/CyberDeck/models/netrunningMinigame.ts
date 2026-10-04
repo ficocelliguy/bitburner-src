@@ -206,11 +206,12 @@ export function initNetrunGrid(corrupted: boolean, depth = 0) {
   }
 
   // Plant bombs
-  const bombCount = Math.random() * 2 + 4;
+  const bombCount = Math.random() * 2 + 5;
   for (let i = 0; i < bombCount; i++) {
     const iceGroup = _.shuffle(
       Object.values(NetrunningState.groups).filter(
-        (g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb && g[0]?.x > 8 && g[0]?.y > 8)
+        (g) => g[0]?.type === NetrunEntityVariant.ice && !g[0]?.hasBomb && g[0]?.x > 6 && g[0]?.y > 6,
+      ),
     )[0];
     if (!iceGroup) {
       break;

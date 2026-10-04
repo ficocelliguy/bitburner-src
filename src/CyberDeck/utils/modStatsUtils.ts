@@ -125,8 +125,11 @@ export function isBuff(key: ModKey, value: number): boolean {
 export function formatAsPercent(value: number, shorten = true): string {
   const precision = shorten ? 2 : 4;
   const percent = value * 100;
-  if (percent > 100) {
+  if (Math.abs(percent) >= 100) {
     return `${(value * 100).toPrecision(precision)}%`;
+  }
+  if (Math.abs(percent) >= 10) {
+    return shorten ? `${(value * 100).toFixed(1)}%` : `${(value * 100).toPrecision(precision)}%`;
   }
   return `${(value * 100).toFixed(precision)}%`;
 }

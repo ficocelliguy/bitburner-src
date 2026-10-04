@@ -9,6 +9,8 @@ import { netrunRewards } from "../models/netrunRewards";
 import { initNetrunGrid } from "../models/netrunningMinigame";
 import { useRerender } from "../../ui/React/hooks";
 import { CyberdeckEvents } from "../models/CyberdeckState";
+import { Brand } from "@enums";
+import { NetrunTargetSelect } from "./NetrunTargetSelect";
 
 export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
   const rerender = useRerender(1000);
@@ -38,7 +40,9 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
         title={"Netrunning Results"}
         flavorText={netrunFlavorText}
       />
-      {NetrunningState.isNetrunning || NetrunningState.showNetrunOverride ? (
+      {NetrunningState.isNetrunning && NetrunningState.target === Brand.Unknown ? (
+        <NetrunTargetSelect />
+      ) : NetrunningState.isNetrunning || NetrunningState.showNetrunOverride ? (
         <NetrunMinigame complete={endNetrun}></NetrunMinigame>
       ) : (
         <NetrunningPortal entered={() => initNetrunGrid(corrupted)} corrupted={corrupted} />

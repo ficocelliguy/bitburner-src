@@ -31,5 +31,5 @@ export enum Brand {
   BachmanAndAssociates = "Bachman & Associates",
   OmniaCybersystems = "Omnia Cybersystems",
   ChurchOfTheMachineGod = "Church of the Machine God",
-  Unknown= "Unknown",
+  Unknown = "Unknown",
 }

@@ -1,13 +1,11 @@
 Patch changes:
-- limit bombs in starting area to prevent getting walled in too much early
+- Players now choose one of four companies to target in their netrun heist. 
+- Each company specializes in specific categories of mod rolls, allowing for more player influence over loot
+- Limit bombs in netrun starting area to prevent getting walled in too much early
 
 TODO:
+- Improve styling of target choice
 
-- choose a target to netrun against when starting
-- Use target to generate some mods in reward pool
-
-- make early rolls more attractive
-- remove some useless rolls
 - reduce early debuffs
 - hint at glitch
 

@@ -1,5 +1,5 @@
 import { NetrunEntity } from "../Types";
-import { NetrunDirection } from "@enums";
+import { Brand, NetrunDirection } from "@enums";
 
 export const NETRUNNING_WIDTH = 20;
 export const NETRUNNING_HEIGHT = 15;
@@ -9,6 +9,7 @@ export const GRID_SIZE_PX = 30;
 export const NetrunningState = {
   isNetrunning: false,
   showNetrunOverride: false,
+  target: Brand.Unknown,
   corrupted: false,
   shaking: false,
   shakingBattery: false,

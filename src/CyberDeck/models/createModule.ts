@@ -11,7 +11,8 @@ import {
   uplinkCraftingCost,
 } from "./constants";
 import {
-  getConsumableBuff, getCyberdeckModStatRanges,
+  getConsumableBuff,
+  getCyberdeckModStatRanges,
   getDebuff,
   getHackingModStatRanges,
   getID,
@@ -20,8 +21,10 @@ import {
   getNextCraftingProcessingModWHRNG,
   getNextCraftingUplinkWHRNG,
   getOtherStatBuff,
-  getOtherStatDebuff, getPhysicalModStatRanges,
-  getPlayerStatBuff, getWorkModStatRanges,
+  getOtherStatDebuff,
+  getPhysicalModStatRanges,
+  getPlayerStatBuff,
+  getWorkModStatRanges,
 } from "../utils/statRng";
 import { WHRNG } from "../../Casino/RNG";
 import { clampNumber } from "../../utils/helpers/clampNumber";
@@ -43,6 +46,23 @@ export const getCyberdeckIOPanel = (): DeckMod => {
   };
 };
 
+export function getBrandedModMaker(brand: Brand) {
+  switch (brand) {
+    case Brand.OmegaSoftware:
+      return createHackingMod;
+
+    case Brand.BachmanAndAssociates:
+      return createWorkMod;
+
+    case Brand.BladeIndustries:
+      return createPhysicalMod;
+
+    case Brand.OmniaCybersystems:
+      return createCyberdeckMod;
+  }
+  return null;
+}
+
 export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng), level: number = getLevel(rng)) {
   if (type == ModType.PowerSupply) {
     return createPowerSupply(level, rng);
@@ -59,16 +79,23 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
   return createProcessingModule(level, rng);
 }
 
-export function createHackingMod(rng: WHRNG, level = getLevel(rng), scalar = 1): DeckMod {
+export function createHackingMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
+  const level = getLevel(rng, levelBoost);
   const { playerMults, otherMults } = getHackingModStatRanges();
-  const isOtherMult = rng.random() < 1/8;
+  const isOtherMult = rng.random() < 1 / 8;
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
+  const isOtherDebuff = rng.random() < 0.3;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+  const mergedMults = mergeBuffs(playerMultsMods, debuff);
+  const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
-  if (isOtherMult) {
-    stats.otherMults = otherMultsMods;
-  } else {
-    stats.playerMults = playerMultsMods;
+  if (isOtherMult || isOtherDebuff) {
+    stats.otherMults = mergedOtherMults;
+  }
+  if (!isOtherMult || !isOtherDebuff) {
+    stats.playerMults = mergedMults;
   }
   return {
     brand: Brand.OmegaSoftware,
@@ -80,16 +107,23 @@ export function createHackingMod(rng: WHRNG, level = getLevel(rng), scalar = 1):
   };
 }
 
-export function createPhysicalMod(rng: WHRNG, level = getLevel(rng), scalar = 1): DeckMod {
+export function createPhysicalMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
+  const level = getLevel(rng, levelBoost);
   const { playerMults, otherMults } = getPhysicalModStatRanges();
   const isOtherMult = rng.random() < 1 / 7;
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
+  const isOtherDebuff = rng.random() < 0.3;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+  const mergedMults = mergeBuffs(playerMultsMods, debuff);
+  const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
-  if (isOtherMult) {
-    stats.otherMults = otherMultsMods;
-  } else {
-    stats.playerMults = playerMultsMods;
+  if (isOtherMult || isOtherDebuff) {
+    stats.otherMults = mergedOtherMults;
+  }
+  if (!isOtherMult || !isOtherDebuff) {
+    stats.playerMults = mergedMults;
   }
   return {
     brand: Brand.BladeIndustries,
@@ -101,16 +135,23 @@ export function createPhysicalMod(rng: WHRNG, level = getLevel(rng), scalar = 1)
   };
 }
 
-export function createWorkMod(rng: WHRNG, level = getLevel(rng), scalar = 1): DeckMod {
+export function createWorkMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
+  const level = getLevel(rng, levelBoost);
   const { playerMults, otherMults } = getWorkModStatRanges();
   const isOtherMult = rng.random() < 4 / 9;
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
+  const isOtherDebuff = rng.random() < 0.3;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+  const mergedMults = mergeBuffs(playerMultsMods, debuff);
+  const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
-  if (isOtherMult) {
-    stats.otherMults = otherMultsMods;
-  } else {
-    stats.playerMults = playerMultsMods;
+  if (isOtherMult || isOtherDebuff) {
+    stats.otherMults = mergedOtherMults;
+  }
+  if (!isOtherMult || !isOtherDebuff) {
+    stats.playerMults = mergedMults;
   }
   return {
     brand: Brand.BachmanAndAssociates,
@@ -122,14 +163,16 @@ export function createWorkMod(rng: WHRNG, level = getLevel(rng), scalar = 1): De
   };
 }
 
-export function createCyberdeckMod(rng: WHRNG, level = getLevel(rng), scalar = 1): DeckMod {
+export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
+  const level = getLevel(rng, levelBoost);
   const { otherMults, consumableStats } = getCyberdeckModStatRanges();
   const isOtherMult = rng.random() < 3 / 7;
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
+  const debuff = isOtherMult ? getOtherStatBuff(level, rng, -0.4) : {};
   const consumableBuffMod = isOtherMult ? {} : getConsumableBuff(level, rng, scalar, consumableStats);
   const stats: ModStats = {};
   if (isOtherMult) {
-    stats.otherMults = otherMultsMods;
+    stats.otherMults = mergeBuffs(otherMultsMods, debuff);
   } else {
     stats.consumableStats = consumableBuffMod;
   }
