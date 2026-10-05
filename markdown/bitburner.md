@@ -1762,6 +1762,26 @@ Skill names type of Bladeburner
 </td></tr>
 <tr><td>
 
+[Brand](./bitburner.brand.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[BrandEnumType](./bitburner.brandenumtype.md)
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
 [CacheResult](./bitburner.cacheresult.md)
 
 

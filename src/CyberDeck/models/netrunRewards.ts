@@ -7,7 +7,7 @@ import {
 import { NetrunningRewards } from "../Types";
 import { Brand, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
-import { createHackingMod, createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
+import { createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 import { completeNetrunTutorial } from "./tutorial";

@@ -11,7 +11,7 @@ import { SocketIOPanel } from "./SocketIOPanel";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
-import { getModDescription, getModuleTypeDescription, isCustomBuild } from "../models/constants";
+import { getModDescription, isCustomBuild } from "../models/constants";
 
 export type DeckModuleProps = {
   module: DeckMod;

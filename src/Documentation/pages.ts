@@ -229,6 +229,8 @@ import nsDoc_bitburner_bladeburnerrankrequirement_md from "../../markdown/bitbur
 import nsDoc_bitburner_bladeburnerrankrequirement_type_md from "../../markdown/bitburner.bladeburnerrankrequirement.type.md?raw";
 import nsDoc_bitburner_bladeburnerskillname_md from "../../markdown/bitburner.bladeburnerskillname.md?raw";
 import nsDoc_bitburner_bladeburnerskillnameenumtype_md from "../../markdown/bitburner.bladeburnerskillnameenumtype.md?raw";
+import nsDoc_bitburner_brand_md from "../../markdown/bitburner.brand.md?raw";
+import nsDoc_bitburner_brandenumtype_md from "../../markdown/bitburner.brandenumtype.md?raw";
 import nsDoc_bitburner_cacheresult_md from "../../markdown/bitburner.cacheresult.md?raw";
 import nsDoc_bitburner_cachereward_md from "../../markdown/bitburner.cachereward.md?raw";
 import nsDoc_bitburner_cityname_md from "../../markdown/bitburner.cityname.md?raw";
@@ -1904,6 +1906,8 @@ AllPages["nsDoc/bitburner.bladeburnerrankrequirement.md"] = nsDoc_bitburner_blad
 AllPages["nsDoc/bitburner.bladeburnerrankrequirement.type.md"] = nsDoc_bitburner_bladeburnerrankrequirement_type_md;
 AllPages["nsDoc/bitburner.bladeburnerskillname.md"] = nsDoc_bitburner_bladeburnerskillname_md;
 AllPages["nsDoc/bitburner.bladeburnerskillnameenumtype.md"] = nsDoc_bitburner_bladeburnerskillnameenumtype_md;
+AllPages["nsDoc/bitburner.brand.md"] = nsDoc_bitburner_brand_md;
+AllPages["nsDoc/bitburner.brandenumtype.md"] = nsDoc_bitburner_brandenumtype_md;
 AllPages["nsDoc/bitburner.cacheresult.md"] = nsDoc_bitburner_cacheresult_md;
 AllPages["nsDoc/bitburner.cachereward.md"] = nsDoc_bitburner_cachereward_md;
 AllPages["nsDoc/bitburner.cityname.md"] = nsDoc_bitburner_cityname_md;

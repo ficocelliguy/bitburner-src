@@ -8,7 +8,7 @@
 
 ```typescript
 netrun: {
-    start(): NetrunStatus;
+    start(target: Brand): NetrunStatus;
 
     move(direction: NetrunDirection): Promise<NetrunStatus>;
 

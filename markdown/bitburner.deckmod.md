@@ -11,6 +11,7 @@
 type DeckMod = {
   id: string;
   rarity: number;
+  brand: string;
   sockets: SocketList;
   type: ModType;
   stats: ModStats;
