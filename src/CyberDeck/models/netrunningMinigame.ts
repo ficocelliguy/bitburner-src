@@ -26,6 +26,9 @@ export function move(direction: NetrunDirection, programmaticMove: boolean = fal
   if (newLocation.type == NetrunEntityVariant.offline) {
     hitOfflineNode(programmaticMove);
   } else if (newLocation.type === NetrunEntityVariant.empty) {
+    if (!newLocation.visible) {
+      revealGroup(newLocation);
+    }
     NetrunningState.location = [y + dy, x + dx];
     updateCurrentThreatSignalStrength();
   } else if (newLocation.type === NetrunEntityVariant.dataStore) {
@@ -46,6 +49,9 @@ export function move(direction: NetrunDirection, programmaticMove: boolean = fal
     NetrunningState.rewardScore += getIceReward(newLocation);
   } else if (newLocation.type === NetrunEntityVariant.firewall) {
     newLocation.hits++;
+    if (!newLocation.visible) {
+      revealGroup(newLocation);
+    }
     consumeEnergy(energyCost());
     if (newLocation.hits >= 3) {
       breakEntity(newLocation);
@@ -358,13 +364,13 @@ function getNeighbors(entity: NetrunEntity) {
 function breakEntity(entity: NetrunEntity) {
   emitSparklesOnEntity(entity);
 
-  const group = NetrunningState.groups[entity.group] ?? [];
   const originalType = entity.type;
+  const group = originalType === NetrunEntityVariant.firewall ?
+    [entity] : NetrunningState.groups[entity.group] ?? [];
   revealGroup(entity);
   entity.type = NetrunEntityVariant.empty;
   if (originalType === NetrunEntityVariant.firewall) {
     updateGroup(entity, -2);
-    return;
   }
   for (const member of group) {
     member.type = NetrunEntityVariant.empty;

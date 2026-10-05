@@ -11,7 +11,7 @@ import { SocketIOPanel } from "./SocketIOPanel";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
-import { getModuleDescription, isCustomBuild } from "../models/constants";
+import { getModDescription, getModuleTypeDescription, isCustomBuild } from "../models/constants";
 
 export type DeckModuleProps = {
   module: DeckMod;
@@ -64,6 +64,9 @@ export function ModuleComponent({
     if (module.corrupted) {
       return "[Corrupted]";
     }
+    if (module.rarity === -1) {
+      return "[Junk]";
+    }
     return `[Rarity ${module.rarity}]`;
   }
 
@@ -113,7 +116,7 @@ export function ModuleComponent({
                     <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
                   </div>
                   <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                    {getModuleDescription(module.type)}
+                    {getModDescription(module)}
                   </Typography>
                   {Settings.CyberdeckWiFU && (
                     <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>

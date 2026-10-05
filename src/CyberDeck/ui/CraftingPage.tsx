@@ -5,7 +5,7 @@ import { craftICEBreaker, craftPowerSupply, craftProcessingModule, craftUplink }
 import { ComponentCost, ComponentSymbol } from "./ComponentCost";
 import {
   componentSymbols,
-  getModuleDescription,
+  getModuleTypeDescription,
   ICEBreakerCraftingCost,
   powerSupplyCraftingCost,
   processingModuleCraftingCost,
@@ -164,7 +164,7 @@ export function CraftingPage(): React.ReactElement {
               <div>
                 <h3 style={{ margin: "4px" }}>Craft a Power Supply mod for use on the cyberdeck rack</h3>
                 <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                  {getModuleDescription(ModType.PowerSupply, true)}
+                  {getModuleTypeDescription(ModType.PowerSupply, true)}
                 </Typography>
               </div>
             </div>
@@ -192,7 +192,7 @@ export function CraftingPage(): React.ReactElement {
               <div>
                 <h3 style={{ margin: "4px" }}>Craft an Uplink mod for use on the cyberdeck rack</h3>
                 <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                  {getModuleDescription(ModType.Uplink, true)}
+                  {getModuleTypeDescription(ModType.Uplink, true)}
                 </Typography>
               </div>
             </div>
@@ -220,7 +220,7 @@ export function CraftingPage(): React.ReactElement {
               <div>
                 <h3 style={{ margin: "4px" }}>Craft a Processing mod for use on the cyberdeck rack</h3>
                 <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                  {getModuleDescription(ModType.ProcessingMod, true)}
+                  {getModuleTypeDescription(ModType.ProcessingMod, true)}
                 </Typography>
               </div>
             </div>

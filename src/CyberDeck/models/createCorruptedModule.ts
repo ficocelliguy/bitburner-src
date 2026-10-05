@@ -78,7 +78,7 @@ export const getJunkModule = (rng: WHRNG) => {
       id: getID(rng),
       brand: Brand.Unknown,
       sockets: oneSocket,
-      rarity: 0,
+      rarity: -1,
       stats: {
         extraRackSlots: 1,
       },
@@ -88,7 +88,7 @@ export const getJunkModule = (rng: WHRNG) => {
       id: getID(rng),
       brand: Brand.Unknown,
       sockets: twoSocket,
-      rarity: 0,
+      rarity: -1,
       stats: {
         playerMults: getDebuff(1, rng),
       },
@@ -98,7 +98,7 @@ export const getJunkModule = (rng: WHRNG) => {
       id: getID(rng),
       brand: Brand.Unknown,
       sockets: twoSocket,
-      rarity: 0,
+      rarity: -1,
       stats: {
         playerMults: getDebuff(1, rng),
       },
@@ -108,7 +108,7 @@ export const getJunkModule = (rng: WHRNG) => {
       id: getID(rng),
       brand: Brand.Unknown,
       sockets: twoSocket,
-      rarity: 0,
+      rarity: -1,
       stats: {},
     },
   ];

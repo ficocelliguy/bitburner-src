@@ -1,32 +1,27 @@
 Patch changes:
-- Players now choose one of four companies to target in their netrun heist. 
+- Players now choose one of four companies to target in their netrun heist (UX WIP). 
 - Each company specializes in specific categories of mod rolls, allowing for more player influence over loot
 - Improved the possible level rolls of netrun and crafted mods at low levels
 - Improved the minimum part of the roll ranges for stats, to make early mods look more interesting
 - Re-worked starting modules to have more useful stats, to hint at the value that mods can have
 - Limit bombs in netrun starting area to prevent getting walled in too much early
 - Added an input buffer to netrun minigame to prevent too many inputs causing lag
+- Made junk mods more clearly labeled
 - Improved performance of netrunning minigame
+- Fixed some visual issues with breaking firewall blocks and dragging wires
 
 TODO:
 - Improve styling of netrun target choice
 
 - hint at glitch
 
-- hint to the player at some of the better possibilities
-
-- dragging a wire and stopping your mouse freezes the line for a second
-
-- breaking a firewall doesn't reveal what's around it?
-
-- make junk mods more clearly labeled
-
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 
-- require at least one free space to netrun
-
+- require at least one free space to netrun or craft
 
 - identify nested droppable?
+
+- connect levels to deck somehow? display on deck
 
 - stats page
   - cleanup styling
@@ -48,6 +43,8 @@ NETRUNNING MINIGAME:
   - explain entity types
 
 TODO LATER:
+
+- augs for cyberdeck?
 
 - save netrun mid-run?
 - seed netrun?

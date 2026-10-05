@@ -51,7 +51,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   }, [updateDisplay]);
 
   useLayoutEffect(() => {
-    DrawWiresOnCanvas(canvas.current, draggingWire);
+    !draggingWire && DrawWiresOnCanvas(canvas.current, draggingWire);
     if (canvas.current) {
       canvas.current.style.zIndex = draggingInstalledModule || draggingWire ? "6000" : "101";
     }

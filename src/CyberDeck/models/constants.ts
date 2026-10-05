@@ -1,4 +1,4 @@
-import { ComponentCounts } from "../Types";
+import { ComponentCounts, DeckMod } from "../Types";
 import { Brand, ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "./CyberdeckState";
@@ -60,7 +60,14 @@ export const uplinkCraftingCost: ComponentCounts = {
   iceBreakers: 0,
 };
 
-export function getModuleDescription(moduleType: ModType, overrideCharacterDescription = false): string {
+export function getModDescription(module: DeckMod) {
+  if (module.rarity < 0) {
+    return "This mod is broken. It must have been out here for a while..."
+  }
+  return getModuleTypeDescription(module.type);
+}
+
+export function getModuleTypeDescription(moduleType: ModType, overrideCharacterDescription = false): string {
   if (moduleType === ModType.CyberdeckIOPanel) {
     return isCustomBuild() ? "Ono-Sendai Mk7, custom build." : "Hosaka Cyberdecks: The finest that money can buy.";
   }
