@@ -2,7 +2,7 @@ import React from "react";
 import { Brand } from "@enums";
 import { NetrunningState } from "../models/NetrunningState";
 import { CyberdeckEvents } from "../models/CyberdeckState";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Tooltip } from "@mui/material";
 import { BRAND_DETAILS } from "../models/constants";
 import { Settings } from "../../Settings/Settings";
 
@@ -19,32 +19,39 @@ export function NetrunTargetSelect(): React.ReactElement {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "20px", width: "300px", margin: "40px auto" }}>
       <Typography>Select a target:</Typography>
-      <Button onClick={() => setTarget(Brand.OmegaSoftware)}>
-        <NetrunTargetDescription brand={Brand.OmegaSoftware} />
-      </Button>
-      <Button onClick={() => setTarget(Brand.BachmanAndAssociates)}>
-        <NetrunTargetDescription brand={Brand.BachmanAndAssociates} />
-      </Button>
-      <Button onClick={() => setTarget(Brand.BladeIndustries)}>
-        <NetrunTargetDescription brand={Brand.BladeIndustries} />
-      </Button>
-      <Button onClick={() => setTarget(Brand.OmniaCybersystems)}>
-        <NetrunTargetDescription brand={Brand.OmniaCybersystems} />
-      </Button>
+      <NetrunTargetDescription brand={Brand.OmegaSoftware} setTarget={setTarget} />
+      <NetrunTargetDescription brand={Brand.BachmanAndAssociates} setTarget={setTarget} />
+      <NetrunTargetDescription brand={Brand.BladeIndustries} setTarget={setTarget} />
+      <NetrunTargetDescription brand={Brand.OmniaCybersystems} setTarget={setTarget} />
       <Button onClick={cancel}>Cancel</Button>
     </Box>
   );
 }
 
-function NetrunTargetDescription({ brand }: { brand: Brand }) {
+function NetrunTargetDescription({ brand, setTarget }: { brand: Brand, setTarget: (b: Brand) => void }) {
   return (
     <div>
-      <Typography sx={{ fontWeight: "bold" }}>{brand}</Typography>
-      <Typography sx={{ fontStyle: "italic", color: Settings.theme.secondary, size: "11px" }}>
-        {BRAND_DETAILS[brand].specialty}
-      </Typography>
+      <Tooltip
+        title={
+          <div>
+            <Typography>{BRAND_DETAILS[brand].specialtyLong}</Typography>
+            <Typography sx={{ fontStyle: "italic", color: Settings.theme.secondary, size: "11px" }}>
+              {BRAND_DETAILS[brand].tagline}
+            </Typography>
+          </div>
+        }
+      >
+        <Button onClick={() => setTarget(brand)}>
+          <div style={{width: "282px"}}>
+            <Typography sx={{ fontWeight: "bold" }}>{brand}</Typography>
+            <Typography sx={{ fontStyle: "italic", color: Settings.theme.secondary, size: "11px" }}>
+              {BRAND_DETAILS[brand].specialty}
+            </Typography>
+          </div>
+        </Button>
+      </Tooltip>
     </div>
   );
 }

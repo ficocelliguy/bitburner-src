@@ -23,6 +23,13 @@ export enum NetrunDirection {
   right = "right",
 }
 
+export enum NetrunTargets {
+  OmegaSoftware = "Omega Software",
+  BladeIndustries = "Blade Industries",
+  BachmanAndAssociates = "Bachman & Associates",
+  OmniaCybersystems = "Omnia Cybersystems",
+}
+
 export enum Brand {
   Hosaka = "Hosaka",
   OnoSendai = "Ono-Sendai",

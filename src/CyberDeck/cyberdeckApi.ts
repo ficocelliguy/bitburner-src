@@ -236,8 +236,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       });
     },
     netrun: {
-      start(ctx: NetscriptContext): NetrunStatus {
+      start(ctx: NetscriptContext, _target: unknown): NetrunStatus {
         checkCyberdeckAccess();
+        const target = getEnumHelper("Brand").nsGetMember(ctx, _target);
         const failedToStartResponse = {
           success: false,
           coordinates: [0, 0],
@@ -268,6 +269,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         }
 
         logger(ctx)(`Starting netrun...`);
+        NetrunningState.target = target;
         initNetrunGrid(false);
         const { threat, signals } = getThreatSignalStrength();
         return {

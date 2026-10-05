@@ -7,7 +7,7 @@ Patch changes:
 - Limit bombs in netrun starting area to prevent getting walled in too much early
 
 TODO:
-- Improve styling of target choice
+- Improve styling of netrun target choice
 
 - hint at glitch
 

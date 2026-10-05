@@ -4639,6 +4639,16 @@ type EntityInfo = {
   hasBomb?: boolean;
 };
 
+/** @public */
+type BrandEnumType = {
+  OmegaSoftware: "Omega Software";
+  BladeIndustries: "Blade Industries";
+  BachmanAndAssociates: "Bachman & Associates";
+  OmniaCybersystems: "Omnia Cybersystems";
+};
+/** @public */
+type Brand = _ValueOf<BrandEnumType>;
+
 /**
  * Cyberdeck API
  * @public
@@ -4806,7 +4816,7 @@ export interface Cyberdeck {
      * @remarks
      * Ram cost: 0 GB
      */
-    start(): NetrunStatus;
+    start(target: Brand): NetrunStatus;
 
     /**
      * Attemts to move to an adjacent nearby empty space, or interact with an adgacent entity.
@@ -10593,6 +10603,7 @@ type NSEnums = {
   CyberdeckModType: CyberdeckModEnumType;
   NetrunDirection: NetrunDirectionEnumType;
   NetrunEntityVariant: NetrunEntityVariantEnumType;
+  NetrunTarget: BrandEnumType;
 };
 
 /**
