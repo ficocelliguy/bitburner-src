@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Typography, Tooltip, Button } from "@mui/material";
 import BatteryCharging90SharpIcon from "@mui/icons-material/BatteryCharging90Sharp";
 import WarningAmberSharpIcon from "@mui/icons-material/WarningAmberSharp";
@@ -13,27 +13,23 @@ import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { NetrunDirection } from "../Enums";
 
+const MOVE_BUFFER_MS = 140;
+
 export function NetrunMinigame({ complete }: { complete: () => void }): React.ReactElement {
   const styles = useCyberdeckStyles();
+  const lastMoveTimestamp = useRef(0);
+  const bufferedMove = useRef<NetrunDirection | null>(null);
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "w") {
-        move(NetrunDirection.up);
-        event.preventDefault();
-        event.stopPropagation();
+        tryMove(NetrunDirection.up, event);
       } else if (event.key === "ArrowDown" || event.key === "s") {
-        move(NetrunDirection.down);
-        event.preventDefault();
-        event.stopPropagation();
+        tryMove(NetrunDirection.down, event);
       } else if (event.key === "ArrowLeft" || event.key === "a") {
-        move(NetrunDirection.left);
-        event.preventDefault();
-        event.stopPropagation();
+        tryMove(NetrunDirection.left, event);
       } else if (event.key === "ArrowRight" || event.key === "d") {
-        move(NetrunDirection.right);
-        event.preventDefault();
-        event.stopPropagation();
+        tryMove(NetrunDirection.right, event);
       }
     };
     document.addEventListener("keydown", listener);
@@ -41,6 +37,29 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
       document.removeEventListener("keydown", listener);
     };
   }, []);
+
+  function tryMove(direction: NetrunDirection, event: KeyboardEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (Date.now() - lastMoveTimestamp.current > MOVE_BUFFER_MS) {
+      console.log(`${Date.now() - lastMoveTimestamp.current} since last move, moving ${direction}`);
+      lastMoveTimestamp.current = Date.now();
+      bufferedMove.current = null;
+
+      // start buffer window
+      setTimeout(() => {
+        if (!bufferedMove.current) return;
+        lastMoveTimestamp.current = Date.now();
+        move(bufferedMove.current);
+      }, MOVE_BUFFER_MS);
+
+      return move(direction);
+    }
+
+    console.log(`${Date.now() - lastMoveTimestamp.current} since last move, buffering ${direction}`);
+    bufferedMove.current = (direction);
+  }
 
   function getRotation() {
     if (NetrunningState.lastMove === NetrunDirection.right) {

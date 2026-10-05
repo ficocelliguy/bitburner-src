@@ -1,7 +1,9 @@
 import { keyframes } from "@emotion/react";
-import { useTheme } from "@mui/material/styles";
+import { Theme, useTheme } from "@mui/material/styles";
+import { makeStyles } from "tss-react/mui";
+import { keyframes as tssKeyframes } from "tss-react";
 import { fadeLoop } from "../../Go/boardState/goStyles";
-import { Settings } from "../../Settings/Settings";
+import { GRID_SIZE_PX } from "../models/NetrunningState";
 
 const spin = keyframes`
    0% { transform: rotate(0deg) scale(1); }
@@ -31,15 +33,16 @@ const shake = keyframes`
   75% { transform: translateY(0px) rotate(-0.5deg) }
   100% { transform: translateY(0) rotate(0) }
 `;
-const shine = keyframes`
+// The sweep is half a cell wide, so translateX percentages are double the equivalent cell-relative offsets.
+const shine = tssKeyframes`
   0% {
-    left: -200%;
+    transform: translateX(-400%) skewX(-20deg);
   }
   40% {
-    left: 150%;
+    transform: translateX(300%) skewX(-20deg);
   }
   100% {
-    left: 150%;
+    transform: translateX(300%) skewX(-20deg);
   }
 `;
 
@@ -78,7 +81,7 @@ const growAndFade = keyframes`
   }
 `;
 
-const staticNoise = keyframes`
+const staticNoise = tssKeyframes`
   0% { transform: translate(0, 0);  background-size: 100%}
   100% { transform: translate(-1%, 0.5%); background-size: 200%}
 `;
@@ -148,29 +151,6 @@ export function useCyberdeckStyles() {
     shake: {
       animation: `${shake} 0.3s steps(1)`,
     },
-    shine: (delaySeconds: number) => ({
-      position: "relative",
-      overflow: "hidden",
-      borderColor: Settings.theme.money,
-      ["&::after"]: {
-        content: "''",
-        position: "absolute",
-        top: 0,
-        left: "-150%",
-        width: "50%",
-        height: "100%",
-
-        background: `linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, 0.8) 50%,
-          rgba(255, 255, 255, 0) 100%
-        )`,
-        transform: "skewX(-20deg)",
-        animation: `${shine} 3s infinite ease-in-out`,
-        animationDelay: `${delaySeconds}s`,
-      },
-    }),
     buttonHighlight: {
       borderStyle: "solid",
       borderWidth: "6px",
@@ -178,15 +158,58 @@ export function useCyberdeckStyles() {
       padding: "0 12px",
       animation: `${fadeLoop} 600ms ease-in-out infinite alternate`,
     },
-    offlineNode: {
-      backgroundImage: `repeating-radial-gradient(circle at 17% 32%, ${theme.colors.white}, black 0.00085px)`,
-      backgroundPosition: "center",
-      opacity: 0.8,
-
-      animation: `${staticNoise} 0.3s steps(4) infinite`,
-    },
   } as const;
 }
+
+export const SHINE_DELAY_VAR = "--netrun-shine-delay";
+
+export const useNetrunCellStyles = makeStyles({ uniqId: "netrunCell" })((theme: Theme) => ({
+  cell: {
+    width: GRID_SIZE_PX,
+    height: GRID_SIZE_PX,
+    minHeight: GRID_SIZE_PX,
+    border: "1px solid transparent",
+    alignContent: "center",
+  },
+  shine: {
+    position: "relative",
+    overflow: "hidden",
+    borderColor: theme.colors.money,
+    "&::after": {
+      content: "''",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "50%",
+      height: "100%",
+
+      background: `linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0) 100%
+      )`,
+      transform: "translateX(-300%) skewX(-20deg)",
+      animation: `${shine} 3s infinite ease-in-out`,
+      animationDelay: `var(${SHINE_DELAY_VAR})`,
+    },
+  },
+  entity: {
+    margin: "auto",
+  },
+  offlineNode: {
+    backgroundImage: `repeating-radial-gradient(circle at 17% 32%, ${theme.colors.white}, black 0.00085px)`,
+    backgroundPosition: "center",
+    animation: `${staticNoise} 0.3s steps(4) infinite`,
+  },
+  threatIndicator: {
+    width: 10,
+    height: 10,
+    minHeight: 10,
+    margin: "5px",
+    borderRadius: "2px",
+  },
+}));
 
 export function usePortalStyles() {
   useTheme();

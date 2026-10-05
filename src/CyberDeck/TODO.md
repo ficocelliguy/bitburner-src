@@ -5,6 +5,8 @@ Patch changes:
 - Improved the minimum part of the roll ranges for stats, to make early mods look more interesting
 - Re-worked starting modules to have more useful stats, to hint at the value that mods can have
 - Limit bombs in netrun starting area to prevent getting walled in too much early
+- Added an input buffer to netrun minigame to prevent too many inputs causing lag
+- Improved performance of netrunning minigame
 
 TODO:
 - Improve styling of netrun target choice
@@ -12,9 +14,6 @@ TODO:
 - hint at glitch
 
 - hint to the player at some of the better possibilities
-  - rig the generation to give the 1st crafted or netrun item good stats ?
-
-- Prevent queueing moves in netrunning minigame
 
 - dragging a wire and stopping your mouse freezes the line for a second
 

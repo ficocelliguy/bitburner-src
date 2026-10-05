@@ -1,20 +1,93 @@
 import React from "react";
-import { Box, Tooltip } from "@mui/material";
 import { GRID_SIZE_PX, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
 import { NetrunEntity } from "../Types";
 import { NetrunEntityVariant } from "../Enums";
-import { useCyberdeckStyles } from "./cyberdeckStyles";
+import { SHINE_DELAY_VAR, useNetrunCellStyles } from "./cyberdeckStyles";
 
 // Seconds for the shine sweep to traverse one cell width in local coords.
 const SHINE_CELL_CROSS_TIME_S = 0.27;
 // Used to offset each row so the shine animation appears to continue at the correct tilt across cells.
 const SHINE_SKEW_TAN = Math.tan((20 * Math.PI) / 180) * 0.9;
 
+type NetrunGridCellProps = {
+  x: number;
+  y: number;
+  color: string;
+  borderTopColor: string;
+  borderRightColor: string;
+  borderBottomColor: string;
+  borderLeftColor: string;
+  opacity: number;
+  size: number;
+  threatColor: string;
+  tooltip: string;
+  shouldShine: boolean;
+  isOffline: boolean;
+};
+
+// Entities are mutated in place, so the cell takes only primitive props to let React.memo skip unchanged cells.
+const NetrunGridCell = React.memo(function NetrunGridCell({
+  x,
+  y,
+  color,
+  borderTopColor,
+  borderRightColor,
+  borderBottomColor,
+  borderLeftColor,
+  opacity,
+  size,
+  threatColor,
+  tooltip,
+  shouldShine,
+  isOffline,
+}: NetrunGridCellProps) {
+  const { classes, cx } = useNetrunCellStyles();
+
+  function flag(e: React.MouseEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    const entity = NetrunningState.grid[y]?.[x];
+    if (entity) {
+      flagEntity(entity);
+    }
+  }
+
+  const shineDelay = (x + y * SHINE_SKEW_TAN) * SHINE_CELL_CROSS_TIME_S - 3;
+  const cellStyle = shouldShine ? ({ [SHINE_DELAY_VAR]: `${shineDelay}s` } as React.CSSProperties) : undefined;
+
+  return (
+    <div
+      className={cx(classes.cell, shouldShine && classes.shine)}
+      style={cellStyle}
+      title={tooltip || undefined}
+      onClick={flag}
+    >
+      <div
+        id={`netrun-entity-${x},${y}`}
+        className={cx(classes.entity, isOffline && classes.offlineNode)}
+        style={{
+          width: size,
+          height: size,
+          minHeight: size,
+          borderTop: `1px solid ${borderTopColor}`,
+          borderLeft: `1px solid ${borderLeftColor}`,
+          borderBottom: `1px solid ${borderBottomColor}`,
+          borderRight: `1px solid ${borderRightColor}`,
+          backgroundColor: color,
+          opacity,
+        }}
+      >
+        <div className={classes.threatIndicator} style={{ backgroundColor: threatColor }} />
+      </div>
+    </div>
+  );
+});
+
 export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
-  const styles = useCyberdeckStyles();
   const color = getEntityColor(entity);
+  const isOffline = entity.type === NetrunEntityVariant.offline && entity.visible;
 
   function getBorderColor(neighbor: NetrunEntity): string {
     if (!neighbor || !entity.visible) {
@@ -36,16 +109,13 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
   }
 
   function getOpacity() {
+    if (isOffline) {
+      return 0.8;
+    }
     if (entity.type !== NetrunEntityVariant.ice || entity.hits) {
       return 1;
     }
     return [0.6, 0.7, 0.8, 0.9, 1][entity.group % 5];
-  }
-
-  function flag(e: React.MouseEvent<HTMLDivElement>) {
-    e.stopPropagation();
-    e.preventDefault();
-    flagEntity(entity);
   }
 
   function getThreatIndicatorColor() {
@@ -57,16 +127,9 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
   }
 
   const northNeighbor = NetrunningState.grid[entity.y - 1]?.[entity.x];
-  const borderTopColor = getBorderColor(northNeighbor);
-
   const eastNeighbor = NetrunningState.grid[entity.y]?.[entity.x + 1];
-  const borderRightColor = getBorderColor(eastNeighbor);
-
   const southNeighbor = NetrunningState.grid[entity.y + 1]?.[entity.x];
-  const borderBottomColor = getBorderColor(southNeighbor);
-
   const westNeighbor = NetrunningState.grid[entity.y]?.[entity.x - 1];
-  const borderLeftColor = getBorderColor(westNeighbor);
 
   const tooltip = !entity.visible
     ? "<unknown entity>"
@@ -81,50 +144,22 @@ export function NetrunGridEntity({ entity }: { entity: NetrunEntity }) {
     : "";
 
   const size = entity.type === NetrunEntityVariant.empty ? GRID_SIZE_PX : (1 - entity.hits * 0.1) * GRID_SIZE_PX;
-  const shouldShine = entity.type === NetrunEntityVariant.dataStore && entity.visible;
-  const shineDelay = (entity.x + entity.y * SHINE_SKEW_TAN) * SHINE_CELL_CROSS_TIME_S - 3;
 
   return (
-    <Tooltip title={tooltip}>
-      <Box
-        sx={{
-          width: GRID_SIZE_PX,
-          height: GRID_SIZE_PX,
-          minHeight: GRID_SIZE_PX,
-          border: `1px solid transparent`,
-          alignContent: "center",
-          ...(shouldShine ? styles.shine(shineDelay) : {}),
-        }}
-        onClick={flag}
-      >
-        <Box
-          id={`netrun-entity-${entity.x},${entity.y}`}
-          sx={{
-            width: size,
-            height: size,
-            minHeight: size,
-            borderTop: `1px solid ${borderTopColor}`,
-            borderLeft: `1px solid ${borderLeftColor}`,
-            borderBottom: `1px solid ${borderBottomColor}`,
-            borderRight: `1px solid ${borderRightColor}`,
-            margin: "auto",
-            backgroundColor: color,
-            opacity: getOpacity(),
-            ...(entity.type === NetrunEntityVariant.offline && entity.visible ? styles.offlineNode : {}),
-          }}
-        >
-          <Box
-            sx={{
-              width: 10,
-              height: 10,
-              minHeight: 10,
-              margin: "5px",
-              backgroundColor: getThreatIndicatorColor(),
-              borderRadius: "2px",
-            }}
-          />
-        </Box>
-      </Box>
-    </Tooltip>
+    <NetrunGridCell
+      x={entity.x}
+      y={entity.y}
+      color={color}
+      borderTopColor={getBorderColor(northNeighbor)}
+      borderRightColor={getBorderColor(eastNeighbor)}
+      borderBottomColor={getBorderColor(southNeighbor)}
+      borderLeftColor={getBorderColor(westNeighbor)}
+      opacity={getOpacity()}
+      size={size}
+      threatColor={getThreatIndicatorColor()}
+      tooltip={tooltip}
+      shouldShine={entity.type === NetrunEntityVariant.dataStore && entity.visible}
+      isOffline={isOffline}
+    />
   );
 }
