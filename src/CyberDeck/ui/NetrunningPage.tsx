@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NetrunMinigame } from "./NetrunMinigame";
 import { NetrunningState } from "../models/NetrunningState";
 import { NetrunningPortal } from "./NetrunningPortal";
@@ -10,14 +10,22 @@ import { initNetrunGrid } from "../models/netrunningMinigame";
 import { useRerender } from "../../ui/React/hooks";
 import { Brand } from "@enums";
 import { NetrunTargetSelect } from "./NetrunTargetSelect";
+import { CyberdeckEvents } from "../models/CyberdeckState";
 
 export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
-  useRerender(1000);
+  const rerender = useRerender(1000);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
     mods: [],
     components: {},
   });
+
+  useEffect(() => {
+    if (corrupted) {
+      const clearSubscription = CyberdeckEvents.subscribe(() => rerender());
+      return () => clearSubscription();
+    }
+  }, [rerender, corrupted]);
 
   function endNetrun() {
     const rewards = netrunRewards();

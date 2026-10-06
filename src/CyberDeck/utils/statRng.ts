@@ -293,14 +293,15 @@ export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel
   const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
 
   const levelUpAttempts = (excess + diminishedExcess) * 0.6 + bonusAttempts;
+  const stepSize = Math.max(levelUpAttempts / 100, 1);
   const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;
-  for (let i = 0; i < levelUpAttempts; i++) {
+  for (let i = 0; i < levelUpAttempts; i += stepSize) {
     if (rng.random() < Math.max(startingValue - i / 20, 0.1)) {
-      level++;
+      level += stepSize;
     }
   }
-  return level;
+  return Math.floor(level);
 }
 
 export function getID(rng: WHRNG) {

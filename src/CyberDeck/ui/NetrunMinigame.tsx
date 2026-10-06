@@ -43,7 +43,6 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
     event.stopPropagation();
 
     if (Date.now() - lastMoveTimestamp.current > MOVE_BUFFER_MS) {
-      console.log(`${Date.now() - lastMoveTimestamp.current} since last move, moving ${direction}`);
       lastMoveTimestamp.current = Date.now();
       bufferedMove.current = null;
 
@@ -57,7 +56,6 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
       return move(direction);
     }
 
-    console.log(`${Date.now() - lastMoveTimestamp.current} since last move, buffering ${direction}`);
     bufferedMove.current = direction;
   }
 

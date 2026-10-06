@@ -314,9 +314,6 @@ function offlineEntity(entity: NetrunEntity | null) {
   entity.type = NetrunEntityVariant.offline;
   entity.hits = 0;
   updateGroup(entity, -1);
-  // TODO-fico: remove from old group inside offlineEntity
-  NetrunningState.groups[-1] ??= [];
-  NetrunningState.groups[-1].unshift(entity);
 }
 
 function updateGroup(entity: NetrunEntity, newGroup: number) {
@@ -336,7 +333,7 @@ function spreadOfflineNodes() {
 
   const offlineNodes = NetrunningState.groups[-1]?.slice(0) ?? [];
 
-  for (const [index, entity] of offlineNodes.entries()) {
+  for (const [index, entity] of Array.from(offlineNodes.entries()).slice(0, 15)) {
     if (Math.random() < 0.6 && index > 4) {
       continue;
     }
