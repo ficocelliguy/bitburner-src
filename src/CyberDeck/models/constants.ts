@@ -62,7 +62,7 @@ export const uplinkCraftingCost: ComponentCounts = {
 
 export function getModDescription(module: DeckMod) {
   if (module.rarity < 0) {
-    return "This mod is broken. It must have been out here for a while..."
+    return "This mod is broken. It must have been out here for a while...";
   }
   return getModuleTypeDescription(module.type);
 }
@@ -115,7 +115,8 @@ export const BRAND_DETAILS = {
   },
   [Brand.BachmanAndAssociates]: {
     specialty: "Faction and social mods",
-    specialtyLong: "Specializes in mods that boost fation and company work, and stock, cct, IPvGO, and classes.",
+    specialtyLong:
+      "Specializes in mods that boost faction and company work, as well as stock, cct, IPvGO, and classes.",
     tagline: "",
   },
   [Brand.BladeIndustries]: {

@@ -34,7 +34,8 @@ import {
   SpecialBladeburnerActionTypeForSleeve,
   GangTaskNameEnum,
   NetrunDirection,
-  NetrunEntityVariant, NetrunTargets,
+  NetrunEntityVariant,
+  NetrunTargets,
 } from "@enums";
 import { PromptEvent } from "./ui/React/PromptManager";
 import { GetServer } from "./Server/AllServers";

@@ -238,7 +238,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     netrun: {
       start(ctx: NetscriptContext, _target: unknown): NetrunStatus {
         checkCyberdeckAccess();
-        const target = getEnumHelper("Brand").nsGetMember(ctx, _target);
+        const target = getEnumHelper("NetrunTargets").nsGetMember(ctx, _target);
         const failedToStartResponse = {
           success: false,
           coordinates: [0, 0],

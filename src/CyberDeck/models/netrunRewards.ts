@@ -76,6 +76,7 @@ export function netrunRewards(): NetrunningRewards {
 
   const rewards = getNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
+  NetrunningState.target = Brand.Unknown;
 
   const chipsGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.chips += chipsGained;
@@ -108,14 +109,16 @@ export function getNetrunningRewards(rng: WHRNG, score: number) {
   return sortedRewards;
 }
 
-export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand: Brand = NetrunningState.target) {
+export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = NetrunningState.target) {
   const modMaker = getBrandedModMaker(brand);
   if (!modMaker) {
     return getGenericNetrunningRewards(rng, score);
   }
   const rewards = [modMaker(rng, 2, 1.2)];
   const boost = isEligibleForSpecialReward(score);
-  rewards.push(boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng));
+  rewards.push(
+    boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng),
+  );
   rewards.push(createModule(rng));
   if (score > 120) {
     rewards.push(createModule(rng));

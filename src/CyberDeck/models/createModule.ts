@@ -1,7 +1,7 @@
 import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModStats } from "../Types";
-import { Brand, ModType } from "../Enums";
+import { Brand, ModType, NetrunTargets } from "../Enums";
 import { createConnection, moveModule } from "./moduleMutation";
 import {
   ICEBreakerCraftingCost,
@@ -46,18 +46,18 @@ export const getCyberdeckIOPanel = (): DeckMod => {
   };
 };
 
-export function getBrandedModMaker(brand: Brand) {
+export function getBrandedModMaker(brand: NetrunTargets | Brand.Unknown) {
   switch (brand) {
-    case Brand.OmegaSoftware:
+    case NetrunTargets.OmegaSoftware:
       return createHackingMod;
 
-    case Brand.BachmanAndAssociates:
+    case NetrunTargets.BachmanAndAssociates:
       return createWorkMod;
 
-    case Brand.BladeIndustries:
+    case NetrunTargets.BladeIndustries:
       return createPhysicalMod;
 
-    case Brand.OmniaCybersystems:
+    case NetrunTargets.OmniaCybersystems:
       return createCyberdeckMod;
   }
   return null;
@@ -182,7 +182,7 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
     rarity: level,
     sockets: getRandomSockets(rng, Math.min(1 + level / 3, 3), 0, true),
     stats,
-    type: ModType.Uplink,
+    type: isOtherMult ? ModType.Uplink : ModType.SkillChip,
   };
 }
 
@@ -397,11 +397,11 @@ export function createSpecialFirstTimeMod(rng: WHRNG): DeckMod {
         hacking_speed: 0.031,
       },
       otherMults: {
-        crime_speed: -0.042
-      }
+        crime_speed: -0.042,
+      },
     },
-    type: ModType.Uplink
-  }
+    type: ModType.Uplink,
+  };
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {

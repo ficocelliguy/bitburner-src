@@ -11,6 +11,11 @@ Patch changes:
 - Fixed some visual issues with breaking firewall blocks and dragging wires
 
 TODO:
+- reset netrun choice after finish to allow picking the next target
+- fix enum helper to only show valid brands if you pass an invalid one to start()
+- fix mods with "consumable" stats to correctly be skillchips
+- typo fix for brand description
+
 - Improve styling of netrun target choice
 
 - hint at glitch

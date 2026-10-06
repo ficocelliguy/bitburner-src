@@ -365,8 +365,7 @@ function breakEntity(entity: NetrunEntity) {
   emitSparklesOnEntity(entity);
 
   const originalType = entity.type;
-  const group = originalType === NetrunEntityVariant.firewall ?
-    [entity] : NetrunningState.groups[entity.group] ?? [];
+  const group = originalType === NetrunEntityVariant.firewall ? [entity] : NetrunningState.groups[entity.group] ?? [];
   revealGroup(entity);
   entity.type = NetrunEntityVariant.empty;
   if (originalType === NetrunEntityVariant.firewall) {

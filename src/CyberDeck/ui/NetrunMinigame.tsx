@@ -58,7 +58,7 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
     }
 
     console.log(`${Date.now() - lastMoveTimestamp.current} since last move, buffering ${direction}`);
-    bufferedMove.current = (direction);
+    bufferedMove.current = direction;
   }
 
   function getRotation() {
