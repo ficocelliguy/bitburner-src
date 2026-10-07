@@ -247,8 +247,8 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
 function applySoftCap(
   value: number,
   softCap: number = 1,
-  hardCap: number = 1e10,
-  hardMin: number = -1e10,
+  hardCap: number = 10,
+  hardMin: number = -0.95,
   basis: number = 0,
 ): number {
   const bonus = value - basis;

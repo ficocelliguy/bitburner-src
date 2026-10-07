@@ -55,8 +55,8 @@ export function getFullStatRollRanges() {
     /* mental mods */
     hacking_chance: { minRoll: 0.1, maxRoll: 0.4 },
     hacking_exp: { minRoll: 0.03, maxRoll: 0.22 },
-    hacking: { minRoll: 0.03, maxRoll: 0.15 },
-    hacking_speed: { minRoll: 0.02, maxRoll: 0.15 },
+    hacking: { minRoll: 0.02, maxRoll: 0.1 },
+    hacking_speed: { minRoll: 0.02, maxRoll: 0.1 },
     hacknet_node_money: { minRoll: 0.05, maxRoll: 0.3 },
     hacknet_node_ram_cost: { minRoll: -0.05, maxRoll: -0.3 },
     hacknet_node_level_cost: { minRoll: -0.05, maxRoll: -0.3 },
@@ -70,10 +70,10 @@ export function getFullStatRollRanges() {
     crime_money: { minRoll: 0.05, maxRoll: 0.23 },
 
     /* work and soft skills mods */
-    charisma: { minRoll: 0.03, maxRoll: 0.2025 },
+    charisma: { minRoll: 0.02, maxRoll: 0.1 },
     charisma_exp: { minRoll: 0.03, maxRoll: 0.21 },
     company_rep: { minRoll: 0.03, maxRoll: 0.28 },
-    faction_rep: { minRoll: 0.03, maxRoll: 0.14 },
+    faction_rep: { minRoll: 0.02, maxRoll: 0.1 },
     work_money: { minRoll: 0.1, maxRoll: 0.72 },
   };
   const otherMults: Partial<{ [K in keyof MiscMults]: StatRollBounds }> = {
@@ -86,7 +86,7 @@ export function getFullStatRollRanges() {
     /* work and soft skills mods */
     stock_fees: { minRoll: -0.0375, maxRoll: -0.23, hardMin: -0.9 },
     cct_money: { minRoll: 0.075, maxRoll: 0.3 },
-    class_cost: { minRoll: -0.05, maxRoll: -0.44, hardMin: -1 },
+    class_cost: { minRoll: -0.05, maxRoll: -0.44, hardMin: -0.99 },
     IPvGO_power: { minRoll: 0.03, maxRoll: 0.2 },
 
     /* cyberdeck mods */
