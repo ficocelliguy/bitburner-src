@@ -194,7 +194,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const extraSockets = rng.random() < 0.08 ? 1 : 0;
   const bonus = Math.max((extraSlotVariant ? 2 : 1) + extraSockets, 2);
 
-  const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.5) : {};
+  const buff = rng.random() < 0.15 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
 
   return {
     type: ModType.PowerSupply,
@@ -259,7 +259,7 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
 
 function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
-  const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.5) : {};
+  const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
   return {
     stats: {
       playerMults: mergeBuffs(debuff, buff),

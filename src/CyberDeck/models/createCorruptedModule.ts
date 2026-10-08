@@ -119,7 +119,7 @@ export const getJunkModule = (rng: WHRNG) => {
 const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   const buffType = rng.random() < 0.1;
   const debuffs = mergeBuffs(getDebuff(8, rng), buffType ? {} : getDebuff(getLevel(rng, 8), rng));
-  const buffs = buffType ? getOtherStatBuff(getLevel(rng, 0), rng, 0.5) : {};
+  const buffs = buffType ? getOtherStatBuff(getLevel(rng, 0), rng, 0.25) : {};
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
     type: ModType.RackExtension,
