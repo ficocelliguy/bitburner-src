@@ -29,6 +29,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.craftingUplinkSeedUsages = 0;
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
+    CyberdeckState.salvagedMods = 0;
     CyberdeckState.completedChallenges = getDefaultCompletedChallenges();
 
     if (hasCyberdeck()) {

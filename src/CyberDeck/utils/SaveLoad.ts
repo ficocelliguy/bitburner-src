@@ -159,12 +159,20 @@ export function loadCyberdeckSaveData(saveString: unknown) {
         if (typeof completed === "boolean") CyberdeckState.completedChallenges[challenge] = completed;
       }
     }
+    adaptLegacyTutorialCompletion(parsedData);
 
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();
   } catch (error) {
     console.error(error);
     console.error("Invalid Cyberdeck data:", saveString);
+  }
+}
+
+/** Older saves tracked tutorial completion as a top-level hasCompletedTutorial flag instead of as a challenge */
+function adaptLegacyTutorialCompletion(parsedData: object) {
+  if ("hasCompletedTutorial" in parsedData && parsedData.hasCompletedTutorial === true) {
+    CyberdeckState.completedChallenges[Challenges.CompletedTutorial] = true;
   }
 }
 

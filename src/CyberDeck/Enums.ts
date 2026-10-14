@@ -47,7 +47,7 @@ export enum Challenges {
   Scrapper = "Salvage at least 5 mods",
   Crafter = "Craft 5 mods",
   DaisyChain = "Charge a mod that is 3+ jumps away from the deck",
-  BombSquad = "Flag a bomb group and finish the run",
+  BombSquad = "Flag ICE with an active countermeasure, and finish the run",
   FullHouse = "Have a charged mod in every rack slot",
   Supplier = "Get crafting components from 5 sources",
   Netrun120 = "Get a score of 120+ while netrunning",

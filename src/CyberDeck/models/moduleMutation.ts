@@ -9,9 +9,9 @@ import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
 import { formatNumber } from "../../ui/formatNumber";
 import {
+  checkConnectionChallenges,
   completeChargedModuleTutorial,
   completeInstalledModTutorial,
-  completeMadeConnectionTutorial,
   hasConsumedSkillchipTutorial,
 } from "./challenges";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
@@ -162,9 +162,7 @@ export function createConnection(source: Socket, destination: Socket) {
 
   CyberdeckState.connections.push([source, destination]);
   updateConnectedModules();
-  if (source.modId !== getCyberdeckIOPanel().id && destination.modId !== getCyberdeckIOPanel().id) {
-    completeMadeConnectionTutorial();
-  }
+  checkConnectionChallenges(sourceModule, destinationModule);
   const chargedMods = getChargedModules();
   if (chargedMods.some((m) => m.id == sourceModule.id || m.id == destinationModule.id)) {
     completeChargedModuleTutorial();

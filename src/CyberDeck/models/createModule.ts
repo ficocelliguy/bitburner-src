@@ -33,7 +33,7 @@ import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
-import { getCyberdeckLevel } from "./challenges";
+import { checkCrafterChallenge, checkScrapperChallenge, getCyberdeckLevel } from "./challenges";
 
 export const getCyberdeckIOPanel = (): DeckMod => {
   const lvl = getCyberdeckLevel();
@@ -442,6 +442,7 @@ export function craftPowerSupply() {
   const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
+  checkCrafterChallenge();
   return newComponent;
 }
 
@@ -454,6 +455,7 @@ export function craftProcessingModule() {
   const newComponent = createProcessingModule(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
+  checkCrafterChallenge();
   return newComponent;
 }
 
@@ -466,6 +468,7 @@ export function craftUplink() {
   const newComponent = createUplink(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
   CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
+  checkCrafterChallenge();
   return newComponent;
 }
 
@@ -499,6 +502,8 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.components.rom += ROMGained;
   CyberdeckState.components.neurodes += neurodesGained;
+
+  checkScrapperChallenge();
 
   if (showToast) {
     gainComponentMessage({ chips: chipsGained, rom: ROMGained, neurodes: neurodesGained });

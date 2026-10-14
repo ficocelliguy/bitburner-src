@@ -50,41 +50,10 @@ rewards:
 - increased netrun level
 - increased crafting level
 - netrun cooldown speed
+
+
+Netrunning
 - less bombs when netrunning?
-
-
-Challenges
-
-Rack and wiring
-1. Daisy Chain: power a mod that is 3+ links away from the I/O panel. Teaches that power chains through mods.
-2. Full House: have every rack slot filled and powered at once.
-3. Spectrum: have wires on 5 different socket colors at the same time. Teaches color/index matching and the no-crossing rule.
-4. Overclocked: reach +X% on a single stat from stacked powered mods. Teaches specialization.
-6. Extended Warranty: power rack extensions up to the cap and fill every slot they add.
-7. Hot Swap: uninstall, install and rewire a mod entirely via the API. Teaches scripted layout swaps.
-
-Netrunning
-
-8. Ghost: finish with score ≥75 without detonating a trap. Teaches reading the threat/signal indicator.
-9. Bomb Squad: flag a trapped ICE group and finish the run with it still intact. Teaches flagging.
-10. Breach: break through a firewall and loot a data store in the same run.
-11. Clean Sweep: loot all 5 data stores in one run.
-12. Jackpot: score over 120, which unlocks the fourth loot slot.
-14. Cold Trail / Hot Pursuit: netrun 10 times at minimum trace cost, and once at ≥3x cost. Teaches the trace decay curve.
-
-The glitch
-
-15. Beyond the Blackwall: complete a first corrupted run (finding the glitch location is the real challenge).
-16. Outrun the Void: score ≥75 on a corrupted run without touching an offline node.
-17. Salvage Rights: recycle 10 broken (rarity -1) mods. Teaches that junk still has component value.
-
-Crafting and economy
-
-18. Supply Chain: earn ROM, chips and neurodes from at least 3 different sources each. componentStats already tracks this per source.
-
-Rewards
-
-Netrunning
 1. Scanner range: threat detection radius goes from 6 to 8, or the signal shows a direction.
 2. Battery capacity: +10% starting energy per level.
 3. Wider entry point: the starting clearing grows from 3x3 to 4x4 or 5x5.
@@ -93,7 +62,6 @@ Netrunning
 6. Safe defusal: flagged trap groups can be broken at normal ICE cost.
 7. Data mining: data stores give a higher score multiplier.
 8. Lower loot thresholds: tiers drop from 30/75/120 to something like 25/65/105.
-10. Target unlocks: megacorp targets unlock one at a time, which also gates brand targeting behind learning the basics.
 
 The glitch
 

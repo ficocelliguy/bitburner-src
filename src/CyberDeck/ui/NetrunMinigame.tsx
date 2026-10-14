@@ -41,6 +41,7 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
   function tryMove(direction: NetrunDirection, event: KeyboardEvent) {
     event.preventDefault();
     event.stopPropagation();
+    NetrunningState.hasMadeManualMove = true;
 
     if (Date.now() - lastMoveTimestamp.current > MOVE_BUFFER_MS) {
       lastMoveTimestamp.current = Date.now();

@@ -1,11 +1,11 @@
 import { NETRUNNING_HEIGHT, NETRUNNING_WIDTH, NetrunningState } from "./NetrunningState";
-import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, hasCompleted } from "./CyberdeckState";
 import _ from "lodash";
 import { clampNumber } from "../../utils/helpers/clampNumber";
 import { Settings } from "../../Settings/Settings";
 import { createSparkles } from "../utils/fx";
 import { NetrunEntity } from "../Types";
-import { NetrunDirection, NetrunEntityVariant } from "../Enums";
+import { Challenges, NetrunDirection, NetrunEntityVariant } from "../Enums";
 import { Player } from "@player";
 import { Page } from "../../ui/Router";
 import { Router } from "../../ui/GameRoot";
@@ -89,7 +89,8 @@ function getIceReward(entity: NetrunEntity) {
 }
 
 function energyCost() {
-  return Math.max(0.1 - CyberdeckState.netrunningLevel * 0.002, 0.03);
+  const multiplier = hasCompleted(Challenges.Netrun80) ? 0.9 : 1;
+  return Math.max(0.1 - CyberdeckState.netrunningLevel * 0.002, 0.03) * multiplier;
 }
 
 function consumeEnergy(amount: number) {
@@ -404,7 +405,8 @@ function detonateBomb(entity: NetrunEntity) {
     entity.hits++;
   }
   revealGroup(entity);
-  consumeEnergy(entity.hits === 1 ? 0.3 : energyCost() * 0.6);
+  const cost = hasCompleted(Challenges.BombSquad) ? 0.25 : 0.3;
+  consumeEnergy(entity.hits === 1 ? cost : energyCost() * 0.6);
   if (entity.hits > 1) {
     return;
   }

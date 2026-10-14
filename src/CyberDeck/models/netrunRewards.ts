@@ -1,16 +1,16 @@
-import { CyberdeckState } from "./CyberdeckState";
+import { CyberdeckState, hasCompleted } from "./CyberdeckState";
 import {
   corruptedNetrunningHardCooldownMs,
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
 import { NetrunningRewards } from "../Types";
-import { Brand, ModType } from "../Enums";
+import { Brand, Challenges, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
-import { completeNetrunTutorial } from "./challenges";
+import { completeNetrunChallenges } from "./challenges";
 import { NetrunningState } from "./NetrunningState";
 import { WHRNG } from "../../Casino/RNG";
 
@@ -64,7 +64,7 @@ export function netrunRewards(): NetrunningRewards {
   const corrupted = NetrunningState.corrupted;
   NetrunningState.isNetrunning = false;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(corrupted);
-  completeNetrunTutorial();
+  completeNetrunChallenges();
 
   if (corrupted) {
     return corruptedNetrun();
@@ -77,6 +77,7 @@ export function netrunRewards(): NetrunningRewards {
   const rewards = getNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
   NetrunningState.target = Brand.Unknown;
+  NetrunningState.hasMadeManualMove = false;
 
   const chipsGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.chips += chipsGained;
@@ -87,7 +88,9 @@ export function netrunRewards(): NetrunningRewards {
   const ROMGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.rom += ROMGained;
   CyberdeckState.componentStats.rom.netrunning += ROMGained;
-  const coresGained = Math.floor(rng.random() * (scoreFactor + 1.5));
+
+  const bonusCores = hasCompleted(Challenges.Crafter) ? 0.5 : 1.5;
+  const coresGained = Math.floor(rng.random() * (scoreFactor + bonusCores));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 

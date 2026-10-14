@@ -15,6 +15,7 @@ export const NetrunningState = {
   shakingBattery: false,
   location: [0, 0], // [y, x] — matches grid[y][x] indexing
   lastMove: NetrunDirection.right,
+  hasMadeManualMove: false,
 
   grid: [] as NetrunEntity[][],
   groups: {} as Record<string, NetrunEntity[]>,
