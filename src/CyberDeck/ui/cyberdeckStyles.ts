@@ -4,6 +4,7 @@ import { makeStyles } from "tss-react/mui";
 import { keyframes as tssKeyframes } from "tss-react";
 import { fadeLoop } from "../../Go/boardState/goStyles";
 import { GRID_SIZE_PX } from "../models/NetrunningState";
+import { Settings } from "../../Settings/Settings";
 
 const spin = keyframes`
    0% { transform: rotate(0deg) scale(1); }
@@ -210,6 +211,96 @@ export const useNetrunCellStyles = makeStyles({ uniqId: "netrunCell" })((theme: 
     borderRadius: "2px",
   },
 }));
+
+export function useNetrunTargetStyles() {
+  const theme = useTheme();
+  const pinColor = theme.palette.secondary.light;
+  const pins = (direction: string) =>
+    `repeating-linear-gradient(${direction}, ${pinColor} 0px, ${pinColor} 4px, transparent 4px, transparent 12px)`;
+  return {
+    circuitry: {
+      position: "absolute",
+      whiteSpace: "pre",
+      height: "calc(100vh - 150px)",
+      width: "calc(100vw - 150px)",
+      contain: "layout",
+      color: theme.colors.primary,
+      WebkitMaskImage:
+        "linear-gradient(to bottom, transparent, black 13%, black calc(100% - 10%), transparent), linear-gradient(to right, transparent, black 13%, black calc(100% - 10%), transparent)",
+      maskImage:
+        "linear-gradient(to bottom, transparent, black 13%, black calc(100% - 13%), transparent), linear-gradient(to right, transparent, black 13%, black calc(100% - 10%), transparent)",
+      webkitMaskComposite: "insource-in",
+      maskComposite: "intersect",
+      fontFamily: "monospace",
+      pointerEvents: "none",
+      fontSize: "0.37vh",
+      lineHeight: 1,
+      fontWeight: "bold",
+      opacity: 0.6,
+    },
+    microchipButton: {
+      position: "relative",
+      display: "block",
+      width: "100%",
+      padding: 0,
+      border: "2px solid transparent",
+      background: "transparent",
+      cursor: "pointer",
+      outline: "none",
+      // Pins along the top and bottom edges
+      "&::before, &::after": {
+        content: "''",
+        position: "absolute",
+        zIndex: 1,
+        left: "15px",
+        right: "15px",
+        height: "5px",
+        background: pins("90deg"),
+      },
+      "&::before": {
+        top: "-5px",
+      },
+      "&::after": {
+        bottom: "-5px",
+      },
+    },
+    chipCore: {
+      display: "block",
+      position: "relative",
+      background: theme.colors.well,
+      color: theme.colors.primary,
+      padding: "15px 30px",
+      border: `1px solid ${theme.colors.button}`,
+      borderRadius: "4px",
+      boxShadow: "inset 0 0 10px rgba(0,0,0,0.8), 0 4px 15px rgba(0,0,0,0.5)",
+      zIndex: 2,
+      "&:hover": {
+        background: Settings.theme.welllight,
+      },
+      // Pins along the left and right edges
+      "&::before": {
+        content: "''",
+        position: "absolute",
+        zIndex: 1,
+        top: "10px",
+        bottom: "10px",
+        left: "-5px",
+        right: "-5px",
+        background: `${pins("180deg")} 0 0 / 5px 100% no-repeat, ${pins("180deg")} 100% 0 / 5px 100% no-repeat`,
+      },
+      "&::after": {
+        content: "''",
+        position: "absolute",
+        top: "5px",
+        left: "5px",
+        right: "5px",
+        bottom: "5px",
+        border: "1px solid rgba(255, 255, 255, 0.03)",
+        pointerEvents: "none",
+      },
+    },
+  } as const;
+}
 
 export function usePortalStyles() {
   useTheme();

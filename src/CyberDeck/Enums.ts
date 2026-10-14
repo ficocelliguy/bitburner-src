@@ -40,3 +40,22 @@ export enum Brand {
   ChurchOfTheMachineGod = "Church of the Machine God",
   Unknown = "Unknown",
 }
+
+export enum Challenges {
+  CompletedTutorial = "Complete the tutorial",
+  Netrun80 = "Get a score of 80+ while netrunning",
+  Scrapper = "Salvage at least 5 mods",
+  Crafter = "Craft 5 mods",
+  DaisyChain = "Charge a mod that is 3+ jumps away from the deck",
+  BombSquad = "Flag a bomb group and finish the run",
+  FullHouse = "Have a charged mod in every rack slot",
+  Supplier = "Get crafting components from 5 sources",
+  Netrun120 = "Get a score of 120+ while netrunning",
+  Overclocked = "Get a 50% bonus in a single stat",
+  BigDeck = "Have at least 9 rack slots",
+  AutoWire = "Charge a mod via the API",
+  AutoRun = "Get a score of 100+ using only the API",
+  AutoBomber = "Flag a bomb group and finish the run with just the API",
+  Corruption = "Install a mod from the glitch",
+  GlitchRun = "Get a score of 100+ at the glitch using only the API",
+}
