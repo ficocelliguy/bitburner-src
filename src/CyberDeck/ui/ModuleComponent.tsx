@@ -12,6 +12,7 @@ import { Box, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { getModDescription, isCustomBuild } from "../models/constants";
+import { getDeckMark, getNextChallenge } from "../models/challenges";
 
 export type DeckModuleProps = {
   module: DeckMod;
@@ -46,6 +47,7 @@ export function ModuleComponent({
   }, [updateDisplay]);
 
   const chargedModuleIDs = getChargedModuleIDs();
+  const challenge = getNextChallenge();
 
   function socketDragEnd() {
     draggingWireEnded?.(module.id);
@@ -118,13 +120,29 @@ export function ModuleComponent({
                   <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
                     {getModDescription(module)}
                   </Typography>
-                  {Settings.CyberdeckWiFU && (
-                    <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
-                      Art by @Mango_to_sleep
-                    </Typography>
+                  {module.type === ModType.CyberdeckIOPanel && challenge ? (
+                    <div>
+                      <Typography
+                        sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px", marginTop: "10px" }}
+                      >
+                        This is the cyberdeck I/O panel. It is the core of the cyberdeck, and it provides power to any
+                        connected modules.
+                      </Typography>
+                      <Typography sx={{ fontSize: "10px", marginTop: "10px" }}>
+                        To upgrade: {challenge.description}
+                      </Typography>
+                    </div>
+                  ) : (
+                    Settings.CyberdeckWiFU && (
+                      <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
+                        Art by @Mango_to_sleep
+                      </Typography>
+                    )
                   )}
                 </div>
-                <div style={{ marginLeft: "10px" }}>{getModuleIcon(module, 150)}</div>
+                {Settings.CyberdeckWiFU && module.type !== ModType.CyberdeckIOPanel && (
+                  <div style={{ marginLeft: "10px" }}>{getModuleIcon(module, 150)}</div>
+                )}
               </div>
             }
             placement={index % 2 === 0 ? "top-end" : "top-start"}
@@ -182,10 +200,10 @@ export function ModuleComponent({
                         fontStyle: "italic",
                       }}
                     >
-                      Hosaka Mark I
+                      Hosaka Mark {getDeckMark()}
                     </Typography>
                     <Typography style={{ width: "179px", marginTop: "4px", textAlign: "center" }}>
-                      保坂 マークI
+                      保坂 マーク{getDeckMark()}
                     </Typography>
                   </>
                 )}

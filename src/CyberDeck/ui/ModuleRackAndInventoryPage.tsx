@@ -3,7 +3,7 @@ import { Container, Box, Typography, FormControl, InputLabel, OutlinedInput } fr
 import { DragDropContext, Droppable, DropResult, DragStart } from "react-beautiful-dnd";
 import { Settings } from "../../Settings/Settings";
 import { useRerender } from "../../ui/React/hooks";
-import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, hasCompleted } from "../models/CyberdeckState";
 import { ModuleComponent } from "./ModuleComponent";
 import {
   createConnection,
@@ -18,7 +18,7 @@ import { getCyberdeckIOPanel } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils";
-import { ToastVariant } from "@enums";
+import { Challenges, ToastVariant } from "@enums";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { TutorialChecklist } from "./TutorialChecklist";
 import { gainCyberdeck } from "../models/cyberdeckServer";
@@ -247,7 +247,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                   </Box>
                 )}
               </Droppable>
-              {!CyberdeckState.hasCompletedTutorial && <TutorialChecklist />}
+              {!hasCompleted(Challenges.CompletedTutorial) && <TutorialChecklist />}
             </Box>
             <Box
               display="flex"

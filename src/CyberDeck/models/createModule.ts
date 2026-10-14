@@ -33,14 +33,16 @@ import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
+import { getCyberdeckLevel } from "./challenges";
 
 export const getCyberdeckIOPanel = (): DeckMod => {
+  const lvl = getCyberdeckLevel();
   return {
     type: ModType.CyberdeckIOPanel,
     id: "cyberdeck-io-panel",
     brand: isCustomBuild() ? Brand.OnoSendai : Brand.Hosaka,
-    sockets: [false, true, false, true, false, true, false, false],
-    rarity: 10,
+    sockets: [false, lvl >= 5, false, true, false, lvl >= 1, false, lvl >= 15],
+    rarity: lvl,
     stats: {},
     charged: true,
   };
@@ -338,7 +340,7 @@ export function createInitialModules() {
     id: getID(rng),
     brand: Brand.OmegaSoftware,
     rarity: 0,
-    sockets: [false, false, false, false, false, false, true, false],
+    sockets: [false, true, false, false, false, false, false, false],
     stats: {
       playerMults: {
         hacking: 0.05,
@@ -363,7 +365,7 @@ export function createInitialModules() {
     id: getID(rng),
     brand: Brand.BladeIndustries,
     rarity: 3,
-    sockets: [false, false, false, false, false, true, false, false],
+    sockets: [false, true, false, false, false, false, true, false],
     stats: {
       playerMults: {
         faction_rep: 0.035,

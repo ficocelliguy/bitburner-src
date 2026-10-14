@@ -2,6 +2,7 @@ import { ComponentCounts, ComponentStats, Connection, DeckMod, Socket } from "..
 import { EventEmitter } from "../../utils/EventEmitter";
 import { getCyberdeckIOPanel } from "./createModule";
 import { Player } from "@player";
+import { Challenges } from "../Enums";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
 export const CyberdeckEvents = new EventEmitter<[]>();
@@ -66,7 +67,6 @@ export const CyberdeckState = {
   craftingPowerSupplySeedUsages: 0,
   craftingProcessingModSeedUsages: 0,
   craftingUplinkSeedUsages: 0,
-  hasCompletedTutorial: false,
   tutorialSteps: {
     hasInstalledMod: false,
     hasMadeConnection: false,
@@ -75,7 +75,16 @@ export const CyberdeckState = {
     hasCraftedIcebreaker: false,
     hasNetrun: false,
   },
+  completedChallenges: getDefaultCompletedChallenges(),
 };
+
+export function getDefaultCompletedChallenges(): Record<Challenges, boolean> {
+  return Object.fromEntries(Object.values(Challenges).map((c) => [c, false])) as Record<Challenges, boolean>;
+}
+
+export function hasCompleted(challenge: Challenges): boolean {
+  return CyberdeckState.completedChallenges[challenge];
+}
 
 export function hasCyberdeck(): boolean {
   return CyberdeckState.hasCyberdeck || !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;

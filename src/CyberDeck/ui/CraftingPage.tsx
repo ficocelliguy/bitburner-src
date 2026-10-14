@@ -13,7 +13,7 @@ import {
 } from "../models/constants";
 import { getModIconComponent } from "./Icons";
 import { DeckMod } from "../Types";
-import { ModType } from "../Enums";
+import { Challenges, ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { RewardsModal } from "./RewardsModal";
 import {
@@ -23,10 +23,10 @@ import {
   upgradeCyberdeckServerCores,
   upgradeCyberdeckServerRam,
 } from "../models/cyberdeckServer";
-import { CyberdeckEvents, CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckEvents, hasCompleted } from "../models/CyberdeckState";
 import { useRerender } from "../../ui/React/hooks";
 import { gainComponentMessage } from "./gainComponentToast";
-import { completeCraftedIcebreakerTutorial } from "../models/tutorial";
+import { completeCraftedIcebreakerTutorial } from "../models/challenges";
 import { TutorialChecklist } from "./TutorialChecklist";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
@@ -154,7 +154,7 @@ export function CraftingPage(): React.ReactElement {
           </div>
         </Button>
 
-        {!CyberdeckState.hasCompletedTutorial && <TutorialChecklist />}
+        {!hasCompleted(Challenges.CompletedTutorial) && <TutorialChecklist />}
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "300px" }}>

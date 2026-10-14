@@ -10,7 +10,7 @@ import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } fro
 import { createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
-import { completeNetrunTutorial } from "./tutorial";
+import { completeNetrunTutorial } from "./challenges";
 import { NetrunningState } from "./NetrunningState";
 import { WHRNG } from "../../Casino/RNG";
 

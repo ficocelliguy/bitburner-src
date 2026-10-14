@@ -1,4 +1,9 @@
-import { CyberdeckState, getRackExtensionCap, hasCyberdeck } from "../models/CyberdeckState";
+import {
+  CyberdeckState,
+  getDefaultCompletedChallenges,
+  getRackExtensionCap,
+  hasCyberdeck,
+} from "../models/CyberdeckState";
 import { addCyberdeckServer, gainCyberdeck } from "../models/cyberdeckServer";
 import { prestigeCyberdeckComponents } from "../models/componentEconomy";
 import { Player } from "@player";
@@ -24,6 +29,7 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.craftingUplinkSeedUsages = 0;
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
+    CyberdeckState.completedChallenges = getDefaultCompletedChallenges();
 
     if (hasCyberdeck()) {
       gainCyberdeck();

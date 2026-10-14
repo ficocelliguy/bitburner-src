@@ -281,3 +281,5 @@ export type ModImageSet = {
   purple: string;
   red: string;
 };
+
+export type ChallengeDetails = { name: string; description: string; hint: string; reward: string };

@@ -1,5 +1,5 @@
 import { ComponentCounts, DeckMod } from "../Types";
-import { Brand, Challenges, ModType } from "../Enums";
+import { Brand, ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "./CyberdeckState";
 import { CONSTANTS } from "../../Constants";
@@ -150,89 +150,6 @@ export const BRAND_DETAILS = {
     tagline: "",
   },
 } as const;
-
-export const ChallengeDetails: Record<Challenges, { name: string; description: string; hint: string }> = {
-  [Challenges.CompletedTutorial]: {
-    name: "Console Jockey",
-    description: Challenges.CompletedTutorial,
-    hint: "The checklist on the cyberdeck page will walk you through it.",
-  },
-  [Challenges.Netrun80]: {
-    name: "Clean Run",
-    description: Challenges.Netrun80,
-    hint: "Data stores are worth a lot more than plain ICE (and take less energy to crack). The further you get from where you jacked in, the more everything is worth.",
-  },
-  [Challenges.Scrapper]: {
-    name: "Scrapper",
-    description: Challenges.Scrapper,
-    hint: "Drag mods you don't want onto the trash can to salvage them for components.",
-  },
-  [Challenges.Crafter]: {
-    name: "Crafter",
-    description: Challenges.Crafter,
-    hint: "You can only get cores from netrunning. Bring some back, then spend them on the crafting page.",
-  },
-  [Challenges.DaisyChain]: {
-    name: "Daisy Chain",
-    description: Challenges.DaisyChain,
-    hint: "A charged mod passes power along to anything wired to it. Try chaining mods off of each other instead of plugging them all into the deck.",
-  },
-  [Challenges.BombSquad]: {
-    name: "Bomb Squad",
-    description: Challenges.BombSquad,
-    hint: "The threat level goes up as you get closer to a bomb. Walk around a bit to figure out which ICE group it is hiding in, then flag it so you can't break it by accident.",
-  },
-  [Challenges.FullHouse]: {
-    name: "Full House",
-    description: Challenges.FullHouse,
-    hint: "Wires of the same color can't cross, so the order of your mods matters. A power supply can help connect mods that don't share any socket colors.",
-  },
-  [Challenges.Supplier]: {
-    name: "Supplier",
-    description: Challenges.Supplier,
-    hint: "Lots of activities give crafting components: crime, classes, company work, hacknet, backdoors, coding contracts... The stats page shows where yours have come from so far.",
-  },
-  [Challenges.Netrun120]: {
-    name: "Jackpot",
-    description: Challenges.Netrun120,
-    hint: "Bombs eat a big chunk of your energy. Steer around them, and save your power for the biggest data stores.",
-  },
-  [Challenges.Overclocked]: {
-    name: "Overclocked",
-    description: Challenges.Overclocked,
-    hint: "Buffs from charged mods stack. Find a few that all boost the same stat (and watch out for debuffs dragging it back down).",
-  },
-  [Challenges.BigDeck]: {
-    name: "Big Deck",
-    description: Challenges.BigDeck,
-    hint: "Rack extensions add more slots, but only while they are charged.",
-  },
-  [Challenges.AutoWire]: {
-    name: "Auto Wire",
-    description: Challenges.AutoWire,
-    hint: "Use ns.cyberdeck.installMod() to put a mod in the rack, then ns.cyberdeck.addConnection() to wire it up.",
-  },
-  [Challenges.AutoRun]: {
-    name: "Auto Run",
-    description: Challenges.AutoRun,
-    hint: "ns.cyberdeck.netrun.move() tells you what is around you, and how much energy you have left, after every step. (Remember to await it!)",
-  },
-  [Challenges.AutoBomber]: {
-    name: "Auto Bomber",
-    description: Challenges.AutoBomber,
-    hint: "The threat and threatCount you get back from each move change as you get closer to a bomb. Once you know where it is, ns.cyberdeck.netrun.toggleFlag() will mark it.",
-  },
-  [Challenges.Corruption]: {
-    name: "Corruption",
-    description: Challenges.Corruption,
-    hint: "There is a place, somewhere out there, where the barrier is thin...",
-  },
-  [Challenges.GlitchRun]: {
-    name: "Glitch Run",
-    description: Challenges.GlitchRun,
-    hint: "Offline nodes spread every few steps, and touching one ends the run (painfully). Plan a route that keeps you away from them.",
-  },
-};
 
 export const netrunFlavorText =
   "You step into cyberspace, the digital world of the net. The neon glow of data streams and the hum of ICE security surrounds you. In the moment before the connection is lost, the ICEBreakers you brought pierce the digital defense, revealing the treasure you came here for.";

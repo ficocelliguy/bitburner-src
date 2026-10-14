@@ -13,7 +13,7 @@ import {
   completeInstalledModTutorial,
   completeMadeConnectionTutorial,
   hasConsumedSkillchipTutorial,
-} from "./tutorial";
+} from "./challenges";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
 import { MODULE_STORAGE, TRASH_CAN } from "./constants";
 
