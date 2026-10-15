@@ -48,6 +48,7 @@ import {
   initNetrunGrid,
   move,
 } from "./models/netrunningMinigame";
+import { checkAutoWireChallenge } from "./models/challenges";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -188,8 +189,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       const result = createConnection({ modId: modId1, socketIndex }, { modId: modId2, socketIndex });
       if (result.error) {
         logger(ctx)(result.error);
-      } else {
+      } else if (result.success) {
         logger(ctx)(`Mods ${modId1} and ${modId2} connected on socket ${socketIndex}`);
+        checkAutoWireChallenge(mod1);
       }
       return result.success;
     },

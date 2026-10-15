@@ -93,7 +93,9 @@ export function hasCyberdeck(): boolean {
 }
 
 export function getRackExtensionCap() {
-  return 3; // TODO-fico: sf reward?
+  const base = 2;
+  const challengeBonus = hasCompleted(Challenges.BigDeck) ? 1 : 0;
+  return base + challengeBonus;
 }
 
 export function getChargedModuleIDs(): string[] {

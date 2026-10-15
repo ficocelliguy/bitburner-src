@@ -1,7 +1,7 @@
-import { CyberdeckEvents, CyberdeckState } from "./CyberdeckState";
+import { CyberdeckEvents, CyberdeckState, hasCompleted } from "./CyberdeckState";
 import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModStats } from "../Types";
-import { Brand, ModType, NetrunTargets } from "../Enums";
+import { Brand, Challenges, ModType, NetrunTargets } from "../Enums";
 import { createConnection, moveModule } from "./moduleMutation";
 import {
   ICEBreakerCraftingCost,
@@ -88,8 +88,10 @@ export function createHackingMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMo
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
   const isOtherDebuff = rng.random() < 0.3;
-  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
-  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.4 : -0.5;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, debuffScalar);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, debuffScalar) : {};
   const mergedMults = mergeBuffs(playerMultsMods, debuff);
   const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
@@ -116,8 +118,9 @@ export function createPhysicalMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckM
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
   const isOtherDebuff = rng.random() < 0.3;
-  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
-  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.4 : -0.5;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, debuffScalar);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, debuffScalar) : {};
   const mergedMults = mergeBuffs(playerMultsMods, debuff);
   const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
@@ -144,8 +147,9 @@ export function createWorkMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
   const playerMultsMods = isOtherMult ? {} : getPlayerStatBuff(level, rng, scalar, playerMults);
   const isOtherDebuff = rng.random() < 0.3;
-  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, -0.4);
-  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, -0.4) : {};
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.4 : -0.5;
+  const debuff = isOtherDebuff ? {} : getPlayerStatBuff(level, rng, debuffScalar);
+  const otherDebuff = isOtherDebuff ? getOtherStatBuff(level, rng, debuffScalar) : {};
   const mergedMults = mergeBuffs(playerMultsMods, debuff);
   const mergedOtherMults = mergeBuffs(otherMultsMods, otherDebuff);
   const stats: ModStats = {};
@@ -170,7 +174,8 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
   const { otherMults, consumableStats } = getCyberdeckModStatRanges();
   const isOtherMult = rng.random() < 3 / 7;
   const otherMultsMods = isOtherMult ? getOtherStatBuff(level, rng, scalar, otherMults) : {};
-  const debuff = isOtherMult ? getOtherStatBuff(level, rng, -0.4) : {};
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.4 : -0.5;
+  const debuff = isOtherMult ? getOtherStatBuff(level, rng, debuffScalar) : {};
   const consumableBuffMod = isOtherMult ? {} : getConsumableBuff(level, rng, scalar, consumableStats);
   const stats: ModStats = {};
   if (isOtherMult) {

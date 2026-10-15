@@ -5,6 +5,7 @@ import { ChallengeDetails, DeckMod } from "../Types";
 import { romanNumeralEncoder } from "../../DarkNet/controllers/ServerGenerator";
 import { NetrunningState } from "./NetrunningState";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
+import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 
 export function completeInstalledModTutorial() {
   CyberdeckState.tutorialSteps.hasInstalledMod = true;
@@ -44,6 +45,12 @@ export function completeNetrunChallenges() {
 
   if (NetrunningState.rewardScore > 120 && !hasCompleted(Challenges.Netrun120)) {
     CyberdeckState.completedChallenges[Challenges.Netrun120] = true;
+    CyberdeckState.netrunningLevel += 2;
+  }
+
+  const flaggedBombs = NetrunningState.grid.flat().filter((e) => e.flagged && e.hasBomb);
+  if (flaggedBombs.length && !hasCompleted(Challenges.AutoBomber)) {
+    CyberdeckState.completedChallenges[Challenges.AutoBomber] = true;
     CyberdeckState.netrunningLevel += 2;
   }
 }
@@ -99,6 +106,9 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     completeMadeConnectionTutorial();
   }
 
+  checkOverclockedChallenge();
+  checkBigDeckChallenge();
+
   if (!hasCompleted(Challenges.FullHouse) && getChargedModuleIDs().length === getCurrentRackSize()) {
     CyberdeckState.completedChallenges[Challenges.FullHouse] = true;
     CyberdeckState.modStorageSize += 2;
@@ -129,6 +139,57 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
   if (twoHopsFromIoPanel.length) {
     CyberdeckState.completedChallenges[Challenges.DaisyChain] = true;
     CyberdeckState.netrunningLevel += 2;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function checkSupplierChallenge() {
+  if (hasCompleted(Challenges.Supplier)) {
+    return;
+  }
+
+  const { rom, chips, neurodes } = CyberdeckState.componentStats;
+  const romSourceCount = +!!rom.backdoors + +!!rom.mods + +!!rom.caches + +!!rom.programs;
+  const chipsSourceCount = +!!chips.hacknet + +!!chips.companyWork + +!!chips.IPvGO + +!!chips.mods;
+  const neurodesSourceCount =
+    +!!neurodes.kills + +!!neurodes.class + +!!neurodes.codingContracts + +!!neurodes.cortexShare + +!!neurodes.mods;
+
+  if (romSourceCount + chipsSourceCount + neurodesSourceCount >= 5) {
+    CyberdeckState.completedChallenges[Challenges.Supplier] = true;
+    CyberdeckState.craftingLevel += 2;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function checkOverclockedChallenge() {
+  if (hasCompleted(Challenges.Overclocked)) {
+    return;
+  }
+
+  const stats = getCyberdeckStatBonuses();
+  const playerBuffOverThreshold = Object.values(stats.playerMults).some((stat) => stat > 0.5);
+  const otherBuffOverThreshold = Object.values(stats.otherMults).some((stat) => stat > 0.5);
+  const endgameBuffOverThreshold = Object.values(stats.endgameMults).some((stat) => stat > 0.5);
+  if (playerBuffOverThreshold || otherBuffOverThreshold || endgameBuffOverThreshold) {
+    CyberdeckState.completedChallenges[Challenges.Overclocked] = true;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function checkBigDeckChallenge() {
+  if (hasCompleted(Challenges.BigDeck)) {
+    return;
+  }
+
+  if (getCurrentRackSize() >= 9) {
+    CyberdeckState.completedChallenges[Challenges.BigDeck] = true;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function checkAutoWireChallenge(mod: DeckMod) {
+  if (!hasCompleted(Challenges.AutoWire) && getChargedModuleIDs().includes(mod.id)) {
+    CyberdeckState.completedChallenges[Challenges.AutoWire] = true;
     CyberdeckEvents.emit();
   }
 }
@@ -198,31 +259,31 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     name: "Supplier",
     description: Challenges.Supplier,
     hint: "Lots of activities give crafting components: crime, classes, company work, hacknet, backdoors, coding contracts...",
-    reward: "+2 cyberdeck crafting level", // TODO-fico
+    reward: "+2 cyberdeck crafting level",
   },
   [Challenges.Netrun120]: {
     name: "Jackpot",
     description: Challenges.Netrun120,
     hint: "Hint: you don't need to actually break the data caches immediately.",
-    reward: "+2 netrunning level", // TODO-fico
+    reward: "+2 netrunning level",
   },
   [Challenges.Overclocked]: {
     name: "Overclocked",
     description: Challenges.Overclocked,
     hint: "Buffs from charged mods stack. Find a few that all boost the same stat (and watch out for debuffs dragging it back down).",
-    reward: "Reduced level of debuffs on new mods", // TODO-fico
-  },
-  [Challenges.BigDeck]: {
-    name: "Big Deck",
-    description: Challenges.BigDeck,
-    hint: "Rack extensions add more slots to the deck, but only while they are charged.",
-    reward: "+1 to rack extension limit", // TODO-fico
+    reward: "Reduced level of debuffs on new mods",
   },
   [Challenges.AutoWire]: {
     name: "Auto Wire",
     description: Challenges.AutoWire,
     hint: "Use ns.cyberdeck.installMod() to put a mod in the rack, then ns.cyberdeck.addConnection() to wire it up.",
     reward: "10% increase in effect of mods connected directly to the cyberdeck I/O panel", // TODO-fico
+  },
+  [Challenges.BigDeck]: {
+    name: "Big Deck",
+    description: Challenges.BigDeck,
+    hint: "Rack extensions add more slots to the deck, but only while they are charged.",
+    reward: "+1 to rack extension limit",
   },
   [Challenges.AutoRun]: {
     name: "Auto Run",

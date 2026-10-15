@@ -1,10 +1,11 @@
-import { CyberdeckState } from "../models/CyberdeckState";
+import { CyberdeckState, hasCompleted } from "../models/CyberdeckState";
 import { Player } from "@player";
 import { WHRNG } from "../../Casino/RNG";
 import { Multipliers } from "@nsdefs";
 import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
 import { getModuleById } from "./moduleUtilities";
+import { Challenges } from "@enums";
 
 export function getNextNetrunningWHRNG() {
   CyberdeckState.netrunningSeedUsages++;
@@ -229,8 +230,9 @@ export function getPlayerStatBuff(
 }
 
 export function getDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<Multipliers> {
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.9 : -1;
   const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
-  return getPlayerStatBuff(debuffLevel, rng, scalar * -1);
+  return getPlayerStatBuff(debuffLevel, rng, scalar * debuffScalar);
 }
 
 export function getConsumableBuff(
@@ -262,7 +264,8 @@ export function getEndgameBuff(level: number, rng: WHRNG, scalar: number = 1): P
 
 export function getEndgameStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<EndgameMults> {
   const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
-  return getEndgameBuff(debuffLevel, rng, scalar * -1);
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.9 : -1;
+  return getEndgameBuff(debuffLevel, rng, scalar * debuffScalar);
 }
 
 export function getOtherStatBuff(
@@ -282,7 +285,8 @@ export function getOtherStatBuff(
 
 export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1): Partial<MiscMults> {
   const debuffLevel = rng.random() * Math.max(5 - level, 2) + Math.max(2 - level / 3, 0);
-  return getOtherStatBuff(debuffLevel, rng, scalar * -1);
+  const debuffScalar = hasCompleted(Challenges.Overclocked) ? -0.9 : -1;
+  return getOtherStatBuff(debuffLevel, rng, scalar * debuffScalar);
 }
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {

@@ -10,6 +10,7 @@ import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 import { Crime } from "../../Crime/Crime";
 import { CrimeType } from "@enums";
 import { ComponentCounts } from "../Types";
+import { checkSupplierChallenge } from "./challenges";
 
 const lastStatsSnapshot = {
   totalWorkRep: null as number | null,
@@ -80,6 +81,8 @@ export function gainCyberdeckComponents(cycles: number) {
     CyberdeckState.components.neurodes += newNeurodes;
     CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
   }
+
+  checkSupplierChallenge();
 }
 
 export function getCrimeComponentReward(crime: Crime, isSleeve = false): Partial<ComponentCounts> {
