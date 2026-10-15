@@ -32,6 +32,37 @@ TODO:
 
 LEVEL UP DECK:
 
+2. Bomb Squad can never be completed. Nothing ever sets Challenges.BombSquad to complete. The deck level is the index of the first incomplete challenge (getCyberdeckLevel). Bomb Squad is at index 5, so the deck can't
+   get past level 5. That also locks the I/O panel socket granted at level 15.
+
+3. Corruption ("Install a mod from the glitch") can never be completed either. Nothing sets it. It should be set when a mod with mod.corrupted === true is moved into the rack (moveModule in moduleMutation.ts).
+- Daisy Chain completes on the first connection to the I/O panel. In the hop search at challenges.ts:122-139, the connection to the I/O panel itself counts as the next hop. So the "two hops away" list fills up with
+  just one mod connected. It needs a real distance search that tracks which mods it has already visited.
+  - Auto Bomber doesn't check for "API only". challenges.ts:51 passes if any bomb is flagged, including one flagged by right-click in the UI. It also doesn't check whether the bomb was still active (hits === 0). It
+    reads like the check meant for Bomb Squad; Auto Bomber also needs !hasMadeManualMove.
+  - Auto Run and Glitch Run can be silently blocked. hasMadeManualMove is only reset at the end of a normal run that finishes (netrunRewards.ts:80). It is not reset after a glitch run, after dying to an offline node, or
+    after leaving a run partway. If the player pressed any arrow key in one of those runs, their next all-API run doesn't count. Resetting it in initNetrunGrid fixes this.
+  - Full House triggers one mod early. getChargedModuleIDs() includes the I/O panel, but the I/O panel doesn't take a rack slot, so this passes with rack size minus one charged mods.
+- Overclocked is nearly free. The check passes when any stat total is over 0.5. But the component production stats (chipProduction, romProduction, neurodeProduction) roll between 0.25 and 5.5, so charging a single
+  production mod usually passes it. Those stats should be excluded, or the check limited to percentage multipliers. Stats where lower is better (class_cost, stock_fees, equipment_cost) can never count, because the
+  check only looks for values above 0.5.
+- Supplier's hint points at the wrong source. The hint says "crime", but rom.pettyCrime isn't one of the five sources it counts. Only kills (homicide) count. There are still plenty of other sources, so it's
+  achievable.
+- Netrun 80/120 and Auto Run use > while the text says "80+", "100+" and "120+". A score of exactly 80, 100 or 120 doesn't count. It's minor, but easy to fix with >=.
+- Auto Wire only checks the first mod. checkAutoWireChallenge(mod1) ignores mod2. It's still achievable, because passing the I/O panel as mod1 always counts as charged. Separately, cyberdeckApi.ts:185 checks mod1.id
+  where it should check mod2.id in the "is installed" guard.
+
+Rewards that are broken or missing
+
+- The Homebrew (Crafter) reward is backwards. In netrunRewards.ts:92 the core bonus is 1.5 before the challenge and 0.5 after, so completing it gives fewer cores.
+- The Scrapper reward isn't implemented. Salvaging still gives a flat 2 of each component no matter what.
+- The Big Deck reward never takes effect. This is the maxInstalledRackExtensions problem from blocker1.
+- The Glitch Run socket comes at the wrong time. The I/O panel's sockets are tied to deck level (1, 5 and15), not to specific challenges. Level 15 is reached by finishing Corruption, so the socket listed as Glitch
+  Run's reward actually arrives one challenge earlier.
+- Corruption's reward isn't connected to the challenge. The legacy API is unlocked by hasDiscoveredGlitch, not by completing Corruption.
+- Auto Wire and Auto Bomber rewards are still unimplemented. They are still marked TODO-fico.
+
+
 challenges:
 - complete tutorial
 - complete netrun with score 100

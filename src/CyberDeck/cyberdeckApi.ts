@@ -3,7 +3,13 @@ import { Cyberdeck, EntityInfo } from "@nsdefs";
 import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
 import { LocationName, ModType, NetrunEntityVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
-import { CyberdeckEvents, CyberdeckState, getChargedModules, hasCyberdeck } from "./models/CyberdeckState";
+import {
+  CyberdeckEvents,
+  CyberdeckState,
+  getChargedModules,
+  getRackExtensionCap,
+  hasCyberdeck,
+} from "./models/CyberdeckState";
 import {
   craftICEBreaker,
   craftPowerSupply,
@@ -134,11 +140,11 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           return false;
         }
         if (
-          getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions &&
+          getInstalledRackExtensionCount() >= getRackExtensionCap() &&
           modToMove.type === ModType.RackExtension
         ) {
           logger(ctx)(
-            `Failed to move mod ${modId}: there are already the max of rack extensions installed (${CyberdeckState.maxInstalledRackExtensions}).`,
+            `Failed to move mod ${modId}: there are already the max of rack extensions installed (${getRackExtensionCap()}).`,
           );
           return false;
         }

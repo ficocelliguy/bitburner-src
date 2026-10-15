@@ -1,5 +1,11 @@
 import { DropResult } from "react-beautiful-dnd";
-import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, getChargedModules } from "./CyberdeckState";
+import {
+  CyberdeckEvents,
+  CyberdeckState,
+  getChargedModuleIDs,
+  getChargedModules,
+  getRackExtensionCap,
+} from "./CyberdeckState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
@@ -37,11 +43,11 @@ export function handleModuleMoved(result: DropResult, filter: string = "") {
     sourceIsStorage &&
     !destinationIsStorage &&
     moduleToMove.type === ModType.RackExtension &&
-    getInstalledRackExtensionCount() >= CyberdeckState.maxInstalledRackExtensions
+    getInstalledRackExtensionCount() >= getRackExtensionCap()
   ) {
     // TODO-fico: rack extension count is a SF reward?
     SnackbarEvents.emit(
-      `Cannot install more than ${CyberdeckState.maxInstalledRackExtensions} Rack Extension modules.`,
+      `Cannot install more than ${getRackExtensionCap()} Rack Extension modules.`,
       ToastVariant.ERROR,
       2000,
     );

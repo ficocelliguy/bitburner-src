@@ -1,7 +1,6 @@
 import {
   CyberdeckState,
   getDefaultCompletedChallenges,
-  getRackExtensionCap,
   hasCyberdeck,
 } from "../models/CyberdeckState";
 import { addCyberdeckServer, gainCyberdeck } from "../models/cyberdeckServer";
@@ -21,7 +20,6 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.craftingLevel = 0;
     CyberdeckState.netrunningCooldownLevel = 0;
     CyberdeckState.modStorageSize = 8;
-    CyberdeckState.maxInstalledRackExtensions = getRackExtensionCap();
     CyberdeckState.netrunningSeedUsages = 0;
     CyberdeckState.netrunningCorruptedSeedUsages = 0;
     CyberdeckState.craftingPowerSupplySeedUsages = 0;
