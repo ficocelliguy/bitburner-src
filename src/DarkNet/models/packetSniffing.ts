@@ -1,5 +1,6 @@
 import { commonPasswordDictionary, letters, packetSniffPhrases } from "./dictionaryData";
-import { generateSimpleArithmeticExpression, getPassword, romanNumeralEncoder } from "../controllers/ServerGenerator";
+import { generateSimpleArithmeticExpression, getPassword } from "../controllers/ServerGenerator";
+import { romanNumeralEncoder } from "../../utils/StringHelperFunctions";
 import { generateDarknetServerName, isPasswordResponse, type PasswordResponse } from "./DarknetServerOptions";
 import { LocationName } from "@enums";
 import { getServerState, LogEntry } from "./DarknetState";

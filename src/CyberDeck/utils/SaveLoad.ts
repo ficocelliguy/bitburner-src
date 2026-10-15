@@ -1,7 +1,7 @@
 import { ComponentCounts, ComponentStats, Connection, DeckMod } from "../Types";
 import { CyberdeckEvents, CyberdeckState, getDefaultCompletedChallenges, hasCyberdeck } from "../models/CyberdeckState";
 import { Challenges } from "../Enums";
-import { updateCoveredSockets } from "../models/moduleMutation";
+import { checkConnection, updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
 
 type CyberdeckSaveData = {
@@ -127,12 +127,13 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     if (!isModuleArray(storedModules)) throw new Error("Invalid cyberdeck savestring value: storedModules");
     CyberdeckState.storedModules = storedModules;
 
-    if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
-    CyberdeckState.connections = connections;
     if (!isComponentCounts(components)) throw new Error("Invalid cyberdeck savestring value: components");
     CyberdeckState.components = components;
     if (!isComponentStats(componentStats)) throw new Error("Invalid cyberdeck savestring value: componentStats");
     CyberdeckState.componentStats = componentStats;
+
+    if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
+    CyberdeckState.connections = connections.filter(([a, b]) => checkConnection(a, b).success);
 
     updateCoveredSockets();
 

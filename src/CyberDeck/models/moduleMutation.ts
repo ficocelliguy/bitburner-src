@@ -115,7 +115,7 @@ export function ejectOverloadedModules() {
   }
 }
 
-export function createConnection(source: Socket, destination: Socket) {
+export function checkConnection(source: Socket, destination: Socket) {
   const sourceModule = getModule(source.modId);
   const destinationModule = getModule(destination.modId);
   if (!sourceModule) {
@@ -161,6 +161,19 @@ export function createConnection(source: Socket, destination: Socket) {
       success: false,
       error: `Wires cannot overlap. There is a wire in between those connection points connecting ${overlapSocket[0].modId} and ${overlapSocket[1].modId}`,
     };
+  }
+  return {
+    success: true,
+    error: "",
+  };
+}
+
+export function createConnection(source: Socket, destination: Socket) {
+  const sourceModule = getModule(source.modId);
+  const destinationModule = getModule(destination.modId);
+  const connectionCheck = checkConnection(source, destination);
+  if (!connectionCheck.success || !sourceModule || !destinationModule) {
+    return connectionCheck;
   }
 
   disconnectSocket(source);

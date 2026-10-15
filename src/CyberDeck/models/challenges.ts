@@ -2,7 +2,7 @@ import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, hasCompleted } fr
 import { Challenges } from "@enums";
 import { getCyberdeckIOPanel } from "./createModule";
 import { ChallengeDetails, DeckMod } from "../Types";
-import { romanNumeralEncoder } from "../../DarkNet/controllers/ServerGenerator";
+import { romanNumeralEncoder } from "../../utils/StringHelperFunctions";
 import { NetrunningState } from "./NetrunningState";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
