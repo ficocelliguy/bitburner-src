@@ -43,8 +43,8 @@ export enum Brand {
 
 export enum Challenges {
   CompletedTutorial = "Complete the tutorial",
-  Netrun80 = "Get a score of 80+ while netrunning",
   Scrapper = "Salvage at least 5 mods",
+  Netrun80 = "Get a score of 80+ while netrunning",
   Crafter = "Craft 5 mods",
   DaisyChain = "Charge a mod that is 3+ jumps away from the deck",
   BombSquad = "Flag ICE with an active countermeasure, and finish the run",
@@ -52,11 +52,11 @@ export enum Challenges {
   Supplier = "Get crafting components from 5 sources",
   Netrun120 = "Get a score of 120+ while netrunning",
   Overclocked = "Get a 50% bonus in a single stat",
-  BigDeck = "Have at least 7 rack slots",
-  DaisierChain = "Charge a mod that is 6+ jumps away from the deck",
   AutoWire = "Charge a mod via the API",
   AutoRun = "Get a score of 100+ using only the API",
   AutoBomber = "Flag ICE with an active countermeasure and finish the run with only the API",
+  BigDeck = "Have at least 7 rack slots",
+  DaisierChain = "Charge a mod that is 6+ jumps away from the deck",
   Corruption = "Install a mod from the glitch",
   GlitchRun = "Get a score of 100+ at the glitch using only the API",
 }
