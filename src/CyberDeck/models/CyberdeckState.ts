@@ -3,6 +3,7 @@ import { EventEmitter } from "../../utils/EventEmitter";
 import { getCyberdeckIOPanel } from "./createModule";
 import { Player } from "@player";
 import { Challenges } from "../Enums";
+import { getCyberdeckLevel } from "./challenges";
 
 /** Event emitter to allow the UI to subscribe to Cyberdeck gameplay updates in order to trigger rerenders properly */
 export const CyberdeckEvents = new EventEmitter<[]>();
@@ -84,6 +85,10 @@ export function getDefaultCompletedChallenges(): Record<Challenges, boolean> {
 }
 
 export function hasCompleted(challenge: Challenges): boolean {
+  const currentLevel = getCyberdeckLevel();
+  const challengeLevel = Object.values(Challenges).indexOf(challenge);
+  if (challengeLevel > currentLevel) return false;
+
   return CyberdeckState.completedChallenges[challenge];
 }
 
@@ -93,7 +98,7 @@ export function hasCyberdeck(): boolean {
 
 export function getRackExtensionCap() {
   const base = 1;
-  const challengeBonus = hasCompleted(Challenges.BigDeck) ? 1 : 0;
+  const challengeBonus = hasCompleted(Challenges.AutoWire) ? 1 : 0;
   const challengeBonus2 = hasCompleted(Challenges.DaisierChain) ? 1 : 0;
   return base + challengeBonus + challengeBonus2;
 }

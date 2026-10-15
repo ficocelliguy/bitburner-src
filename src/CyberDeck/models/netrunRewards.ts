@@ -77,7 +77,6 @@ export function netrunRewards(): NetrunningRewards {
   const rewards = getNetrunningRewards(rng, NetrunningState.rewardScore);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
   NetrunningState.target = Brand.Unknown;
-  NetrunningState.hasMadeManualMove = false;
 
   const chipsGained = Math.floor(rng.random() * (scoreFactor * 2 + 2));
   CyberdeckState.components.chips += chipsGained;
@@ -157,9 +156,7 @@ function corruptedNetrun(): NetrunningRewards {
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const rewards = getCorruptedNetrunningRewards(rng, NetrunningState.rewardScore);
-  completeNetrunChallenges();
   CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
-  NetrunningState.hasMadeManualMove = false;
 
   const coresGained = Math.floor(rng.random() * (NetrunningState.rewardScore / 25 + 2));
   CyberdeckState.components.cores += coresGained;

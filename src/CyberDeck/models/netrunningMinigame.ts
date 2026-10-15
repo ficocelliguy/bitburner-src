@@ -71,7 +71,6 @@ function hitOfflineNode(programmaticMove: boolean) {
   emitSparklesOnEntity(entity);
   NetrunningState.isNetrunning = false;
   NetrunningState.showNetrunOverride = true;
-  NetrunningState.hasMadeManualMove = false;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
   NetrunningState.rewardScore = 0;
@@ -130,6 +129,7 @@ export function initNetrunGrid(corrupted: boolean, depth = 0) {
   NetrunningState.isNetrunning = true;
   NetrunningState.corrupted = corrupted;
   NetrunningState.shaking = false;
+  NetrunningState.hasMadeManualMove = false;
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 1;
   NetrunningState.steps = 0;

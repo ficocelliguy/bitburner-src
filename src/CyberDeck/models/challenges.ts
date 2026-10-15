@@ -37,23 +37,27 @@ export function completeNetrunChallenges() {
   if (NetrunningState.rewardScore >= 100 && !NetrunningState.hasMadeManualMove) {
     if (NetrunningState.corrupted) {
       CyberdeckState.completedChallenges[Challenges.GlitchRun] = true;
-    } else if (!hasCompleted(Challenges.AutoRun)) {
+    } else if (!CyberdeckState.completedChallenges[Challenges.AutoRun]) {
       CyberdeckState.completedChallenges[Challenges.AutoRun] = true;
       CyberdeckState.netrunningCooldownLevel += 2;
     }
   }
 
-  if (NetrunningState.rewardScore >= 120 && !hasCompleted(Challenges.Netrun120)) {
+  if (NetrunningState.rewardScore >= 120 && !CyberdeckState.completedChallenges[Challenges.Netrun120]) {
     CyberdeckState.completedChallenges[Challenges.Netrun120] = true;
     CyberdeckState.netrunningLevel += 2;
   }
 
-  const flaggedBombs = NetrunningState.grid.flat().filter((e) => e.flagged && e.hasBomb);
-  if (flaggedBombs.length && !hasCompleted(Challenges.BombSquad)) {
+  const flaggedBombs = NetrunningState.grid.flat().filter((e) => e.flagged && e.hasBomb && !e.hits);
+  if (flaggedBombs.length && !CyberdeckState.completedChallenges[Challenges.BombSquad]) {
     CyberdeckState.completedChallenges[Challenges.BombSquad] = true;
     CyberdeckState.netrunningLevel += 2;
   }
-  if (flaggedBombs.length && !NetrunningState.hasMadeManualMove && !hasCompleted(Challenges.AutoBomber)) {
+  if (
+    flaggedBombs.length &&
+    !NetrunningState.hasMadeManualMove &&
+    !CyberdeckState.completedChallenges[Challenges.AutoBomber]
+  ) {
     CyberdeckState.completedChallenges[Challenges.AutoBomber] = true;
   }
 }
@@ -113,7 +117,10 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
   checkBigDeckChallenge();
   checkCorruptionChallenge();
 
-  if (!hasCompleted(Challenges.FullHouse) && getChargedModuleIDs().length === getCurrentRackSize() + 1) {
+  if (
+    !CyberdeckState.completedChallenges[Challenges.FullHouse] &&
+    getChargedModuleIDs().length === getCurrentRackSize() + 1
+  ) {
     CyberdeckState.completedChallenges[Challenges.FullHouse] = true;
     CyberdeckState.modStorageSize += 2;
     CyberdeckEvents.emit();
@@ -141,12 +148,12 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     return Math.max(...connectedMods.map((mod) => getMaxDepthOfConnections(mod, depth + 1, visited)));
   }
   const depth = getMaxDepthOfConnections();
-  if (depth >= 3 && !hasCompleted(Challenges.DaisyChain)) {
+  if (depth >= 3 && !CyberdeckState.completedChallenges[Challenges.DaisyChain]) {
     CyberdeckState.completedChallenges[Challenges.DaisyChain] = true;
     CyberdeckState.netrunningLevel += 2;
     CyberdeckEvents.emit();
   }
-  if (depth >= 6 && hasCompleted(Challenges.DaisierChain)) {
+  if (depth >= 6 && !CyberdeckState.completedChallenges[Challenges.DaisierChain]) {
     CyberdeckState.completedChallenges[Challenges.DaisierChain] = true;
     CyberdeckEvents.emit();
   }
@@ -163,7 +170,7 @@ export function checkSupplierChallenge() {
   const neurodesSourceCount =
     +!!neurodes.kills + +!!neurodes.class + +!!neurodes.codingContracts + +!!neurodes.cortexShare + +!!neurodes.mods;
 
-  if (romSourceCount + chipsSourceCount + neurodesSourceCount >= 5) {
+  if (!hasCompleted(Challenges.Supplier) && romSourceCount + chipsSourceCount + neurodesSourceCount >= 5) {
     CyberdeckState.completedChallenges[Challenges.Supplier] = true;
     CyberdeckState.craftingLevel += 2;
     CyberdeckEvents.emit();
@@ -189,7 +196,7 @@ export function checkBigDeckChallenge() {
     return;
   }
 
-  if (getCurrentRackSize() >= 9) {
+  if (getCurrentRackSize() >= 7) {
     CyberdeckState.completedChallenges[Challenges.BigDeck] = true;
     CyberdeckEvents.emit();
   }
@@ -296,13 +303,13 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     name: "Auto Wire",
     description: Challenges.AutoWire,
     hint: "Use ns.cyberdeck.installMod() to put a mod in the rack, then ns.cyberdeck.addConnection() to wire it up.",
-    reward: "10% increase in effect of mods connected directly to the cyberdeck I/O panel", // TODO-fico
+    reward: "+1 to rack extension limit",
   },
   [Challenges.BigDeck]: {
     name: "Big Deck",
     description: Challenges.BigDeck,
     hint: "Rack extensions add more slots to the deck, but only while they are charged.",
-    reward: "+1 to rack extension limit",
+    reward: "+1 deck I/O panel socket",
   },
   [Challenges.AutoRun]: {
     name: "Auto Run",
