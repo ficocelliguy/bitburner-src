@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography, Tooltip } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { ChallengeDetail, getCyberdeckLevel } from "../models/challenges";
@@ -62,35 +62,41 @@ function CompletedChallengesTable(): React.ReactElement {
   const challenges = Object.values(Challenges);
   const level = getCyberdeckLevel();
   const nextChallenge = challenges[level];
-  // Only challenges up to and including the next uncompleted one, highest-level first
-  const rows = challenges.slice(0, level + 1).reverse();
+  const rows = challenges.slice(0, level).reverse();
   const cellSx = { fontSize: "14px", color: Settings.theme.maplocation, py: 0.5 };
-  const nextCellSx = { ...cellSx, color: Settings.theme.secondary, fontStyle: "italic" };
+  const nextCellSx = { ...cellSx, color: Settings.theme.maplocation, fontStyle: "italic", };
   return (
     <div style={{ maxWidth: "600px" }}>
       <Typography variant="h4" gutterBottom>
-        Challenges
+        Deck Upgrades
       </Typography>
+      {nextChallenge && (
+        <Tooltip title={ChallengeDetail[nextChallenge].hint}>
+          <Box sx={{backgroundColor: Settings.theme.well, padding: "10px", borderRadius: "3px", marginBottom: "20px"}}>
+            <Typography sx={{ color: Settings.theme.maplocation }}>
+              Next challenge ({ChallengeDetail[nextChallenge].name}): {ChallengeDetail[nextChallenge].description}
+            </Typography>
+            <Typography sx={nextCellSx}>
+              Reward: {ChallengeDetail[nextChallenge].reward}
+            </Typography>
+          </Box>
+        </Tooltip>
+      )}
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ ...cellSx, color: Settings.theme.primary }}>Challenge</TableCell>
-            <TableCell sx={{ ...cellSx, color: Settings.theme.primary }}>Reward</TableCell>
+            <TableCell sx={{ ...cellSx, color: Settings.theme.primary }}>Completed Challenge</TableCell>
+            <TableCell sx={{ ...cellSx, color: Settings.theme.primary }}>Rewards</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((challenge) => {
-            const isNext = challenge === nextChallenge;
-            const sx = isNext ? nextCellSx : cellSx;
             return (
               <TableRow key={challenge}>
-                <TableCell
-                  sx={sx}
-                  title={isNext ? ChallengeDetail[challenge].hint : ChallengeDetail[challenge].description}
-                >
-                  {isNext ? `Next: ${ChallengeDetail[challenge].description}` : ChallengeDetail[challenge].name}
+                <TableCell sx={cellSx} title={ChallengeDetail[challenge].description}>
+                  {ChallengeDetail[challenge].name}
                 </TableCell>
-                <TableCell sx={sx}>{ChallengeDetail[challenge].reward}</TableCell>
+                <TableCell sx={cellSx}>{ChallengeDetail[challenge].reward}</TableCell>
               </TableRow>
             );
           })}
