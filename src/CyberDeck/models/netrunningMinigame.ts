@@ -71,6 +71,7 @@ function hitOfflineNode(programmaticMove: boolean) {
   emitSparklesOnEntity(entity);
   NetrunningState.isNetrunning = false;
   NetrunningState.showNetrunOverride = true;
+  NetrunningState.hasMadeManualMove = false;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
   CyberdeckState.lastNetrunningTimestamp = Date.now();
   NetrunningState.rewardScore = 0;
@@ -206,8 +207,9 @@ export function initNetrunGrid(corrupted: boolean, depth = 0) {
   }
 
   // Make airspace at the start
-  for (let x = 0; x < 3; x++) {
-    for (let y = 0; y < 3; y++) {
+  const airspaceSize = hasCompleted(Challenges.AutoBomber) ? 3 : 2;
+  for (let x = 0; x < airspaceSize; x++) {
+    for (let y = 0; y < airspaceSize; y++) {
       breakEntity(NetrunningState.grid[y][x]);
     }
   }

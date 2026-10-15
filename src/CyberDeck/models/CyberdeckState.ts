@@ -92,9 +92,10 @@ export function hasCyberdeck(): boolean {
 }
 
 export function getRackExtensionCap() {
-  const base = 2;
+  const base = 1;
   const challengeBonus = hasCompleted(Challenges.BigDeck) ? 1 : 0;
-  return base + challengeBonus;
+  const challengeBonus2 = hasCompleted(Challenges.DaisierChain) ? 1 : 0;
+  return base + challengeBonus + challengeBonus2;
 }
 
 export function getChargedModuleIDs(): string[] {

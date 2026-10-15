@@ -41,7 +41,16 @@ export const getCyberdeckIOPanel = (): DeckMod => {
     type: ModType.CyberdeckIOPanel,
     id: "cyberdeck-io-panel",
     brand: isCustomBuild() ? Brand.OnoSendai : Brand.Hosaka,
-    sockets: [false, lvl >= 5, false, true, false, lvl >= 1, false, lvl >= 15],
+    sockets: [
+      false,
+      hasCompleted(Challenges.BigDeck),
+      false,
+      true,
+      false,
+      hasCompleted(Challenges.CompletedTutorial),
+      false,
+      hasCompleted(Challenges.Corruption),
+    ],
     rarity: lvl,
     stats: {},
     charged: true,
@@ -501,9 +510,10 @@ export function disassembleModule(module: DeckMod, showToast: boolean = false): 
     return { chips: 0, rom: 0, neurodes: 0, cores: 0, iceBreakers: 0 };
   }
 
-  const chipsGained = module.type !== ModType.Uplink ? 2 : 0;
-  const ROMGained = 2;
-  const neurodesGained = module.type !== ModType.ProcessingMod ? 2 : 0;
+  const componentCounts = hasCompleted(Challenges.Scrapper) ? 2 : 1;
+  const chipsGained = module.type !== ModType.Uplink ? componentCounts : 0;
+  const ROMGained = componentCounts;
+  const neurodesGained = module.type !== ModType.ProcessingMod ? componentCounts : 0;
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.components.rom += ROMGained;
   CyberdeckState.components.neurodes += neurodesGained;

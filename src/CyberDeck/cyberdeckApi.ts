@@ -139,10 +139,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           logger(ctx)(`Failed to move mod ${modId}: cyberdeck mod rack is already full.`);
           return false;
         }
-        if (
-          getInstalledRackExtensionCount() >= getRackExtensionCap() &&
-          modToMove.type === ModType.RackExtension
-        ) {
+        if (getInstalledRackExtensionCount() >= getRackExtensionCap() && modToMove.type === ModType.RackExtension) {
           logger(ctx)(
             `Failed to move mod ${modId}: there are already the max of rack extensions installed (${getRackExtensionCap()}).`,
           );
@@ -188,7 +185,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         logger(ctx)(`Cannot add connection: mod ${modId1} is not installed on the deck rack.`);
         return false;
       }
-      if (!CyberdeckState.installedModules.includes(mod2) && mod1.id !== getCyberdeckIOPanel().id) {
+      if (!CyberdeckState.installedModules.includes(mod2) && mod2.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot add connection: mod ${modId2} is not installed on the deck rack.`);
         return false;
       }

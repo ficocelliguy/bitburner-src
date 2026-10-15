@@ -1,8 +1,4 @@
-import {
-  CyberdeckState,
-  getDefaultCompletedChallenges,
-  hasCyberdeck,
-} from "../models/CyberdeckState";
+import { CyberdeckState, getDefaultCompletedChallenges, hasCyberdeck } from "../models/CyberdeckState";
 import { addCyberdeckServer, gainCyberdeck } from "../models/cyberdeckServer";
 import { prestigeCyberdeckComponents } from "../models/componentEconomy";
 import { Player } from "@player";

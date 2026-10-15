@@ -31,10 +31,10 @@ export function completeNetrunChallenges() {
   CyberdeckState.tutorialSteps.hasNetrun = true;
   checkTutorialCompletion();
 
-  if (NetrunningState.rewardScore > 80) {
+  if (NetrunningState.rewardScore >= 80) {
     CyberdeckState.completedChallenges[Challenges.Netrun80] = true;
   }
-  if (NetrunningState.rewardScore > 100 && !NetrunningState.hasMadeManualMove) {
+  if (NetrunningState.rewardScore >= 100 && !NetrunningState.hasMadeManualMove) {
     if (NetrunningState.corrupted) {
       CyberdeckState.completedChallenges[Challenges.GlitchRun] = true;
     } else if (!hasCompleted(Challenges.AutoRun)) {
@@ -43,15 +43,18 @@ export function completeNetrunChallenges() {
     }
   }
 
-  if (NetrunningState.rewardScore > 120 && !hasCompleted(Challenges.Netrun120)) {
+  if (NetrunningState.rewardScore >= 120 && !hasCompleted(Challenges.Netrun120)) {
     CyberdeckState.completedChallenges[Challenges.Netrun120] = true;
     CyberdeckState.netrunningLevel += 2;
   }
 
   const flaggedBombs = NetrunningState.grid.flat().filter((e) => e.flagged && e.hasBomb);
-  if (flaggedBombs.length && !hasCompleted(Challenges.AutoBomber)) {
-    CyberdeckState.completedChallenges[Challenges.AutoBomber] = true;
+  if (flaggedBombs.length && !hasCompleted(Challenges.BombSquad)) {
+    CyberdeckState.completedChallenges[Challenges.BombSquad] = true;
     CyberdeckState.netrunningLevel += 2;
+  }
+  if (flaggedBombs.length && !NetrunningState.hasMadeManualMove && !hasCompleted(Challenges.AutoBomber)) {
+    CyberdeckState.completedChallenges[Challenges.AutoBomber] = true;
   }
 }
 
@@ -108,37 +111,43 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
 
   checkOverclockedChallenge();
   checkBigDeckChallenge();
+  checkCorruptionChallenge();
 
-  if (!hasCompleted(Challenges.FullHouse) && getChargedModuleIDs().length === getCurrentRackSize()) {
+  if (!hasCompleted(Challenges.FullHouse) && getChargedModuleIDs().length === getCurrentRackSize() + 1) {
     CyberdeckState.completedChallenges[Challenges.FullHouse] = true;
     CyberdeckState.modStorageSize += 2;
     CyberdeckEvents.emit();
   }
 
-  if (hasCompleted(Challenges.DaisyChain)) {
+  if (hasCompleted(Challenges.DaisyChain) && hasCompleted(Challenges.DaisierChain)) {
     return;
   }
 
-  const deck = getCyberdeckIOPanel().id;
-  const connectedToIOPanel = CyberdeckState.connections
-    .filter(([source, destination]) => source.modId === deck || destination.modId === deck)
-    .map(([source, destination]) => (source.modId === deck ? destination.modId : source.modId));
-  const oneHopFromIoPanel = CyberdeckState.connections
-    .filter(
-      ([source, destination]) =>
-        connectedToIOPanel.includes(source.modId) || connectedToIOPanel.includes(destination.modId),
-    )
-    .map(([source, destination]) => (connectedToIOPanel.includes(source.modId) ? destination.modId : source.modId));
-  const twoHopsFromIoPanel = CyberdeckState.connections
-    .filter(
-      ([source, destination]) =>
-        oneHopFromIoPanel.includes(source.modId) || oneHopFromIoPanel.includes(destination.modId),
-    )
-    .map(([source, destination]) => (oneHopFromIoPanel.includes(source.modId) ? destination.modId : source.modId));
-
-  if (twoHopsFromIoPanel.length) {
+  function getMaxDepthOfConnections(
+    modId = getCyberdeckIOPanel().id,
+    depth = 0,
+    visited: Set<string> = new Set(),
+  ): number {
+    if (visited.has(modId)) {
+      return depth;
+    }
+    visited.add(modId);
+    const connectedMods = CyberdeckState.connections
+      .filter(([m1, m2]) => m1.modId === modId || m2.modId === modId)
+      .map(([m1, m2]) => (m1.modId === modId ? m2.modId : m1.modId));
+    if (connectedMods.length === 0) {
+      return depth;
+    }
+    return Math.max(...connectedMods.map((mod) => getMaxDepthOfConnections(mod, depth + 1, visited)));
+  }
+  const depth = getMaxDepthOfConnections();
+  if (depth >= 3 && !hasCompleted(Challenges.DaisyChain)) {
     CyberdeckState.completedChallenges[Challenges.DaisyChain] = true;
     CyberdeckState.netrunningLevel += 2;
+    CyberdeckEvents.emit();
+  }
+  if (depth >= 6 && hasCompleted(Challenges.DaisierChain)) {
+    CyberdeckState.completedChallenges[Challenges.DaisierChain] = true;
     CyberdeckEvents.emit();
   }
 }
@@ -149,7 +158,7 @@ export function checkSupplierChallenge() {
   }
 
   const { rom, chips, neurodes } = CyberdeckState.componentStats;
-  const romSourceCount = +!!rom.backdoors + +!!rom.mods + +!!rom.caches + +!!rom.programs;
+  const romSourceCount = +!!rom.backdoors + +!!rom.mods + +!!rom.caches + +!!rom.programs + +!!rom.pettyCrime;
   const chipsSourceCount = +!!chips.hacknet + +!!chips.companyWork + +!!chips.IPvGO + +!!chips.mods;
   const neurodesSourceCount =
     +!!neurodes.kills + +!!neurodes.class + +!!neurodes.codingContracts + +!!neurodes.cortexShare + +!!neurodes.mods;
@@ -168,9 +177,8 @@ export function checkOverclockedChallenge() {
 
   const stats = getCyberdeckStatBonuses();
   const playerBuffOverThreshold = Object.values(stats.playerMults).some((stat) => stat > 0.5);
-  const otherBuffOverThreshold = Object.values(stats.otherMults).some((stat) => stat > 0.5);
   const endgameBuffOverThreshold = Object.values(stats.endgameMults).some((stat) => stat > 0.5);
-  if (playerBuffOverThreshold || otherBuffOverThreshold || endgameBuffOverThreshold) {
+  if (playerBuffOverThreshold || endgameBuffOverThreshold) {
     CyberdeckState.completedChallenges[Challenges.Overclocked] = true;
     CyberdeckEvents.emit();
   }
@@ -183,6 +191,17 @@ export function checkBigDeckChallenge() {
 
   if (getCurrentRackSize() >= 9) {
     CyberdeckState.completedChallenges[Challenges.BigDeck] = true;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function checkCorruptionChallenge() {
+  if (hasCompleted(Challenges.Corruption)) {
+    return;
+  }
+
+  if (CyberdeckState.installedModules.some((mod) => mod.corrupted)) {
+    CyberdeckState.completedChallenges[Challenges.Corruption] = true;
     CyberdeckEvents.emit();
   }
 }
@@ -295,7 +314,13 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     name: "Auto Bomber",
     description: Challenges.AutoBomber,
     hint: "The threat and threatCount you get back from each move change as you get closer to a bomb. Once you know where it is, ns.cyberdeck.netrun.toggleFlag() will mark it.",
-    reward: "Increased size of safe starting area when netrunning", // TODO-fico
+    reward: "Increased size of safe starting area when netrunning",
+  },
+  [Challenges.DaisierChain]: {
+    name: "Arc Hazard",
+    description: Challenges.DaisierChain,
+    hint: "The homebrewed mods you have wired together are starting to look not quite up to up to fire code.",
+    reward: "+1 to rack extension limit",
   },
   [Challenges.Corruption]: {
     name: "Corruption",

@@ -53,9 +53,10 @@ export enum Challenges {
   Netrun120 = "Get a score of 120+ while netrunning",
   Overclocked = "Get a 50% bonus in a single stat",
   BigDeck = "Have at least 9 rack slots",
+  DaisierChain = "Charge a mod that is 6+ jumps away from the deck",
   AutoWire = "Charge a mod via the API",
   AutoRun = "Get a score of 100+ using only the API",
-  AutoBomber = "Flag a bomb group and finish the run with just the API",
+  AutoBomber = "Flag a  ICE with an active countermeasure and finish the run with only the API",
   Corruption = "Install a mod from the glitch",
   GlitchRun = "Get a score of 100+ at the glitch using only the API",
 }
