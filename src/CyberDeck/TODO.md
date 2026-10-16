@@ -3,8 +3,6 @@ Patch changes:
 
 TODO:
 
-- Auto Wire rewards are still unimplemented.
-
 - link netrun score more with loot level
 
 - Improve styling of netrun target choice
@@ -16,8 +14,6 @@ TODO:
 - require at least one free space to netrun or craft
 
 - identify nested droppable?
-
-- connect levels to deck somehow? display on deck
 
 - stats page
   - cleanup styling
@@ -32,52 +28,6 @@ TODO:
 
 - dev menu - set component counts
 
-
-
-
-challenges:
-- complete tutorial
-- complete netrun with score 100
-- complete netrun with score 100 via script
-- equip a module from the glitch
-- get 1000 in any component
-- craft 50 modules
-
-rewards:
-- additional sockets
-- raise rack extension cap
-- reduce debuffs on future mods
-- increase production of components?
-- raise storage size
-- increase rewards from recycling?
-- increased netrun level
-- increased crafting level
-- netrun cooldown speed
-
-
-Netrunning
-- less bombs when netrunning?
-1. Scanner range: threat detection radius goes from 6 to 8, or the signal shows a direction.
-2. Battery capacity: +10% starting energy per level.
-3. Wider entry point: the starting clearing grows from 3x3 to 4x4 or 5x5.
-4. Firewall drill: firewalls break in 2 hits instead of 3.
-5. Blast shielding: the first trap detonation costs 0.15 energy instead of 0.3.
-6. Safe defusal: flagged trap groups can be broken at normal ICE cost.
-7. Data mining: data stores give a higher score multiplier.
-8. Lower loot thresholds: tiers drop from 30/75/120 to something like 25/65/105.
-
-The glitch
-
-11. Void dampener: offline nodes spread every 4 steps instead of 3.
-12. Blackwall bypass: shorter corrupted hard cooldown.
-13. Emergency jack-out: once per cooldown, touching an offline node ends the run without hospitalization or ICEBreaker loss.
-14. Scavenger: junk mods recycle into a core, or the junk roll chance drops.
-
-Rack and crafting
-
-17. Direct feed: mods wired straight to the I/O panel get +% buff strength.
-
-challenges can have tiers (score 75/100/120, 1/3/5 data stores)
 
 NETRUNNING MINIGAME:
 
