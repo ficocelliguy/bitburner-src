@@ -18,6 +18,7 @@ import {
   disassembleModule,
   getCyberdeckIOPanel,
   getEasterEggModule,
+  moduleStorageAvailable,
 } from "./models/createModule";
 import { helpers } from "../Netscript/NetscriptHelpers";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
@@ -266,7 +267,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           );
           return failedToStartResponse;
         }
-        if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+        if (!moduleStorageAvailable()) {
           logger(ctx)(
             `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
           );
@@ -563,6 +564,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           );
           return null;
         }
+        if (!moduleStorageAvailable()) {
+          logger(ctx)(`Not enough module storage.`);
+          return null;
+        }
         logger(ctx)(`Crafting Power Supply Mod.`);
         return craftPowerSupply();
       },
@@ -593,6 +598,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           );
           return null;
         }
+        if (!moduleStorageAvailable()) {
+          logger(ctx)(`Not enough module storage.`);
+          return null;
+        }
         logger(ctx)(`Crafting Processing Mod.`);
         return craftProcessingModule();
       },
@@ -621,6 +630,10 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           logger(ctx)(
             `Not enough cores to craft Uplink Mod. Need ${uplinkCraftingCost.cores}, have ${CyberdeckState.components.cores}`,
           );
+          return null;
+        }
+        if (!moduleStorageAvailable()) {
+          logger(ctx)(`Not enough module storage.`);
           return null;
         }
         logger(ctx)(`Crafting Uplink Mod.`);
@@ -680,7 +693,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           );
           return failedToStartResponse;
         }
-        if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+        if (!moduleStorageAvailable()) {
           logger(ctx)(
             `Not enough module storage space to netrun. ${CyberdeckState.storedModules.length}/${CyberdeckState.modStorageSize}`,
           );

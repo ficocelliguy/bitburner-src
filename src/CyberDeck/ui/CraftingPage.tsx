@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 
 import { Button, Tooltip, Typography } from "@mui/material";
-import { craftICEBreaker, craftPowerSupply, craftProcessingModule, craftUplink } from "../models/createModule";
+import {
+  craftICEBreaker,
+  craftPowerSupply,
+  craftProcessingModule,
+  craftUplink,
+  moduleStorageAvailable,
+} from "../models/createModule";
 import { ComponentCost, ComponentSymbol } from "./ComponentCost";
 import {
   componentSymbols,
@@ -65,7 +71,12 @@ export function CraftingPage(): React.ReactElement {
   }
 
   function craft(results: DeckMod | null) {
+    if (!results && !moduleStorageAvailable()) {
+      SnackbarEvents.emit(`Module storage full!`, ToastVariant.WARNING, 2000);
+      return;
+    }
     if (!results) {
+      SnackbarEvents.emit(`Insufficient crafting components.`, ToastVariant.WARNING, 2000);
       return;
     }
     setCraftingRewards([results]);

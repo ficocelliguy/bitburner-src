@@ -64,7 +64,7 @@ function CompletedChallengesTable(): React.ReactElement {
   const nextChallenge = challenges[level];
   const rows = challenges.slice(0, level).reverse();
   const cellSx = { fontSize: "14px", color: Settings.theme.maplocation, py: 0.5 };
-  const nextCellSx = { ...cellSx, color: Settings.theme.maplocation, fontStyle: "italic", };
+  const nextCellSx = { ...cellSx, color: Settings.theme.maplocation, fontStyle: "italic" };
   return (
     <div style={{ maxWidth: "600px" }}>
       <Typography variant="h4" gutterBottom>
@@ -72,13 +72,13 @@ function CompletedChallengesTable(): React.ReactElement {
       </Typography>
       {nextChallenge && (
         <Tooltip title={ChallengeDetail[nextChallenge].hint}>
-          <Box sx={{backgroundColor: Settings.theme.well, padding: "10px", borderRadius: "3px", marginBottom: "20px"}}>
+          <Box
+            sx={{ backgroundColor: Settings.theme.well, padding: "10px", borderRadius: "3px", marginBottom: "20px" }}
+          >
             <Typography sx={{ color: Settings.theme.maplocation }}>
               Next challenge ({ChallengeDetail[nextChallenge].name}): {ChallengeDetail[nextChallenge].description}
             </Typography>
-            <Typography sx={nextCellSx}>
-              Reward: {ChallengeDetail[nextChallenge].reward}
-            </Typography>
+            <Typography sx={nextCellSx}>Reward: {ChallengeDetail[nextChallenge].reward}</Typography>
           </Box>
         </Tooltip>
       )}

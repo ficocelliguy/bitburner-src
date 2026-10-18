@@ -14,7 +14,7 @@ import {
 import { DrawWiresOnCanvas } from "./socketWireConnections";
 import { Socket } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { getCyberdeckIOPanel } from "../models/createModule";
+import { getCyberdeckIOPanel, moduleStorageAvailable } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
 import { getFilteredStoredModules, logStatRanges } from "../utils/modStatsUtils";
@@ -292,10 +292,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                         Mod Storage:{" "}
                         <span
                           style={{
-                            color:
-                              CyberdeckState.storedModules.length > CyberdeckState.modStorageSize
-                                ? Settings.theme.warning
-                                : Settings.theme.primary,
+                            color: moduleStorageAvailable() ? Settings.theme.primary : Settings.theme.warning,
                           }}
                         >
                           {CyberdeckState.storedModules.length} / {Math.floor(CyberdeckState.modStorageSize)}

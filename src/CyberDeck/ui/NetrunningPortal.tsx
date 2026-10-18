@@ -19,6 +19,7 @@ import { NetrunningState } from "../models/NetrunningState";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { MARQUEE_LINES } from "../models/constants";
+import { moduleStorageAvailable } from "../models/createModule";
 
 export function NetrunningPortal({
   entered,
@@ -54,7 +55,7 @@ export function NetrunningPortal({
       );
       return;
     }
-    if (CyberdeckState.modStorageSize < CyberdeckState.storedModules.length) {
+    if (!moduleStorageAvailable()) {
       SnackbarEvents.emit("Module storage is full!", ToastVariant.WARNING, 2000);
       return;
     }
@@ -116,7 +117,7 @@ export function NetrunningPortal({
           </Box>
           {!entering && hasCyberdeck() && (
             <>
-              {CyberdeckState.modStorageSize < CyberdeckState.storedModules.length && (
+              {!moduleStorageAvailable() && (
                 <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
                   Module storage full!
                 </Typography>

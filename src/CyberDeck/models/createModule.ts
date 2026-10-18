@@ -426,6 +426,7 @@ export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1
   if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0) * count) return false;
   if (CyberdeckState.components.cores < (cost.cores ?? 0) * count) return false;
   if (CyberdeckState.components.iceBreakers < (cost.iceBreakers ?? 0) * count) return false;
+  if (!moduleStorageAvailable()) return false;
   return true;
 }
 
@@ -554,4 +555,8 @@ export function moduleExists(id: string) {
   return (
     CyberdeckState.installedModules.some((m) => m.id === id) || CyberdeckState.storedModules.some((m) => m.id === id)
   );
+}
+
+export function moduleStorageAvailable() {
+  return CyberdeckState.storedModules.length < CyberdeckState.modStorageSize;
 }

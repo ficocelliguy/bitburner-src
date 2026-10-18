@@ -26,12 +26,14 @@ export function NetrunTargetSelect(): React.ReactElement {
     <div>
       <Box sx={styles.circuitry}>{CircuitryBackground}</Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px", width: "330px", margin: "40px auto" }}>
-        <Typography>Select a target:</Typography>
-        <NetrunTargetDescription brand={NetrunTargets.OmegaSoftware} setTarget={setTarget} />
-        <NetrunTargetDescription brand={NetrunTargets.BachmanAndAssociates} setTarget={setTarget} />
-        <NetrunTargetDescription brand={NetrunTargets.BladeIndustries} setTarget={setTarget} />
-        <NetrunTargetDescription brand={NetrunTargets.OmniaCybersystems} setTarget={setTarget} />
-        <Button onClick={cancel}>Cancel</Button>
+        <Typography sx={{ textAlign: "center" }}>Select a target:</Typography>
+        <NetrunTargetDescription brand={NetrunTargets.OmegaSoftware} setTarget={setTarget} x={-60} y={0} />
+        <NetrunTargetDescription brand={NetrunTargets.BachmanAndAssociates} setTarget={setTarget} x={70} y={-30} />
+        <NetrunTargetDescription brand={NetrunTargets.BladeIndustries} setTarget={setTarget} x={30} y={-10} />
+        <NetrunTargetDescription brand={NetrunTargets.OmniaCybersystems} setTarget={setTarget} x={-60} y={0} />
+        <Button sx={{ marginTop: "10px" }} onClick={cancel}>
+          Cancel
+        </Button>
       </Box>
     </div>
   );
@@ -40,13 +42,17 @@ export function NetrunTargetSelect(): React.ReactElement {
 function NetrunTargetDescription({
   brand,
   setTarget,
+  x,
+  y,
 }: {
   brand: NetrunTargets;
   setTarget: (b: NetrunTargets) => void;
+  x?: number;
+  y?: number;
 }) {
   const styles = useNetrunTargetStyles();
   return (
-    <div>
+    <div style={{ position: "relative", left: `${x ?? 0}%`, top: `${y ?? 0}px` }}>
       <Tooltip
         title={
           <div>

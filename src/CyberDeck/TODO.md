@@ -1,17 +1,13 @@
 Patch changes:
-
+- Change mod free space calculations to require at least one free slot, rather than just looking for overfull storage
+- Added mod storage space requirement for crafting mods 
+- Improved fx of netrun target select page
 
 TODO:
-
-- link netrun score more with loot level
-
-- Improve styling of netrun target choice
 
 - hint at glitch
 
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
-
-- require at least one free space to netrun or craft
 
 - identify nested droppable?
 

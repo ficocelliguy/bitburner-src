@@ -406,7 +406,7 @@ export function usePortalStyles() {
       userSelect: "none",
     },
     enteringPortal: {
-      zIndex: 9999,
+      zIndex: 9999, // just enough to correctly animate over floating UI elements for this brief effect
       pointerEvents: "none",
       animation: `${growAndFade} 1.2s ease-in forwards`,
     },

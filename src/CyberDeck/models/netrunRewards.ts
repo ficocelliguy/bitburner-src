@@ -7,7 +7,7 @@ import {
 import { NetrunningRewards } from "../Types";
 import { Brand, Challenges, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
-import { createModule, createSpecialFirstTimeMod, getBrandedModMaker } from "./createModule";
+import { createModule, createSpecialFirstTimeMod, getBrandedModMaker, moduleStorageAvailable } from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 import { completeNetrunChallenges } from "./challenges";
@@ -54,10 +54,7 @@ export function getNetrunningTraceFraction(corrupted = false): number {
 }
 
 export function canNetrun(corrupted = false): boolean {
-  return (
-    CyberdeckState.components.iceBreakers >= getCurrentNetrunningIceCost(corrupted) &&
-    CyberdeckState.modStorageSize >= CyberdeckState.storedModules.length
-  );
+  return CyberdeckState.components.iceBreakers >= getCurrentNetrunningIceCost(corrupted) && moduleStorageAvailable();
 }
 
 export function netrunRewards(): NetrunningRewards {
@@ -116,7 +113,8 @@ export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = N
   if (!modMaker) {
     return getGenericNetrunningRewards(rng, score);
   }
-  const rewards = [modMaker(rng, 2, 1.2)];
+  const firstModBoost = score > 100 ? 2 : score > 70 ? 1 : 0;
+  const rewards = [modMaker(rng, firstModBoost, 1.2)];
   const boost = isEligibleForSpecialReward(score);
   rewards.push(
     boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng),
