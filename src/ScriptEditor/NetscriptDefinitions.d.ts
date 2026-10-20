@@ -4649,6 +4649,26 @@ type BrandEnumType = {
 /** @public */
 type Brand = _ValueOf<BrandEnumType>;
 
+type ChallengeStatus = {
+  CompletedTutorial: boolean;
+  Scrapper: boolean;
+  CleanRun: boolean;
+  Homebrew: boolean;
+  DaisyChain: boolean;
+  BombSquad: boolean;
+  FullHouse: boolean;
+  Supplier: boolean;
+  Jackpot: boolean;
+  Overclocked: boolean;
+  AutoWire: boolean;
+  BigDeck: boolean;
+  AutoRun: boolean;
+  AutoBomber: boolean;
+  ArcHazard: boolean;
+  Corruption: boolean;
+  GlitchRun: boolean;
+};
+
 /**
  * Cyberdeck API
  * @public
@@ -4805,6 +4825,14 @@ export interface Cyberdeck {
    * some part of you is always half in the tank.
    */
   cortexShare(): Promise<void>;
+
+  /**
+   * Returns the completion status of each of the cyberdeck challenges.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   */
+  getChallengeStatus(): ChallengeStatus;
 
   netrun: {
     /**

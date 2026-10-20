@@ -16,8 +16,8 @@ export const CyberdeckState = {
   modStorageSize: 8,
   cortexSharedThreads: 0,
   netrunningCooldownLevel: 0,
-  netrunningLevel: 8, // TODO-fico: change this to 0 after testing is done
-  craftingLevel: 8, // TODO-fico: change this to 0 after testing is done
+  netrunningLevel: 1,
+  craftingLevel: 1,
   serverRamUpgrades: 0,
   serverCoreUpgrades: 0,
   lastNetrunningTimestamp: 0,
@@ -99,7 +99,7 @@ export function hasCyberdeck(): boolean {
 export function getRackExtensionCap() {
   const base = 1;
   const challengeBonus = hasCompleted(Challenges.AutoWire) ? 1 : 0;
-  const challengeBonus2 = hasCompleted(Challenges.DaisierChain) ? 1 : 0;
+  const challengeBonus2 = hasCompleted(Challenges.ArcHazard) ? 1 : 0;
   return base + challengeBonus + challengeBonus2;
 }
 

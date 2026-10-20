@@ -32,26 +32,25 @@ export function completeNetrunChallenges() {
   checkTutorialCompletion();
 
   if (NetrunningState.rewardScore >= 80) {
-    CyberdeckState.completedChallenges[Challenges.Netrun80] = true;
+    CyberdeckState.completedChallenges[Challenges.CleanRun] = true;
   }
   if (NetrunningState.rewardScore >= 100 && !NetrunningState.hasMadeManualMove) {
     if (NetrunningState.corrupted) {
       CyberdeckState.completedChallenges[Challenges.GlitchRun] = true;
     } else if (!CyberdeckState.completedChallenges[Challenges.AutoRun]) {
       CyberdeckState.completedChallenges[Challenges.AutoRun] = true;
-      CyberdeckState.netrunningCooldownLevel += 2;
+      CyberdeckState.netrunningCooldownLevel += 4;
     }
   }
 
-  if (NetrunningState.rewardScore >= 120 && !CyberdeckState.completedChallenges[Challenges.Netrun120]) {
-    CyberdeckState.completedChallenges[Challenges.Netrun120] = true;
-    CyberdeckState.netrunningLevel += 2;
+  if (NetrunningState.rewardScore >= 120 && !CyberdeckState.completedChallenges[Challenges.Jackpot]) {
+    CyberdeckState.completedChallenges[Challenges.Jackpot] = true;
+    CyberdeckState.netrunningLevel += 4;
   }
 
   const flaggedBombs = NetrunningState.grid.flat().filter((e) => e.flagged && e.hasBomb && !e.hits);
   if (flaggedBombs.length && !CyberdeckState.completedChallenges[Challenges.BombSquad]) {
     CyberdeckState.completedChallenges[Challenges.BombSquad] = true;
-    CyberdeckState.netrunningLevel += 2;
   }
   if (
     flaggedBombs.length &&
@@ -102,8 +101,8 @@ export function checkScrapperChallenge() {
 
 export function checkCrafterChallenge() {
   CyberdeckState.craftedMods++;
-  if (CyberdeckState.craftedMods >= 5 && !hasCompleted(Challenges.Crafter)) {
-    CyberdeckState.completedChallenges[Challenges.Crafter] = true;
+  if (CyberdeckState.craftedMods >= 5 && !hasCompleted(Challenges.Homebrew)) {
+    CyberdeckState.completedChallenges[Challenges.Homebrew] = true;
     CyberdeckEvents.emit();
   }
 }
@@ -126,7 +125,7 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     CyberdeckEvents.emit();
   }
 
-  if (hasCompleted(Challenges.DaisyChain) && hasCompleted(Challenges.DaisierChain)) {
+  if (hasCompleted(Challenges.DaisyChain) && hasCompleted(Challenges.ArcHazard)) {
     return;
   }
 
@@ -153,8 +152,8 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     CyberdeckState.netrunningLevel += 2;
     CyberdeckEvents.emit();
   }
-  if (depth >= 6 && !CyberdeckState.completedChallenges[Challenges.DaisierChain]) {
-    CyberdeckState.completedChallenges[Challenges.DaisierChain] = true;
+  if (depth >= 6 && !CyberdeckState.completedChallenges[Challenges.ArcHazard]) {
+    CyberdeckState.completedChallenges[Challenges.ArcHazard] = true;
     CyberdeckEvents.emit();
   }
 }
@@ -172,7 +171,7 @@ export function checkSupplierChallenge() {
 
   if (!hasCompleted(Challenges.Supplier) && romSourceCount + chipsSourceCount + neurodesSourceCount >= 5) {
     CyberdeckState.completedChallenges[Challenges.Supplier] = true;
-    CyberdeckState.craftingLevel += 2;
+    CyberdeckState.craftingLevel += 4;
     CyberdeckEvents.emit();
   }
 }
@@ -251,15 +250,15 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     hint: "Drag mods you don't want onto the trash can to salvage them for components.",
     reward: "Extra components gained when recycling mods",
   },
-  [Challenges.Netrun80]: {
+  [Challenges.CleanRun]: {
     name: "Clean Run",
-    description: Challenges.Netrun80,
+    description: Challenges.CleanRun,
     hint: "The further you get from where you jacked in, the more everything is worth.",
     reward: "Reduced netrun battery usage",
   },
-  [Challenges.Crafter]: {
+  [Challenges.Homebrew]: {
     name: "Homebrew",
-    description: Challenges.Crafter,
+    description: Challenges.Homebrew,
     hint: "You can get crafting cores from netrunning.",
     reward: "Increased chance of crafting cores from netrunning",
   },
@@ -285,13 +284,13 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     name: "Supplier",
     description: Challenges.Supplier,
     hint: "Lots of activities give crafting components: crime, classes, company work, hacknet, backdoors, coding contracts...",
-    reward: "+2 cyberdeck crafting level",
+    reward: "+4 cyberdeck crafting level",
   },
-  [Challenges.Netrun120]: {
+  [Challenges.Jackpot]: {
     name: "Jackpot",
-    description: Challenges.Netrun120,
+    description: Challenges.Jackpot,
     hint: "Hint: you don't need to actually break the data caches immediately.",
-    reward: "+2 netrunning level",
+    reward: "+4 netrunning level",
   },
   [Challenges.Overclocked]: {
     name: "Overclocked",
@@ -315,7 +314,7 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     name: "Auto Run",
     description: Challenges.AutoRun,
     hint: "await ns.cyberdeck.netrun.move() tells you what is around you, and how much energy you have left, after every step.",
-    reward: "+2 netrun cooldown reduction level",
+    reward: "+4 netrun cooldown reduction level",
   },
   [Challenges.AutoBomber]: {
     name: "Auto Bomber",
@@ -323,9 +322,9 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     hint: "The threat and threatCount you get back from each move change as you get closer to a bomb. Once you know where it is, ns.cyberdeck.netrun.toggleFlag() will mark it.",
     reward: "Increased size of safe starting area when netrunning",
   },
-  [Challenges.DaisierChain]: {
+  [Challenges.ArcHazard]: {
     name: "Arc Hazard",
-    description: Challenges.DaisierChain,
+    description: Challenges.ArcHazard,
     hint: "The homebrewed mods you have wired together are starting to look not quite up to up to fire code.",
     reward: "+1 to rack extension limit",
   },
@@ -342,3 +341,26 @@ export const ChallengeDetail: Record<Challenges, ChallengeDetails> = {
     reward: "+1 socket on the cyberdeck I/O panel",
   },
 };
+
+export function getChallengeStatus() {
+  const c = CyberdeckState.completedChallenges;
+  return {
+    CompletedTutorial: c[Challenges.CompletedTutorial] || false,
+    Scrapper: c[Challenges.Scrapper] || false,
+    CleanRun: c[Challenges.CleanRun] || false,
+    Homebrew: c[Challenges.Homebrew] || false,
+    DaisyChain: c[Challenges.DaisyChain] || false,
+    BombSquad: c[Challenges.BombSquad] || false,
+    FullHouse: c[Challenges.FullHouse] || false,
+    Supplier: c[Challenges.Supplier] || false,
+    Jackpot: c[Challenges.Jackpot] || false,
+    Overclocked: c[Challenges.Overclocked] || false,
+    AutoWire: c[Challenges.AutoWire] || false,
+    AutoRun: c[Challenges.AutoRun] || false,
+    AutoBomber: c[Challenges.AutoBomber] || false,
+    BigDeck: c[Challenges.BigDeck] || false,
+    ArcHazard: c[Challenges.ArcHazard] || false,
+    Corruption: c[Challenges.Corruption] || false,
+    GlitchRun: c[Challenges.GlitchRun] || false,
+  };
+}

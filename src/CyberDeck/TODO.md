@@ -1,11 +1,13 @@
 Patch changes:
+- added getChallengeStatus to the API
 - Change mod free space calculations to require at least one free slot, rather than just looking for overfull storage
-- Added mod storage space requirement for crafting mods 
+- Added open mod storage space requirement for crafting mods 
 - Improved fx of netrun target select page
+- Increased the effect of score in a netrun on the quality of resulting mods
 
 TODO:
 
-- hint at glitch
+- offline production?
 
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 
@@ -43,7 +45,6 @@ TODO LATER:
 - code review
 - docs
 - unit tests
-- lint
 
 - make testing script
 
@@ -63,8 +64,6 @@ TODO LATER:
   - rewards
     - starting netrunning level?
     - rack extension cap up?
-
-- offline production?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 

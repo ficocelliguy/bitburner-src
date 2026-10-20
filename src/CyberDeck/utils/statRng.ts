@@ -290,7 +290,7 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
 }
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
-  const bonusAttempts = rng.random() < 0.1 ? 9 : 6;
+  const bonusAttempts = rng.random() < 0.1 ? 12 : 7;
   const excess = Math.max(levelBoost - 10, 0);
   const ratio = 0.75;
   const chunk = 10;

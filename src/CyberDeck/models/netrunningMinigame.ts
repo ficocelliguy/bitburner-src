@@ -89,7 +89,7 @@ function getIceReward(entity: NetrunEntity) {
 }
 
 function energyCost() {
-  const multiplier = hasCompleted(Challenges.Netrun80) ? 0.9 : 1;
+  const multiplier = hasCompleted(Challenges.CleanRun) ? 0.9 : 1;
   return Math.max(0.1 - CyberdeckState.netrunningLevel * 0.002, 0.03) * multiplier;
 }
 

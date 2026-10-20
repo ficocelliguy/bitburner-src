@@ -55,7 +55,7 @@ import {
   initNetrunGrid,
   move,
 } from "./models/netrunningMinigame";
-import { checkAutoWireChallenge } from "./models/challenges";
+import { checkAutoWireChallenge, getChallengeStatus } from "./models/challenges";
 
 function getModOrThrow(modId: string, allowIoPanel: boolean = false): DeckMod {
   const ioPanel = getCyberdeckIOPanel();
@@ -240,6 +240,9 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         helpers.log(ctx, () => `Finished loaning neural activity with ${threads} threads on ${hostname}.`);
         CyberdeckState.cortexSharedThreads -= threads;
       });
+    },
+    getChallengeStatus: () => {
+      return getChallengeStatus();
     },
     netrun: {
       start(ctx: NetscriptContext, _target: unknown): NetrunStatus {

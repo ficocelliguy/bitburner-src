@@ -85,7 +85,7 @@ export function netrunRewards(): NetrunningRewards {
   CyberdeckState.components.rom += ROMGained;
   CyberdeckState.componentStats.rom.netrunning += ROMGained;
 
-  const bonusCores = hasCompleted(Challenges.Crafter) ? 1.5 : 0.5;
+  const bonusCores = hasCompleted(Challenges.Homebrew) ? 1.5 : 0.5;
   const coresGained = Math.floor(rng.random() * (scoreFactor + bonusCores));
   CyberdeckState.components.cores += coresGained;
   CyberdeckState.componentStats.cores.netrunning += coresGained;
@@ -113,7 +113,7 @@ export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = N
   if (!modMaker) {
     return getGenericNetrunningRewards(rng, score);
   }
-  const firstModBoost = score > 100 ? 2 : score > 70 ? 1 : 0;
+  const firstModBoost = score > 100 ? 4 : score > 70 ? 2 : 0;
   const rewards = [modMaker(rng, firstModBoost, 1.2)];
   const boost = isEligibleForSpecialReward(score);
   rewards.push(
