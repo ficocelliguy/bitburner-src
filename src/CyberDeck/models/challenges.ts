@@ -85,9 +85,6 @@ function checkTutorialCompletion() {
     hasNetrun &&
     hasMadeConnection &&
     hasConsumedSkillchip;
-  if (hasCompleted(Challenges.CompletedTutorial)) {
-    getCyberdeckIOPanel();
-  }
   CyberdeckEvents.emit();
 }
 
@@ -169,7 +166,10 @@ export function checkSupplierChallenge() {
   const neurodesSourceCount =
     +!!neurodes.kills + +!!neurodes.class + +!!neurodes.codingContracts + +!!neurodes.cortexShare + +!!neurodes.mods;
 
-  if (!hasCompleted(Challenges.Supplier) && romSourceCount + chipsSourceCount + neurodesSourceCount >= 5) {
+  if (
+    !CyberdeckState.completedChallenges[Challenges.Supplier] &&
+    romSourceCount + chipsSourceCount + neurodesSourceCount >= 5
+  ) {
     CyberdeckState.completedChallenges[Challenges.Supplier] = true;
     CyberdeckState.craftingLevel += 4;
     CyberdeckEvents.emit();
