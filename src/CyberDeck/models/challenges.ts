@@ -168,7 +168,7 @@ export function checkSupplierChallenge() {
 
   if (
     !CyberdeckState.completedChallenges[Challenges.Supplier] &&
-    romSourceCount + chipsSourceCount + neurodesSourceCount >= 5
+    romSourceCount + chipsSourceCount + neurodesSourceCount >= 8
   ) {
     CyberdeckState.completedChallenges[Challenges.Supplier] = true;
     CyberdeckState.craftingLevel += 4;

@@ -1,9 +1,4 @@
 Patch changes:
-- added getChallengeStatus to the API
-- Change mod free space calculations to require at least one free slot, rather than just looking for overfull storage
-- Added open mod storage space requirement for crafting mods 
-- Improved fx of netrun target select page
-- Increased the effect of score in a netrun on the quality of resulting mods
 
 TODO:
 

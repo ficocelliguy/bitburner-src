@@ -49,7 +49,7 @@ export enum Challenges {
   DaisyChain = "Charge a mod that is 3+ jumps away from the deck",
   BombSquad = "Flag ICE with an active countermeasure, and finish the run",
   FullHouse = "Have a charged mod in every rack slot",
-  Supplier = "Get crafting components from 5 sources",
+  Supplier = "Get crafting components from 8 sources",
   Jackpot = "Get a score of 120+ while netrunning",
   Overclocked = "Get a 50% bonus in a single stat",
   AutoWire = "Charge a mod via the API",

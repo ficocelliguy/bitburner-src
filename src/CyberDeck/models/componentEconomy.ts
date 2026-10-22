@@ -3,7 +3,8 @@ import { Player } from "@player";
 import { isMember } from "../../utils/EnumHelper";
 import { Companies } from "../../Company/Companies";
 import { minCyclesToProcess, NEURODES_PER_ASSASSINATION, NEURODES_PER_HOMICIDE } from "./constants";
-import { isClassWork } from "../../Work/ClassWork";
+import { ClassWork, isClassWork } from "../../Work/ClassWork";
+import { CompanyWork, isCompanyWork } from "../../Work/CompanyWork";
 import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
@@ -41,48 +42,67 @@ export function gainCyberdeckComponents(cycles: number) {
   CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction, 0);
   CyberdeckState.componentStats.rom.mods += Math.max(stats.otherMults.romProduction, 0);
 
-  // Making programs gives ROM
   if (isCreateProgramWork(Player.currentWork)) {
-    CyberdeckState.components.rom += 3;
-    CyberdeckState.componentStats.rom.programs += 3;
+    getRomFromManualProgramCreation();
   }
 
-  // Classes give neurodes
   if (isClassWork(Player.currentWork)) {
-    const tuition = Player.currentWork.calculateRates().money * -1;
-    const newNeurodes = 0.5 + tuition / 50;
-    CyberdeckState.components.neurodes += newNeurodes;
-    CyberdeckState.componentStats.neurodes.class += newNeurodes;
+    getNeurodesFromClass(Player.currentWork);
   }
 
-  // Company job gives chips
-  if (getAllWorkRep() > lastStatsSnapshot.totalWorkRep) {
-    const newRep = getAllWorkRep() - lastStatsSnapshot.totalWorkRep;
-    const newChips = 0.1 + (10 * newRep + 1000) / (newRep + 1000);
-    CyberdeckState.components.chips += newChips;
-    CyberdeckState.componentStats.chips.companyWork += newChips;
+  if (isCompanyWork(Player.currentWork)) {
+    getChipsFromCompanyWork(Player.currentWork);
   }
-  lastStatsSnapshot.totalWorkRep = getAllWorkRep();
 
-  // Hacknet gives chips
   if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
     const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
-    const magnitude = Math.log10(newIncome + 1);
-    const newChips = (0.1 + magnitude / 3) * 1.2;
-    CyberdeckState.components.chips += newChips;
-    CyberdeckState.componentStats.chips.hacknet += newChips;
+    // TODO: move this to processHacknetEarnings
+    getChipsFromHacknetIncome(newIncome);
     lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
   }
 
-  // cortexShare() gives neurodes
-  if (CyberdeckState.cortexSharedThreads > 0) {
-    const newNeurodes =
-      0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300);
-    CyberdeckState.components.neurodes += newNeurodes;
-    CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
-  }
+  getNeurodesFromCortexShare();
 
   checkSupplierChallenge();
+}
+
+export function getRomFromManualProgramCreation(ticks = 1) {
+  CyberdeckState.components.rom += 3 * ticks;
+  CyberdeckState.componentStats.rom.programs += 3 * ticks;
+}
+
+export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
+  const tuition = work.calculateRates().money * -1;
+  const newNeurodes = (0.5 + tuition / 50) * ticks;
+  CyberdeckState.components.neurodes += newNeurodes;
+  CyberdeckState.componentStats.neurodes.class += newNeurodes;
+}
+
+export function getChipsFromCompanyWork(work: CompanyWork, ticks = 1) {
+  const job = Player.jobs[work.companyName];
+  if (!job) { return; }
+  const repPerTick = work.getGainRates(job).reputation / ticks;
+  const newChips = (0.1 + (10 * repPerTick + 1000) / (repPerTick + 1000)) * ticks;
+  CyberdeckState.components.chips += newChips;
+  CyberdeckState.componentStats.chips.companyWork += newChips;
+}
+
+export function getChipsFromHacknetIncome(income: number, ticks = 1) {
+  const newIncome = income / ticks;
+  const magnitude = Math.log10(newIncome + 1);
+  const newChips = (0.1 + magnitude / 3) * 1.2 * ticks;
+  CyberdeckState.components.chips += newChips;
+  CyberdeckState.componentStats.chips.hacknet += newChips;
+}
+
+export function getNeurodesFromCortexShare(ticks = 1) {
+  if (CyberdeckState.cortexSharedThreads <= 0) {
+    return;
+  }
+  const newNeurodes =
+      (0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300)) * ticks;
+  CyberdeckState.components.neurodes += newNeurodes;
+  CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
 }
 
 export function getCrimeComponentReward(crime: Crime, isSleeve = false): Partial<ComponentCounts> {
