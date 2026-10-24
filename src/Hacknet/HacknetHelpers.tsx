@@ -364,22 +364,28 @@ export function purchaseCacheUpgrade(node: HacknetServer, levels = 1): boolean {
   return true;
 }
 
-export function processHacknetEarnings(numCycles: number): number {
+export function processHacknetEarnings(numCycles: number) {
   // Determine if player has Hacknet Nodes or Hacknet Servers, then
   // call the appropriate function
   if (Player.hacknetNodes.length === 0) {
-    return 0;
+    return {
+      money: 0,
+      hashes: 0,
+    };
   }
   if (hasHacknetServers()) {
     return processAllHacknetServerEarnings(numCycles);
   } else if (Player.hacknetNodes[0] instanceof HacknetNode) {
     return processAllHacknetNodeEarnings(numCycles);
   } else {
-    return 0;
+    return {
+      money: 0,
+      hashes: 0,
+    };
   }
 }
 
-function processAllHacknetNodeEarnings(numCycles: number): number {
+function processAllHacknetNodeEarnings(numCycles: number) {
   let total = 0;
   for (let i = 0; i < Player.hacknetNodes.length; ++i) {
     const node = Player.hacknetNodes[i];
@@ -388,7 +394,10 @@ function processAllHacknetNodeEarnings(numCycles: number): number {
     total += processSingleHacknetNodeEarnings(numCycles, node);
   }
 
-  return total;
+  return {
+    money: total,
+    hashes: 0,
+  };
 }
 
 function processSingleHacknetNodeEarnings(numCycles: number, nodeObj: HacknetNode): number {
@@ -398,7 +407,7 @@ function processSingleHacknetNodeEarnings(numCycles: number, nodeObj: HacknetNod
   return totalEarnings;
 }
 
-function processAllHacknetServerEarnings(numCycles: number): number {
+function processAllHacknetServerEarnings(numCycles: number) {
   if (!(Player.hashManager instanceof HashManager)) {
     throw new Error(`Player does not have a HashManager (should be in 'hashManager' prop)`);
   }
@@ -424,11 +433,19 @@ function processAllHacknetServerEarnings(numCycles: number): number {
 
     const multiplier = wastedHashes / upgrade.cost;
     if (multiplier > 0) {
-      Player.gainMoney(upgrade.value * multiplier, "hacknet");
+      const moneyGained = upgrade.value * multiplier;
+      Player.gainMoney(moneyGained, "hacknet");
+      return {
+        money: moneyGained,
+        hashes: hashes,
+      };
     }
   }
 
-  return hashes;
+  return {
+    money: 0,
+    hashes: hashes,
+  };
 }
 
 export function updateHashManagerCapacity(): void {

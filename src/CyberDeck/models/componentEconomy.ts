@@ -10,15 +10,16 @@ import { isCreateProgramWork } from "../../Work/CreateProgramWork";
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 import { Crime } from "../../Crime/Crime";
 import { CrimeType } from "@enums";
-import { ComponentCounts } from "../Types";
+import { ComponentCounts, SimpleComponentCounts } from "../Types";
 import { checkSupplierChallenge } from "./challenges";
+import { CONSTANTS } from "../../Constants";
 
 const lastStatsSnapshot = {
   totalWorkRep: null as number | null,
   totalHacknetIncome: null as number | null,
 };
 
-export function gainCyberdeckComponents(cycles: number) {
+export function gainCyberdeckComponents(cycles: number, hacknetMoney = 0) {
   if (!hasCyberdeck()) {
     return;
   }
@@ -34,41 +35,69 @@ export function gainCyberdeckComponents(cycles: number) {
   }
   CyberdeckState.storedCycles -= minCyclesToProcess;
 
-  const stats = getCyberdeckStatBonuses();
-  CyberdeckState.components.chips += Math.max(stats.otherMults.chipProduction, 0);
-  CyberdeckState.componentStats.chips.mods += Math.max(stats.otherMults.chipProduction, 0);
-  CyberdeckState.components.neurodes += Math.max(stats.otherMults.neurodeProduction, 0);
-  CyberdeckState.componentStats.neurodes.mods += Math.max(stats.otherMults.neurodeProduction, 0);
-  CyberdeckState.components.rom += Math.max(stats.otherMults.romProduction, 0);
-  CyberdeckState.componentStats.rom.mods += Math.max(stats.otherMults.romProduction, 0);
-
-  if (isCreateProgramWork(Player.currentWork)) {
-    getRomFromManualProgramCreation();
-  }
-
-  if (isClassWork(Player.currentWork)) {
-    getNeurodesFromClass(Player.currentWork);
-  }
-
-  if (isCompanyWork(Player.currentWork)) {
-    getChipsFromCompanyWork(Player.currentWork);
-  }
-
-  if (Player.moneySourceA.hacknet > lastStatsSnapshot.totalHacknetIncome) {
-    const newIncome = Player.moneySourceA.hacknet - lastStatsSnapshot.totalHacknetIncome;
-    // TODO: move this to processHacknetEarnings
-    getChipsFromHacknetIncome(newIncome);
-    lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
-  }
-
-  getNeurodesFromCortexShare();
+  processCyberdeckComponentGains(hacknetMoney);
 
   checkSupplierChallenge();
 }
 
+export function processCyberdeckComponentGains(hacknetMoney = 0, time = minCyclesToProcess) {
+  const ticks = time / minCyclesToProcess;
+  const componentsGained = [
+    getCyberdeckComponentsFromHacknetIncome(hacknetMoney, ticks),
+    getCyberdeckComponentsFromWork(ticks),
+    getCyberdeckComponentsFromMods(ticks),
+    getNeurodesFromCortexShare(ticks),
+  ];
+  return componentsGained.reduce<ComponentCounts>(
+    (acc, c) => ({
+      chips: acc.chips + (c.chips ?? 0),
+      neurodes: acc.neurodes + (c.neurodes ?? 0),
+      rom: acc.rom + (c.rom ?? 0),
+      cores: 0,
+      iceBreakers: 0,
+    }),
+    { chips: 0, neurodes: 0, rom: 0, cores: 0, iceBreakers: 0 },
+  );
+}
+
+export function getCyberdeckComponentsFromWork(ticks = 1): Partial<SimpleComponentCounts> {
+  if (isCreateProgramWork(Player.currentWork)) {
+    return getRomFromManualProgramCreation(ticks);
+  }
+
+  if (isClassWork(Player.currentWork)) {
+    return getNeurodesFromClass(Player.currentWork, ticks);
+  }
+
+  if (isCompanyWork(Player.currentWork)) {
+    return getChipsFromCompanyWork(Player.currentWork, ticks);
+  }
+  return {};
+}
+
+export function getCyberdeckComponentsFromMods(ticks = 1): SimpleComponentCounts {
+  const stats = getCyberdeckStatBonuses();
+  const chips = Math.max(stats.otherMults.chipProduction, 0) * ticks;
+  const neurodes = Math.max(stats.otherMults.neurodeProduction, 0) * ticks;
+  const rom = Math.max(stats.otherMults.romProduction, 0) * ticks;
+  CyberdeckState.components.chips += chips;
+  CyberdeckState.componentStats.chips.mods += chips;
+  CyberdeckState.components.neurodes += neurodes;
+  CyberdeckState.componentStats.neurodes.mods += neurodes;
+  CyberdeckState.components.rom += rom;
+  CyberdeckState.componentStats.rom.mods += rom;
+  return {
+    chips,
+    neurodes,
+    rom,
+  };
+}
+
 export function getRomFromManualProgramCreation(ticks = 1) {
-  CyberdeckState.components.rom += 3 * ticks;
-  CyberdeckState.componentStats.rom.programs += 3 * ticks;
+  const romGained = 3 * ticks;
+  CyberdeckState.components.rom += romGained;
+  CyberdeckState.componentStats.rom.programs += romGained;
+  return { rom: romGained };
 }
 
 export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
@@ -76,33 +105,56 @@ export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
   const newNeurodes = (0.5 + tuition / 50) * ticks;
   CyberdeckState.components.neurodes += newNeurodes;
   CyberdeckState.componentStats.neurodes.class += newNeurodes;
+  return {
+    neurodes: newNeurodes,
+  };
 }
 
 export function getChipsFromCompanyWork(work: CompanyWork, ticks = 1) {
   const job = Player.jobs[work.companyName];
-  if (!job) { return; }
+  if (!job) {
+    return {};
+  }
   const repPerTick = work.getGainRates(job).reputation / ticks;
   const newChips = (0.1 + (10 * repPerTick + 1000) / (repPerTick + 1000)) * ticks;
   CyberdeckState.components.chips += newChips;
   CyberdeckState.componentStats.chips.companyWork += newChips;
+  return {
+    chips: newChips,
+  };
 }
 
-export function getChipsFromHacknetIncome(income: number, ticks = 1) {
+export function getCyberdeckComponentsFromHacknetIncome(income: number, ticks = 1): Partial<SimpleComponentCounts> {
   const newIncome = income / ticks;
   const magnitude = Math.log10(newIncome + 1);
   const newChips = (0.1 + magnitude / 3) * 1.2 * ticks;
   CyberdeckState.components.chips += newChips;
   CyberdeckState.componentStats.chips.hacknet += newChips;
+  return {
+    chips: newChips,
+  };
 }
 
-export function getNeurodesFromCortexShare(ticks = 1) {
-  if (CyberdeckState.cortexSharedThreads <= 0) {
-    return;
-  }
+export function getNeurodesFromCortexShare(ticks = 1): Partial<SimpleComponentCounts> {
+  const threads = CyberdeckState.cortexSharedThreads;
   const newNeurodes =
-      (0.1 + (10 * CyberdeckState.cortexSharedThreads + 300) / (CyberdeckState.cortexSharedThreads + 300)) * ticks;
+    ticks > 1
+      ? getOfflineNeurodesFromCortexShare(ticks)
+      : threads > 0
+      ? (0.1 + (10 * threads + 300) / (threads + 300)) * ticks
+      : 0;
   CyberdeckState.components.neurodes += newNeurodes;
   CyberdeckState.componentStats.neurodes.cortexShare += newNeurodes;
+  return {
+    neurodes: newNeurodes,
+  };
+}
+
+function getOfflineNeurodesFromCortexShare(ticks = 1) {
+  const totalNeurodesGained = CyberdeckState.componentStats.neurodes.cortexShare;
+  const totalOnlineTime = Player.playtimeSinceLastAug;
+  const onlineCycles = totalOnlineTime / (CONSTANTS.MilliPerCycle * minCyclesToProcess);
+  return onlineCycles > 0 ? (totalNeurodesGained / onlineCycles) * ticks : 0;
 }
 
 export function getCrimeComponentReward(crime: Crime, isSleeve = false): Partial<ComponentCounts> {

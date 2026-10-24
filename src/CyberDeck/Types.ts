@@ -41,6 +41,12 @@ export type ComponentCounts = {
   iceBreakers: number;
 };
 
+export type SimpleComponentCounts = {
+  rom: number;
+  neurodes: number;
+  chips: number;
+};
+
 export type CyberdeckStats = {
   playerMults: Multipliers;
   otherMults: MiscMults;

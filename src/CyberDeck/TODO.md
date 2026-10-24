@@ -1,8 +1,9 @@
 Patch changes:
+- offline production for cortexShare, mods, work, hacknet
 
 TODO:
 
-- offline production?
+- offline production for crime
 
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 

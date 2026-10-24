@@ -5,6 +5,7 @@ import { CyberdeckState } from "../models/CyberdeckState";
 import { componentSymbols } from "../models/constants";
 import { Player } from "@player";
 import { formatMoney } from "../../ui/formatNumber";
+import { ComponentTooltip } from "./ComponentInventoryCount";
 
 export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; moneyCost?: number }) {
   return (
@@ -57,13 +58,17 @@ export function ComponentSymbol({ symbol }: { symbol: string }) {
 export function ComponentCostRow({ available, cost, symbol }: { available: number; cost: number; symbol: string }) {
   if (cost <= 0) return <></>;
   return (
-    <span style={{ color: available >= cost ? Settings.theme.maplocation : Settings.theme.error, marginRight: "5px" }}>
-      <ComponentSymbol symbol={symbol} />
-      <span style={{ marginLeft: "3px" }}>
-        {available >= cost ? "" : `${Math.floor(available)}/`}
-        {cost}
+    <ComponentTooltip symbol={symbol}>
+      <span
+        style={{ color: available >= cost ? Settings.theme.maplocation : Settings.theme.error, marginRight: "5px" }}
+      >
+        <ComponentSymbol symbol={symbol} />
+        <span style={{ marginLeft: "3px" }}>
+          {available >= cost ? "" : `${Math.floor(available)}/`}
+          {Math.ceil(cost)}
+        </span>
       </span>
-    </span>
+    </ComponentTooltip>
   );
 }
 

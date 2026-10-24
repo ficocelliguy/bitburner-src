@@ -57,9 +57,11 @@ import { processDarknet } from "./DarkNet/controllers/NetworkMovement";
 import { hasDarknetAccess } from "./DarkNet/utils/darknetAuthUtils";
 import { initForeignServers } from "./Server/ServerHelpers";
 import { apr1 } from "./Terminal/commands/apr1";
-import { gainCyberdeckComponents } from "./CyberDeck/models/componentEconomy";
+import { gainCyberdeckComponents, processCyberdeckComponentGains } from "./CyberDeck/models/componentEconomy";
 import { LastExportBonus } from "./ExportBonus";
 import { hasDevQueryParam } from "./utils/Utility";
+import { ComponentCost } from "./CyberDeck/ui/ComponentCost";
+import { hasCyberdeck } from "./CyberDeck/models/CyberdeckState";
 
 declare global {
   // This property is only available in the dev build
@@ -126,14 +128,14 @@ const Engine = {
       processDarknet(numCycles);
     }
 
-    // Cyberdeck
-    gainCyberdeckComponents(numCycles);
-
     // Update the running time of all active scripts
     updateOnlineScriptTimes(numCycles);
 
     // Hacknet Nodes
-    processHacknetEarnings(numCycles);
+    const hacknetEarnings = processHacknetEarnings(numCycles);
+
+    // Cyberdeck
+    gainCyberdeckComponents(numCycles, hacknetEarnings.money);
 
     // Counters
     Engine.decrementAllCounters(numCycles);
@@ -318,11 +320,13 @@ const Engine = {
       const offlineProductionFromHacknetNodes = processHacknetEarnings(numCyclesOffline);
       const hacknetProdInfo = hasHacknetServers() ? (
         <>
-          <Hashes hashes={offlineProductionFromHacknetNodes} /> hashes
+          <Hashes hashes={offlineProductionFromHacknetNodes.hashes} /> hashes
         </>
       ) : (
-        <Money money={offlineProductionFromHacknetNodes} />
+        <Money money={offlineProductionFromHacknetNodes.money} />
       );
+
+      const componentGains = processCyberdeckComponentGains(offlineProductionFromHacknetNodes.money, numCyclesOffline);
 
       // Passive faction rep gain offline
       processPassiveFactionRepGain(numCyclesOffline);
@@ -383,6 +387,14 @@ const Engine = {
                       You gained <Reputation reputation={offlineReputation} /> reputation divided amongst your factions
                     </Typography>
                   </li>
+                  {hasCyberdeck() && (
+                    <li>
+                      <span style={{ display: "inline-flex", gap: "10px" }}>
+                        <Typography>Cyberdeck components gained:</Typography>
+                        <ComponentCost cost={componentGains} />
+                      </span>
+                    </li>
+                  )}
                 </ul>
               </>,
             ),
