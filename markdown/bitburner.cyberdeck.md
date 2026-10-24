@@ -184,6 +184,17 @@ Favorited mods cannot be recycled.
 </td></tr>
 <tr><td>
 
+[getChallengeStatus()](./bitburner.cyberdeck.getchallengestatus.md)
+
+
+</td><td>
+
+Returns the completion status of each of the cyberdeck challenges.
+
+
+</td></tr>
+<tr><td>
+
 [getComponentCounts()](./bitburner.cyberdeck.getcomponentcounts.md)
 
 

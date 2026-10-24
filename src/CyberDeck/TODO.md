@@ -1,9 +1,9 @@
 Patch changes:
-- offline production for cortexShare, mods, work, hacknet
+- Added cyberdeck component offline production for cortexShare, mods, work, hacknet, crime
+- Added a line item on the offline production pop-up showing the components gained
+- Tweaked component production rates to make them a bit more consistent between different production sources
 
 TODO:
-
-- offline production for crime
 
 - After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 

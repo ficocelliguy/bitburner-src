@@ -17,8 +17,8 @@ export const CyberdeckRequiredWorkUnits = CONSTANTS.MillisecondsPerHour;
 export const SOFT_CAP_DECAY_RATIO = 0.6;
 export const SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE = 1;
 
-export const NEURODES_PER_HOMICIDE = 6;
-export const NEURODES_PER_ASSASSINATION = 100;
+export const NEURODES_PER_HOMICIDE = 3;
+export const NEURODES_PER_ASSASSINATION = 160;
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   rom: "⛃",
