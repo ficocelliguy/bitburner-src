@@ -1,7 +1,5 @@
 import { CyberdeckState, hasCyberdeck } from "./CyberdeckState";
 import { Player } from "@player";
-import { isMember } from "../../utils/EnumHelper";
-import { Companies } from "../../Company/Companies";
 import { minCyclesToProcess, NEURODES_PER_ASSASSINATION, NEURODES_PER_HOMICIDE } from "./constants";
 import { ClassWork, isClassWork } from "../../Work/ClassWork";
 import { CompanyWork, isCompanyWork } from "../../Work/CompanyWork";
@@ -14,23 +12,13 @@ import { ComponentCounts, SimpleComponentCounts } from "../Types";
 import { checkSupplierChallenge } from "./challenges";
 import { CONSTANTS } from "../../Constants";
 
-const lastStatsSnapshot = {
-  totalWorkRep: null as number | null,
-  totalHacknetIncome: null as number | null,
-};
-
 export function gainCyberdeckComponents(cycles: number, hacknetMoney = 0) {
   if (!hasCyberdeck()) {
     return;
   }
   CyberdeckState.storedCycles += cycles;
-  initStats();
 
-  if (
-    CyberdeckState.storedCycles < minCyclesToProcess ||
-    lastStatsSnapshot.totalWorkRep === null ||
-    lastStatsSnapshot.totalHacknetIncome === null
-  ) {
+  if (CyberdeckState.storedCycles < minCyclesToProcess) {
     return;
   }
   CyberdeckState.storedCycles -= minCyclesToProcess;
@@ -40,13 +28,18 @@ export function gainCyberdeckComponents(cycles: number, hacknetMoney = 0) {
   checkSupplierChallenge();
 }
 
-export function processCyberdeckComponentGains(hacknetMoney = 0, time = minCyclesToProcess) {
+export function processCyberdeckComponentGains(
+  hacknetMoney = 0,
+  time = minCyclesToProcess,
+  crimeGains: Partial<SimpleComponentCounts> = {},
+) {
   const ticks = time / minCyclesToProcess;
   const componentsGained = [
     getCyberdeckComponentsFromHacknetIncome(hacknetMoney, ticks),
     getCyberdeckComponentsFromWork(ticks),
     getCyberdeckComponentsFromMods(ticks),
     getNeurodesFromCortexShare(ticks),
+    crimeGains,
   ];
   return componentsGained.reduce<ComponentCounts>(
     (acc, c) => ({
@@ -180,31 +173,7 @@ export function gainCrimeComponentReward(crime: Crime, isSleeve = false) {
   CyberdeckState.componentStats.rom.pettyCrime += rom;
 }
 
-function initStats() {
-  if (lastStatsSnapshot.totalWorkRep === null) {
-    lastStatsSnapshot.totalWorkRep = getAllWorkRep();
-  }
-  if (lastStatsSnapshot.totalHacknetIncome === null) {
-    lastStatsSnapshot.totalHacknetIncome = Player.moneySourceA.hacknet;
-  }
-}
-
-function getAllWorkRep() {
-  const employers = Object.keys(Player.jobs);
-  let total = 0;
-
-  for (const companyName of employers) {
-    if (!isMember("CompanyName", companyName)) continue;
-    const company = Companies[companyName];
-    total += company?.playerReputation ?? 0;
-  }
-  return total;
-}
-
 export function prestigeCyberdeckComponents() {
-  lastStatsSnapshot.totalWorkRep = null;
-  lastStatsSnapshot.totalHacknetIncome = null;
-
   CyberdeckState.components = {
     chips: 0,
     rom: 0,

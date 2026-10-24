@@ -61,7 +61,7 @@ import { gainCyberdeckComponents, processCyberdeckComponentGains } from "./Cyber
 import { LastExportBonus } from "./ExportBonus";
 import { hasDevQueryParam } from "./utils/Utility";
 import { ComponentCost } from "./CyberDeck/ui/ComponentCost";
-import { hasCyberdeck } from "./CyberDeck/models/CyberdeckState";
+import { CyberdeckState, hasCyberdeck } from "./CyberDeck/models/CyberdeckState";
 
 declare global {
   // This property is only available in the dev build
@@ -288,6 +288,11 @@ const Engine = {
 
       loadAllRunningScripts(); // This also takes care of offline production for those scripts
 
+      const comonentCountsBeforeCrime = {
+        rom: CyberdeckState.componentStats.rom.pettyCrime,
+        neurodes: CyberdeckState.componentStats.neurodes.kills,
+      };
+
       // Process offline progress
       if (Player.currentWork !== null) {
         Player.focus = true;
@@ -326,7 +331,15 @@ const Engine = {
         <Money money={offlineProductionFromHacknetNodes.money} />
       );
 
-      const componentGains = processCyberdeckComponentGains(offlineProductionFromHacknetNodes.money, numCyclesOffline);
+      const crimeGains = {
+        rom: CyberdeckState.componentStats.rom.pettyCrime - comonentCountsBeforeCrime.rom,
+        neurodes: CyberdeckState.componentStats.neurodes.kills - comonentCountsBeforeCrime.neurodes,
+      };
+      const componentGains = processCyberdeckComponentGains(
+        offlineProductionFromHacknetNodes.money,
+        numCyclesOffline,
+        crimeGains,
+      );
 
       // Passive faction rep gain offline
       processPassiveFactionRepGain(numCyclesOffline);
