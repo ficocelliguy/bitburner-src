@@ -16,7 +16,7 @@ export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses(1);
   const playerMults = mults.playerMults;
   mults.playerMults.bladeburner_stamina_gain = mults.endgameMults.stamina_gain;
-  Player.mults = mergeMultipliers(Player.mults, playerMults);
+  mergeMultipliers(Player.mults, playerMults);
   Player.updateSkillLevels();
 }
 

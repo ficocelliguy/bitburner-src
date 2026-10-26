@@ -10,8 +10,7 @@ import { extend as extendAcornWalkForJsxNodes } from "acorn-jsx-walk";
 
 import { Editor } from "./Editor";
 
-import { Router } from "../../ui/GameRoot";
-import { Page } from "../../ui/Router";
+import { Page, Router } from "../../ui/Router";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
 import { checkInfiniteLoop } from "../../Script/RamCalculations";
 
@@ -194,7 +193,7 @@ function Root(props: IProps): React.ReactElement {
     const preSave = options.beautifyOnSave ? beautify : () => Promise.resolve();
 
     // this is duplicate code with saving later.
-    if (ITutorial.isRunning && ITutorial.currStep === iTutorialSteps.TerminalEditScript) {
+    if (ITutorial.isRunning && ITutorial.currStep === iTutorialSteps.ScriptEditorEditAndSave) {
       //Make sure filename + code properly follow tutorial
       if (currentScript.path !== "n00dles.js") {
         dialogBoxCreate("Don't change the script name for now.");
@@ -548,6 +547,13 @@ function Root(props: IProps): React.ReactElement {
     }
   }
 
+  function onCloseCurrentTab(): void {
+    const currIndex = currentTabIndex();
+    if (currIndex !== undefined) {
+      onTabClose(currIndex);
+    }
+  }
+
   function onUnmountEditor() {
     if (!currentScript) {
       return;
@@ -565,6 +571,7 @@ function Root(props: IProps): React.ReactElement {
     onSave: save,
     onOpenNextTab,
     onOpenPreviousTab,
+    onCloseCurrentTab,
   });
 
   useEffect(() => {

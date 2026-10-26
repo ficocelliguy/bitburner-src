@@ -779,6 +779,7 @@ export const RamCosts: RamCostTree<NSFull> = {
     gang: {
       wantedPenalty: 0,
       respectGain: 0,
+      reputationGain: 0,
       wantedLevelGain: 0,
       moneyGain: 0,
       ascensionPointsGain: 0,
@@ -799,6 +800,7 @@ export const RamCosts: RamCostTree<NSFull> = {
       getAuthenticateTime: 0,
       getHeartbleedTime: 0,
       getExpectedRamBlockRemoved: 0,
+      getExpectedMigrationCharge: 0,
     },
   },
 } as const;

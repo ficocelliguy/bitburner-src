@@ -1,4 +1,4 @@
-import { Multipliers } from "../PersonObjects/Multipliers";
+import type { Multipliers } from "@nsdefs";
 import { Brand, ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
 
 export type DeckMod = {

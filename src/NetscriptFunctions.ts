@@ -105,8 +105,7 @@ import { getRamCost, RamCostConstants } from "./Netscript/RamCostGenerator";
 import { getEnumHelper } from "./utils/EnumHelper";
 import { ServerConstants } from "./Server/data/Constants";
 import { assertFunctionWithNSContext } from "./Netscript/TypeAssertion";
-import { Router } from "./ui/GameRoot";
-import { Page } from "./ui/Router";
+import { Page, Router } from "./ui/Router";
 import { getDarknetPropertiesForDeprecationSupport, NetscriptDarknet } from "./NetscriptFunctions/Darknet";
 import { canAccessBitNodeFeature } from "./BitNode/BitNodeUtils";
 import { validBitNodes } from "./BitNode/Constants";
@@ -1316,7 +1315,7 @@ export const ns: InternalAPI<NSFull> = {
       );
       options.type = _options.type;
       const validTypes = ["boolean", "text", "select"];
-      if (!["boolean", "text", "select"].includes(options.type)) {
+      if (!validTypes.includes(options.type)) {
         throw helpers.errorMessage(
           ctx,
           `Invalid value for options.type: ${options.type}. Must be one of ${validTypes.join(", ")}.`,

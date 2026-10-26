@@ -40,7 +40,7 @@ import {
 } from "../../CyberDeck/utils/statRng";
 import { createModule } from "../../CyberDeck/models/createModule";
 import { Settings } from "../../Settings/Settings";
-import { Multipliers } from "../../PersonObjects/Multipliers";
+import type { Multipliers } from "@nsdefs";
 import {
   getDefaultConsumableStats,
   getDefaultEndgameMults,

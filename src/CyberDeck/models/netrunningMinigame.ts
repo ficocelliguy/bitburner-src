@@ -7,8 +7,7 @@ import { createSparkles } from "../utils/fx";
 import { NetrunEntity } from "../Types";
 import { Challenges, NetrunDirection, NetrunEntityVariant } from "../Enums";
 import { Player } from "@player";
-import { Page } from "../../ui/Router";
-import { Router } from "../../ui/GameRoot";
+import { Page, Router } from "../../ui/Router";
 import { roundToFour } from "../utils/modStatsUtils";
 import { getCurrentNetrunningIceCost } from "./netrunRewards";
 
@@ -407,7 +406,7 @@ function detonateBomb(entity: NetrunEntity) {
     entity.hits++;
   }
   revealGroup(entity);
-  const cost = hasCompleted(Challenges.BombSquad) ? 0.25 : 0.3;
+  const cost = hasCompleted(Challenges.BombSquad) ? 0.28 : 0.35;
   consumeEnergy(entity.hits === 1 ? cost : energyCost() * 0.6);
   if (entity.hits > 1) {
     return;

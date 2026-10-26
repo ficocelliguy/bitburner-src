@@ -8,7 +8,7 @@ import type { PromisePair } from "../Types/Promises";
 import { Factions } from "../Faction/Factions";
 
 import { dialogBoxCreate } from "../ui/React/DialogBox";
-import { constructorsForReviver, Generic_toJSON, Generic_fromJSON, IReviverValue } from "../utils/JSONReviver";
+import { makeSerializable } from "../utils/GenericReviver";
 
 import { exceptionAlert } from "../utils/helpers/exceptionAlert";
 import { getRandomIntInclusive } from "../utils/helpers/getRandomIntInclusive";
@@ -27,6 +27,7 @@ import { PowerMultiplier } from "./data/power";
 import { FactionName } from "@enums";
 import { CONSTANTS } from "../Constants";
 import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
+import { calculateReputationGain } from "./formulas/formulas";
 
 export enum RecruitmentResult {
   Success = "Success",
@@ -150,10 +151,12 @@ export class Gang {
       );
       throw new Error("Could not find the faction associated with this gang.");
     }
-    const favorMult = 1 + gangFaction.favor / 100;
 
-    gangFaction.playerReputation +=
-      (Player.mults.faction_rep * respectGainsTotal * favorMult) / GangConstants.GangRespectToReputationRatio;
+    gangFaction.playerReputation += calculateReputationGain(
+      respectGainsTotal,
+      gangFaction.favor,
+      Player.mults.faction_rep,
+    );
 
     if (this.wanted !== 1 || wantedLevelGainPerCycle >= 0) {
       const oldWanted = this.wanted;
@@ -435,15 +438,5 @@ export class Gang {
     return (upg.cost * cyberdeckBonus) / this.getDiscount();
   }
 
-  /** Serialize the current object to a JSON save state. */
-  toJSON(): IReviverValue {
-    return Generic_toJSON("Gang", this);
-  }
-
-  /** Initializes a Gang object from a JSON save state. */
-  static fromJSON(value: IReviverValue): Gang {
-    return Generic_fromJSON(Gang, value.data);
-  }
+  static includedKeys = makeSerializable("Gang", Gang);
 }
-
-constructorsForReviver.Gang = Gang;

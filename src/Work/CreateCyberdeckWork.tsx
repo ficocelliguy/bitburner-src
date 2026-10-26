@@ -3,9 +3,10 @@ import { CONSTANTS } from "../Constants";
 import { Player } from "@player";
 import { dialogBoxCreate } from "../ui/React/DialogBox";
 import { gainCyberdeck } from "../CyberDeck/models/cyberdeckServer";
-import { constructorsForReviver, Generic_fromJSON, Generic_toJSON, IReviverValue } from "../utils/JSONReviver";
+import { Generic_fromJSON, IReviverValue } from "../utils/JSONReviver";
 import { CyberdeckState } from "../CyberDeck/models/CyberdeckState";
 import { CyberdeckRequiredWorkUnits } from "../CyberDeck/models/constants";
+import { makeSerializable } from "../utils/GenericReviver";
 
 export const isCreateCyberdeckWork = (w: PlayerBaseWork | null): w is CreateCyberdeckWork =>
   w !== null && w.type === WorkType.CREATE_CYBERDECK;
@@ -57,19 +58,14 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
     };
   }
 
-  /** Serialize the current object to a JSON save state. */
-  toJSON(): IReviverValue {
-    return Generic_toJSON("CreateCyberdeckWork", this);
-  }
-
-  /** Initializes a CreateProgramWork object from a JSON save state. */
-  static fromJSON(value: IReviverValue): CreateCyberdeckWork {
-    return Generic_fromJSON(CreateCyberdeckWork, value.data);
+  /** Custom load handling */
+  static jsonReviver(value: IReviverValue): CreateCyberdeckWork {
+    return Generic_fromJSON(CreateCyberdeckWork, value.data, CreateCyberdeckWork.includedKeys);
   }
 
   getStatusText() {
     return "Assembling cyberdeck...";
   }
-}
 
-constructorsForReviver.CreateCyberdeckWork = CreateCyberdeckWork;
+  static includedKeys = makeSerializable("CompanyWork", CreateCyberdeckWork);
+}
