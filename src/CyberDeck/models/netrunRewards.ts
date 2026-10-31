@@ -23,7 +23,8 @@ export function getCurrentNetrunningIceCost(corrupted = false): number {
   const recencyMultiplier = Math.max(Math.max((recencyWindow - timeSinceLastRun) / 200, 0) * (corrupted ? 1000 : 1), 1);
   const netrunningCooldownBoost =
     1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
-  const cost = Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * 10;
+  const cost =
+    Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * minimumNetrunCost(corrupted);
   return Math.floor(cost);
 }
 
@@ -164,8 +165,9 @@ export function getCorruptedNetrunningRewards(rng: WHRNG, score: number) {
   if (score > 30) {
     rewards.push(createCorruptedModule(rng));
   }
-  if (score > 75) {
-    rewards.push(createCorruptedModule(rng));
+  if (score > 55) {
+    const boost = score > 80 ? 2 : 0;
+    rewards.push(createCorruptedModule(rng, boost));
   }
   if (score > 120) {
     rewards.push(createCorruptedModule(rng));

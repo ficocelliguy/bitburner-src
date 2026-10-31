@@ -71,7 +71,7 @@ function hitOfflineNode(programmaticMove: boolean) {
   NetrunningState.isNetrunning = false;
   NetrunningState.showNetrunOverride = true;
   CyberdeckState.components.iceBreakers -= getCurrentNetrunningIceCost(true);
-  CyberdeckState.lastNetrunningTimestamp = Date.now();
+  CyberdeckState.lastCorruptedNetrunningTimestamp = Date.now();
   NetrunningState.rewardScore = 0;
   NetrunningState.energy = 0;
 

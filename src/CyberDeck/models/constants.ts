@@ -1,12 +1,12 @@
-import { ComponentCounts, DeckMod } from "../Types";
+import { ComponentCounts, type ComponentStats, DeckMod } from "../Types";
 import { Brand, ModType } from "../Enums";
 import { Settings } from "../../Settings/Settings";
 import { CyberdeckState } from "./CyberdeckState";
 import { CONSTANTS } from "../../Constants";
 
 // TODO-fico: change these after testing to slower cooldowns
-export const netrunningTraceDecayMs = 5e4; //5e5
-export const netrunningInitialTraceDecayWindowMs = 8000; // 20000
+export const netrunningTraceDecayMs = 5e4; //2e5
+export const netrunningInitialTraceDecayWindowMs = 8000; // 12000
 export const corruptedNetrunningHardCooldownMs = 1000 * 30; // 1000 * 90
 export const minCyclesToProcess = 20;
 
@@ -19,6 +19,10 @@ export const SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE = 1;
 
 export const NEURODES_PER_HOMICIDE = 3;
 export const NEURODES_PER_ASSASSINATION = 160;
+
+export const MODULE_STORAGE = "moduleStorage";
+export const INSTALLED_MODULES = "installedModules";
+export const TRASH_CAN = "trashcan";
 
 export const componentSymbols: { [key in keyof ComponentCounts]: string } = {
   rom: "⛃",
@@ -188,6 +192,46 @@ export const MARQUEE_LINES = [
   "There's nothing sadder than a puppet without a ghost, especially the kind with red blood running through them.",
   "I just wanna tell you how I'm feeling Gotta make you understand Never gonna give you up Never gonna let you down Never gonna run around And desert you Never gonna make you cry Never gonna say goodbye Never gonna tell a lie And hurt you",
 ];
-export const MODULE_STORAGE = "moduleStorage";
-export const INSTALLED_MODULES = "installedModules";
-export const TRASH_CAN = "trashcan";
+
+export const componentStatsLabels: {
+  [K in keyof ComponentStats]: { name: string; sources: Record<keyof ComponentStats[K], string> };
+} = {
+  rom: {
+    name: "ROM",
+    sources: {
+      backdoors: "Backdoors",
+      caches: "Caches",
+      pettyCrime: "Petty crime",
+      programs: "Programs",
+      netrunning: "Netrunning",
+      mods: "Mods",
+    },
+  },
+  chips: {
+    name: "Chips",
+    sources: {
+      hacknet: "Hacknet",
+      companyWork: "Company work",
+      IPvGO: "IPvGO",
+      netrunning: "Netrunning",
+      mods: "Mods",
+    },
+  },
+  neurodes: {
+    name: "Neurodes",
+    sources: {
+      kills: "Kills",
+      class: "Classes",
+      codingContracts: "Coding contracts",
+      cortexShare: "Cortex share",
+      netrunning: "Netrunning",
+      mods: "Mods",
+    },
+  },
+  cores: {
+    name: "Cores",
+    sources: {
+      netrunning: "Netrunning",
+    },
+  },
+};

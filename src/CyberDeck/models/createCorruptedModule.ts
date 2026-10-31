@@ -16,7 +16,7 @@ import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { mergeBuffs } from "../utils/modStatsUtils";
 
-export function createCorruptedModule(rng: WHRNG): DeckMod {
+export function createCorruptedModule(rng: WHRNG, levelBoost = 0): DeckMod {
   // TODO-fico: reduce this probability after testing
   if (Player.sourceFiles.get(1) && rng.random() < 0.1) {
     return getEndgameStatModule(rng);
@@ -24,22 +24,22 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
 
   const roll = rng.random();
   if (roll < 0.04) {
-    return getCorruptedRackExtension(rng);
+    return getCorruptedRackExtension(rng, levelBoost);
   }
   if (roll < 0.09) {
-    return getCorruptedSkillChip(rng);
+    return getCorruptedSkillChip(rng, levelBoost);
   }
 
   if (roll < 0.15) {
-    return createUplink(getLevel(rng), rng, false);
+    return createUplink(getLevel(rng, levelBoost), rng, false);
   }
 
   if (roll < 0.21) {
-    return createProcessingModule(getLevel(rng), rng, false);
+    return createProcessingModule(getLevel(rng, levelBoost), rng, false);
   }
 
   if (roll < 0.27) {
-    const module = createProcessingModule(getLevel(rng, 2), rng, true, 1.5, 2);
+    const module = createProcessingModule(getLevel(rng, levelBoost + 2), rng, true, 1.5, 2);
     module.stats.playerMults = mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.corrupted = true;
     module.rarity = Math.min(module.rarity, 7);
@@ -47,7 +47,7 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
   }
 
   if (roll < 0.33) {
-    const module = createUplink(getLevel(rng, 2), rng, true, 1.5, 2);
+    const module = createUplink(getLevel(rng, levelBoost + 2), rng, true, 1.5, 2);
     module.stats.playerMults = mergeBuffs(getDebuff(8, rng), module.stats?.playerMults ?? {});
     module.corrupted = true;
     module.rarity = Math.min(module.rarity, 7);
@@ -55,15 +55,15 @@ export function createCorruptedModule(rng: WHRNG): DeckMod {
   }
 
   if (roll < 0.39) {
-    return createProcessingModule(getLevel(rng, 2), rng);
+    return createProcessingModule(getLevel(rng, levelBoost + 2), rng);
   }
   if (roll < 0.45) {
-    return createUplink(getLevel(rng, 2), rng);
+    return createUplink(getLevel(rng, levelBoost + 2), rng);
   }
 
   // TODO-fico: remove this after first rounds of testing
   if (roll < 0.6) {
-    return createCorruptedModule(rng);
+    return createCorruptedModule(rng, levelBoost);
   }
 
   return getJunkModule(rng);
@@ -116,10 +116,10 @@ export const getJunkModule = (rng: WHRNG) => {
   return modules[Math.floor(rng.random() * modules.length)];
 };
 
-const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
+const getCorruptedRackExtension = (rng: WHRNG, levelBoost = 0): DeckMod => {
   const buffType = rng.random() < 0.1;
   const debuffs = mergeBuffs(getDebuff(8, rng), buffType ? {} : getDebuff(getLevel(rng, 8), rng));
-  const buffs = buffType ? getOtherStatBuff(getLevel(rng, 0), rng, 0.25) : {};
+  const buffs = buffType ? getOtherStatBuff(getLevel(rng, levelBoost), rng, 0.25) : {};
   const extraSlots = Math.floor(rng.random() * 3) + 2;
   return {
     type: ModType.RackExtension,
@@ -136,14 +136,15 @@ const getCorruptedRackExtension = (rng: WHRNG): DeckMod => {
   };
 };
 
-export const getCorruptedSkillChip = (rng: WHRNG): DeckMod => {
-  const buffs = mergeBuffs(getConsumableBuff(8, rng), getConsumableBuff(8, rng));
+export const getCorruptedSkillChip = (rng: WHRNG, levelBoost = 0): DeckMod => {
+  const level = getLevel(rng, levelBoost) + 4;
+  const buffs = mergeBuffs(getConsumableBuff(level, rng), getConsumableBuff(level + 2, rng));
   return {
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.Unknown,
     sockets: getRandomSockets(rng, 1),
-    rarity: 5,
+    rarity: level,
     corrupted: true,
     stats: {
       consumableStats: buffs,

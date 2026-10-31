@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography, Tooltip } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { ChallengeDetail, getCyberdeckLevel } from "../models/challenges";
@@ -9,14 +9,17 @@ import { Settings } from "../../Settings/Settings";
 import { formatNumber } from "../../ui/formatNumber";
 
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
+import { componentStatsLabels, componentSymbols } from "../models/constants";
+import { ComponentSymbol } from "./ComponentCost";
+import type { ComponentStats } from "../Types";
 
 export function StatsPage(): React.ReactElement {
   useRerender(1000);
   const bonuses = getCyberdeckStatBonuses();
   return (
     <div style={{ display: "flex", gap: "40px", alignItems: "flex-start" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        <div style={{ width: "500px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+        <div style={{ width: "380px" }}>
           <Typography variant="h4" gutterBottom>
             Cyberdeck Bonuses
           </Typography>
@@ -46,15 +49,52 @@ export function StatsPage(): React.ReactElement {
         </div>
         <div>
           <Typography variant="h4" gutterBottom>
-            Component Stats
+            Component Sources
           </Typography>
-          <Typography component="pre" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-            {JSON.stringify(CyberdeckState.componentStats, null, 2)}
-          </Typography>
+          <ComponentStatsTable />
         </div>
       </div>
       <CompletedChallengesTable />
     </div>
+  );
+}
+
+function ComponentStatsTable(): React.ReactElement {
+  const cellSx = { fontSize: "14px", color: Settings.theme.maplocation, py: 0.5, borderBottom: "none" };
+  const headerSx = { ...cellSx, color: Settings.theme.primary };
+  const components = Object.keys(componentStatsLabels) as (keyof ComponentStats)[];
+  return (
+    <Table size="small" sx={{ width: "250px" }}>
+      <TableBody>
+        {components.map((component, componentIndex) => {
+          const stats: Record<string, number> = CyberdeckState.componentStats[component];
+          const labels: Record<string, string> = componentStatsLabels[component].sources;
+          const total = Object.values(stats).reduce((sum, value) => sum + value, 0);
+          // Only draw a divider above each component group after the first
+          const groupSx = componentIndex > 0 ? { ...headerSx, paddingTop: "20px" } : headerSx;
+          return (
+            <React.Fragment key={component}>
+              <TableRow>
+                <TableCell sx={groupSx}>
+                  <ComponentSymbol symbol={componentSymbols[component]} /> {componentStatsLabels[component].name}
+                </TableCell>
+                <TableCell sx={groupSx} align="right">
+                  {formatNumber(total, 0)}
+                </TableCell>
+              </TableRow>
+              {Object.entries(stats).map(([source, value]) => (
+                <TableRow key={source}>
+                  <TableCell sx={{ ...cellSx, pl: 4 }}>{labels[source] ?? source}</TableCell>
+                  <TableCell sx={cellSx} align="right">
+                    {formatNumber(value, 0)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </React.Fragment>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
 }
 

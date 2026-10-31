@@ -52,7 +52,7 @@ function FormatStat({
         minWidth: 0,
         justifyContent: "space-between",
         padding: `${Math.ceil(fontSize / 10)}px 3px`,
-        color: Settings.theme.rep,
+        color: Settings.theme.maplocation,
         lineHeight: "11px",
       }}
     >

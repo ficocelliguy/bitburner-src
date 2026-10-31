@@ -1,12 +1,13 @@
 Patch changes:
 - Fixed corrupted netrun cooldown display to be simpler and cleaner and not go up and down
+- Improved corrupted netrun offline node spreading
+- Slightly reworked count and level of corrupted rewards
 
 TODO:
 
 - identify nested droppable?
 
 - stats page
-  - cleanup styling
   - tooltips for stats page
 
 - API - test
