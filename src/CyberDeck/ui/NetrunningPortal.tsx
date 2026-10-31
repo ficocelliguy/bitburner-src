@@ -12,7 +12,12 @@ import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
 import { formatNumber } from "../../ui/formatNumber";
 import { Settings } from "../../Settings/Settings";
 import { CorruptibleText } from "../../ui/React/CorruptibleText";
-import { canNetrun, getCurrentNetrunningIceCost, getNetrunningTraceFraction } from "../models/netrunRewards";
+import {
+  canNetrun,
+  getCurrentNetrunningIceCost,
+  getNetrunningTraceFraction,
+  minimumNetrunCost,
+} from "../models/netrunRewards";
 import { useRerender } from "../../ui/React/hooks";
 import { dialogBoxCreate } from "../../ui/React/DialogBox";
 import { NetrunningState } from "../models/NetrunningState";
@@ -70,10 +75,6 @@ export function NetrunningPortal({
       }
       entered();
     }, 1000);
-  }
-
-  function minimumCost(corrupted: boolean) {
-    return corrupted ? 40 : 10;
   }
 
   return (
@@ -134,7 +135,7 @@ export function NetrunningPortal({
                 )}
               </Typography>
 
-              {getCurrentNetrunningIceCost(corrupted) > minimumCost(corrupted) && (
+              {getCurrentNetrunningIceCost(corrupted) > minimumNetrunCost(corrupted) && (
                 <Typography sx={{ textAlign: "center", fontStyle: "italic", fontSize: "13px" }}>
                   Hostile trace risk: {formatNumber(getNetrunningTraceFraction(corrupted) * 10, 2)}%
                 </Typography>

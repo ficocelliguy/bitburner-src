@@ -335,7 +335,7 @@ function spreadOfflineNodes() {
 
   const offlineNodes = NetrunningState.groups[-1]?.slice(0) ?? [];
 
-  for (const [index, entity] of Array.from(offlineNodes.entries()).slice(0, 15)) {
+  for (const [index, entity] of Array.from(offlineNodes.entries())) {
     if (Math.random() < 0.6 && index > 4) {
       continue;
     }

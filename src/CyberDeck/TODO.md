@@ -1,11 +1,7 @@
 Patch changes:
-- Added cyberdeck component offline production for cortexShare, mods, work, hacknet, crime
-- Added a line item on the offline production pop-up showing the components gained
-- Tweaked component production rates to make them a bit more consistent between different production sources
+- Fixed corrupted netrun cooldown display to be simpler and cleaner and not go up and down
 
 TODO:
-
-- After doing a corrupted run it now always increases the trace risk instead of reducing it till it overflows
 
 - identify nested droppable?
 
@@ -62,16 +58,6 @@ TODO LATER:
     - rack extension cap up?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
-
-- deck upgrades?
-  - boost connected mods?
-  - improve sockets?
-
-- Glitch netrunning
-  - bonus corruption effects on mods?
-    - can't be removed
-    - health loss?
-    - sockets in wrong order?
 
 Cyberdeck Expansion
 

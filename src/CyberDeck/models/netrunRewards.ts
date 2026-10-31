@@ -15,42 +15,24 @@ import { NetrunningState } from "./NetrunningState";
 import { WHRNG } from "../../Casino/RNG";
 
 export function getCurrentNetrunningIceCost(corrupted = false): number {
-  if (corrupted) {
-    return getCorruptedNetrunningIceCost();
-  }
-  const timeSinceLastRun = Date.now() - CyberdeckState.lastNetrunningTimestamp;
-  return Math.floor(getNetrunningCost(timeSinceLastRun));
-}
-
-function getCorruptedNetrunningIceCost(): number {
   const timeSinceLastRun =
-    Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp - corruptedNetrunningHardCooldownMs;
-  if (timeSinceLastRun <= 0) {
-    return Infinity;
-  }
-  return Math.floor(getNetrunningCost(timeSinceLastRun, true) * 4);
-}
-
-function getNetrunningCost(timeSinceLastRun: number, corrupted = false): number {
+    Date.now() - (corrupted ? CyberdeckState.lastCorruptedNetrunningTimestamp : CyberdeckState.lastNetrunningTimestamp);
   const traceDecay = netrunningTraceDecayMs * (corrupted ? 2 : 1);
   const diminishingCosts = 0.95 + traceDecay / timeSinceLastRun;
-  const recencyMultiplier = Math.max((netrunningInitialTraceDecayWindowMs - timeSinceLastRun) / 200, 1);
+  const recencyWindow = corrupted ? corruptedNetrunningHardCooldownMs : netrunningInitialTraceDecayWindowMs;
+  const recencyMultiplier = Math.max(Math.max((recencyWindow - timeSinceLastRun) / 200, 0) * (corrupted ? 1000 : 1), 1);
   const netrunningCooldownBoost =
     1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
-  return Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * 10;
+  const cost = Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * 10;
+  return Math.floor(cost);
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-  if (corrupted) {
-    const timeSinceLastRun = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
-    if (timeSinceLastRun <= corruptedNetrunningHardCooldownMs) {
-      const timeFactor = (corruptedNetrunningHardCooldownMs - timeSinceLastRun) / 100;
-      return getNetrunningCost(timeFactor, true) / 10 - 1;
-    }
-    const timeFactor = Date.now() - CyberdeckState.lastCorruptedNetrunningTimestamp;
-    return getNetrunningCost(timeFactor, true) / 10 - 1;
-  }
-  return getNetrunningCost(Date.now() - CyberdeckState.lastNetrunningTimestamp, corrupted) / 10 - 1;
+  return getCurrentNetrunningIceCost(corrupted) / minimumNetrunCost(corrupted) - 1;
+}
+
+export function minimumNetrunCost(corrupted: boolean) {
+  return corrupted ? 40 : 10;
 }
 
 export function canNetrun(corrupted = false): boolean {
