@@ -13,10 +13,12 @@ export function getCurrentRackSize() {
   return CyberdeckState.baseRackSize + rackExtensionCount;
 }
 
-export function getRandomSockets(rng: WHRNG, baseCap: number, bonus: number = 0, disadvantage = false): SocketList {
-  const socketCount1 = rng.random() * baseCap + bonus;
-  const socketCount2 = rng.random() * baseCap + bonus;
-  return getFixedCountSocketArray(rng, disadvantage ? Math.min(socketCount1, socketCount2) : socketCount1);
+export function getRandomSockets(rng: WHRNG, level: number, bonusSocketScalar = 1, min = 1): SocketList {
+  const bonusSocket1 = rng.random() < 0.09 + 0.003 * level * bonusSocketScalar ? 1 : 0;
+  const bonusSocket2 = rng.random() < 0.015 + 0.001 * level * bonusSocketScalar ? 1 : 0;
+  const bonusSocket3 = bonusSocketScalar > 1 ? rng.random() < 0.03 + 0.001 * level * bonusSocketScalar ? 1 : 0 : 0;
+  const socketCount = min + bonusSocket1 + bonusSocket2 + bonusSocket3;
+  return getFixedCountSocketArray(rng, socketCount);
 }
 
 function getFixedCountSocketArray(rng: WHRNG, socketCount: number): SocketList {

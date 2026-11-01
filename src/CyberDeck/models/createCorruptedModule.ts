@@ -11,7 +11,7 @@ import {
   getOtherStatBuff,
 } from "../utils/statRng";
 import { getRandomSockets } from "../utils/moduleUtilities";
-import { createProcessingModule, createUplink } from "./createModule";
+import { createAndStoreModule, createProcessingModule, createUplink } from "./createModule";
 import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
 import { mergeBuffs } from "../utils/modStatsUtils";
@@ -71,7 +71,7 @@ export function createCorruptedModule(rng: WHRNG, levelBoost = 0): DeckMod {
 
 export const getJunkModule = (rng: WHRNG) => {
   const oneSocket = getRandomSockets(rng, 1);
-  const twoSocket = getRandomSockets(rng, 2);
+  const twoSocket = getRandomSockets(rng, 1, 1, 2);
   const modules: DeckMod[] = [
     {
       type: ModType.RackExtension,
@@ -113,7 +113,7 @@ export const getJunkModule = (rng: WHRNG) => {
     },
   ];
 
-  return modules[Math.floor(rng.random() * modules.length)];
+  return createAndStoreModule(modules[Math.floor(rng.random() * modules.length)]);
 };
 
 const getCorruptedRackExtension = (rng: WHRNG, levelBoost = 0): DeckMod => {
@@ -121,35 +121,36 @@ const getCorruptedRackExtension = (rng: WHRNG, levelBoost = 0): DeckMod => {
   const debuffs = mergeBuffs(getDebuff(8, rng), buffType ? {} : getDebuff(getLevel(rng, 8), rng));
   const buffs = buffType ? getOtherStatBuff(getLevel(rng, levelBoost), rng, 0.25) : {};
   const extraSlots = Math.floor(rng.random() * 3) + 2;
-  return {
+  const level = Math.floor(extraSlots * 2);
+  return createAndStoreModule({
     type: ModType.RackExtension,
     id: getID(rng),
     brand: Brand.Unknown,
-    sockets: getRandomSockets(rng, 1),
-    rarity: Math.floor(extraSlots * 2),
+    sockets: getRandomSockets(rng, level, 0.5),
+    rarity: level,
     corrupted: true,
     stats: {
       playerMults: debuffs,
       otherMults: buffs,
       extraRackSlots: extraSlots,
     },
-  };
+  });
 };
 
 export const getCorruptedSkillChip = (rng: WHRNG, levelBoost = 0): DeckMod => {
   const level = getLevel(rng, levelBoost) + 4;
   const buffs = mergeBuffs(getConsumableBuff(level, rng), getConsumableBuff(level + 2, rng));
-  return {
+  return createAndStoreModule({
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.Unknown,
-    sockets: getRandomSockets(rng, 1),
+    sockets: getRandomSockets(rng, level),
     rarity: level,
     corrupted: true,
     stats: {
       consumableStats: buffs,
     },
-  };
+  });
 };
 
 export const getEndgameStatModule = (rng: WHRNG): DeckMod => {
@@ -159,15 +160,15 @@ export const getEndgameStatModule = (rng: WHRNG): DeckMod => {
   const endgameDebuff = getEndgameStatDebuff(CyberdeckState.netrunningLevel / 2, rng);
   const effects = mergeBuffs(buff, endgameDebuff);
 
-  return {
+  return createAndStoreModule({
     type: ModType.ProcessingMod,
     id: getID(rng),
     brand: Brand.ChurchOfTheMachineGod,
-    sockets: getRandomSockets(rng, 1),
+    sockets: getRandomSockets(rng, level),
     rarity: level,
     stats: {
       playerMults: standardDebuff,
       endgameMults: effects,
     },
-  };
+  });
 };

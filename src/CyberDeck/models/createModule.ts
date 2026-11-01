@@ -90,6 +90,11 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
   return createProcessingModule(level, rng);
 }
 
+export function createAndStoreModule(mod: DeckMod) {
+  CyberdeckState.storedModules.push(mod);
+  return mod;
+}
+
 export function createHackingMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
   const level = getLevel(rng, levelBoost);
   const { playerMults, otherMults } = getHackingModStatRanges();
@@ -110,14 +115,14 @@ export function createHackingMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMo
   if (!isOtherMult || !isOtherDebuff) {
     stats.playerMults = mergedMults;
   }
-  return {
+  return createAndStoreModule({
     brand: Brand.OmegaSoftware,
     id: getID(rng),
     rarity: level,
-    sockets: getRandomSockets(rng, Math.min(1 + level / 3, 3), 0, true),
+    sockets: getRandomSockets(rng, level, 0.7),
     stats,
     type: ModType.Uplink,
-  };
+  });
 }
 
 export function createPhysicalMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
@@ -139,14 +144,14 @@ export function createPhysicalMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckM
   if (!isOtherMult || !isOtherDebuff) {
     stats.playerMults = mergedMults;
   }
-  return {
+  return createAndStoreModule({
     brand: Brand.BladeIndustries,
     id: getID(rng),
     rarity: level,
-    sockets: getRandomSockets(rng, Math.min(1 + level / 3, 3), 0, true),
+    sockets: getRandomSockets(rng, level, 1.2),
     stats,
     type: ModType.Uplink,
-  };
+  });
 }
 
 export function createWorkMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
@@ -168,14 +173,14 @@ export function createWorkMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
   if (!isOtherMult || !isOtherDebuff) {
     stats.playerMults = mergedMults;
   }
-  return {
+  return createAndStoreModule({
     brand: Brand.BachmanAndAssociates,
     id: getID(rng),
     rarity: level,
-    sockets: getRandomSockets(rng, Math.min(1 + level / 3, 3), 0, true),
+    sockets: getRandomSockets(rng, level, 0.6),
     stats,
     type: ModType.Uplink,
-  };
+  });
 }
 
 export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): DeckMod {
@@ -192,14 +197,14 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
   } else {
     stats.consumableStats = consumableBuffMod;
   }
-  return {
+  return createAndStoreModule({
     brand: Brand.OmniaCybersystems,
     id: getID(rng),
     rarity: level,
-    sockets: getRandomSockets(rng, Math.min(1 + level / 3, 3), 0, true),
+    sockets: getRandomSockets(rng, level, 1.2),
     stats,
     type: isOtherMult ? ModType.Uplink : ModType.SkillChip,
-  };
+  });
 }
 
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
@@ -212,17 +217,17 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
 
   const buff = rng.random() < 0.15 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
 
-  return {
+  return createAndStoreModule({
     type: ModType.PowerSupply,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, 2 + level / 3, bonus, true),
+    sockets: getRandomSockets(rng, level, 2, bonus),
     rarity: level,
     stats: {
       playerMults: mergeBuffs(debuff, buff),
       otherMults: debuff2,
     },
-  };
+  });
 }
 
 export function createProcessingModule(
@@ -239,17 +244,17 @@ export function createProcessingModule(
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
   const effects = mergeBuffs(otherMultDebuff, buff);
 
-  return {
+  return createAndStoreModule({
     type: ModType.ProcessingMod,
     id: getID(rng),
     brand: Brand.OmegaSoftware,
-    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
+    sockets: getRandomSockets(rng, level),
     rarity: level,
     stats: {
       playerMults: debuff,
       otherMults: effects,
     },
-  };
+  });
 }
 
 export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar = 1, debuffScalar = 0.7): DeckMod {
@@ -260,23 +265,23 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
   const otherMultDebuff = addDebuff && !applyStandardDebuff ? getOtherStatDebuff(level, rng, debuffScalar) : {};
   const mergedStats = mergeBuffs(debuff, buff);
 
-  return {
+  return createAndStoreModule({
     type: ModType.Uplink,
     id: getID(rng),
     brand: Brand.BachmanAndAssociates,
-    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
+    sockets: getRandomSockets(rng, level),
     rarity: level,
     stats: {
       playerMults: mergedStats,
       otherMults: otherMultDebuff,
     },
-  };
+  });
 }
 
 function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
   const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
-  return {
+  return createAndStoreModule({
     stats: {
       playerMults: mergeBuffs(debuff, buff),
       extraRackSlots: clampNumber(Math.floor(1 + level / 4), 1, 3),
@@ -284,22 +289,22 @@ function createRackExtension(level: number, rng: WHRNG): DeckMod {
     type: ModType.RackExtension,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, 1 + level / 3, 0, true),
+    sockets: getRandomSockets(rng, level, 0.5),
     rarity: level,
-  };
+  });
 }
 
 function createSkillChip(level: number, rng: WHRNG): DeckMod {
-  return {
+  return createAndStoreModule({
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, 1),
+    sockets: getRandomSockets(rng, level),
     rarity: level,
     stats: {
       consumableStats: getConsumableBuff(level, rng),
     },
-  };
+  });
 }
 
 function getRandomModuleType(rng: WHRNG) {
@@ -324,7 +329,7 @@ export function createInitialModules() {
     return; // TODO-fico: throw error here later
   }
   const rng = getNextCraftingPowerSupplyWHRNG();
-  const powerSupply: DeckMod = {
+  const powerSupply = createAndStoreModule({
     type: ModType.PowerSupply,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
@@ -335,8 +340,8 @@ export function createInitialModules() {
         charisma_exp: -0.03,
       },
     },
-  };
-  const processingModule: DeckMod = {
+  });
+  const processingModule = createAndStoreModule({
     type: ModType.ProcessingMod,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
@@ -348,8 +353,8 @@ export function createInitialModules() {
         neurodeProduction: 0.15,
       },
     },
-  };
-  const uplinkModule: DeckMod = {
+  });
+  const uplinkModule = createAndStoreModule({
     type: ModType.Uplink,
     id: getID(rng),
     brand: Brand.OmegaSoftware,
@@ -361,8 +366,8 @@ export function createInitialModules() {
       },
       otherMults: getOtherStatDebuff(4, rng, 0.5),
     },
-  };
-  const skillChip: DeckMod = {
+  });
+  const skillChip = createAndStoreModule({
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
@@ -373,8 +378,8 @@ export function createInitialModules() {
         netrunning_lvl: 0.13,
       },
     },
-  };
-  const uplinkModule2: DeckMod = {
+  });
+  const uplinkModule2 = createAndStoreModule({
     type: ModType.Uplink,
     id: getID(rng),
     brand: Brand.BladeIndustries,
@@ -386,8 +391,9 @@ export function createInitialModules() {
       },
       otherMults: getOtherStatDebuff(1, rng, 0.4),
     },
-  };
+  });
 
+  // Mods are stored on creation, so move the starting rack out of storage
   CyberdeckState.storedModules = [skillChip, uplinkModule2];
   CyberdeckState.installedModules = [processingModule, powerSupply, uplinkModule];
   createConnection({ modId: powerSupply.id, socketIndex: 0 }, { modId: processingModule.id, socketIndex: 0 });
@@ -403,11 +409,11 @@ export function createInitialModules() {
 }
 
 export function createSpecialFirstTimeMod(rng: WHRNG): DeckMod {
-  return {
+  return createAndStoreModule({
     brand: Brand.OmegaSoftware,
     id: getID(rng),
     rarity: 5,
-    sockets: getRandomSockets(rng, 1),
+    sockets: getRandomSockets(rng, 1, 1, 2),
     stats: {
       playerMults: {
         hacking_speed: 0.031,
@@ -417,7 +423,7 @@ export function createSpecialFirstTimeMod(rng: WHRNG): DeckMod {
       },
     },
     type: ModType.Uplink,
-  };
+  });
 }
 
 export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
@@ -455,7 +461,6 @@ export function craftPowerSupply() {
   payComponentCost(powerSupplyCraftingCost);
   const rng = getNextCraftingPowerSupplyWHRNG();
   const newComponent = createPowerSupply(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
-  CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   checkCrafterChallenge();
   return newComponent;
@@ -468,7 +473,6 @@ export function craftProcessingModule() {
   payComponentCost(processingModuleCraftingCost);
   const rng = getNextCraftingProcessingModWHRNG();
   const newComponent = createProcessingModule(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
-  CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   checkCrafterChallenge();
   return newComponent;
@@ -481,7 +485,6 @@ export function craftUplink() {
   payComponentCost(uplinkCraftingCost);
   const rng = getNextCraftingUplinkWHRNG();
   const newComponent = createUplink(getLevel(rng, CyberdeckState.craftingLevel + 3), rng);
-  CyberdeckState.storedModules.push(newComponent);
   CyberdeckEvents.emit();
   checkCrafterChallenge();
   return newComponent;
@@ -534,7 +537,7 @@ export function getEasterEggModule(): DeckMod {
     return existingModule;
   }
 
-  return {
+  return createAndStoreModule({
     type: ModType.ProcessingMod,
     id: LocationName.IshimaGlitch,
     brand: Brand.OnoSendai,
@@ -548,7 +551,7 @@ export function getEasterEggModule(): DeckMod {
         neurodeProduction: 1.729,
       },
     },
-  };
+  });
 }
 
 export function moduleExists(id: string) {

@@ -4,7 +4,7 @@ import {
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
-import { NetrunningRewards } from "../Types";
+import { DeckMod, NetrunningRewards } from "../Types";
 import { Brand, Challenges, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule, createSpecialFirstTimeMod, getBrandedModMaker, moduleStorageAvailable } from "./createModule";
@@ -86,9 +86,7 @@ export function netrunRewards(): NetrunningRewards {
 
 export function getNetrunningRewards(rng: WHRNG, score: number) {
   const rewards = getBrandedNetrunningRewards(rng, score);
-  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity);
-  CyberdeckState.storedModules.unshift(...sortedRewards);
-  return sortedRewards;
+  return moveRewardsToFrontOfStorage(rewards);
 }
 
 export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = NetrunningState.target) {
@@ -96,9 +94,10 @@ export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = N
   if (!modMaker) {
     return getGenericNetrunningRewards(rng, score);
   }
+  // Check eligibility before creating any mods, since mods are stored as soon as they are created
+  const boost = isEligibleForSpecialReward(score);
   const firstModBoost = score > 100 ? 4 : score > 70 ? 2 : 0;
   const rewards = [modMaker(rng, firstModBoost, 1.2)];
-  const boost = isEligibleForSpecialReward(score);
   rewards.push(
     boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng),
   );
@@ -173,8 +172,13 @@ export function getCorruptedNetrunningRewards(rng: WHRNG, score: number) {
     rewards.push(createCorruptedModule(rng));
   }
 
-  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity);
+  return moveRewardsToFrontOfStorage(rewards);
+}
 
-  CyberdeckState.storedModules.unshift(...sortedRewards);
+/** Reward mods are already stored on creation; show them first in storage, sorted by rarity. */
+function moveRewardsToFrontOfStorage(rewards: DeckMod[]) {
+  const sortedRewards = rewards.sort((m1, m2) => m1.rarity - m2.rarity);
+  const otherMods = CyberdeckState.storedModules.filter((m) => !sortedRewards.includes(m));
+  CyberdeckState.storedModules = [...sortedRewards, ...otherMods];
   return sortedRewards;
 }

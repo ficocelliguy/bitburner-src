@@ -122,7 +122,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       checkCyberdeckAccess();
       const modId = helpers.string(ctx, "modId", moduleId);
       if (modId === LocationName.IshimaGlitch && !getModuleById(modId)) {
-        CyberdeckState.storedModules.unshift(getEasterEggModule());
+        getEasterEggModule();
       }
       const mod = getModOrThrow(modId);
       const locationIndex = helpers.integer(ctx, "modIndex", modIndex);

@@ -38,7 +38,7 @@ import {
   getNextNetrunningCorruptedWHRNG,
   getNextNetrunningWHRNG,
 } from "../../CyberDeck/utils/statRng";
-import { createModule } from "../../CyberDeck/models/createModule";
+import { createAndStoreModule, createModule } from "../../CyberDeck/models/createModule";
 import { Settings } from "../../Settings/Settings";
 import type { Multipliers } from "@nsdefs";
 import {
@@ -122,14 +122,12 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.connections = [];
     CyberdeckState.coveredSockets = [];
     CyberdeckState.netrunningLevel += 18;
-    for (let i = 0; i < 4; i++) {
-      CyberdeckState.installedModules.push(createModule(getNextNetrunningWHRNG()));
+    for (let i = 0; i < 8; i++) {
+      createModule(getNextNetrunningWHRNG());
     }
-    for (let i = 0; i < 4; i++) {
-      CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG()));
-    }
-
-    CyberdeckState.storedModules.push(createModule(getNextNetrunningWHRNG(), ModType.RackExtension, 8));
+    createModule(getNextNetrunningWHRNG(), ModType.RackExtension, 8);
+    // Mods are stored on creation, so move the first four into the rack
+    CyberdeckState.installedModules = CyberdeckState.storedModules.splice(0, 4);
     CyberdeckState.netrunningLevel -= 18;
     CyberdeckState.components.rom = 25;
     CyberdeckState.components.chips = 25;
@@ -141,7 +139,7 @@ export function CyberdeckDev(): React.ReactElement {
   function addCustomMod(mod?: DeckMod | undefined) {
     setShowCustomModModal(false);
     if (mod) {
-      CyberdeckState.storedModules.unshift(mod);
+      createAndStoreModule(mod);
       setNetrunningModRewards({ mods: [mod], components: {} });
       setShowRewardsModal(true);
     }
