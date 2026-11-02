@@ -70,7 +70,7 @@ const costIsBelowThreshold = cost <= 20;
 const canAffordNetrunning = cost <= ns.cyberdeck.getComponentCounts().iceBreakers;
 
 if (costIsBelowThreshold && canAffordNetrunning) {
-  let result = ns.cyberdeck.netrun.start();
+  let result = ns.cyberdeck.netrun.start(ns.enums.NetrunTarget.OmegaSoftware);
 
   while (result.energy) {
     await ns.cyberdeck.netrun.move(ns.enums.NetrunDirection.down);

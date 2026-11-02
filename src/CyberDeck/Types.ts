@@ -110,6 +110,10 @@ export type NetrunningRewards = {
   components: Partial<ComponentCounts>;
 };
 
+export type NetrunningResult = NetrunningRewards & {
+  success: boolean;
+};
+
 export type NetrunEntity = {
   type: NetrunEntityVariant;
   group: number;

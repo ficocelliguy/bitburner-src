@@ -4,7 +4,7 @@
 
 ## Cyberdeck.removeConnection() method
 
-Removes the connection between the two specified servers, if present.
+Removes the connection between the two specified mods, if present.
 
 **Signature:**
 

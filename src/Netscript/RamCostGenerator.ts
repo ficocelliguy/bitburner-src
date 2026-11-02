@@ -248,6 +248,7 @@ const cyberdeck = {
   addConnection: 0.5,
   removeConnection: 0.05,
   getRackCapacity: 0,
+  getRackExtensionCap: 0,
   cortexShare: 2.4,
   getChallengeStatus: 0,
   netrun: {

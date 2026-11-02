@@ -1,6 +1,6 @@
 import { InternalAPI, NetscriptContext } from "../Netscript/APIWrapper";
 import { Cyberdeck, EntityInfo } from "@nsdefs";
-import { ComponentCounts, DeckMod, NetrunningRewards, NetrunStatus } from "./Types";
+import { ComponentCounts, DeckMod, NetrunningResult, NetrunStatus } from "./Types";
 import { LocationName, ModType, NetrunEntityVariant } from "@enums";
 import { getEnumHelper } from "../utils/EnumHelper";
 import {
@@ -87,7 +87,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
     },
     getComponentCounts: () => {
       checkCyberdeckAccess();
-      return { ...CyberdeckState.components };
+      return {
+        rom: Math.floor(CyberdeckState.components.rom),
+        neurodes: Math.floor(CyberdeckState.components.neurodes),
+        chips: Math.floor(CyberdeckState.components.chips),
+        cores: Math.floor(CyberdeckState.components.cores),
+        iceBreakers: Math.floor(CyberdeckState.components.iceBreakers),
+      };
     },
     getStoredMods: (): DeckMod[] => {
       checkCyberdeckAccess();
@@ -140,7 +146,11 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           logger(ctx)(`Failed to move mod ${modId}: cyberdeck mod rack is already full.`);
           return false;
         }
-        if (getInstalledRackExtensionCount() >= getRackExtensionCap() && modToMove.type === ModType.RackExtension) {
+        if (
+          getInstalledRackExtensionCount() >= getRackExtensionCap() &&
+          modToMove.type === ModType.RackExtension &&
+          sourceIsStorage
+        ) {
           logger(ctx)(
             `Failed to move mod ${modId}: there are already the max of rack extensions installed (${getRackExtensionCap()}).`,
           );
@@ -213,7 +223,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         logger(ctx)(`Cannot remove connection: mod ${modId1} is not installed on the deck rack.`);
         return false;
       }
-      if (!CyberdeckState.installedModules.includes(mod2) && mod1.id !== getCyberdeckIOPanel().id) {
+      if (!CyberdeckState.installedModules.includes(mod2) && mod2.id !== getCyberdeckIOPanel().id) {
         logger(ctx)(`Cannot remove connection: mod ${modId2} is not installed on the deck rack.`);
         return false;
       }
@@ -227,9 +237,13 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       return success;
     },
     getRackCapacity() {
+      checkCyberdeckAccess();
       return getCurrentRackSize();
     },
-
+    getRackExtensionCap() {
+      checkCyberdeckAccess();
+      return getRackExtensionCap();
+    },
     cortexShare: (ctx: NetscriptContext) => {
       checkCyberdeckAccess();
       const threads = ctx.workerScript.scriptRef.threads;
@@ -242,6 +256,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       });
     },
     getChallengeStatus: () => {
+      checkCyberdeckAccess();
       return getChallengeStatus();
     },
     netrun: {
@@ -321,7 +336,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
 
           // TODO-fico: log feedback - OOM, off the map, broke ice, etc
           if (result && (newX !== x || newY !== y)) {
-            logger(ctx)(`Moved to ${y},${x}`);
+            logger(ctx)(`Moved to ${newY},${newX}`);
           } else if (result) {
             logger(ctx)(`Interacted! Still at ${y},${x}`);
           } else {
@@ -340,14 +355,22 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           };
         });
       },
-      finish(ctx: NetscriptContext): NetrunningRewards {
+      finish(ctx: NetscriptContext): NetrunningResult {
         checkCyberdeckAccess();
         if (!NetrunningState.isNetrunning) {
-          throw new Error("Failed to complete netrun - no run in progress.");
+          logger(ctx)("Failed to complete netrun - no run in progress.");
+          return {
+            success: false,
+            mods: [],
+            components: {},
+          };
         }
         const results = netrunRewards();
         logger(ctx)(`Netrun completed. ${results.mods.length} new modules found.`);
-        return structuredClone(results);
+        return {
+          ...structuredClone(results),
+          success: true,
+        };
       },
       getCost() {
         checkCyberdeckAccess();
@@ -357,7 +380,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         checkCyberdeckAccess();
         const { threat, signals } = getThreatSignalStrength();
         return {
-          success: true,
+          success: NetrunningState.isNetrunning,
           coordinates: structuredClone(NetrunningState.location),
           energy: NetrunningState.energy,
           score: NetrunningState.rewardScore,
@@ -422,7 +445,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
           netrunningLevel: CyberdeckState.netrunningLevel,
           craftingLevel: CyberdeckState.craftingLevel,
           netrunningCooldownLevel: CyberdeckState.netrunningCooldownLevel,
-          modStorageSize: CyberdeckState.modStorageSize,
+          modStorageSize: Math.floor(CyberdeckState.modStorageSize),
           cyberdeckServerRamUpgrades: CyberdeckState.serverRamUpgrades,
           cyberdeckServerCoreUpgrades: CyberdeckState.serverCoreUpgrades,
         };

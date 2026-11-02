@@ -4,7 +4,7 @@
 
 ## Cyberdeck.getInstalledMods() method
 
-Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
+Gets a list of all cyberdeck mods currently installed. (Does not include mods in storage)
 
 Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged mod through socket connections)
 

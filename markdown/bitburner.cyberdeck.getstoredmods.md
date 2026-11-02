@@ -4,7 +4,7 @@
 
 ## Cyberdeck.getStoredMods() method
 
-Gets a list of all cyberdeck mods in storage. (Does not included installed mods)
+Gets a list of all cyberdeck mods in storage. (Does not include installed mods)
 
 **Signature:**
 

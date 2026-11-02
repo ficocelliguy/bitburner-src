@@ -78,7 +78,9 @@ function hitOfflineNode(programmaticMove: boolean) {
   setTimeout(() => {
     NetrunningState.showNetrunOverride = false;
     Player.hospitalize(programmaticMove);
-    Router.toPage(Page.City);
+    if (!programmaticMove) {
+      Router.toPage(Page.City);
+    }
   }, 500);
 }
 

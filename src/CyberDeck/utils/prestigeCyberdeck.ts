@@ -4,6 +4,12 @@ import { prestigeCyberdeckComponents } from "../models/componentEconomy";
 import { Player } from "@player";
 
 export function prestigeCyberdeck(prestigeBitnode = false) {
+  CyberdeckState.lastNetrunningTimestamp = 0;
+  CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
+  CyberdeckState.cortexSharedThreads = 0;
+
+  prestigeCyberdeckComponents();
+
   if (prestigeBitnode) {
     CyberdeckState.hasCyberdeck = !!Player.sourceFiles.get(16) || Player.bitNodeN === 16;
     CyberdeckState.storedCycles = 0;
@@ -12,8 +18,8 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.storedModules = [];
     CyberdeckState.connections = [];
     CyberdeckState.coveredSockets = [];
-    CyberdeckState.netrunningLevel = 0;
-    CyberdeckState.craftingLevel = 0;
+    CyberdeckState.netrunningLevel = 1;
+    CyberdeckState.craftingLevel = 1;
     CyberdeckState.netrunningCooldownLevel = 0;
     CyberdeckState.modStorageSize = 8;
     CyberdeckState.netrunningSeedUsages = 0;
@@ -24,17 +30,13 @@ export function prestigeCyberdeck(prestigeBitnode = false) {
     CyberdeckState.serverRamUpgrades = 0;
     CyberdeckState.serverCoreUpgrades = 0;
     CyberdeckState.salvagedMods = 0;
+    CyberdeckState.craftedMods = 0;
     CyberdeckState.completedChallenges = getDefaultCompletedChallenges();
 
     if (hasCyberdeck()) {
       gainCyberdeck();
     }
   }
-  CyberdeckState.lastNetrunningTimestamp = 0;
-  CyberdeckState.lastCorruptedNetrunningTimestamp = 0;
-  CyberdeckState.cortexSharedThreads = 0;
-
-  prestigeCyberdeckComponents();
 
   if (hasCyberdeck()) {
     addCyberdeckServer();

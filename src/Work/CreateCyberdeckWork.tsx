@@ -67,5 +67,5 @@ export class CreateCyberdeckWork extends PlayerBaseWork {
     return "Assembling cyberdeck...";
   }
 
-  static includedKeys = makeSerializable("CompanyWork", CreateCyberdeckWork);
+  static includedKeys = makeSerializable("CreateCyberdeckWork", CreateCyberdeckWork);
 }

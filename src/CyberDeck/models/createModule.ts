@@ -49,7 +49,7 @@ export const getCyberdeckIOPanel = (): DeckMod => {
       false,
       hasCompleted(Challenges.CompletedTutorial),
       false,
-      hasCompleted(Challenges.Corruption),
+      hasCompleted(Challenges.GlitchRun),
     ],
     rarity: lvl,
     stats: {},
@@ -425,13 +425,13 @@ export function createSpecialFirstTimeMod(rng: WHRNG): DeckMod {
   });
 }
 
-export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1) {
+export function canAffordComponentCost(cost: Partial<ComponentCounts>, count = 1, ignoreStorage = false) {
   if (CyberdeckState.components.chips < (cost.chips ?? 0) * count) return false;
   if (CyberdeckState.components.rom < (cost.rom ?? 0) * count) return false;
   if (CyberdeckState.components.neurodes < (cost.neurodes ?? 0) * count) return false;
   if (CyberdeckState.components.cores < (cost.cores ?? 0) * count) return false;
   if (CyberdeckState.components.iceBreakers < (cost.iceBreakers ?? 0) * count) return false;
-  if (!moduleStorageAvailable()) return false;
+  if (!ignoreStorage && !moduleStorageAvailable()) return false;
   return true;
 }
 
@@ -444,7 +444,7 @@ export function payComponentCost(cost: Partial<ComponentCounts>, count = 1) {
 }
 
 export function craftICEBreaker(count = 1) {
-  if (!canAffordComponentCost(ICEBreakerCraftingCost, count)) {
+  if (!canAffordComponentCost(ICEBreakerCraftingCost, count, true)) {
     return false;
   }
   payComponentCost(ICEBreakerCraftingCost, count);
@@ -560,5 +560,5 @@ export function moduleExists(id: string) {
 }
 
 export function moduleStorageAvailable() {
-  return CyberdeckState.storedModules.length < CyberdeckState.modStorageSize;
+  return CyberdeckState.storedModules.length < Math.floor(CyberdeckState.modStorageSize);
 }

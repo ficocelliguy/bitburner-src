@@ -180,8 +180,8 @@ export function createConnection(source: Socket, destination: Socket) {
   disconnectSocket(destination);
 
   CyberdeckState.connections.push([source, destination]);
-  updateConnectedModules();
   checkConnectionChallenges(sourceModule, destinationModule);
+  updateConnectedModules();
   const chargedMods = getChargedModules();
   if (chargedMods.some((m) => m.id == sourceModule.id || m.id == destinationModule.id)) {
     completeChargedModuleTutorial();

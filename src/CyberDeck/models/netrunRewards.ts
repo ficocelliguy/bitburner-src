@@ -4,7 +4,7 @@ import {
   netrunningInitialTraceDecayWindowMs,
   netrunningTraceDecayMs,
 } from "./constants";
-import { DeckMod, NetrunningRewards } from "../Types";
+import { DeckMod, NetrunningResult, NetrunningRewards } from "../Types";
 import { Brand, Challenges, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
 import { createModule, createSpecialFirstTimeMod, getBrandedModMaker, moduleStorageAvailable } from "./createModule";
@@ -132,7 +132,7 @@ function isEligibleForSpecialReward(score: number) {
   return score > 70 && isEarlyRun && !hasRareMod;
 }
 
-function corruptedNetrun(): NetrunningRewards {
+function corruptedNetrun(): NetrunningResult {
   const rng = getNextNetrunningCorruptedWHRNG();
 
   const rewards = getCorruptedNetrunningRewards(rng, NetrunningState.rewardScore);
@@ -143,6 +143,7 @@ function corruptedNetrun(): NetrunningRewards {
   CyberdeckState.componentStats.cores.netrunning += coresGained;
 
   return {
+    success: true,
     mods: rewards,
     components: {
       cores: coresGained,

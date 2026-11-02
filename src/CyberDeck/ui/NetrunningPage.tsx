@@ -4,7 +4,7 @@ import { NetrunningState } from "../models/NetrunningState";
 import { NetrunningPortal } from "./NetrunningPortal";
 import { RewardsModal } from "./RewardsModal";
 import { NetrunningRewards } from "../Types";
-import { netrunFlavorText } from "../models/constants";
+import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants";
 import { netrunRewards } from "../models/netrunRewards";
 import { initNetrunGrid } from "../models/netrunningMinigame";
 import { useRerender } from "../../ui/React/hooks";
@@ -40,9 +40,9 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
         onClose={() => setShowRewardsModal(false)}
         rewards={netrunningModRewards}
         title={"Netrunning Results"}
-        flavorText={netrunFlavorText}
+        flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
       />
-      {NetrunningState.isNetrunning && NetrunningState.target === Brand.Unknown ? (
+      {NetrunningState.isNetrunning && NetrunningState.target === Brand.Unknown && !NetrunningState.corrupted ? (
         <NetrunTargetSelect />
       ) : NetrunningState.isNetrunning || NetrunningState.showNetrunOverride ? (
         <NetrunMinigame complete={endNetrun}></NetrunMinigame>

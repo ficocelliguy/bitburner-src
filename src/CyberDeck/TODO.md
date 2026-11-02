@@ -3,11 +3,14 @@ Patch changes:
 - Rebalanced component extra sockets to make them rarer on the better types of stat-boosting mods
 - Fixed corrupted netrun cooldown display to be simpler and cleaner and not go up and down
 - Improved corrupted netrun offline node spreading
-- Fixed bug with count and level of corrupted rewards
+- Normalized count and level of corrupted rewards to be more consistent with standard netrunning
 - fixed bug where some mods could have duplicate IDs if they were created in the same batch
 - fixed bug with corrupted netrun cooldown display
+- Fixed some labelling nd documentation inconsistencies
 
 TODO:
+- save Tutorial steps
+- fix Daisy Chain / Arc Hazard calculation
 
 - identify nested droppable?
 

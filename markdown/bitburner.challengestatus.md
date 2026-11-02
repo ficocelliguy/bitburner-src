@@ -4,6 +4,7 @@
 
 ## ChallengeStatus type
 
+
 **Signature:**
 
 ```typescript

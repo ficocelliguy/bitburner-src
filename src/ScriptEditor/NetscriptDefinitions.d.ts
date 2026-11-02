@@ -4572,9 +4572,10 @@ type EndgameMults = {
 };
 
 /** @public */
-type NetrunningRewards = {
+type NetrunningResult = {
   mods: DeckMod[];
   components: Partial<ComponentCounts>;
+  success: boolean;
 };
 
 /** @public */
@@ -4611,7 +4612,7 @@ type NetrunStatus = {
   surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
   /** The threat level rating at your current position. A threat of 1.0 indicates there is a bomb in one of the groups within 1 tile of you, or perhaps there are 2 that are each 3 tiles away... */
   threat: number;
-  /** The number of groups containing bombs within 5 tiles of your current position */
+  /** The number of groups containing bombs within 6 tiles of your current position */
   threatCount: number;
   /** The amount of energy remaining, in the range [1,0]. Once energy is zero you can no longer break ICE. */
   energy: number;
@@ -4651,6 +4652,7 @@ type BrandEnumType = {
 /** @public */
 type Brand = _ValueOf<BrandEnumType>;
 
+/** @public */
 type ChallengeStatus = {
   CompletedTutorial: boolean;
   Scrapper: boolean;
@@ -4690,13 +4692,13 @@ export interface Cyberdeck {
   getComponentCounts(): ComponentCounts;
   /**
    * Gets a list of all cyberdeck mods in storage.
-   * (Does not included installed mods)
+   * (Does not include installed mods)
    * @remarks
    * RAM cost: 0.05 GB
    */
   getStoredMods(): DeckMod[];
   /**
-   * Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
+   * Gets a list of all cyberdeck mods currently installed. (Does not include mods in storage)
    *
    * Also indicates if the mod is currently charged (e.g. active, has a connection to the
    * cyberdeck IO panel itself or another charged mod through socket connections)
@@ -4783,13 +4785,13 @@ export interface Cyberdeck {
    *
    * @param modId1 - The ID of a mod to connect
    * @param modId2 - The ID of another mod to connect to modId1
-   * @param socketIndex - the socket to connect them on. This corresponds to he socket colors in the UI.
+   * @param socketIndex - the socket to connect them on. This corresponds to the socket colors in the UI.
    * @returns true if the connection was made successfully; false if it is invalid
    */
   addConnection(modId1: string, modId2: string, socketIndex: number): boolean;
 
   /**
-   * Removes the connection between the two specified servers, if present.
+   * Removes the connection between the two specified mods, if present.
    *
    * @remarks
    * RAM cost: 0.05 GB
@@ -4811,6 +4813,16 @@ export interface Cyberdeck {
    * @returns the maximum number of mods that currently can be installed at once
    */
   getRackCapacity(): number;
+
+  /**
+   * Get the maximum number of rack extension mods currently installable at once.
+   *
+   * @remarks
+   * RAM cost: 0 GB
+   *
+   * @returns the maximum number of rack extension mods that currently can be installed at once
+   */
+  getRackExtensionCap(): number;
 
   /**
    * Loans neural bandwidth (and ram) to produce neurodes. Effect increases with the number
@@ -4849,7 +4861,7 @@ export interface Cyberdeck {
     start(target: Brand): NetrunStatus;
 
     /**
-     * Attemts to move to an adjacent nearby empty space, or interact with an adgacent entity.
+     * Attempts to move to an adjacent nearby empty space, or interact with an adjacent entity.
      * This method must be awaited - netrunning takes time!
      *
      * @param direction - the direction to move
@@ -4865,7 +4877,7 @@ export interface Cyberdeck {
      * @remarks
      * Ram cost: 0 GB
      */
-    finish(): NetrunningRewards;
+    finish(): NetrunningResult;
 
     /**
      * Get the number of ICEBreakers required to netrun currently.
@@ -4954,7 +4966,7 @@ export interface Cyberdeck {
    */
   server: {
     /**
-     * Returns the cost to upgrade the cyberdeck server's RAM.
+     * Returns the cost to upgrade the cyberdeck server's RAM, or INFINITY if the upgrades are capped.
      * @remarks
      * RAM cost: 0 GB
      */
@@ -4969,7 +4981,7 @@ export interface Cyberdeck {
      * Upgrades the cyberdeck server's RAM.
      * @remarks
      * RAM cost: 0.5 GB
-     * @returns true if the upgrade was successful, false if it failed due to a lack of components or money
+     * @returns true if the upgrade was successful, false if it failed due to a lack of components or money, or hitting the cap
      */
     upgradeRam(): boolean;
     /**

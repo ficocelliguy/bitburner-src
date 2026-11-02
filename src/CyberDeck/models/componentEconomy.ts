@@ -32,6 +32,9 @@ export function processCyberdeckComponentGains(
   time = minCyclesToProcess,
   crimeGains: Partial<SimpleComponentCounts> = {},
 ) {
+  if (!hasCyberdeck()) {
+    return { chips: 0, neurodes: 0, rom: 0, cores: 0, iceBreakers: 0 };
+  }
   const ticks = time / minCyclesToProcess;
   const componentsGained = [
     getCyberdeckComponentsFromHacknetIncome(hacknetMoney, ticks),

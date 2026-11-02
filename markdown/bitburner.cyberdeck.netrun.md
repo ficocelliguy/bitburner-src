@@ -12,7 +12,7 @@ netrun: {
 
     move(direction: NetrunDirection): Promise<NetrunStatus>;
 
-    finish(): NetrunningRewards;
+    finish(): NetrunningResult;
 
     getCost(): number;
 

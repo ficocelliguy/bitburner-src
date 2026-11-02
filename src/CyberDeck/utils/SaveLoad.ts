@@ -132,11 +132,6 @@ export function loadCyberdeckSaveData(saveString: unknown) {
     if (!isComponentStats(componentStats)) throw new Error("Invalid cyberdeck savestring value: componentStats");
     CyberdeckState.componentStats = componentStats;
 
-    if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
-    CyberdeckState.connections = connections.filter(([a, b]) => checkConnection(a, b).success);
-
-    updateCoveredSockets();
-
     if (typeof netrunningSeedUsages !== "number")
       throw new Error("Invalid cyberdeck savestring value: netrunningSeedUsages");
     CyberdeckState.netrunningSeedUsages = netrunningSeedUsages;
@@ -161,6 +156,11 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       }
     }
     adaptLegacyTutorialCompletion(parsedData);
+
+    if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
+    CyberdeckState.connections = connections.filter(([a, b]) => checkConnection(a, b).success);
+
+    updateCoveredSockets();
 
     // Emit an event to notify that the state has changed
     CyberdeckEvents.emit();

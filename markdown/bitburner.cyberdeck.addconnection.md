@@ -76,7 +76,7 @@ number
 
 </td><td>
 
-the socket to connect them on. This corresponds to he socket colors in the UI.
+the socket to connect them on. This corresponds to the socket colors in the UI.
 
 
 </td></tr>

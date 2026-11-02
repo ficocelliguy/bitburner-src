@@ -85,7 +85,7 @@ May the Blackwall continue to shield us all.
 
 </td><td>
 
-{ start(target: [Brand](./bitburner.brand.md)<!-- -->): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; move(direction: [NetrunDirection](./bitburner.netrundirection.md)<!-- -->): Promise&lt;[NetrunStatus](./bitburner.netrunstatus.md)<!-- -->&gt;; finish(): [NetrunningRewards](./bitburner.netrunningrewards.md)<!-- -->; getCost(): number; getStatus(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; getGrid(): [EntityInfo](./bitburner.entityinfo.md)<!-- -->\[\]\[\]; toggleFlag(y: number, x: number): void; }
+{ start(target: [Brand](./bitburner.brand.md)<!-- -->): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; move(direction: [NetrunDirection](./bitburner.netrundirection.md)<!-- -->): Promise&lt;[NetrunStatus](./bitburner.netrunstatus.md)<!-- -->&gt;; finish(): [NetrunningResult](./bitburner.netrunningresult.md)<!-- -->; getCost(): number; getStatus(): [NetrunStatus](./bitburner.netrunstatus.md)<!-- -->; getGrid(): [EntityInfo](./bitburner.entityinfo.md)<!-- -->\[\]\[\]; toggleFlag(y: number, x: number): void; }
 
 
 </td><td>
@@ -235,7 +235,7 @@ Gets information about the base connection point of the cyberdeck itself. All mo
 
 </td><td>
 
-Gets a list of all cyberdeck mods currently installed. (Does not included mods in storage)
+Gets a list of all cyberdeck mods currently installed. (Does not include mods in storage)
 
 Also indicates if the mod is currently charged (e.g. active, has a connection to the cyberdeck IO panel itself or another charged mod through socket connections)
 
@@ -254,12 +254,23 @@ Get the max number of mod slots available in the cyberdeck mod rack. Includes an
 </td></tr>
 <tr><td>
 
+[getRackExtensionCap()](./bitburner.cyberdeck.getrackextensioncap.md)
+
+
+</td><td>
+
+Get the maximum number of rack extension mods currently installable at once.
+
+
+</td></tr>
+<tr><td>
+
 [getStoredMods()](./bitburner.cyberdeck.getstoredmods.md)
 
 
 </td><td>
 
-Gets a list of all cyberdeck mods in storage. (Does not included installed mods)
+Gets a list of all cyberdeck mods in storage. (Does not include installed mods)
 
 
 </td></tr>
@@ -294,7 +305,7 @@ Mods must be both installed and charged (have a connection to another charged mo
 
 </td><td>
 
-Removes the connection between the two specified servers, if present.
+Removes the connection between the two specified mods, if present.
 
 
 </td></tr>

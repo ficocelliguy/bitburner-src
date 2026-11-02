@@ -1808,6 +1808,7 @@ Skill names type of Bladeburner
 </td><td>
 
 
+
 </td></tr>
 <tr><td>
 
@@ -2444,7 +2445,7 @@ Stats affecting component production, fee reduction, and activity speed.
 </td></tr>
 <tr><td>
 
-[NetrunningRewards](./bitburner.netrunningrewards.md)
+[NetrunningResult](./bitburner.netrunningresult.md)
 
 
 </td><td>

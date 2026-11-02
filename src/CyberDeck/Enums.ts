@@ -57,6 +57,6 @@ export enum Challenges {
   AutoRun = "Get a score of 100+ using only the API",
   AutoBomber = "Flag ICE with an active countermeasure and finish the run with only the API",
   ArcHazard = "Charge a mod that is 6+ jumps away from the deck",
-  Corruption = "Install a mod from the glitch",
+  Corruption = "Install a corrupted mod from the glitch",
   GlitchRun = "Get a score of 100+ at the glitch using only the API",
 }
