@@ -116,8 +116,8 @@ export function ejectOverloadedModules() {
 }
 
 export function checkConnection(source: Socket, destination: Socket) {
-  const sourceModule = getModule(source.modId);
-  const destinationModule = getModule(destination.modId);
+  const sourceModule = getModule(source.modId, false);
+  const destinationModule = getModule(destination.modId, false);
   if (!sourceModule) {
     return {
       success: false,
@@ -169,8 +169,8 @@ export function checkConnection(source: Socket, destination: Socket) {
 }
 
 export function createConnection(source: Socket, destination: Socket) {
-  const sourceModule = getModule(source.modId);
-  const destinationModule = getModule(destination.modId);
+  const sourceModule = getModule(source.modId, false);
+  const destinationModule = getModule(destination.modId, false);
   const connectionCheck = checkConnection(source, destination);
   if (!connectionCheck.success || !sourceModule || !destinationModule) {
     return connectionCheck;
@@ -178,6 +178,11 @@ export function createConnection(source: Socket, destination: Socket) {
 
   disconnectSocket(source);
   disconnectSocket(destination);
+
+  const connectionCheck2 = checkConnection(source, destination);
+  if (!connectionCheck2.success) {
+    return connectionCheck2;
+  }
 
   CyberdeckState.connections.push([source, destination]);
   checkConnectionChallenges(sourceModule, destinationModule);
@@ -203,13 +208,13 @@ function updateConnectedModules(consumeSkillchips = true) {
   CyberdeckEvents.emit();
 }
 
-function getModule(moduleId: string) {
+function getModule(moduleId: string, allowStorage = true) {
   if (moduleId == getCyberdeckIOPanel().id) {
     return getCyberdeckIOPanel();
   }
   return (
     CyberdeckState.installedModules.find((m) => m.id === moduleId) ||
-    CyberdeckState.storedModules.find((m) => m.id === moduleId)
+    (allowStorage ? CyberdeckState.storedModules.find((m) => m.id === moduleId) : undefined)
   );
 }
 

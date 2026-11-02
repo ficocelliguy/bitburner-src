@@ -22,7 +22,7 @@ export function getRandomSockets(rng: WHRNG, level: number, bonusSocketScalar = 
   return getFixedCountSocketArray(rng, socketCount);
 }
 
-function getFixedCountSocketArray(rng: WHRNG, socketCount: number): SocketList {
+export function getFixedCountSocketArray(rng: WHRNG, socketCount: number): SocketList {
   const array: SocketList = [false, false, false, false, false, false, false, false];
   const count = clampInteger(socketCount, 1, array.length);
   for (let i = 0; i < count; i++) {

@@ -1,16 +1,18 @@
 Patch changes:
-- Rebalanced component income sources to provide more comparable options and make "focus" sources better
-- Rebalanced component extra sockets to make them rarer on the better types of stat-boosting mods
-- Fixed corrupted netrun cooldown display to be simpler and cleaner and not go up and down
-- Improved corrupted netrun offline node spreading
-- Normalized count and level of corrupted rewards to be more consistent with standard netrunning
-- fixed bug where some mods could have duplicate IDs if they were created in the same batch
-- fixed bug with corrupted netrun cooldown display
-- Fixed some labelling nd documentation inconsistencies
+- fixed two bugs that can lead to modules in storage that still have dangling connections
+- improved the descriptions of some challenge text
 
 TODO:
+- increase component count legibility in top-left
+
 - save Tutorial steps
 - fix Daisy Chain / Arc Hazard calculation
+- rename server namespace to hardware?
+
+- netrunning Docs
+  - add simple code examples
+  - explain entity types
+
 
 - identify nested droppable?
 
@@ -26,12 +28,6 @@ TODO:
 
 - dev menu - set component counts
 
-
-NETRUNNING MINIGAME:
-
-- Docs
-  - add simple code examples
-  - explain entity types
 
 TODO LATER:
 

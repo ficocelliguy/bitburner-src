@@ -10,7 +10,7 @@ import {
   getLevel,
   getOtherStatBuff,
 } from "../utils/statRng";
-import { getRandomSockets } from "../utils/moduleUtilities";
+import { getFixedCountSocketArray, getRandomSockets } from "../utils/moduleUtilities";
 import { createAndStoreModule, createProcessingModule, createUplink } from "./createModule";
 import { CyberdeckState } from "./CyberdeckState";
 import { Player } from "@player";
@@ -144,7 +144,7 @@ export const getCorruptedSkillChip = (rng: WHRNG, levelBoost = 0): DeckMod => {
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.Unknown,
-    sockets: getRandomSockets(rng, level),
+    sockets: getFixedCountSocketArray(rng, 1),
     rarity: level,
     corrupted: true,
     stats: {

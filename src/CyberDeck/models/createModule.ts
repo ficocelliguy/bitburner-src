@@ -1,5 +1,5 @@
 import { CyberdeckEvents, CyberdeckState, hasCompleted } from "./CyberdeckState";
-import { getModuleById, getRandomSockets } from "../utils/moduleUtilities";
+import { getFixedCountSocketArray, getModuleById, getRandomSockets } from "../utils/moduleUtilities";
 import { ComponentCounts, DeckMod, ModStats } from "../Types";
 import { Brand, Challenges, ModType, NetrunTargets } from "../Enums";
 import { createConnection, moveModule } from "./moduleMutation";
@@ -201,7 +201,7 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
     brand: Brand.OmniaCybersystems,
     id: getID(rng),
     rarity: level,
-    sockets: getRandomSockets(rng, level, 1.2),
+    sockets: isOtherMult ? getRandomSockets(rng, level, 1.2) : getFixedCountSocketArray(rng, 1),
     stats,
     type: isOtherMult ? ModType.Uplink : ModType.SkillChip,
   });
@@ -298,7 +298,7 @@ function createSkillChip(level: number, rng: WHRNG): DeckMod {
     type: ModType.SkillChip,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, level),
+    sockets: getFixedCountSocketArray(rng, 1),
     rarity: level,
     stats: {
       consumableStats: getConsumableBuff(level, rng),
