@@ -1363,7 +1363,7 @@ function runScenario(kind: ScenarioKind, seed: number): ScenarioResult {
           }
         }
         // Salvage worst stored mods so a netrun has room
-        while (CyberdeckState.storedModules.length >= CyberdeckState.modStorageSize - 0.0001) {
+        while (!moduleStorageAvailable()) {
           if (!salvageWorstStoredMod(true)) break;
         }
         // Netrun when it's cheap, or early (paying the trace-decay premium) while ROM and chips are above the floor
