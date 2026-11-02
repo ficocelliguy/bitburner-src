@@ -1,7 +1,11 @@
 Patch changes:
+- Rebalanced component income sources to provide more comparable options and make "focus" sources better
+- Rebalanced component extra sockets to make them rarer on the better types of stat-boosting mods
 - Fixed corrupted netrun cooldown display to be simpler and cleaner and not go up and down
 - Improved corrupted netrun offline node spreading
-- Slightly reworked count and level of corrupted rewards
+- Fixed bug with count and level of corrupted rewards
+- fixed bug where some mods could have duplicate IDs if they were created in the same batch
+- fixed bug with corrupted netrun cooldown display
 
 TODO:
 

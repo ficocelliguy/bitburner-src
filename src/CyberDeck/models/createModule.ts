@@ -212,8 +212,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
 
   const extraSlotVariant = rng.random() < 0.1;
   const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng, 0.7) : {};
-  const extraSockets = rng.random() < 0.08 ? 1 : 0;
-  const bonus = Math.max((extraSlotVariant ? 2 : 1) + extraSockets, 2);
+  const bonus = extraSlotVariant ? 3 : 2;
 
   const buff = rng.random() < 0.15 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
 
@@ -221,7 +220,7 @@ function createPowerSupply(level: number, rng: WHRNG): DeckMod {
     type: ModType.PowerSupply,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, level, 2, bonus),
+    sockets: getRandomSockets(rng, level, 4, bonus),
     rarity: level,
     stats: {
       playerMults: mergeBuffs(debuff, buff),
