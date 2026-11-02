@@ -5,6 +5,7 @@ import { Multipliers } from "@nsdefs";
 import { ConsumableStats, EndgameMults, MiscMults } from "../Types";
 import { getRecordKeys } from "../../Types/Record";
 import { getModuleById } from "./moduleUtilities";
+import { applySoftCap } from "./modStatsUtils";
 import { Challenges } from "@enums";
 
 export function getNextNetrunningWHRNG() {
@@ -291,12 +292,9 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
   const bonusAttempts = rng.random() < 0.1 ? 12 : 7;
-  const excess = Math.max(levelBoost - 10, 0);
-  const ratio = 0.75;
-  const chunk = 10;
-  const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
+  const cappedLevel = applySoftCap(levelBoost, 0, Infinity, 0, 0, 0.89, 20) * 0.6;
 
-  const levelUpAttempts = (excess + diminishedExcess) * 0.6 + bonusAttempts;
+  const levelUpAttempts = cappedLevel + bonusAttempts;
   const stepSize = Math.max(levelUpAttempts / 100, 1);
   const startingValue = 0.3 + (0.7 * levelBoost) / (levelBoost + 20);
   let level = 0;

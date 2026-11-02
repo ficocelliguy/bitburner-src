@@ -24,10 +24,10 @@ export function gainCyberdeckComponentsFromSaveBackup() {
   if (!hasCyberdeck()) {
     return;
   }
-  CyberdeckState.components.chips += 100;
-  CyberdeckState.components.rom += 100;
-  CyberdeckState.components.neurodes += 100;
-  gainComponentMessage({ chips: 100, rom: 100, neurodes: 100 });
+  CyberdeckState.components.chips += 300;
+  CyberdeckState.components.rom += 300;
+  CyberdeckState.components.neurodes += 300;
+  gainComponentMessage({ chips: 300, rom: 300, neurodes: 300 });
 }
 
 export function gainCyberdeckComponentsFromNukeOrBackdoor(
@@ -62,7 +62,7 @@ export function gainCyberdeckChipsFromIPvGO(nodesCaptured: number) {
   if (!hasCyberdeck()) {
     return;
   }
-  const chipsGained = Math.floor(nodesCaptured * 0.6 + 3);
+  const chipsGained = Math.ceil(nodesCaptured * 0.2 + 3);
   CyberdeckState.components.chips += chipsGained;
   CyberdeckState.componentStats.chips.IPvGO += chipsGained;
   return chipsGained;
@@ -112,7 +112,7 @@ export function getCyberdeckComponentsFromMods(ticks = 1): SimpleComponentCounts
 }
 
 export function getRomFromManualProgramCreation(ticks = 1) {
-  const romGained = 4 * ticks;
+  const romGained = 7 * ticks;
   CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.rom.programs += romGained;
   return { rom: romGained };
@@ -121,7 +121,7 @@ export function getRomFromManualProgramCreation(ticks = 1) {
 export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
   const tuitionPriceMod = getCyberdeckStatBonuses(1).otherMults.class_cost;
   const tuition = (work.calculateRates().money * -1) / tuitionPriceMod;
-  const newNeurodes = (0.5 + tuition / 50) * ticks;
+  const newNeurodes = (0.5 + tuition / 25) * ticks;
   CyberdeckState.components.neurodes += newNeurodes;
   CyberdeckState.componentStats.neurodes.class += newNeurodes;
   return {
@@ -135,7 +135,7 @@ export function getChipsFromCompanyWork(work: CompanyWork, ticks = 1) {
     return {};
   }
   const repPerTick = work.getGainRates(job).reputation;
-  const newChips = (0.1 + (10 * repPerTick + 1000) / (repPerTick + 1000)) * ticks;
+  const newChips = (1 + (50 * repPerTick + 800) / (repPerTick + 800)) * ticks;
   CyberdeckState.components.chips += newChips;
   CyberdeckState.componentStats.chips.companyWork += newChips;
   return {

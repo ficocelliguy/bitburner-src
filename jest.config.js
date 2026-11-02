@@ -5,7 +5,13 @@ module.exports = {
     "^.+\\.(js|jsx|ts|tsx|cjs|mjs)$": "<rootDir>/test/jest/config/babelTransform.js",
   },
   transformIgnorePatterns: ["node_modules/(?!react-markdown)/"],
-  testPathIgnorePatterns: [".cypress", "node_modules", "dist"],
+  // Long-running balance simulations only run on request (SIM_RUN=1, set by test/jest/Simulations/runParallel.js)
+  testPathIgnorePatterns: [
+    ".cypress",
+    "node_modules",
+    "dist",
+    ...(process.env.SIM_RUN === "1" ? [] : ["/test/jest/Simulations/"]),
+  ],
   testEnvironment: "./FixJSDOMEnvironment.ts",
   setupFiles: ["./jest.polyfills.js"],
   moduleNameMapper: {

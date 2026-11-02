@@ -14,10 +14,11 @@ export function getCurrentRackSize() {
 }
 
 export function getRandomSockets(rng: WHRNG, level: number, bonusSocketScalar = 1, min = 1): SocketList {
-  const bonusSocket1 = rng.random() < 0.09 + 0.003 * level * bonusSocketScalar ? 1 : 0;
-  const bonusSocket2 = rng.random() < 0.015 + 0.001 * level * bonusSocketScalar ? 1 : 0;
-  const bonusSocket3 = bonusSocketScalar > 1 ? rng.random() < 0.03 + 0.001 * level * bonusSocketScalar ? 1 : 0 : 0;
-  const socketCount = min + bonusSocket1 + bonusSocket2 + bonusSocket3;
+  const bonusSocket1 = rng.random() < (0.1 + 0.005 * level) * bonusSocketScalar ? 1 : 0;
+  const bonusSocket2 = rng.random() < (0.02 + 0.001 * level) * bonusSocketScalar ? 1 : 0;
+  const bonusSocket3 = bonusSocketScalar > 1 ? (rng.random() < (0.03 + 0.001 * level) * bonusSocketScalar ? 1 : 0) : 0;
+  const bonusSocket4 = bonusSocketScalar > 1 ? (rng.random() < 0.003 * level * bonusSocketScalar ? 1 : 0) : 0;
+  const socketCount = min + bonusSocket1 + bonusSocket2 + bonusSocket3 + bonusSocket4;
   return getFixedCountSocketArray(rng, socketCount);
 }
 

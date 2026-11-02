@@ -28,6 +28,8 @@ NETRUNNING MINIGAME:
 
 TODO LATER:
 
+- remove simulation
+
 - augs for cyberdeck?
 
 - save netrun mid-run?

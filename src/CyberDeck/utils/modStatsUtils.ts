@@ -244,12 +244,14 @@ export function applyCaps(stats: CyberdeckStats, basis: number): CyberdeckStats 
   return result;
 }
 
-function applySoftCap(
+export function applySoftCap(
   value: number,
   softCap: number = 1,
   hardCap: number = 10,
   hardMin: number = -0.95,
   basis: number = 0,
+  ratio: number = SOFT_CAP_DECAY_RATIO,
+  chunk: number = SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE,
 ): number {
   const bonus = value - basis;
   const sign = Math.sign(bonus);
@@ -260,9 +262,7 @@ function applySoftCap(
     effectiveMagnitude = magnitude;
   } else {
     const excess = magnitude - softCap;
-    // Each additional chunk of raw bonus past softCap is SOFT_CAP_DECAY_RATIO as effective as the previous chunk
-    const ratio = SOFT_CAP_DECAY_RATIO;
-    const chunk = SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE;
+    // Each additional chunk of raw bonus past softCap is `ratio` as effective as the previous chunk
     const diminishedExcess = (ratio * chunk * (1 - Math.pow(ratio, excess / chunk))) / (1 - ratio);
     effectiveMagnitude = softCap + diminishedExcess;
   }

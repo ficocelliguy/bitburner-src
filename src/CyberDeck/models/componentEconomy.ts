@@ -61,7 +61,7 @@ export function getCrimeComponentReward(crime: Crime, isSleeve = false): Partial
     return { neurodes: NEURODES_PER_ASSASSINATION * scalar };
   }
 
-  const newRom = (0.1 + (10 * crime.money + 1e7) / (crime.money + 1e7)) * (crime.time / 10000) * scalar;
+  const newRom = (1 + (15 * crime.money + 1e7) / (crime.money + 1e7)) * (crime.time / 10000) * scalar;
   return { rom: newRom };
 }
 
