@@ -4911,8 +4911,8 @@ export interface Cyberdeck {
     /**
      * Flag an ICE block at the specified coordinates.
      *
-     * @param y
-     * @param x
+     * @param y - the row of the ICE block to flag
+     * @param x - the column of the ICE block to flag
      *
      * @remarks
      * RAM cost: 0 GB
