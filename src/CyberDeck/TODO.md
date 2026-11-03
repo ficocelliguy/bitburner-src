@@ -6,7 +6,11 @@ TODO:
 - increase component count legibility in top-left
 
 - save Tutorial steps
+
+- show count/progress towards achievements
+
 - fix Daisy Chain / Arc Hazard calculation
+
 - rename server namespace to hardware?
 
 - netrunning Docs
