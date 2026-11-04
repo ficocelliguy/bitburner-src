@@ -1,5 +1,5 @@
 import type { Multipliers } from "@nsdefs";
-import { Brand, ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
+import { Brand, Challenges, ModType, NetrunDirection, NetrunEntityVariant } from "./Enums";
 
 export type DeckMod = {
   id: string;
@@ -292,4 +292,4 @@ export type ModImageSet = {
   red: string;
 };
 
-export type ChallengeDetails = { name: string; description: string; hint: string; reward: string };
+export type ChallengeDetails = { name: string; description: Challenges; hint: string; reward: string };

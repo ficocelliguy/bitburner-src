@@ -265,7 +265,7 @@ const cyberdeck = {
     getLevels: 0,
     getComponentStats: 0,
   },
-  server: {
+  hardware: {
     getRamUpgradeCost: 0,
     getCoreUpgradeCost: 0,
     upgradeRam: 0.5,

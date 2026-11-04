@@ -43,7 +43,7 @@ export enum Brand {
 
 export enum Challenges {
   CompletedTutorial = "Complete the tutorial",
-  Scrapper = "Salvage at least 5 mods",
+  Scrapper = "Salvage 5 mods",
   CleanRun = "Get a score of 80+ while netrunning",
   Homebrew = "Craft 5 mods",
   DaisyChain = "Charge a mod that is 3+ jumps away from the deck",
@@ -53,7 +53,7 @@ export enum Challenges {
   Jackpot = "Get a score of 120+ while netrunning",
   Overclocked = "Get a 50% bonus in a single stat",
   AutoWire = "Charge a mod via the API",
-  BigDeck = "Have at least 7 rack slots",
+  BigDeck = "Have 7 total rack slots",
   AutoRun = "Get a score of 100+ using only the API",
   AutoBomber = "Flag ICE with an active countermeasure and finish the run with only the API",
   ArcHazard = "Charge a mod that is 6+ jumps away from the deck",

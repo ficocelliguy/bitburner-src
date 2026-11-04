@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
-import { ChallengeDetail, getCyberdeckLevel } from "../models/challenges";
+import { ChallengeDetail, getCyberdeckLevel, getSupplierChallengeCount } from "../models/challenges";
 import { Challenges } from "@enums";
 import { useRerender } from "../../ui/React/hooks";
 import { Settings } from "../../Settings/Settings";
@@ -12,6 +12,7 @@ import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 import { componentStatsLabels, componentSymbols } from "../models/constants";
 import { ComponentSymbol } from "./ComponentCost";
 import type { ComponentStats } from "../Types";
+import { getCurrentRackSize } from "../utils/moduleUtilities";
 
 export function StatsPage(): React.ReactElement {
   useRerender(1000);
@@ -116,7 +117,8 @@ function CompletedChallengesTable(): React.ReactElement {
             sx={{ backgroundColor: Settings.theme.well, padding: "10px", borderRadius: "3px", marginBottom: "20px" }}
           >
             <Typography sx={{ color: Settings.theme.maplocation }}>
-              Next challenge ({ChallengeDetail[nextChallenge].name}): {ChallengeDetail[nextChallenge].description}
+              Next challenge ({ChallengeDetail[nextChallenge].name}): {ChallengeDetail[nextChallenge].description}{" "}
+              {getChallengeProgress(nextChallenge)}
             </Typography>
             <Typography sx={nextCellSx}>Reward: {ChallengeDetail[nextChallenge].reward}</Typography>
           </Box>
@@ -144,4 +146,20 @@ function CompletedChallengesTable(): React.ReactElement {
       </Table>
     </div>
   );
+}
+
+export function getChallengeProgress(challenge: Challenges): string {
+  if (challenge === Challenges.Scrapper) {
+    return `(${CyberdeckState.salvagedMods}/5)`;
+  }
+  if (challenge === Challenges.Homebrew) {
+    return `(${CyberdeckState.craftedMods}/5)`;
+  }
+  if (challenge === Challenges.Supplier) {
+    return `(${getSupplierChallengeCount()}/8)`;
+  }
+  if (challenge === Challenges.BigDeck) {
+    return `(${getCurrentRackSize()}/7)`;
+  }
+  return "";
 }

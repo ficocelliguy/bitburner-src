@@ -56,6 +56,25 @@ Namespace for API methods that create or destroy mods and ICEBreakers.
 </td></tr>
 <tr><td>
 
+[hardware](./bitburner.cyberdeck.hardware.md)
+
+
+</td><td>
+
+
+</td><td>
+
+{ getRamUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; getCoreUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; upgradeRam(): boolean; upgradeCores(): boolean; }
+
+
+</td><td>
+
+Namespace for API methods for upgrading the cyberdeck server.
+
+
+</td></tr>
+<tr><td>
+
 [legacy](./bitburner.cyberdeck.legacy.md)
 
 
@@ -89,25 +108,6 @@ May the Blackwall continue to shield us all.
 
 
 </td><td>
-
-
-</td></tr>
-<tr><td>
-
-[server](./bitburner.cyberdeck.server.md)
-
-
-</td><td>
-
-
-</td><td>
-
-{ getRamUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; getCoreUpgradeCost(): [ComponentCounts](./bitburner.componentcounts.md) &amp; { money: number }; upgradeRam(): boolean; upgradeCores(): boolean; }
-
-
-</td><td>
-
-Namespace for API methods for upgrading the cyberdeck server.
 
 
 </td></tr>

@@ -6,7 +6,7 @@ import { componentSymbols } from "../models/constants";
 import { CyberdeckState } from "../models/CyberdeckState";
 import { formatNumber } from "../../ui/formatNumber";
 
-export function ComponentInventoryCount() {
+export function ComponentInventoryCount({ fontSize = "16px" }: { fontSize?: string }): React.ReactElement {
   return (
     <div
       style={{
@@ -18,32 +18,32 @@ export function ComponentInventoryCount() {
       }}
     >
       <ComponentTooltip symbol={componentSymbols.rom}>
-        <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.rom} />:
+        <Typography sx={{ fontSize: fontSize, color: Settings.theme.maplocation }}>
+          <ComponentSymbol symbol={componentSymbols.rom} fontSize={fontSize} />:
           {formatNumber(Math.floor(CyberdeckState.components.rom), 0, 1000)}
         </Typography>
       </ComponentTooltip>
       <ComponentTooltip symbol={componentSymbols.chips}>
-        <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.chips} />:
+        <Typography sx={{ fontSize: fontSize, color: Settings.theme.maplocation }}>
+          <ComponentSymbol symbol={componentSymbols.chips} fontSize={fontSize} />:
           {formatNumber(Math.floor(CyberdeckState.components.chips), 0, 1000)}
         </Typography>
       </ComponentTooltip>
       <ComponentTooltip symbol={componentSymbols.neurodes}>
-        <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.neurodes} />:
+        <Typography sx={{ fontSize: fontSize, color: Settings.theme.maplocation }}>
+          <ComponentSymbol symbol={componentSymbols.neurodes} fontSize={fontSize} />:
           {formatNumber(Math.floor(CyberdeckState.components.neurodes), 0, 1000)}
         </Typography>
       </ComponentTooltip>
       <ComponentTooltip symbol={componentSymbols.cores}>
-        <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.cores} />:
+        <Typography sx={{ fontSize: fontSize, color: Settings.theme.maplocation }}>
+          <ComponentSymbol symbol={componentSymbols.cores} fontSize={fontSize} />:
           {formatNumber(Math.floor(CyberdeckState.components.cores), 0, 1000)}
         </Typography>
       </ComponentTooltip>
       <ComponentTooltip symbol={componentSymbols.iceBreakers}>
-        <Typography sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-          <ComponentSymbol symbol={componentSymbols.iceBreakers} />:
+        <Typography sx={{ fontSize: fontSize, color: Settings.theme.maplocation }}>
+          <ComponentSymbol symbol={componentSymbols.iceBreakers} fontSize={fontSize} />:
           {formatNumber(Math.floor(CyberdeckState.components.iceBreakers), 0, 1000)}
         </Typography>
       </ComponentTooltip>

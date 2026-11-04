@@ -1,22 +1,19 @@
 Patch changes:
+- improved legibility of component count widget in the top-left
 - fixed two bugs that can lead to modules in storage that still have dangling connections
+- show count/progress towards deck upgrade challenges
 - improved the descriptions of some challenge text
+- rename server api namespace under cyberdeck to hardware to be more specific
 
 TODO:
-- increase component count legibility in top-left
 
 - save Tutorial steps
 
-- show count/progress towards achievements
-
 - fix Daisy Chain / Arc Hazard calculation
-
-- rename server namespace to hardware?
 
 - netrunning Docs
   - add simple code examples
   - explain entity types
-
 
 - identify nested droppable?
 

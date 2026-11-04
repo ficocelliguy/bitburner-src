@@ -4964,7 +4964,7 @@ export interface Cyberdeck {
   /**
    * Namespace for API methods for upgrading the cyberdeck server.
    */
-  server: {
+  hardware: {
     /**
      * Returns the cost to upgrade the cyberdeck server's RAM, or INFINITY if the upgrades are capped.
      * @remarks

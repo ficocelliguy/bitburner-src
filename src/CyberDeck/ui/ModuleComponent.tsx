@@ -13,6 +13,7 @@ import { StatBonus } from "./StatBonuses";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { getModDescription, isCustomBuild } from "../models/constants";
 import { getDeckMark, getNextChallenge } from "../models/challenges";
+import { getChallengeProgress } from "./StatsPage";
 
 export type DeckModuleProps = {
   module: DeckMod;
@@ -129,7 +130,7 @@ export function ModuleComponent({
                         connected modules.
                       </Typography>
                       <Typography sx={{ fontSize: "10px", marginTop: "10px" }}>
-                        To upgrade: {challenge.description}
+                        To upgrade: {challenge.description} {getChallengeProgress(challenge.description)}
                       </Typography>
                     </div>
                   ) : (

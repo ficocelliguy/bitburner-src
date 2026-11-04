@@ -455,7 +455,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         return structuredClone(CyberdeckState.componentStats);
       },
     },
-    server: {
+    hardware: {
       getRamUpgradeCost(): ComponentCounts & { money: number } {
         checkCyberdeckAccess();
         const cost = getCyberdeckServerRamUpgradeCost();

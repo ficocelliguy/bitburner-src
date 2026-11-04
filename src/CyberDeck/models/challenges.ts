@@ -160,20 +160,20 @@ export function checkSupplierChallenge() {
     return;
   }
 
+  if (!CyberdeckState.completedChallenges[Challenges.Supplier] && getSupplierChallengeCount() >= 8) {
+    CyberdeckState.completedChallenges[Challenges.Supplier] = true;
+    CyberdeckState.craftingLevel += 4;
+    CyberdeckEvents.emit();
+  }
+}
+
+export function getSupplierChallengeCount() {
   const { rom, chips, neurodes } = CyberdeckState.componentStats;
   const romSourceCount = +!!rom.backdoors + +!!rom.mods + +!!rom.caches + +!!rom.programs + +!!rom.pettyCrime;
   const chipsSourceCount = +!!chips.hacknet + +!!chips.companyWork + +!!chips.IPvGO + +!!chips.mods;
   const neurodesSourceCount =
     +!!neurodes.kills + +!!neurodes.class + +!!neurodes.codingContracts + +!!neurodes.cortexShare + +!!neurodes.mods;
-
-  if (
-    !CyberdeckState.completedChallenges[Challenges.Supplier] &&
-    romSourceCount + chipsSourceCount + neurodesSourceCount >= 8
-  ) {
-    CyberdeckState.completedChallenges[Challenges.Supplier] = true;
-    CyberdeckState.craftingLevel += 4;
-    CyberdeckEvents.emit();
-  }
+  return romSourceCount + chipsSourceCount + neurodesSourceCount;
 }
 
 export function checkOverclockedChallenge() {

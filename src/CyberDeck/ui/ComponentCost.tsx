@@ -48,10 +48,13 @@ export function ComponentCost({ cost, moneyCost = 0 }: { cost: ComponentCounts; 
   );
 }
 
-export function ComponentSymbol({ symbol }: { symbol: string }) {
+export function ComponentSymbol({ symbol, fontSize }: { symbol: string; fontSize?: string }) {
   const isROM = symbol === componentSymbols.rom;
   return (
-    <span style={{ color: getSymbolColor(symbol), fontSize: "14px", marginTop: isROM ? "-2px" : "0" }}> {symbol}</span>
+    <span style={{ color: getSymbolColor(symbol), fontSize: fontSize || "14px", marginTop: isROM ? "-2px" : "0" }}>
+      {" "}
+      {symbol}
+    </span>
   );
 }
 
