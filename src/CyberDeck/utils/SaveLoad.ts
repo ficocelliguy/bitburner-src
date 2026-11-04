@@ -1,5 +1,11 @@
 import { ComponentCounts, ComponentStats, Connection, DeckMod } from "../Types";
-import { CyberdeckEvents, CyberdeckState, getDefaultCompletedChallenges, hasCyberdeck } from "../models/CyberdeckState";
+import {
+  CyberdeckEvents,
+  CyberdeckState,
+  getDefaultCompletedChallenges,
+  getDefaultTutorialSteps,
+  hasCyberdeck,
+} from "../models/CyberdeckState";
 import { Challenges } from "../Enums";
 import { checkConnection, updateCoveredSockets } from "../models/moduleMutation";
 import { assertObject } from "../../utils/TypeAssertion";
@@ -27,8 +33,11 @@ type CyberdeckSaveData = {
   craftingPowerSupplySeedUsages: number;
   craftingProcessingModSeedUsages: number;
   craftingUplinkSeedUsages: number;
+  tutorialSteps: TutorialSteps;
   completedChallenges: Record<Challenges, boolean>;
 };
+
+type TutorialSteps = typeof CyberdeckState.tutorialSteps;
 
 export function getCyberdeckSaveData(): CyberdeckSaveData {
   return {
@@ -54,6 +63,7 @@ export function getCyberdeckSaveData(): CyberdeckSaveData {
     craftingUplinkSeedUsages: CyberdeckState.craftingUplinkSeedUsages,
     netrunningSeedUsages: CyberdeckState.netrunningSeedUsages,
     netrunningCorruptedSeedUsages: CyberdeckState.netrunningCorruptedSeedUsages,
+    tutorialSteps: CyberdeckState.tutorialSteps,
     completedChallenges: CyberdeckState.completedChallenges,
   };
 }
@@ -89,6 +99,7 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       craftingPowerSupplySeedUsages,
       craftingProcessingModSeedUsages,
       craftingUplinkSeedUsages,
+      tutorialSteps,
       completedChallenges,
     } = parsedData;
 
@@ -156,6 +167,14 @@ export function loadCyberdeckSaveData(saveString: unknown) {
       }
     }
     adaptLegacyTutorialCompletion(parsedData);
+    // Older saves will not have tutorial step data; missing or invalid entries fall back to not completed
+    CyberdeckState.tutorialSteps = getDefaultTutorialSteps();
+    if (typeof tutorialSteps === "object" && tutorialSteps !== null) {
+      for (const step of Object.keys(CyberdeckState.tutorialSteps) as (keyof TutorialSteps)[]) {
+        const completed: unknown = (tutorialSteps as Record<string, unknown>)[step];
+        if (typeof completed === "boolean") CyberdeckState.tutorialSteps[step] = completed;
+      }
+    }
 
     if (!isConnectionsArray(connections)) throw new Error("Invalid cyberdeck savestring value: connections");
     CyberdeckState.connections = connections.filter(([a, b]) => checkConnection(a, b).success);

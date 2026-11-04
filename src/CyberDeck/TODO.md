@@ -1,15 +1,7 @@
 Patch changes:
-- improved legibility of component count widget in the top-left
-- fixed two bugs that can lead to modules in storage that still have dangling connections
-- show count/progress towards deck upgrade challenges
-- improved the descriptions of some challenge text
-- rename server api namespace under cyberdeck to hardware to be more specific
+- saved tutorial progress if it was only partially completed in one sitting
 
 TODO:
-
-- save Tutorial steps
-
-- fix Daisy Chain / Arc Hazard calculation
 
 - netrunning Docs
   - add simple code examples
@@ -29,6 +21,8 @@ TODO:
 
 - dev menu - set component counts
 
+- rewards modal cleanup - do we need a state variable AND a prop?
+
 
 TODO LATER:
 
@@ -39,7 +33,6 @@ TODO LATER:
 - save netrun mid-run?
 - seed netrun?
 
-- rewards modal cleanup - do we need a state variable AND a prop?
 
 - code review
 - docs

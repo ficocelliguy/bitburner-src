@@ -69,16 +69,20 @@ export const CyberdeckState = {
   craftingPowerSupplySeedUsages: 0,
   craftingProcessingModSeedUsages: 0,
   craftingUplinkSeedUsages: 0,
-  tutorialSteps: {
+  tutorialSteps: getDefaultTutorialSteps(),
+  completedChallenges: getDefaultCompletedChallenges(),
+};
+
+export function getDefaultTutorialSteps() {
+  return {
     hasInstalledMod: false,
     hasMadeConnection: false,
     hasChargedModule: false,
     hasConsumedSkillchip: false,
     hasCraftedIcebreaker: false,
     hasNetrun: false,
-  },
-  completedChallenges: getDefaultCompletedChallenges(),
-};
+  };
+}
 
 export function getDefaultCompletedChallenges(): Record<Challenges, boolean> {
   return Object.fromEntries(Object.values(Challenges).map((c) => [c, false])) as Record<Challenges, boolean>;

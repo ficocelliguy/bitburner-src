@@ -1,7 +1,7 @@
 import { CyberdeckEvents, CyberdeckState, getChargedModuleIDs, hasCompleted } from "./CyberdeckState";
 import { Challenges } from "@enums";
 import { getCyberdeckIOPanel } from "./createModule";
-import { ChallengeDetails, DeckMod } from "../Types";
+import { ChallengeDetails, Connection, DeckMod } from "../Types";
 import { romanNumeralEncoder } from "../../utils/StringHelperFunctions";
 import { NetrunningState } from "./NetrunningState";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
@@ -136,7 +136,7 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     }
     visited.add(modId);
     const connectedMods = CyberdeckState.connections
-      .filter(([m1, m2]) => m1.modId === modId || m2.modId === modId)
+      .filter((c) => (containsSpecifiedMod(c, modId)))
       .map(([m1, m2]) => (m1.modId === modId ? m2.modId : m1.modId));
     if (connectedMods.length === 0) {
       return depth;
@@ -153,6 +153,14 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     CyberdeckState.completedChallenges[Challenges.ArcHazard] = true;
     CyberdeckEvents.emit();
   }
+}
+
+function containsSpecifiedMod(connection: Connection, modId: string) {
+  const [m1, m2] = connection;
+  if (modId === getCyberdeckIOPanel().id) {
+    return m1.modId === modId || m2.modId === modId;
+  }
+  return (m1.modId === modId || m2.modId === modId) && m1.modId !== getCyberdeckIOPanel().id && m2.modId !== getCyberdeckIOPanel().id;
 }
 
 export function checkSupplierChallenge() {
