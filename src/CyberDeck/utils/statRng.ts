@@ -292,7 +292,7 @@ export function getOtherStatDebuff(level: number, rng: WHRNG, scalar: number = 1
 
 export function getLevel(rng: WHRNG, levelBoost = CyberdeckState.netrunningLevel) {
   const bonusAttempts = rng.random() < 0.1 ? 12 : 7;
-  const cappedLevel = applySoftCap(levelBoost, 0, Infinity, 0, 0, 0.89, 20) * 0.6;
+  const cappedLevel = applySoftCap(levelBoost, 0, Infinity, 0, 0, 0.85, 20) * 0.6;
 
   const levelUpAttempts = cappedLevel + bonusAttempts;
   const stepSize = Math.max(levelUpAttempts / 100, 1);

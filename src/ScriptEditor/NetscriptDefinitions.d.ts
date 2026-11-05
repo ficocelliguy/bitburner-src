@@ -4610,9 +4610,9 @@ type NetrunStatus = {
   coordinates: number[];
   /** The type of entity directly adjacent to you in each direction */
   surroundings: Record<NetrunDirection, NetrunEntityVariant | null>;
-  /** The threat level rating at your current position. A threat of 1.0 indicates there is a bomb in one of the groups within 1 tile of you, or perhaps there are 2 that are each 3 tiles away... */
+  /** The threat level rating at your current position. A threat of 1.0 indicates there is a bomb in one of the groups within 1 tile of you, or perhaps there are 2 that are each a few tiles away... */
   threat: number;
-  /** The number of groups containing bombs within 6 tiles of your current position */
+  /** The number of groups containing bombs within 5 tiles of your current position */
   threatCount: number;
   /** The amount of energy remaining, in the range [1,0]. Once energy is zero you can no longer break ICE. */
   energy: number;
@@ -4644,9 +4644,13 @@ type EntityInfo = {
 
 /** @public */
 type BrandEnumType = {
+  /** A netrun target. Specializes in mods that boost hack skills, program creation, and hacknet.*/
   OmegaSoftware: "Omega Software";
+  /** A netrun target. Specializes in mods that boost physical stats and crime. */
   BladeIndustries: "Blade Industries";
+  /** A netrun target. Specializes in mods that boost faction and company work, as well as stock, cct, IPvGO, and classes. */
   BachmanAndAssociates: "Bachman & Associates";
+  /** A netrun target. Specializes in mods that boost crafting component production and cyberdeck levels. */
   OmniaCybersystems: "Omnia Cybersystems";
 };
 /** @public */
@@ -4654,22 +4658,39 @@ type Brand = _ValueOf<BrandEnumType>;
 
 /** @public */
 type ChallengeStatus = {
+  /** Complete the tutorial */
   CompletedTutorial: boolean;
+  /** Salvage 5 mods */
   Scrapper: boolean;
+  /** Get a score of 80+ while netrunning */
   CleanRun: boolean;
+  /** Craft 5 mods */
   Homebrew: boolean;
+  /** Charge a mod that is 3+ jumps away from the deck */
   DaisyChain: boolean;
+  /** Flag ICE with an active countermeasure, and finish the run */
   BombSquad: boolean;
+  /** Have a charged mod in every rack slot */
   FullHouse: boolean;
+  /** Get crafting components from 8 unique sources */
   Supplier: boolean;
+  /** Get a score of 120+ while netrunning */
   Jackpot: boolean;
+  /** Get a 50% bonus in a single stat */
   Overclocked: boolean;
+  /** Charge a mod via the API */
   AutoWire: boolean;
+  /** Have 7 total rack slots */
   BigDeck: boolean;
+  /** Get a score of 100+ using only the API */
   AutoRun: boolean;
+  /** Flag ICE with an active countermeasure and finish the run with only the API */
   AutoBomber: boolean;
+  /** Charge a mod that is 6+ jumps away from the deck */
   ArcHazard: boolean;
+  /** Install a corrupted mod from the glitch */
   Corruption: boolean;
+  /** Get a score of 100+ at the glitch using only the API */
   GlitchRun: boolean;
 };
 
@@ -5096,7 +5117,9 @@ export interface Cyberdeck {
    */
   legacy: {
     /**
-     * It's not paranoia if they're really after you
+     * it's not paranoia
+     *
+     * if they're really after you
      */
     getCost(): number;
 

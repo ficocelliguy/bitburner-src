@@ -59,6 +59,70 @@ TODO LATER:
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 
+new challenge ideas:
+
+- Brand Loyalty: Have 4 charged mods from the same brand
+  - Reward: Netruns against a corp target drop one extra mod from that brand
+  - Hook: checkConnectionChallenges - group getChargedModuleIDs() by brand, leaving out the I/O panel
+- Ghost: Get a score of 80+ without triggering an active countermeasure
+  - Reward: +5% starting netrun energy
+  - Hook: new NetrunningState.detonatedBomb flag, set in detonateBomb when hits === 1
+- Battering Ram: Break 6 firewalls in a single run
+  - Reward: Firewalls break in 2 hits instead of 3
+  - Hook: new per-run counter, incremented where hits >= 3 in move()
+- Efficient: Get a score of 80+ with 30%+ energy left
+  - Reward: Reduced ICEBreaker cost per netrun
+  - Hook: check NetrunningState.energy in completeNetrunChallenges
+- Espionage: Get a score of 70+ against each of the 4 corp targets
+  - Reward: +2 netrunning level
+  - Hook: new Record<NetrunTargets, boolean> in CyberdeckState. Read NetrunningState.target before netrunRewards resets it
+- Collector: Own mods from 6 different brands at once
+  - Reward: +2 mod storage size
+  - Hook: scan installed and stored mods by brand after rewards or crafting
+- Lean Machine: Get a 30% bonus in a single stat with 3 or fewer charged mods
+  - Reward: +2 crafting level
+  - Hook: same as checkOverclockedChallenge, plus a count of charged mods (excluding the I/O panel)
+- Skill Junkie: Consume 10 skillchips
+  - Reward: Skillchips give 25% more consumable stats
+  - Hook: new consumedSkillchips counter in consumeSkillChips()
+- Hot Swap: Charge 5 different mods within 10 seconds
+  - Reward: Faster mod install/move time
+  - Hook: ring buffer of charge timestamps. Pushes players toward scripted "flash mobbing"
+- Cortex Donor: Share 10,000 total threads from the cyberdeck server
+  - Reward: Cheaper server core upgrades
+  - Hook: cortexSharedThreads already exists, so this only needs a threshold check
+
+- Alternate (joke): Glitch Salvage: Salvage a corrupted mod
+  - Hint: "Some things are better left in pieces"
+  - Reward: Salvaging corrupted mods returns cores
+
+harder versions of existing challenge ideas:
+
+- Chop Shop (Scrapper): Salvage 25 mods
+  - Reward: Salvaging sometimes returns a core
+- Artisan (Homebrew): Craft 25 mods
+  - Reward: +2 crafting level
+- High Roller (Jackpot): Get a score of 150+ while netrunning
+  - Reward: Extra mod reward tier when the score is above 150
+- Ground Fault (Daisy Chain / Arc Hazard): Charge a mod that is 10+ jumps from the deck
+  - Reward: +1 deck I/O panel socket
+- Redline (Overclocked): Get a 100% bonus in a single stat
+  - Reward: Debuffs on new mods are reduced further
+- Server Farm (Big Deck): Have 10 total rack slots
+  - Reward: +1 to rack extension limit
+- Royal Flush (Full House): Have a charged mod in every rack slot with 9+ slots
+  - Reward: +2 mod storage size
+- Distributor (Supplier): Get components from all 14 non-netrunning sources
+  - Reward: Softer soft-cap decay on component gains
+- Sapper (Bomb Squad / Auto Bomber): Flag 3 separate countermeasure groups in one run, using only the API
+  - Reward: Countermeasures trigger at threat 2 instead of on first contact, giving one free hit
+- Into the Static (Glitch Run): Get a score of 140+ at the glitch using only the API
+  - Reward: Reduced corrupted netrun cooldown
+
+- Possessed (Corruption): Have 3 charged corrupted mods
+- Autopilot (Auto Run): Score 100+ through the API on 10 separate runs
+
+
 Cyberdeck Expansion
 
 Project goals:

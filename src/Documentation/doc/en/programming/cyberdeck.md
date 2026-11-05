@@ -59,7 +59,7 @@ Netrunning is the main way to get new mods. You spend a few ICEBreakers, dive in
 
 While netrunning, your character moves through cyberspace, breaking through ICE and looking for valuable reward caches. As you move, you will see a threat level indicator and signal count. It indicates how many of the nearby ICE groups within 6 blocks have active countermeasures or traps, and how many distinct traps are nearby. (TODO: flesh out details more)
 
-You can make netrunning rewards and energy cost better over time by finding and consuming the right skill chips:
+You can increase netrunning rewards and energy efficiency by finding and consuming the right skill chips:
 
 - Raising your **netrunning level** increases the rarity of the loot you find.
 - Raising your **netrunning cooldown level** shortens the trace decay window.
@@ -80,6 +80,21 @@ if (costIsBelowThreshold && canAffordNetrunning) {
   const rewards = ns.cyberdeck.netrun.finish();
 }
 ```
+
+### Netrunning Tips
+- Click on ICE groups you suspect have dangerous active countermeasures to flag them.
+  - Flagged groups prevent you from walking into them and breaking them.
+  - Flagging can be scripted via `ns.cyberdeck.netrun.toggleFlag()`
+- Firewalls can be broken through, but it takes multiple hits. Consider taking another path if possible!
+- Triggered active countermeasures can also be broken through with multiple hits. 
+  - After the initial detonation, the energy cost for subsequent hits is much smaller.
+- A threat level of 100 could mean that there is only one nearby bomb, and you are right next to it.
+  - It could also mean that there are two threats that each are a few blocks away. Walk around a bit to check multiple points! 
+  - The threat signal from each active countermeasure within 5 blocks is added together to form the displayed threat level.
+  - The current threat level can be seen from the return value when you `await ns.cyberdeck.netrun.move()` or `.start()`
+- Breaking ICE increases your reward score (as log as it isn't trapped). 
+  - ICE farther from the starting area gives more points.
+- Data caches can still be grabbed if you have zero energy remaining.
 
 &nbsp;
 
