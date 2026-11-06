@@ -6,8 +6,7 @@ import {
   MiscMults,
   ModKey,
   ModStats,
-  statBonusLongNames,
-  statBonusShortNames,
+  statBonusDetails,
 } from "../Types";
 import { CyberdeckState, getChargedModules } from "../models/CyberdeckState";
 import { Multipliers } from "@nsdefs";
@@ -16,8 +15,8 @@ import { SOFT_CAP_DECAY_RATIO, SOFT_CAP_DEFAULT_DECAY_CHUNK_SIZE } from "../mode
 import { clampNumber } from "../../utils/helpers/clampNumber";
 
 export function getFormattedStatBonus(keyName: ModKey, value: number, useShortName = false) {
-  const keyNameSource = useShortName ? statBonusShortNames : statBonusLongNames;
-  const formattedKey = keyNameSource[keyName];
+  const names = statBonusDetails[keyName];
+  const formattedKey = useShortName ? names.shortName : names.longName;
 
   const valueStr = keyName.includes("RackSlots")
     ? Math.floor(value)

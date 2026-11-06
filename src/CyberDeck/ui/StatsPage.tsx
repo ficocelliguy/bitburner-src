@@ -11,7 +11,7 @@ import { formatNumber } from "../../ui/formatNumber";
 import { getCyberdeckStatBonuses } from "../utils/modStatsUtils";
 import { componentStatsLabels, componentSymbols } from "../models/constants";
 import { ComponentSymbol } from "./ComponentCost";
-import type { ComponentStats } from "../Types";
+import { ComponentStats, statBonusDetails } from "../Types";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
 
 export function StatsPage(): React.ReactElement {
@@ -30,6 +30,7 @@ export function StatsPage(): React.ReactElement {
               emptyMessage={"No current bonuses. Wire up some mods!"}
               fontSize={14}
               useShortStatNames={false}
+              showTooltip={true}
             />
           </Typography>
         </div>
@@ -38,13 +39,21 @@ export function StatsPage(): React.ReactElement {
             Current Levels
           </Typography>
           <Typography component="div" sx={{ fontSize: "14px", color: Settings.theme.maplocation }}>
-            <span>Netrunning level: {formatNumber(CyberdeckState.netrunningLevel, 2)}</span>
+            <Tooltip title={statBonusDetails.netrunning_lvl.tooltip}>
+              <span>Netrunning level: {formatNumber(CyberdeckState.netrunningLevel, 2)}</span>
+            </Tooltip>
             <br />
-            <span>Netrun trace cooldown level: {formatNumber(CyberdeckState.netrunningCooldownLevel, 2)}</span>
+            <Tooltip title={statBonusDetails.netrun_cooldown_lvl.tooltip}>
+              <span>Netrun trace cooldown level: {formatNumber(CyberdeckState.netrunningCooldownLevel, 2)}</span>
+            </Tooltip>
             <br />
-            <span>Crafting level: {formatNumber(CyberdeckState.craftingLevel, 2)}</span>
+            <Tooltip title={statBonusDetails.crafting_lvl.tooltip}>
+              <span>Crafting level: {formatNumber(CyberdeckState.craftingLevel, 2)}</span>
+            </Tooltip>
             <br />
-            <span>Mod storage: {formatNumber(CyberdeckState.modStorageSize, 2)}</span>
+            <Tooltip title={statBonusDetails.mod_storage.tooltip}>
+              <span>Mod storage: {formatNumber(CyberdeckState.modStorageSize, 2)}</span>
+            </Tooltip>
             <br />
           </Typography>
         </div>

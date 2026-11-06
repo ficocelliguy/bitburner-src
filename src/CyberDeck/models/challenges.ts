@@ -136,7 +136,7 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     }
     visited.add(modId);
     const connectedMods = CyberdeckState.connections
-      .filter((c) => (containsSpecifiedMod(c, modId)))
+      .filter((c) => containsSpecifiedMod(c, modId))
       .map(([m1, m2]) => (m1.modId === modId ? m2.modId : m1.modId));
     if (connectedMods.length === 0) {
       return depth;
@@ -160,7 +160,11 @@ function containsSpecifiedMod(connection: Connection, modId: string) {
   if (modId === getCyberdeckIOPanel().id) {
     return m1.modId === modId || m2.modId === modId;
   }
-  return (m1.modId === modId || m2.modId === modId) && m1.modId !== getCyberdeckIOPanel().id && m2.modId !== getCyberdeckIOPanel().id;
+  return (
+    (m1.modId === modId || m2.modId === modId) &&
+    m1.modId !== getCyberdeckIOPanel().id &&
+    m2.modId !== getCyberdeckIOPanel().id
+  );
 }
 
 export function checkSupplierChallenge() {

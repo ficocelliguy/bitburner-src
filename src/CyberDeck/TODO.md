@@ -1,11 +1,10 @@
 Patch changes:
-- saved tutorial progress if it was only partially completed in one sitting
+- Tutorial progress is now saved if it was only partially completed in one sitting
+- Added some more API references and tips to the netrunning documentation
+- Fleshed out API documentation for various return types
+- Added tooltips for stats on the stats page
 
 TODO:
-
-- netrunning Docs
-  - add simple code examples
-  - explain entity types
 
 - identify nested droppable?
 
@@ -15,13 +14,14 @@ TODO:
 - API - test
   - docs for all the types etc
 
-- use pop-up numbers instead of toasts?
-
 - add notification for all dev buttons
 
 - dev menu - set component counts
 
 - rewards modal cleanup - do we need a state variable AND a prop?
+
+- filter box help text
+  - more search options? > and < ?
 
 
 TODO LATER:
@@ -42,8 +42,7 @@ TODO LATER:
 
 - let player choose color of each stat key and value, to hilight or hide stats
 
-- filter box help text
-  - more search options? > and < ?
+- use pop-up numbers instead of toasts?
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 
@@ -56,6 +55,7 @@ TODO LATER:
   - rewards
     - starting netrunning level?
     - rack extension cap up?
+    - deck level cap increase?
 
 - when creating a module, make an IP or module VIN that can be used to create the module again later
 

@@ -144,143 +144,207 @@ export type ModKey =
   | keyof CyberdeckStats["consumableStats"]
   | "extraRackSlots";
 
-export const statBonusShortNames: {
-  [key in ModKey]: string;
-} = {
+export type StatBonusName = { shortName: string; longName: string; tooltip: string };
+
+export const statBonusDetails: Record<ModKey, StatBonusName> = {
   // Player Multipliers
-  hacking: "Hack Lvl",
-  hacking_chance: "Hack Chance",
-  hacking_exp: "Hack XP",
-  strength: "Strength",
-  strength_exp: "Strength XP",
-  defense: "Defense",
-  defense_exp: "Defense XP",
-  dexterity: "Dexterity",
-  dexterity_exp: "Dexterity XP",
-  agility: "Agility",
-  agility_exp: "Agility XP",
-  charisma: "Charisma",
-  charisma_exp: "Charisma XP",
-  hacknet_node_money: "Hnet Money",
-  hacknet_node_ram_cost: "Hnet RAM Cost",
-  hacknet_node_core_cost: "Hnet Core Cost",
-  hacknet_node_level_cost: "Hnet Lvl Cost",
-  company_rep: "Company Rep",
-  faction_rep: "Faction Rep",
-  work_money: "Work Money",
-  crime_success: "Crime Success",
-  crime_money: "Crime Money",
+  hacking: { shortName: "Hack Lvl", longName: "Hack Lvl", tooltip: "Multiplier to hacking level." },
+  hacking_chance: {
+    shortName: "Hack Chance",
+    longName: "Hack Success Chance",
+    tooltip: "Multiplier to hacking success chance.",
+  },
+  hacking_exp: { shortName: "Hack XP", longName: "Hack Experience", tooltip: "Multiplier to hacking experience gain." },
+  hacking_speed: { shortName: "Hack Speed", longName: "Hack Speed", tooltip: "Multiplier to hack speed." },
+  strength: { shortName: "Strength", longName: "Strength Level", tooltip: "Multiplier to strength level." },
+  strength_exp: {
+    shortName: "Strength XP",
+    longName: "Strength Experience",
+    tooltip: "Multiplier to strength experience gain.",
+  },
+  defense: { shortName: "Defense", longName: "Defense Level", tooltip: "Multiplier to defense level." },
+  defense_exp: {
+    shortName: "Defense XP",
+    longName: "Defense Experience",
+    tooltip: "Multiplier to defense experience gain.",
+  },
+  dexterity: { shortName: "Dexterity", longName: "Dexterity Level", tooltip: "Multiplier to dexterity level." },
+  dexterity_exp: {
+    shortName: "Dexterity XP",
+    longName: "Dexterity Experience",
+    tooltip: "Multiplier to dexterity experience gain.",
+  },
+  agility: { shortName: "Agility", longName: "Agility Level", tooltip: "Multiplier to agility level." },
+  agility_exp: {
+    shortName: "Agility XP",
+    longName: "Agility Experience",
+    tooltip: "Multiplier to agility experience gain.",
+  },
+  charisma: { shortName: "Charisma", longName: "Charisma Level", tooltip: "Multiplier to charisma level." },
+  charisma_exp: {
+    shortName: "Charisma XP",
+    longName: "Charisma Experience",
+    tooltip: "Multiplier to charisma experience gain.",
+  },
+  hacknet_node_money: {
+    shortName: "Hnet Money",
+    longName: "Hacknet Money",
+    tooltip: "Multiplier to hacknet money gain.",
+  },
+  hacknet_node_ram_cost: {
+    shortName: "Hnet RAM Cost",
+    longName: "Hacknet RAM Cost",
+    tooltip: "Multiplier to hacknet RAM cost.",
+  },
+  hacknet_node_core_cost: {
+    shortName: "Hnet Core Cost",
+    longName: "Hacknet Core Cost",
+    tooltip: "Multiplier to hacknet core cost.",
+  },
+  hacknet_node_level_cost: {
+    shortName: "Hnet Lvl Cost",
+    longName: "Hacknet Level Cost",
+    tooltip: "Multiplier to hacknet level cost.",
+  },
+  company_rep: {
+    shortName: "Company Rep",
+    longName: "Company/Work Reputation",
+    tooltip: "Multiplier to company/work reputation.",
+  },
+  faction_rep: {
+    shortName: "Faction Rep",
+    longName: "Faction Reputation",
+    tooltip: "Multiplier to faction reputation.",
+  },
+  work_money: { shortName: "Work Money", longName: "Work Money", tooltip: "Multiplier to work money gain." },
+  crime_success: {
+    shortName: "Crime Success",
+    longName: "Crime Success Chance",
+    tooltip: "Multiplier to crime success chance.",
+  },
+  crime_money: { shortName: "Crime Money", longName: "Crime Money", tooltip: "Multiplier to crime money gain." },
 
   // Other Multipliers
-  romProduction: "ROM/cycle",
-  chipProduction: "Chip/cycle",
-  neurodeProduction: "Neurode/cycle",
-  program_creation_speed: "Program Speed",
-  crime_speed: "Crime Speed",
-  stock_fees: "Stock Fees",
-  cct_money: "CCT Money",
-  IPvGO_power: "IPvGO Power",
-  class_cost: "Class Cost",
+  romProduction: {
+    shortName: "ROM/cycle",
+    longName: "ROM Production Per Cycle",
+    tooltip: "Rom produced per cyberdeck mechanic cycle (around two seconds).",
+  },
+  chipProduction: {
+    shortName: "Chip/cycle",
+    longName: "Chip Production Per Cycle",
+    tooltip: "Chips produced per cyberdeck mechanic cycle (around two seconds).",
+  },
+  neurodeProduction: {
+    shortName: "Neurode/cycle",
+    longName: "Neurode Production Per Cycle",
+    tooltip: "Neurode produced per cyberdeck mechanic cycle (around two seconds).",
+  },
+  program_creation_speed: {
+    shortName: "Program Speed",
+    longName: "Program/.EXE Creation Speed",
+    tooltip: "Multiplier to the speed it takes to manually make programs.",
+  },
+  crime_speed: {
+    shortName: "Crime Speed",
+    longName: "Crime Speed",
+    tooltip: "Multiplier to the time it takes to commit crimes.",
+  },
+  stock_fees: {
+    shortName: "Stock Fees",
+    longName: "Stock Commission Costs",
+    tooltip: "Multiplier to stock commission costs.",
+  },
+  cct_money: {
+    shortName: "CCT Money",
+    longName: "Coding Contract .cct Money",
+    tooltip: "Multiplier to coding contract money.",
+  },
+  IPvGO_power: {
+    shortName: "IPvGO Power",
+    longName: "IPvGO Node Power",
+    tooltip: "Multiplier to IPvGO node power gained after each game.",
+  },
+  class_cost: {
+    shortName: "Class Cost",
+    longName: "University/Gym Class Cost",
+    tooltip: "Multiplier to university/gym activity costs.",
+  },
 
   // Consumable Stats
-  netrunning_lvl: "Netrun Lvl",
-  netrun_cooldown_lvl: "Trace CD",
-  mod_storage: "Mod Storage",
-  crafting_lvl: "Crafting Lvl",
+  netrunning_lvl: {
+    shortName: "Netrun Lvl",
+    longName: "Netrunning Loot Level",
+    tooltip: "Increases the rarity of mods found while netrunning.",
+  },
+  netrun_cooldown_lvl: {
+    shortName: "Trace CD",
+    longName: "Netrun Trace Cooldown Level",
+    tooltip: "Reduces the cooldown time for netrunning ICEBreaker costs.",
+  },
+  mod_storage: {
+    shortName: "Mod Storage",
+    longName: "Mod Storage",
+    tooltip: "Increases the maximum number of mods that can be stored.",
+  },
+  crafting_lvl: {
+    shortName: "Crafting Lvl",
+    longName: "Mod Crafting Level",
+    tooltip: "Increases the quality of crafted mods.",
+  },
 
   // Endgame Multipliers
-  stamina_gain: "Stamina Gain",
-  graft_speed: "Graft Speed",
-  sleeve_sync: "Sleeve Sync",
-  stanek_charge: "Stanek Charge",
-  equipment_cost: "Equipment Cost",
-  int_exp: "Int XP",
+  stamina_gain: {
+    shortName: "Stamina Gain",
+    longName: "Bladeburner Stamina Gain",
+    tooltip: "Multiplier to the amount of stamina gained from bladeburner activities.",
+  },
+  graft_speed: {
+    shortName: "Graft Speed",
+    longName: "Graft Speed",
+    tooltip: "Multiplier to the speed at which you can graft augments.",
+  },
+  sleeve_sync: {
+    shortName: "Sleeve Sync",
+    longName: "Sleeve Sync Speed",
+    tooltip: "Multiplier to the speed at which sleeves can synchronize.",
+  },
+  stanek_charge: {
+    shortName: "Stanek Charge",
+    longName: "Stanek Charge Boost",
+    tooltip: "Multiplier to the charge gained from Stanek's Gift.",
+  },
+  equipment_cost: {
+    shortName: "Equipment Cost",
+    longName: "Gang Equipment Cost",
+    tooltip: "Multiplier to the cost of purchasing gang equipment.",
+  },
+  int_exp: {
+    shortName: "Int XP",
+    longName: "Intelligence Experience",
+    tooltip: "Multiplier to the experience gained for intelligence.",
+  },
 
   // Extra Rack Slots
-  extraRackSlots: "Mod Rack Slots",
+  extraRackSlots: {
+    shortName: "Mod Rack Slots",
+    longName: "Extra Mod Rack Slots",
+    tooltip: "Increases the number of mod slots available.",
+  },
 
   // unused
-  hacking_speed: "Hack Speed",
-  hacking_money: "Hack Money",
-  hacking_grow: "Hack Grow",
-  hacknet_node_purchase_cost: "Hacknet Node Purchase Cost",
-  dnet_money: "Darknet Money",
-  bladeburner_max_stamina: "BB Max Stamina",
-  bladeburner_stamina_gain: "BB Stamina Gain",
-  bladeburner_analysis: "BB Analysis",
-  bladeburner_success_chance: "BB Success",
-} as const;
-
-export const statBonusLongNames: {
-  [key in
-    | keyof CyberdeckStats["playerMults"]
-    | keyof CyberdeckStats["otherMults"]
-    | keyof CyberdeckStats["endgameMults"]
-    | keyof CyberdeckStats["consumableStats"]
-    | "extraRackSlots"]: string;
-} = {
-  // Player Multipliers
-  hacking: "Hack Lvl",
-  hacking_chance: "Hack Success Chance",
-  hacking_exp: "Hack Experience",
-  strength: "Strength Level",
-  strength_exp: "Strength Experience",
-  defense: "Defense Level",
-  defense_exp: "Defense Experience",
-  dexterity: "Dexterity Level",
-  dexterity_exp: "Dexterity Experience",
-  agility: "Agility Level",
-  agility_exp: "Agility Experience",
-  charisma: "Charisma Level",
-  charisma_exp: "Charisma Experience",
-  hacknet_node_money: "Hacknet Money",
-  hacknet_node_ram_cost: "Hacknet RAM Cost",
-  hacknet_node_core_cost: "Hacknet Core Cost",
-  hacknet_node_level_cost: "Hacknet Level Cost",
-  company_rep: "Company/Work Reputation",
-  faction_rep: "Faction Reputation",
-  work_money: "Work Money",
-  crime_success: "Crime Success Chance",
-  crime_money: "Crime Money",
-
-  // Other Multipliers
-  romProduction: "ROM Production Per Cycle",
-  chipProduction: "Chip Production Per Cycle",
-  neurodeProduction: "Neurode Production Per Cycle",
-  program_creation_speed: "Program/.EXE Creation Speed",
-  crime_speed: "Crime Speed",
-  stock_fees: "Stock Commission Costs",
-  cct_money: "Coding Contract .cct Money",
-  IPvGO_power: "IPvGO Node Power",
-  class_cost: "University/Gym Class Cost",
-
-  // Consumable Stats
-  netrunning_lvl: "Netrunning Loot Level",
-  netrun_cooldown_lvl: "Netrun Trace Cooldown Level",
-  mod_storage: "Mod Storage",
-  crafting_lvl: "Mod Crafting Level",
-
-  // Endgame Multipliers
-  stamina_gain: "Bladeburner Stamina Gain",
-  graft_speed: "Graft Speed",
-  sleeve_sync: "Sleeve Sync Speed",
-  stanek_charge: "Stanek Charge Boost",
-  equipment_cost: "Gang Equipment Cost",
-  int_exp: "Intelligence Experience",
-
-  // Extra Rack Slots
-  extraRackSlots: "Extra Mod Rack Slots",
-
-  // unused
-  hacking_speed: "Hack Speed",
-  hacking_money: "Hack Money",
-  hacking_grow: "Hack Grow",
-  hacknet_node_purchase_cost: "Hacknet Node Purchase Cost",
-  dnet_money: "Darknet Money",
-  bladeburner_max_stamina: "Bladeburner Max Stamina",
-  bladeburner_stamina_gain: "Bladeburner Stamina Gain",
-  bladeburner_analysis: "Bladeburner Analysis",
-  bladeburner_success_chance: "Bladeburner Success Chance",
+  hacking_money: { shortName: "Hack Money", longName: "Hack Money", tooltip: "" },
+  hacking_grow: { shortName: "Hack Grow", longName: "Hack Grow", tooltip: "" },
+  hacknet_node_purchase_cost: {
+    shortName: "Hacknet Node Purchase Cost",
+    longName: "Hacknet Node Purchase Cost",
+    tooltip: "",
+  },
+  dnet_money: { shortName: "Darknet Money", longName: "Darknet Money", tooltip: "" },
+  bladeburner_max_stamina: { shortName: "BB Max Stamina", longName: "Bladeburner Max Stamina", tooltip: "" },
+  bladeburner_stamina_gain: { shortName: "BB Stamina Gain", longName: "Bladeburner Stamina Gain", tooltip: "" },
+  bladeburner_analysis: { shortName: "BB Analysis", longName: "Bladeburner Analysis", tooltip: "" },
+  bladeburner_success_chance: { shortName: "BB Success", longName: "Bladeburner Success Chance", tooltip: "" },
 } as const;
 
 export type ModImageSet = {
