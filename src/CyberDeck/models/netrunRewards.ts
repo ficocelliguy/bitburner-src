@@ -14,7 +14,7 @@ import { completeNetrunChallenges } from "./challenges";
 import { NetrunningState } from "./NetrunningState";
 import { WHRNG } from "../../Casino/RNG";
 
-export function getCurrentNetrunningIceCost(corrupted = false): number {
+function getRawNetrunCost(corrupted: boolean) {
   const timeSinceLastRun =
     Date.now() - (corrupted ? CyberdeckState.lastCorruptedNetrunningTimestamp : CyberdeckState.lastNetrunningTimestamp);
   const traceDecay = netrunningTraceDecayMs * (corrupted ? 2 : 1);
@@ -23,13 +23,15 @@ export function getCurrentNetrunningIceCost(corrupted = false): number {
   const recencyMultiplier = Math.max(Math.max((recencyWindow - timeSinceLastRun) / 200, 0) * (corrupted ? 1000 : 1), 1);
   const netrunningCooldownBoost =
     1 - (CyberdeckState.netrunningCooldownLevel / (CyberdeckState.netrunningCooldownLevel + 5)) * 0.4;
-  const cost =
-    Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * minimumNetrunCost(corrupted);
-  return Math.floor(cost);
+  return Math.max(diminishingCosts * recencyMultiplier * netrunningCooldownBoost, 1) * minimumNetrunCost(corrupted);
+}
+
+export function getCurrentNetrunningIceCost(corrupted = false): number {
+  return Math.floor(getRawNetrunCost(corrupted));
 }
 
 export function getNetrunningTraceFraction(corrupted = false): number {
-  return getCurrentNetrunningIceCost(corrupted) / minimumNetrunCost(corrupted) - 1;
+  return getRawNetrunCost(corrupted) / minimumNetrunCost(corrupted) - 1;
 }
 
 export function minimumNetrunCost(corrupted: boolean) {
