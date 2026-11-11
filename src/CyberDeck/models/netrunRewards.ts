@@ -7,7 +7,13 @@ import {
 import { DeckMod, NetrunningResult, NetrunningRewards } from "../Types";
 import { Brand, Challenges, ModType } from "../Enums";
 import { getLevel, getNextNetrunningCorruptedWHRNG, getNextNetrunningWHRNG } from "../utils/statRng";
-import { createModule, createSpecialFirstTimeMod, getBrandedModMaker, moduleStorageAvailable } from "./createModule";
+import {
+  createModule,
+  createRackExtension,
+  createSpecialFirstTimeMod,
+  getBrandedModMaker,
+  moduleStorageAvailable,
+} from "./createModule";
 import { createCorruptedModule, getCorruptedSkillChip, getEndgameStatModule } from "./createCorruptedModule";
 import { Player } from "@player";
 import { completeNetrunChallenges } from "./challenges";
@@ -104,8 +110,11 @@ export function getBrandedNetrunningRewards(rng: WHRNG, score: number, brand = N
     boost ? createSpecialFirstTimeMod(rng) : score > 70 ? modMaker(rng, score > 100 ? 4 : 2) : createModule(rng),
   );
   rewards.push(createModule(rng));
-  if (score > 120) {
-    rewards.push(createModule(rng));
+  if (score >= 120) {
+    const mod = CyberdeckState.completedChallenges[Challenges.Jackpot]
+      ? createModule(rng)
+      : createRackExtension(2, rng);
+    rewards.push(mod);
   }
   return rewards;
 }

@@ -9,6 +9,7 @@ import { Program } from "../Programs/Program";
 import { calculateIntelligenceBonus } from "../PersonObjects/formulas/intelligence";
 import { asProgramFilePath } from "../Paths/ProgramFilePath";
 import { getCyberdeckStatBonuses } from "../CyberDeck/utils/modStatsUtils";
+import { getRomFromManualProgramCompletion } from "../CyberDeck/effects";
 
 export const isCreateProgramWork = (w: PlayerBaseWork | null): w is CreateProgramWork =>
   w !== null && w.type === WorkType.CREATE_PROGRAM;
@@ -89,6 +90,7 @@ export class CreateProgramWork extends PlayerBaseWork {
       }
 
       Player.getHomeComputer().pushProgram(programName);
+      getRomFromManualProgramCompletion(this.getProgram().create?.level ?? 0);
     } else if (!Player.getHomeComputer().programs.includes(programName)) {
       //Incomplete case
       const perc = ((100 * this.unitCompleted) / this.unitNeeded()).toFixed(2);

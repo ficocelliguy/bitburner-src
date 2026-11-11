@@ -35,7 +35,8 @@ export function ModuleComponent({
   draggingWireEnded,
   draggingInstalledModule,
   currentDragSource,
-  disableTooltip
+  isAnyDragActive,
+  disableTooltip,
 }: DeckModuleProps) {
   const render = useRerender(200);
   const styles = useCyberdeckStyles();
@@ -103,53 +104,58 @@ export function ModuleComponent({
           onContextMenu={(e) => e.preventDefault()}
         >
           <Tooltip
-            title={disableTooltip ? "" : (
-              <div style={{ display: "inline-flex", alignItems: "center" }}>
-                <div>
-                  <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
-                    {module.type} {getRarityText(module)}
-                  </Typography>
-                  <div style={{ color: Settings.theme.warning }}>
-                    {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
-                  </div>{" "}
-                  <Typography
-                    sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
-                  >
-                    ID: {module.id}
-                  </Typography>
-                  <div style={{ margin: "10px 0" }}>
-                    <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
-                  </div>
-                  <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
-                    {getModDescription(module)}
-                  </Typography>
-                  {module.type === ModType.CyberdeckIOPanel && challenge ? (
-                    <div>
-                      <Typography
-                        sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px", marginTop: "10px" }}
-                      >
-                        This is the cyberdeck I/O panel. It is the core of the cyberdeck, and it provides power to any
-                        connected modules.
-                      </Typography>
-                      <Typography sx={{ fontSize: "10px", marginTop: "10px" }}>
-                        To upgrade: {challenge.description} {getChallengeProgress(challenge.description)}
-                      </Typography>
+            title={
+              disableTooltip || isAnyDragActive ? (
+                ""
+              ) : (
+                <div style={{ display: "inline-flex", alignItems: "center" }}>
+                  <div>
+                    <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
+                      {module.type} {getRarityText(module)}
+                    </Typography>
+                    <div style={{ color: Settings.theme.warning }}>
+                      {chargedModuleIDs.includes(module.id) ? "" : "(Not powered - provides no bonuses.)"}
+                    </div>{" "}
+                    <Typography
+                      sx={{ fontSize: "8px", color: Settings.theme.secondary, width: "300px", textAlign: "center" }}
+                    >
+                      ID: {module.id}
+                    </Typography>
+                    <div style={{ margin: "10px 0" }}>
+                      <StatBonus stats={module.stats} useShortStatNames={false} fontSize={14} />
                     </div>
-                  ) : (
-                    Settings.CyberdeckWiFU && (
-                      <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
-                        Art by @Mango_to_sleep
-                      </Typography>
-                    )
+                    <Typography sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px" }}>
+                      {getModDescription(module)}
+                    </Typography>
+                    {module.type === ModType.CyberdeckIOPanel && challenge ? (
+                      <div>
+                        <Typography
+                          sx={{ fontSize: "11px", color: Settings.theme.secondary, width: "350px", marginTop: "10px" }}
+                        >
+                          This is the cyberdeck I/O panel. It is the core of the cyberdeck, and it provides power to any
+                          connected modules.
+                        </Typography>
+                        <Typography sx={{ fontSize: "10px", marginTop: "10px" }}>
+                          To upgrade: {challenge.description} {getChallengeProgress(challenge.description)}
+                        </Typography>
+                      </div>
+                    ) : (
+                      Settings.CyberdeckWiFU && (
+                        <Typography sx={{ fontSize: "10px", color: Settings.theme.secondary, marginTop: "10px" }}>
+                          Art by @Mango_to_sleep
+                        </Typography>
+                      )
+                    )}
+                  </div>
+                  {Settings.CyberdeckWiFU && module.type !== ModType.CyberdeckIOPanel && (
+                    <div style={{ marginLeft: "10px" }}>{getModuleIcon(module, 150)}</div>
                   )}
                 </div>
-                {Settings.CyberdeckWiFU && module.type !== ModType.CyberdeckIOPanel && (
-                  <div style={{ marginLeft: "10px" }}>{getModuleIcon(module, 150)}</div>
-                )}
-              </div>
-            )}
+              )
+            }
             placement={index % 2 === 0 ? "top-end" : "top-start"}
             arrow
+            disableInteractive
             enterDelay={600}
             enterNextDelay={400}
           >

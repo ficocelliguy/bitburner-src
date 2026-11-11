@@ -1,19 +1,16 @@
 Patch changes:
+- Player now gains a small amount of ROM when manually completing a program
 - Prevented NaN in component gains when player has extremely high stats
 - Fixed tooltip layering on crafting buttons and component masks
 
 TODO:
 
-- gain a small amount of rom when completing a program manually
 - limit the width of the portal screen
-- make component symbols bigger across the board
 - improve netrun reward component display:  make inline, add hovers
 - Skill chip consumption animation: +1 up?
 - double click to move mod
 - hover effect on port when mousing over it when installed
 - clarify netrunning threat is within 5 blocks
-- rack extension minimum +2
-- confirm rack extension acquisition routes
 - mod hover effects sometimes get stuck
 - drop on top of installed mod to swap/replace mods when full?
 

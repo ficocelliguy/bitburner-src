@@ -118,6 +118,13 @@ export function getRomFromManualProgramCreation(ticks = 1) {
   return { rom: romGained };
 }
 
+export function getRomFromManualProgramCompletion(level: number) {
+  const romGained = 2 + Math.floor(level / 50);
+  CyberdeckState.components.rom += romGained;
+  CyberdeckState.componentStats.rom.programs += romGained;
+  return { rom: romGained };
+}
+
 export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
   const tuitionPriceMod = getCyberdeckStatBonuses(1).otherMults.class_cost;
   const tuition = (work.calculateRates().money * -1) / tuitionPriceMod;

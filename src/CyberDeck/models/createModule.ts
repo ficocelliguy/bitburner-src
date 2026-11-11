@@ -277,18 +277,18 @@ export function createUplink(level: number, rng: WHRNG, addDebuff = true, scalar
   });
 }
 
-function createRackExtension(level: number, rng: WHRNG): DeckMod {
+export function createRackExtension(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
   const buff = rng.random() < 0.2 ? getPlayerStatBuff(level / 2, rng, 0.3) : {};
   return createAndStoreModule({
     stats: {
       playerMults: mergeBuffs(debuff, buff),
-      extraRackSlots: clampNumber(Math.floor(1 + level / 4), 1, 3),
+      extraRackSlots: clampNumber(Math.floor(1 + level / 4), 2, 3),
     },
     type: ModType.RackExtension,
     id: getID(rng),
     brand: Brand.OmniaCybersystems,
-    sockets: getRandomSockets(rng, level, 0.5),
+    sockets: getRandomSockets(rng, level, 0.4),
     rarity: level,
   });
 }

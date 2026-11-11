@@ -74,6 +74,7 @@ export function getCustomModIcon(module: DeckMod, size: number) {
       style={{ position: "relative", top: "-4px", left: "-2px" }}
       width={size}
       height={size}
+      draggable={false}
     />
   );
 }
