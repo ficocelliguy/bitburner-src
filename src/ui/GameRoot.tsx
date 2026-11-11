@@ -80,6 +80,7 @@ import { DWRoot } from "../DarkNet/DWRoot";
 import { DocumentationPopUp } from "../Documentation/ui/DocumentationPopUp";
 import { CustomPage } from "./CustomPage";
 import { CyberdeckRoot } from "../CyberDeck/CyberdeckRoot";
+import { FxLayer } from "../CyberDeck/ui/FxLayer";
 import { hasDevQueryParam } from "../utils/Utility";
 
 const htmlLocation = location;
@@ -522,6 +523,7 @@ export function GameRoot(): React.ReactElement {
               <PromptManager hidden={hidePopups} />
               <FactionInvitationManager hidden={hidePopups} />
               <Snackbar hidden={hidePopups} />
+              <FxLayer />
               {/* Allow opening the documentation popup in the BitVerse */}
               <DocumentationPopUp hidden={hidePopups && pageWithContext.page !== Page.BitVerse} />
               <Apr1 />

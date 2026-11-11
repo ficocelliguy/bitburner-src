@@ -102,6 +102,7 @@ export function ModuleComponent({
           onMouseUp={() => socketDragEnd()}
           onMouseDown={toggleFavorite}
           onContextMenu={(e) => e.preventDefault()}
+          id={`module-${module.id}`}
         >
           <Tooltip
             title={

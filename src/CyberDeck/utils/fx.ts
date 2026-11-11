@@ -1,47 +1,41 @@
-const SPARK_CLASS = "cyberdeck-spark";
-const SPARK_STYLE_ID = "cyberdeck-spark-styles";
+import { Settings } from "../../Settings/Settings";
+import { EventEmitter } from "../../utils/EventEmitter";
 
-function ensureSparkStyles() {
-  if (document.getElementById(SPARK_STYLE_ID)) return;
-  const style = document.createElement("style");
-  style.id = SPARK_STYLE_ID;
-  style.textContent = `
-    .${SPARK_CLASS} {
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 90001;
-      animation: cyberdeck-spark-popout 1.5s ease-out forwards;
-    }
-    @keyframes cyberdeck-spark-popout {
-      0%   { transform: translate(0, 0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-  `;
-  document.head.appendChild(style);
+const SPARK_COUNT = 16;
+
+interface Spark {
+  id: number;
+  x: number;
+  y: number;
+  tx: number;
+  ty: number;
+  color: string;
 }
 
-function createSpark(x: number, y: number, color: string) {
-  const spark = document.createElement("div");
-  spark.classList.add(SPARK_CLASS);
+interface PopupText {
+  id: number;
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  fontSize: string;
+}
 
-  spark.style.left = `${x}px`;
-  spark.style.top = `${y}px`;
+let nextFxId = 0;
+export let activeSparks: Spark[] = [];
+export let activePopupTexts: PopupText[] = [];
 
-  const destinationX = (Math.random() - 0.5) * 800;
-  const destinationY = (Math.random() - 0.5) * 800;
+/** Event emitter to allow the FX layer to rerender when effects are added or finish animating */
+export const FxEvents = new EventEmitter<[]>();
 
-  spark.style.setProperty("--tx", `${destinationX}px`);
-  spark.style.setProperty("--ty", `${destinationY}px`);
-  spark.style.backgroundColor = color;
+export function removeSpark(id: number) {
+  activeSparks = activeSparks.filter((spark) => spark.id !== id);
+  FxEvents.emit();
+}
 
-  document.body.appendChild(spark);
-
-  setTimeout(() => {
-    spark.remove();
-  }, 1500);
+export function removePopupText(id: number) {
+  activePopupTexts = activePopupTexts.filter((popupText) => popupText.id !== id);
+  FxEvents.emit();
 }
 
 function getRandomHexColor() {
@@ -54,9 +48,37 @@ function getRandomHexColor() {
 }
 
 export function createSparkles(x: number, y: number, color: string = "") {
-  ensureSparkStyles();
-  const sparkCount = 16;
-  for (let i = 0; i < sparkCount; i++) {
-    createSpark(x, y, color || getRandomHexColor());
+  for (let i = 0; i < SPARK_COUNT; i++) {
+    activeSparks.push({
+      id: nextFxId++,
+      x,
+      y,
+      tx: (Math.random() - 0.5) * 800,
+      ty: (Math.random() - 0.5) * 800,
+      color: color || getRandomHexColor(),
+    });
   }
+  FxEvents.emit();
+}
+
+export interface PopupTextOptions {
+  color?: string;
+  fontSize?: string;
+  /** Random positional jitter in px, applied as +/- half the value on each axis */
+  jitterX?: number;
+  jitterY?: number;
+}
+
+/** Spawns text centered at the given viewport coordinates that pops up, floats upward, and fades out. */
+export function createPopupText(x: number, y: number, text: string, options: PopupTextOptions = {}) {
+  const { color = Settings.theme.primary, fontSize = "20px", jitterX = 40, jitterY = 20 } = options;
+  activePopupTexts.push({
+    id: nextFxId++,
+    x: x + (Math.random() - 0.5) * jitterX,
+    y: y + (Math.random() - 0.5) * jitterY,
+    text,
+    color,
+    fontSize,
+  });
+  FxEvents.emit();
 }

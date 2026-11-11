@@ -87,6 +87,19 @@ const staticNoise = tssKeyframes`
   100% { transform: translate(-1%, 0.5%); background-size: 200%}
 `;
 
+const sparkPopout = tssKeyframes`
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+`;
+
+const popupTextRise = tssKeyframes`
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  15%  { opacity: 1; }
+  50%  { scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -160%) scale(1); }
+`;
+
 export const tickerLoop = keyframes`
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -421,109 +434,29 @@ export function usePortalStyles() {
   } as const;
 }
 
-/*
-
-pop-up number:
-
-.game-container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background-color: #1a1a1a;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-#hitButton {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  background-color: #ff4757;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-
-.damage-popup {
-  position: absolute;
-  font-family: monospace;
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: #ff3838;
-  text-shadow:
-  -2px -2px 0 #000,
-    2px -2px 0 #000,
-    -2px  2px 0 #000,
-    2px  2px 0 #000;
-  pointer-events: none;
-  user-select: none;
-
-
-  animation: moba-damage 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-
-@keyframes moba-damage {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
-}
-  15% {
-    opacity: 1;
-    scale(1.4);
-  }
-  30% {scale(1);
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -220%) scale(0.8);
-  }
-}
-
-const gameContainer = document.getElementById('gameContainer');
-const hitButton = document.getElementById('hitButton');
-
-hitButton.addEventListener('click', (e) => {
-  // 1. Generate random damage value
-  const damageAmount = Math.floor(Math.random() * 150) + 50;
-
-  // 2. Create the element
-  const damageText = document.createElement('div');
-  damageText.classList.add('damage-popup');
-  damageText.innerText = damageAmount;
-
-  // 3. Randomize critical hits occasionally
-  if (damageAmount > 170) {
-    damageText.innerText += '!';
-    damageText.style.color = '#ffa502';
-    damageText.style.fontSize = '3.5rem';
-  }
-
-  // 4. Position it near the click (or target) with a slight offset variance
-  const varianceX = (Math.random() - 0.5) * 40; // Max 20px left or right
-  const varianceY = (Math.random() - 0.5) * 20;
-
-  damageText.style.left = `${e.clientX + varianceX}px`;
-  damageText.style.top = `${e.clientY + varianceY}px`;
-
-  // 5. Append to container
-  gameContainer.appendChild(damageText);
-
-  // 6. Clean up DOM after animation completes
-  damageText.addEventListener('animationend', () => {
-    damageText.remove();
-  });
+export const useFxStyles = makeStyles({ uniqId: "cyberdeckFx" })({
+  spark: {
+    position: "fixed",
+    width: 8,
+    height: 8,
+    borderRadius: "50%",
+    pointerEvents: "none",
+    zIndex: 90001,
+    animation: `${sparkPopout} 1.5s ease-out forwards`,
+  },
+  popupText: {
+    position: "fixed",
+    fontFamily: "monospace",
+    fontSize: "2.5rem",
+    fontWeight: 900,
+    whiteSpace: "nowrap",
+    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+    pointerEvents: "none",
+    userSelect: "none",
+    zIndex: 90001,
+    animation: `${popupTextRise} 1s ease-out forwards`,
+  },
 });
-
-
- */
 
 // TODO-fico: remove once done
 const themeColors = {

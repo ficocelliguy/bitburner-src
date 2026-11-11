@@ -1,4 +1,5 @@
 Patch changes:
+- Add clearer level gain fx on skillchip consumption (removing the toast)
 - Player now gains a small amount of ROM when manually completing a program
 - Prevented NaN in component gains when player has extremely high stats
 - Fixed tooltip layering on crafting buttons and component masks
@@ -7,7 +8,6 @@ TODO:
 
 - limit the width of the portal screen
 - improve netrun reward component display:  make inline, add hovers
-- Skill chip consumption animation: +1 up?
 - double click to move mod
 - hover effect on port when mousing over it when installed
 - clarify netrunning threat is within 5 blocks

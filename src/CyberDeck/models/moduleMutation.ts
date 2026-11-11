@@ -9,11 +9,11 @@ import {
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
-import { Connection, DeckMod, Socket } from "../Types";
+import { Connection, DeckMod, Socket, statBonusDetails } from "../Types";
+import { getRecordEntries } from "../../Types/Record";
 import { ModType } from "../Enums";
 import { getCyberdeckIOPanel, disassembleModule } from "./createModule";
 import { Player } from "@player";
-import { formatNumber } from "../../ui/formatNumber";
 import {
   checkConnectionChallenges,
   completeChargedModuleTutorial,
@@ -22,6 +22,7 @@ import {
 } from "./challenges";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
 import { MODULE_STORAGE, TRASH_CAN } from "./constants";
+import { createPopupText } from "../utils/fx";
 
 export function handleModuleMoved(result: DropResult, filter: string = "") {
   if (!result.destination) {
@@ -324,42 +325,37 @@ function consumeSkillChips() {
     const stats = module.stats?.consumableStats ?? {};
     if (stats.netrunning_lvl) {
       CyberdeckState.netrunningLevel += stats.netrunning_lvl;
-      SnackbarEvents.emit(
-        `Consumed SkillChip. Gained +${formatNumber(stats.netrunning_lvl, 2)} netrunning boost.`,
-        ToastVariant.SUCCESS,
-        4000,
-      );
     }
     if (stats.crafting_lvl) {
       CyberdeckState.craftingLevel += stats.crafting_lvl;
-      SnackbarEvents.emit(
-        `Consumed SkillChip. Gained +${formatNumber(stats.crafting_lvl, 2)} crafting boost.`,
-        ToastVariant.SUCCESS,
-        4000,
-      );
     }
     if (stats.netrun_cooldown_lvl) {
       CyberdeckState.netrunningCooldownLevel += stats.netrun_cooldown_lvl;
-      SnackbarEvents.emit(
-        `Consumed SkillChip. Gained +${formatNumber(stats.netrun_cooldown_lvl, 2)} trace decay reduction boost.`,
-        ToastVariant.SUCCESS,
-        4000,
-      );
     }
     if (stats.mod_storage) {
       CyberdeckState.modStorageSize += stats.mod_storage;
-      SnackbarEvents.emit(
-        `Consumed SkillChip. Increased mod storage by +${formatNumber(stats.mod_storage, 2)} slots.`,
-        ToastVariant.SUCCESS,
-        4000,
-      );
     }
-
+    displaySkillchipConsumptionMessage(module);
     disconnectModule(module);
     hasConsumedSkillchipTutorial();
   }
   CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
   CyberdeckEvents.emit();
+}
+
+function displaySkillchipConsumptionMessage(module: DeckMod) {
+  const element = document.getElementById(`module-${module.id}`);
+  if (!element) return;
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  const stats = module.stats?.consumableStats ?? {};
+  const text = getRecordEntries(stats)
+    .map(([stat, value]) => `+${value.toPrecision(2)} ${statBonusDetails[stat].longName}`)
+    .join("\n");
+
+  createPopupText(x, y, text, { color: "#00FF00", fontSize: "20px" });
 }
 
 export function getInstalledRackExtensionCount() {
