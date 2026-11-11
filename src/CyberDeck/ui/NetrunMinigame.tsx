@@ -77,13 +77,13 @@ export function NetrunMinigame({ complete }: { complete: () => void }): React.Re
   return (
     <Box sx={{ display: "grid", justifyContent: "center", marginTop: "20px" }}>
       <div style={{ display: "inline-flex", gap: "30px", marginBottom: "15px", justifyContent: "space-between" }}>
-        <Tooltip title={"Threat level: How strong of a signal is coming from nearby hidden countermeasures"}>
+        <Tooltip title={"Threat level: How strong of a signal is coming from hidden countermeasures within 5 blocks."}>
           <Typography>
             <WarningAmberSharpIcon sx={{ position: "relative", top: "5px" }} /> {(threat * 100).toPrecision(3)}%
           </Typography>
         </Tooltip>
 
-        <Tooltip title={"Threat count: How many hidden threats are nearby."}>
+        <Tooltip title={"Threat count: How many hidden threats are within 5 blocks."}>
           <Typography>
             <WifiTetheringErrorSharpIcon sx={{ position: "relative", top: "5px" }} /> {signals}
           </Typography>

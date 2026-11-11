@@ -1,5 +1,6 @@
 Patch changes:
 - Add clearer level gain fx on skillchip consumption (removing the toast)
+- Clarified what "nearby" means in the icon tooltips in the netrunning minigame
 - Player now gains a small amount of ROM when manually completing a program
 - Prevented NaN in component gains when player has extremely high stats
 - Fixed tooltip layering on crafting buttons and component masks
@@ -10,8 +11,6 @@ TODO:
 - improve netrun reward component display:  make inline, add hovers
 - double click to move mod
 - hover effect on port when mousing over it when installed
-- clarify netrunning threat is within 5 blocks
-- mod hover effects sometimes get stuck
 - drop on top of installed mod to swap/replace mods when full?
 
 - identify nested droppable?
