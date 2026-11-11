@@ -24,6 +24,7 @@ export type DeckModuleProps = {
   isAnyDragActive?: boolean;
   draggingInstalledModule?: boolean;
   allowShift?: boolean;
+  disableTooltip?: boolean;
 };
 
 export function ModuleComponent({
@@ -34,6 +35,7 @@ export function ModuleComponent({
   draggingWireEnded,
   draggingInstalledModule,
   currentDragSource,
+  disableTooltip
 }: DeckModuleProps) {
   const render = useRerender(200);
   const styles = useCyberdeckStyles();
@@ -101,7 +103,7 @@ export function ModuleComponent({
           onContextMenu={(e) => e.preventDefault()}
         >
           <Tooltip
-            title={
+            title={disableTooltip ? "" : (
               <div style={{ display: "inline-flex", alignItems: "center" }}>
                 <div>
                   <Typography variant="h6" style={{ margin: "4px", textAlign: "center" }}>
@@ -145,7 +147,7 @@ export function ModuleComponent({
                   <div style={{ marginLeft: "10px" }}>{getModuleIcon(module, 150)}</div>
                 )}
               </div>
-            }
+            )}
             placement={index % 2 === 0 ? "top-end" : "top-start"}
             arrow
             enterDelay={600}

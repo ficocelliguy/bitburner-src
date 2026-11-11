@@ -56,7 +56,7 @@ export function CyberdeckRoot(): React.ReactElement {
         <DocumentationLink
           page="programming/cyberdeck.md"
           style={{
-            fontSize: "14px",
+            fontSize: "16px",
             padding: "3px 15px",
             backgroundColor: Settings.theme.well,
             margin: "1px 0 0 300px",

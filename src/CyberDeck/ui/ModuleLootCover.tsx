@@ -67,7 +67,7 @@ export function ModuleLootCover({ module, index }: { module: DeckMod; index: num
     >
       {open ? "   " : "Click to reveal..."}
       <div style={{ opacity: open ? 1 : 0, transition: "opacity 1s ease-in" }} ref={cover}>
-        <ModuleComponent module={module} index={index} allowShift={true} />
+        <ModuleComponent module={module} index={index} allowShift={true} disableTooltip={!open} />
       </div>
     </Typography>
   );

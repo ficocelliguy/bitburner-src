@@ -134,7 +134,7 @@ export function getChipsFromCompanyWork(work: CompanyWork, ticks = 1) {
   if (!job) {
     return {};
   }
-  const repPerTick = work.getGainRates(job).reputation;
+  const repPerTick = Math.min(work.getGainRates(job).reputation, Number.MAX_SAFE_INTEGER);
   const newChips = (1 + (50 * repPerTick + 800) / (repPerTick + 800)) * ticks;
   CyberdeckState.components.chips += newChips;
   CyberdeckState.componentStats.chips.companyWork += newChips;

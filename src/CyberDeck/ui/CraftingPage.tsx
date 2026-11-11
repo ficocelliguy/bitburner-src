@@ -123,7 +123,7 @@ export function CraftingPage(): React.ReactElement {
               <span>
                 Craft 10x <ComponentSymbol symbol={componentSymbols.iceBreakers} /> ICEBreaker
               </span>
-              <ComponentCost cost={ICEBreakerCraftingCost} />
+              <ComponentCost cost={ICEBreakerCraftingCost} disableTooltips={true} />
             </div>
           </Button>
         </ComponentTooltip>
@@ -143,6 +143,7 @@ export function CraftingPage(): React.ReactElement {
               <ComponentCost
                 cost={getCyberdeckServerRamUpgradeCost().componentCost}
                 moneyCost={getCyberdeckServerRamUpgradeCost().moneyCost}
+                disableTooltips={true}
               />
             )}
           </div>
@@ -161,6 +162,7 @@ export function CraftingPage(): React.ReactElement {
             <ComponentCost
               cost={getCyberdeckServerCoreUpgradeCost().componentCost}
               moneyCost={getCyberdeckServerCoreUpgradeCost().moneyCost}
+              disableTooltips={true}
             />
           </div>
         </Button>
@@ -192,7 +194,7 @@ export function CraftingPage(): React.ReactElement {
               }}
             >
               <span>Craft {getModIconComponent(ModType.PowerSupply, 16)} Power Supply Mod</span>
-              <ComponentCost cost={powerSupplyCraftingCost} />
+              <ComponentCost cost={powerSupplyCraftingCost} disableTooltips={true} />
             </div>
           </Button>
         </Tooltip>
@@ -220,7 +222,7 @@ export function CraftingPage(): React.ReactElement {
               }}
             >
               <span>Craft {getModIconComponent(ModType.Uplink, 16)} Uplink Mod</span>
-              <ComponentCost cost={uplinkCraftingCost} />
+              <ComponentCost cost={uplinkCraftingCost} disableTooltips={true} />
             </div>
           </Button>
         </Tooltip>
@@ -248,7 +250,7 @@ export function CraftingPage(): React.ReactElement {
               }}
             >
               <span>Craft {getModIconComponent(ModType.ProcessingMod, 16)} Processing Mod</span>
-              <ComponentCost cost={processingModuleCraftingCost} />
+              <ComponentCost cost={processingModuleCraftingCost} disableTooltips={true} />
             </div>
           </Button>
         </Tooltip>
