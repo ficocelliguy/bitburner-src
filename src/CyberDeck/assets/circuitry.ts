@@ -221,4 +221,5 @@ export const CircuitryBackground = `
                                                                                                                                                                                                                                                                                                                                                                                                                 `
   .split("\n")
   .map((row) => row.slice(0, -1) + row.slice(0, -1).split("").reverse().join(""))
+  .map((row) => row.slice(0, -1) + row.slice(0, -1).split("").reverse().join(""))
   .join("\n");

@@ -1,5 +1,6 @@
 Patch changes:
-- imporved netrun portal page to work better across themes (and have a background)
+- improved netrun portal page to work better across themes (and have a background)
+- improved circuitry background to correctly fade and have longer max width
 
 TODO:
 

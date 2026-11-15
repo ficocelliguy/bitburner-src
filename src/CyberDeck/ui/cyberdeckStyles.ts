@@ -262,6 +262,7 @@ export function useNetrunTargetStyles() {
       fontWeight: "bold",
       opacity: 0.6,
       zIndex: -2,
+      maxWidth: "2800px",
     },
     microchipButton: {
       position: "relative",
