@@ -81,6 +81,17 @@ const growAndFade = keyframes`
     transform: scale(20);
   }
 `;
+const justFade = keyframes`
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
 
 const staticNoise = tssKeyframes`
   0% { transform: translate(0, 0);  background-size: 100%}
@@ -250,6 +261,7 @@ export function useNetrunTargetStyles() {
       lineHeight: 1,
       fontWeight: "bold",
       opacity: 0.6,
+      zIndex: -2,
     },
     microchipButton: {
       position: "relative",
@@ -318,8 +330,25 @@ export function useNetrunTargetStyles() {
 export function usePortalStyles() {
   useTheme();
   return {
+    portalAnchor: {
+      position: "relative",
+      width: "300px",
+      height: "300px",
+      margin: "20vh auto 10px auto",
+    },
+    portalStage: {
+      position: "absolute",
+      inset: 0,
+    },
+    portalWebBackground: {
+      left: "50%",
+      top: "50%",
+      width: "max-content",
+      height: "max-content",
+      transform: "translate(-50%, -50%)",
+      fontSize: "0.7vh",
+    },
     portalContainer: {
-      margin: "150px auto 10px auto",
       cursor: "pointer",
       position: "relative",
       width: "300px",
@@ -418,10 +447,24 @@ export function usePortalStyles() {
       pointerEvents: "none",
       userSelect: "none",
     },
+    portalBlackBackground: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      background: `radial-gradient(circle, #000 25%, transparent 40%)`,
+      zIndex: -1,
+      width: "900px",
+      height: "900px",
+      pointerEvents: "none",
+    },
     enteringPortal: {
       zIndex: 9999, // just enough to correctly animate over floating UI elements for this brief effect
       pointerEvents: "none",
       animation: `${growAndFade} 1.2s ease-in forwards`,
+    },
+    backgroundEnteringPortal: {
+      animation: `${justFade} 1.2s ease-in forwards`,
     },
     corruptedSkew: {
       animation: `${skewFrames} 5s infinite steps(1)`,

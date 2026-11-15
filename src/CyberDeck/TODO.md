@@ -1,11 +1,10 @@
 Patch changes:
-- Add clearer level gain fx on skillchip consumption (removing the toast)
-- Clarified what "nearby" means in the icon tooltips in the netrunning minigame
-- Player now gains a small amount of ROM when manually completing a program
-- Prevented NaN in component gains when player has extremely high stats
-- Fixed tooltip layering on crafting buttons and component masks
+- imporved netrun portal page to work better across themes (and have a background)
 
 TODO:
+
+- improve not-enough-icebreakers portal feedback
+- reduce portal flash on corrupted portal
 
 - limit the width of the portal screen
 - improve netrun reward component display:  make inline, add hovers

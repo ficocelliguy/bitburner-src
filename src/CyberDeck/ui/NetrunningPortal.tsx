@@ -6,6 +6,7 @@ import {
   PORTAL_RING_CLASS,
   PORTAL_RING_REVERSE_CLASS,
   tickerLoop,
+  useNetrunTargetStyles,
   usePortalStyles,
 } from "./cyberdeckStyles";
 import { CyberdeckState, hasCyberdeck } from "../models/CyberdeckState";
@@ -25,6 +26,7 @@ import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { ToastVariant } from "@enums";
 import { MARQUEE_LINES } from "../models/constants";
 import { moduleStorageAvailable } from "../models/createModule";
+import { WebBackground } from "../assets/web";
 
 export function NetrunningPortal({
   entered,
@@ -35,6 +37,7 @@ export function NetrunningPortal({
 }): React.ReactElement {
   useRerender(200);
   const styles = usePortalStyles();
+  const netrunStyles = useNetrunTargetStyles();
   const [entering, setEntering] = React.useState(false);
   const [showPortal, setShowPortal] = React.useState(true);
 
@@ -80,40 +83,48 @@ export function NetrunningPortal({
   return (
     <Container disableGutters maxWidth={false} sx={[{ m: 3 }, corrupted && styles.corruptedSkew]}>
       {showPortal && (
-        <Box sx={[entering && styles.enteringPortal]}>
-          <Box
-            className={PORTAL_CONTAINER_CLASS}
-            sx={[styles.portalContainer, disabled && styles.portalDisabled]}
-            onClick={() => void handlePortalClick()}
-          >
-            <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
-            <Box
-              className={`${PORTAL_RING_CLASS} ${PORTAL_RING_REVERSE_CLASS}`}
-              sx={[styles.portalRing, styles.portalRingReverse]}
-            />
-            <Box sx={styles.orbiter} />
-            <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
-            <Box aria-hidden sx={styles.portalTextMask}>
-              {MARQUEE_LINES.map((line, i) => (
-                <Box key={i} sx={{ overflow: "hidden", width: "100%" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      width: "max-content",
-                      whiteSpace: "nowrap",
-                      animation: `${tickerLoop} ${(corrupted ? 8 : 45) + (i % 4) * 12}s linear infinite`,
-                      animationDirection: `${!corrupted || i % 4 ? "normal" : "reverse"}`,
-                    }}
-                  >
-                    <Box component="span" sx={{ paddingRight: "2rem" }}>
-                      {line}
+        <>
+          <Box sx={styles.portalAnchor}>
+            <Box sx={[netrunStyles.circuitry, styles.portalWebBackground, entering && styles.backgroundEnteringPortal]}>
+              {WebBackground}
+            </Box>
+            <Box sx={[styles.portalStage, entering && styles.enteringPortal]}>
+              <Box sx={styles.portalBlackBackground} />
+              <Box
+                className={PORTAL_CONTAINER_CLASS}
+                sx={[styles.portalContainer, disabled && styles.portalDisabled]}
+                onClick={() => void handlePortalClick()}
+              >
+                <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
+                <Box
+                  className={`${PORTAL_RING_CLASS} ${PORTAL_RING_REVERSE_CLASS}`}
+                  sx={[styles.portalRing, styles.portalRingReverse]}
+                />
+                <Box sx={styles.orbiter} />
+                <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
+                <Box aria-hidden sx={styles.portalTextMask}>
+                  {MARQUEE_LINES.map((line, i) => (
+                    <Box key={i} sx={{ overflow: "hidden", width: "100%" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "max-content",
+                          whiteSpace: "nowrap",
+                          animation: `${tickerLoop} ${(corrupted ? 8 : 45) + (i % 4) * 12}s linear infinite`,
+                          animationDirection: `${!corrupted || i % 4 ? "normal" : "reverse"}`,
+                        }}
+                      >
+                        <Box component="span" sx={{ paddingRight: "2rem" }}>
+                          {line}
+                        </Box>
+                        <Box component="span" sx={{ paddingRight: "2rem" }} aria-hidden>
+                          {line}
+                        </Box>
+                      </Box>
                     </Box>
-                    <Box component="span" sx={{ paddingRight: "2rem" }} aria-hidden>
-                      {line}
-                    </Box>
-                  </Box>
+                  ))}
                 </Box>
-              ))}
+              </Box>
             </Box>
           </Box>
           {!entering && hasCyberdeck() && (
@@ -142,7 +153,7 @@ export function NetrunningPortal({
               )}
             </>
           )}
-        </Box>
+        </>
       )}
     </Container>
   );
