@@ -7,18 +7,22 @@ import { BRAND_DETAILS } from "../models/constants";
 import { Settings } from "../../Settings/Settings";
 import { CircuitryBackground } from "../assets/circuitry";
 import { useNetrunTargetStyles } from "./cyberdeckStyles";
+import { initNetrunGrid } from "../models/netrunningMinigame";
 
-export function NetrunTargetSelect(): React.ReactElement {
+export function NetrunTargetSelect({ closeSelection }: { closeSelection: () => void }): React.ReactElement {
   const styles = useNetrunTargetStyles();
 
   function setTarget(target: NetrunTargets | Brand.Unknown) {
     NetrunningState.target = target;
+    closeSelection();
+    initNetrunGrid(false);
     CyberdeckEvents.emit();
   }
 
   function cancel() {
     NetrunningState.target = Brand.Unknown;
     NetrunningState.isNetrunning = false;
+    closeSelection();
     CyberdeckEvents.emit();
   }
 

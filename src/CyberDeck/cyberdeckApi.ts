@@ -310,7 +310,7 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
       move(ctx: NetscriptContext, _direction: unknown): Promise<NetrunStatus> {
         checkCyberdeckAccess();
         const direction = getEnumHelper("NetrunDirection").nsGetMember(ctx, _direction, "direction");
-        const failureReult = {
+        const failureResult = {
           success: false,
           coordinates: [0, 0],
           energy: 0,
@@ -322,12 +322,12 @@ export function NetscriptCyberdeck(): InternalAPI<Cyberdeck> {
         };
         if (!NetrunningState.isNetrunning) {
           logger(ctx)("Failed to move - no netrun has been started.");
-          return Promise.resolve(failureReult);
+          return Promise.resolve(failureResult);
         }
         return helpers.netscriptDelay(ctx, 400).then(() => {
           if (!NetrunningState.isNetrunning) {
             logger(ctx)("Fail to move - no netrun has been started.");
-            return failureReult;
+            return failureResult;
           }
           const [y, x] = NetrunningState.location;
           const result = move(direction, true);

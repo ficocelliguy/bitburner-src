@@ -20,10 +20,20 @@ const pulse = keyframes`
    0%, 100% { transform: scale(1); opacity: 0.8; }
    50% { transform: scale(1.15); opacity: 1; }
 `;
-const flicker = keyframes`
-   0% { filter: invert(0); }
-   25% { filter: invert(0.8); }
-   100% { filter: invert(0); }
+// Clip polygons share a vertex layout so they swap cleanly; each one shows a horizontal band (or most) of the element.
+const glitchClip = (top: number, bottom: number, left = bottom) =>
+  `polygon(0 ${top}%, 100% ${top}%, 100% ${bottom}%, 95% ${bottom}%, 95% ${bottom}%, 85% ${bottom}%, 85% ${bottom}%, 8% ${bottom}%, 0 ${left}%)`;
+const glitchSlice = keyframes`
+   0% { clip-path: ${glitchClip(2, 95, 70)}; transform: translateX(0); }
+   10% { clip-path: ${glitchClip(78, 100)}; transform: translateX(-3%); }
+   20% { clip-path: ${glitchClip(78, 100)}; transform: translateX(3%); }
+   30% { clip-path: ${glitchClip(44, 54)}; transform: translateX(3%); }
+   40% { clip-path: ${glitchClip(44, 54)}; transform: translateX(0); }
+   50% { clip-path: ${glitchClip(40, 85, 70)}; transform: translateX(-3%); }
+   60% { clip-path: ${glitchClip(40, 85, 70)}; transform: translateX(3%); }
+   70% { clip-path: ${glitchClip(63, 80, 70)}; transform: translateX(3%); }
+   80% { clip-path: ${glitchClip(0, 100)}; transform: translateX(-1%); }
+   100% { clip-path: ${glitchClip(0, 100)}; transform: translateX(0); }
 `;
 const shake = keyframes`
   0% { transform: translateY(-2px) rotate(2deg) }
@@ -116,6 +126,7 @@ export const tickerLoop = keyframes`
   100% { transform: translateX(-50%); }
 `;
 
+export const PORTAL_STAGE_CLASS = "portal-stage";
 export const PORTAL_CONTAINER_CLASS = "portal-container";
 export const PORTAL_RING_CLASS = "portal-ring";
 export const PORTAL_RING_REVERSE_CLASS = "portal-ring-reverse";
@@ -339,7 +350,6 @@ export function usePortalStyles() {
     },
     portalStage: {
       position: "absolute",
-      inset: 0,
     },
     portalWebBackground: {
       left: "50%",
@@ -469,10 +479,10 @@ export function usePortalStyles() {
     },
     corruptedSkew: {
       animation: `${skewFrames} 5s infinite steps(1)`,
-      [`& .${PORTAL_CONTAINER_CLASS}`]: {
-        "&:hover": {
-          animation: `${flicker} 0.2s steps(1)`,
-        },
+      // Hover is tracked on the unclipped stage: the glitch's clip-path shrinks the container's hit area,
+      // which would drop :hover mid-animation and restart it in a loop.
+      [`& .${PORTAL_STAGE_CLASS}:hover .${PORTAL_CONTAINER_CLASS}`]: {
+        animation: `${glitchSlice} 0.35s steps(1)`,
       },
     },
   } as const;

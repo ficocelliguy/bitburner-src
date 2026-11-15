@@ -5,6 +5,7 @@ import {
   PORTAL_CORE_CLASS,
   PORTAL_RING_CLASS,
   PORTAL_RING_REVERSE_CLASS,
+  PORTAL_STAGE_CLASS,
   tickerLoop,
   useNetrunTargetStyles,
   usePortalStyles,
@@ -67,6 +68,14 @@ export function NetrunningPortal({
       SnackbarEvents.emit("Module storage is full!", ToastVariant.WARNING, 2000);
       return;
     }
+    if (CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost(corrupted)) {
+      SnackbarEvents.emit(
+        `Insufficient ICEBreakers: ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost(corrupted)}`,
+        ToastVariant.WARNING,
+        2000,
+      );
+      return;
+    }
     if (!canNetrun(corrupted)) return;
     setEntering(true);
     if (corrupted) {
@@ -80,49 +89,57 @@ export function NetrunningPortal({
     }, 1000);
   }
 
+  function getIcebreakerText() {
+    return CyberdeckState.components.iceBreakers < getCurrentNetrunningIceCost(corrupted)
+      ? `Insufficient ICEBreakers: ${CyberdeckState.components.iceBreakers}/${getCurrentNetrunningIceCost(corrupted)}`
+      : `ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`;
+  }
+
   return (
-    <Container disableGutters maxWidth={false} sx={[{ m: 3 }, corrupted && styles.corruptedSkew]}>
+    <Container disableGutters maxWidth={false} sx={{ m: 3 }}>
       {showPortal && (
         <>
           <Box sx={styles.portalAnchor}>
             <Box sx={[netrunStyles.circuitry, styles.portalWebBackground, entering && styles.backgroundEnteringPortal]}>
               {WebBackground}
             </Box>
-            <Box sx={[styles.portalStage, entering && styles.enteringPortal]}>
-              <Box sx={styles.portalBlackBackground} />
-              <Box
-                className={PORTAL_CONTAINER_CLASS}
-                sx={[styles.portalContainer, disabled && styles.portalDisabled]}
-                onClick={() => void handlePortalClick()}
-              >
-                <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
+            <Box sx={[corrupted && styles.corruptedSkew]}>
+              <Box className={PORTAL_STAGE_CLASS} sx={[styles.portalStage, entering && styles.enteringPortal]}>
+                <Box sx={styles.portalBlackBackground} />
                 <Box
-                  className={`${PORTAL_RING_CLASS} ${PORTAL_RING_REVERSE_CLASS}`}
-                  sx={[styles.portalRing, styles.portalRingReverse]}
-                />
-                <Box sx={styles.orbiter} />
-                <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
-                <Box aria-hidden sx={styles.portalTextMask}>
-                  {MARQUEE_LINES.map((line, i) => (
-                    <Box key={i} sx={{ overflow: "hidden", width: "100%" }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          width: "max-content",
-                          whiteSpace: "nowrap",
-                          animation: `${tickerLoop} ${(corrupted ? 8 : 45) + (i % 4) * 12}s linear infinite`,
-                          animationDirection: `${!corrupted || i % 4 ? "normal" : "reverse"}`,
-                        }}
-                      >
-                        <Box component="span" sx={{ paddingRight: "2rem" }}>
-                          {line}
-                        </Box>
-                        <Box component="span" sx={{ paddingRight: "2rem" }} aria-hidden>
-                          {line}
+                  className={PORTAL_CONTAINER_CLASS}
+                  sx={[styles.portalContainer, disabled && styles.portalDisabled]}
+                  onClick={() => void handlePortalClick()}
+                >
+                  <Box className={PORTAL_RING_CLASS} sx={styles.portalRing} />
+                  <Box
+                    className={`${PORTAL_RING_CLASS} ${PORTAL_RING_REVERSE_CLASS}`}
+                    sx={[styles.portalRing, styles.portalRingReverse]}
+                  />
+                  <Box sx={styles.orbiter} />
+                  <Box className={PORTAL_CORE_CLASS} sx={styles.portalCore} />
+                  <Box aria-hidden sx={styles.portalTextMask}>
+                    {MARQUEE_LINES.map((line, i) => (
+                      <Box key={i} sx={{ overflow: "hidden", width: "100%" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "max-content",
+                            whiteSpace: "nowrap",
+                            animation: `${tickerLoop} ${(corrupted ? 8 : 45) + (i % 4) * 12}s linear infinite`,
+                            animationDirection: `${!corrupted || i % 4 ? "normal" : "reverse"}`,
+                          }}
+                        >
+                          <Box component="span" sx={{ paddingRight: "2rem" }}>
+                            {line}
+                          </Box>
+                          <Box component="span" sx={{ paddingRight: "2rem" }} aria-hidden>
+                            {line}
+                          </Box>
                         </Box>
                       </Box>
-                    </Box>
-                  ))}
+                    ))}
+                  </Box>
                 </Box>
               </Box>
             </Box>
@@ -130,20 +147,13 @@ export function NetrunningPortal({
           {!entering && hasCyberdeck() && (
             <>
               {!moduleStorageAvailable() && (
-                <Typography sx={{ textAlign: "center", marginTop: "20px", color: Settings.theme.warning }}>
+                <Typography sx={{ textAlign: "center", marginTop: "30px", color: Settings.theme.warning }}>
                   Module storage full!
                 </Typography>
               )}
 
-              <Typography sx={{ textAlign: "center", marginTop: "20px" }}>
-                {corrupted ? (
-                  <CorruptibleText
-                    content={`ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`}
-                    spoiler={false}
-                  />
-                ) : (
-                  `ICEBreakers needed: ${getCurrentNetrunningIceCost(corrupted)}`
-                )}
+              <Typography sx={{ textAlign: "center", marginTop: "30px" }}>
+                {corrupted ? <CorruptibleText content={getIcebreakerText()} spoiler={false} /> : getIcebreakerText()}
               </Typography>
 
               {getCurrentNetrunningIceCost(corrupted) > minimumNetrunCost(corrupted) && (

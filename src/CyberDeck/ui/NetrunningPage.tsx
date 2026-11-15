@@ -8,13 +8,13 @@ import { corruptedNetrunFlavorText, netrunFlavorText } from "../models/constants
 import { netrunRewards } from "../models/netrunRewards";
 import { initNetrunGrid } from "../models/netrunningMinigame";
 import { useRerender } from "../../ui/React/hooks";
-import { Brand } from "@enums";
 import { NetrunTargetSelect } from "./NetrunTargetSelect";
 import { CyberdeckEvents } from "../models/CyberdeckState";
 
 export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): React.ReactElement {
   const rerender = useRerender(1000);
   const [showRewardsModal, setShowRewardsModal] = React.useState(false);
+  const [showTargetSelect, setShowTargetSelect] = React.useState(false);
   const [netrunningModRewards, setNetrunningModRewards] = React.useState<NetrunningRewards>({
     mods: [],
     components: {},
@@ -26,6 +26,19 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
       return () => clearSubscription();
     }
   }, [rerender, corrupted]);
+
+  function startNetrun() {
+    if (corrupted) {
+      setShowTargetSelect(false);
+      initNetrunGrid(true);
+    } else {
+      setShowTargetSelect(true);
+    }
+  }
+
+  function cancel() {
+    setShowTargetSelect(false);
+  }
 
   function endNetrun() {
     const rewards = netrunRewards();
@@ -42,12 +55,12 @@ export function NetrunningPage({ corrupted = false }: { corrupted?: boolean }): 
         title={"Netrunning Results"}
         flavorText={corrupted ? corruptedNetrunFlavorText : netrunFlavorText}
       />
-      {NetrunningState.isNetrunning && NetrunningState.target === Brand.Unknown && !NetrunningState.corrupted ? (
-        <NetrunTargetSelect />
+      {showTargetSelect ? (
+        <NetrunTargetSelect closeSelection={cancel} />
       ) : NetrunningState.isNetrunning || NetrunningState.showNetrunOverride ? (
         <NetrunMinigame complete={endNetrun}></NetrunMinigame>
       ) : (
-        <NetrunningPortal entered={() => initNetrunGrid(corrupted)} corrupted={corrupted} />
+        <NetrunningPortal entered={startNetrun} corrupted={corrupted} />
       )}
     </>
   );

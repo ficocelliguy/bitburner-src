@@ -1,17 +1,21 @@
 Patch changes:
 - improved netrun portal page to work better across themes (and have a background)
 - improved circuitry background to correctly fade and have longer max width
+- improved glitch netrun portal to have better flicker effect and less flash
+- improved required ICEBreaker feedback - show current and required counts, show toast on insufficient count and click
+- do not mark netrunning as true in the api until it has actually started (not just target select)
 
 TODO:
 
 - improve not-enough-icebreakers portal feedback
 - reduce portal flash on corrupted portal
 
-- limit the width of the portal screen
 - improve netrun reward component display:  make inline, add hovers
 - double click to move mod
-- hover effect on port when mousing over it when installed
+- hover effect on socket when mousing over it when installed
 - drop on top of installed mod to swap/replace mods when full?
+
+- limit the width of the portal screen?
 
 - identify nested droppable?
 
@@ -32,6 +36,8 @@ TODO:
 
 
 TODO LATER:
+
+- touch event support
 
 - remove simulation
 
