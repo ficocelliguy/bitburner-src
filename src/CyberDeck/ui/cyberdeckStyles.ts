@@ -1,7 +1,5 @@
 import { keyframes } from "@emotion/react";
-import { Theme, useTheme } from "@mui/material/styles";
-import { makeStyles } from "tss-react/mui";
-import { keyframes as tssKeyframes } from "tss-react";
+import { useTheme } from "@mui/material/styles";
 import { fadeLoop } from "../../Go/boardState/goStyles";
 import { GRID_SIZE_PX } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
@@ -45,7 +43,7 @@ const shake = keyframes`
   100% { transform: translateY(0) rotate(0) }
 `;
 // The sweep is half a cell wide, so translateX percentages are double the equivalent cell-relative offsets.
-const shine = tssKeyframes`
+const shine = keyframes`
   0% {
     transform: translateX(-400%) skewX(-20deg);
   }
@@ -103,17 +101,17 @@ const justFade = keyframes`
   }
 `;
 
-const staticNoise = tssKeyframes`
+const staticNoise = keyframes`
   0% { transform: translate(0, 0);  background-size: 100%}
   100% { transform: translate(-1%, 0.5%); background-size: 200%}
 `;
 
-const sparkPopout = tssKeyframes`
+const sparkPopout = keyframes`
   0%   { transform: translate(0, 0) scale(1); opacity: 1; }
   100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 `;
 
-const popupTextRise = tssKeyframes`
+const popupTextRise = keyframes`
   0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
   15%  { opacity: 1; }
   50%  { scale(1); }
@@ -203,53 +201,56 @@ export function useCyberdeckStyles() {
 
 export const SHINE_DELAY_VAR = "--netrun-shine-delay";
 
-export const useNetrunCellStyles = makeStyles({ uniqId: "netrunCell" })((theme: Theme) => ({
-  cell: {
-    width: GRID_SIZE_PX,
-    height: GRID_SIZE_PX,
-    minHeight: GRID_SIZE_PX,
-    border: "1px solid transparent",
-    alignContent: "center",
-  },
-  shine: {
-    position: "relative",
-    overflow: "hidden",
-    borderColor: theme.colors.money,
-    "&::after": {
-      content: "''",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "50%",
-      height: "100%",
-
-      background: `linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.8) 50%,
-        rgba(255, 255, 255, 0) 100%
-      )`,
-      transform: "translateX(-300%) skewX(-20deg)",
-      animation: `${shine} 3s infinite ease-in-out`,
-      animationDelay: `var(${SHINE_DELAY_VAR})`,
+export function useNetrunCellStyles() {
+  const theme = useTheme();
+  return {
+    cell: {
+      width: GRID_SIZE_PX,
+      height: GRID_SIZE_PX,
+      minHeight: GRID_SIZE_PX,
+      border: "1px solid transparent",
+      alignContent: "center",
     },
-  },
-  entity: {
-    margin: "auto",
-  },
-  offlineNode: {
-    backgroundImage: `repeating-radial-gradient(circle at 17% 32%, ${theme.colors.white}, black 0.00085px)`,
-    backgroundPosition: "center",
-    animation: `${staticNoise} 0.3s steps(4) infinite`,
-  },
-  threatIndicator: {
-    width: 10,
-    height: 10,
-    minHeight: 10,
-    margin: "5px",
-    borderRadius: "2px",
-  },
-}));
+    shine: {
+      position: "relative",
+      overflow: "hidden",
+      borderColor: theme.colors.money,
+      "&::after": {
+        content: "''",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "50%",
+        height: "100%",
+
+        background: `linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0) 100%
+        )`,
+        transform: "translateX(-300%) skewX(-20deg)",
+        animation: `${shine} 3s infinite ease-in-out`,
+        animationDelay: `var(${SHINE_DELAY_VAR})`,
+      },
+    },
+    entity: {
+      margin: "auto",
+    },
+    offlineNode: {
+      backgroundImage: `repeating-radial-gradient(circle at 17% 32%, ${theme.colors.white}, black 0.00085px)`,
+      backgroundPosition: "center",
+      animation: `${staticNoise} 0.3s steps(4) infinite`,
+    },
+    threatIndicator: {
+      width: 10,
+      height: 10,
+      minHeight: 10,
+      margin: "5px",
+      borderRadius: "2px",
+    },
+  } as const;
+}
 
 export function useNetrunTargetStyles() {
   const theme = useTheme();
@@ -492,29 +493,32 @@ export function usePortalStyles() {
   } as const;
 }
 
-export const useFxStyles = makeStyles({ uniqId: "cyberdeckFx" })({
-  spark: {
-    position: "fixed",
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    pointerEvents: "none",
-    zIndex: 90001,
-    animation: `${sparkPopout} 1.5s ease-out forwards`,
-  },
-  popupText: {
-    position: "fixed",
-    fontFamily: "monospace",
-    fontSize: "2.5rem",
-    fontWeight: 900,
-    whiteSpace: "nowrap",
-    textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
-    pointerEvents: "none",
-    userSelect: "none",
-    zIndex: 90001,
-    animation: `${popupTextRise} 1s ease-out forwards`,
-  },
-});
+export function useFxStyles() {
+  useTheme();
+  return {
+    spark: {
+      position: "fixed",
+      width: 8,
+      height: 8,
+      borderRadius: "50%",
+      pointerEvents: "none",
+      zIndex: 90001,
+      animation: `${sparkPopout} 1.5s ease-out forwards`,
+    },
+    popupText: {
+      position: "fixed",
+      fontFamily: "monospace",
+      fontSize: "2.5rem",
+      fontWeight: 900,
+      whiteSpace: "nowrap",
+      textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+      pointerEvents: "none",
+      userSelect: "none",
+      zIndex: 90001,
+      animation: `${popupTextRise} 1s ease-out forwards`,
+    },
+  } as const;
+}
 
 // TODO-fico: remove once done
 const themeColors = {

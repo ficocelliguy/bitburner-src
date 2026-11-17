@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
+import { Box } from "@mui/material";
 import { useRerender } from "../../ui/React/hooks";
 import { activePopupTexts, activeSparks, FxEvents, removePopupText, removeSpark } from "../utils/fx";
 import { useFxStyles } from "./cyberdeckStyles";
 
 export function FxLayer(): React.ReactElement {
-  const { classes } = useFxStyles();
+  const styles = useFxStyles();
   const rerender = useRerender();
 
   useEffect(() => {
@@ -15,9 +16,9 @@ export function FxLayer(): React.ReactElement {
   return (
     <>
       {activeSparks.map((spark) => (
-        <div
+        <Box
           key={spark.id}
-          className={classes.spark}
+          sx={styles.spark}
           style={
             {
               left: spark.x,
@@ -31,14 +32,14 @@ export function FxLayer(): React.ReactElement {
         />
       ))}
       {activePopupTexts.map((popupText) => (
-        <div
+        <Box
           key={popupText.id}
-          className={classes.popupText}
+          sx={styles.popupText}
           style={{ left: popupText.x, top: popupText.y, color: popupText.color, fontSize: popupText.fontSize }}
           onAnimationEnd={() => removePopupText(popupText.id)}
         >
           {popupText.text}
-        </div>
+        </Box>
       ))}
     </>
   );

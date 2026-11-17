@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from "@mui/material";
 import { GRID_SIZE_PX, NetrunningState } from "../models/NetrunningState";
 import { Settings } from "../../Settings/Settings";
 import { flagEntity, getEntityColor, getThreatColor } from "../models/netrunningMinigame";
@@ -43,7 +44,7 @@ const NetrunGridCell = React.memo(function NetrunGridCell({
   shouldShine,
   isOffline,
 }: NetrunGridCellProps) {
-  const { classes, cx } = useNetrunCellStyles();
+  const styles = useNetrunCellStyles();
 
   function flag(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
@@ -58,15 +59,10 @@ const NetrunGridCell = React.memo(function NetrunGridCell({
   const cellStyle = shouldShine ? ({ [SHINE_DELAY_VAR]: `${shineDelay}s` } as React.CSSProperties) : undefined;
 
   return (
-    <div
-      className={cx(classes.cell, shouldShine && classes.shine)}
-      style={cellStyle}
-      title={tooltip || undefined}
-      onClick={flag}
-    >
-      <div
+    <Box sx={[styles.cell, shouldShine && styles.shine]} style={cellStyle} title={tooltip || undefined} onClick={flag}>
+      <Box
         id={`netrun-entity-${x},${y}`}
-        className={cx(classes.entity, isOffline && classes.offlineNode)}
+        sx={[styles.entity, isOffline && styles.offlineNode]}
         style={{
           width: size,
           height: size,
@@ -79,9 +75,9 @@ const NetrunGridCell = React.memo(function NetrunGridCell({
           opacity,
         }}
       >
-        <div className={classes.threatIndicator} style={{ backgroundColor: threatColor }} />
-      </div>
-    </div>
+        <Box sx={styles.threatIndicator} style={{ backgroundColor: threatColor }} />
+      </Box>
+    </Box>
   );
 });
 
