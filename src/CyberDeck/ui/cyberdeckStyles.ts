@@ -194,6 +194,10 @@ export function useCyberdeckStyles() {
       padding: "0 12px",
       animation: `${fadeLoop} 600ms ease-in-out infinite alternate`,
     },
+    disableDisplacement: {
+      WebkitTransform: "unset !important",
+      transform: "unset !important",
+    },
   } as const;
 }
 

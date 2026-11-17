@@ -24,18 +24,35 @@ import { getFilteredStoredModules } from "../utils/modStatsUtils";
 import { MODULE_STORAGE, TRASH_CAN } from "./constants";
 import { createPopupText } from "../utils/fx";
 
-export function handleModuleMoved(result: DropResult, filter: string = "") {
-  if (!result.destination) {
+export function handleModuleMovedEvent(result: DropResult, filter: string = "") {
+  handleModuleMoved(
+    result.source.droppableId,
+    result.source.index,
+    result.destination?.droppableId,
+    result.destination?.index,
+    filter,
+  );
+  CyberdeckEvents.emit();
+}
+
+export function handleModuleMoved(
+  sourceId: string,
+  sourceIndex: number,
+  destinationId: string | undefined,
+  destinationIndex: number | undefined,
+  filter: string = "",
+) {
+  if (!destinationId) {
     return;
   }
 
-  const sourceIsStorage = result.source.droppableId === MODULE_STORAGE;
-  const destinationIsStorage = result.destination.droppableId === MODULE_STORAGE;
+  const sourceIsStorage = sourceId === MODULE_STORAGE;
+  const destinationIsStorage = destinationId === MODULE_STORAGE;
 
   const sourceLocation = sourceIsStorage ? getFilteredStoredModules(filter) : CyberdeckState.installedModules;
-  const moduleToMove = sourceLocation[result.source.index];
+  const moduleToMove = sourceLocation[sourceIndex];
 
-  if (result.destination.droppableId == TRASH_CAN) {
+  if (destinationId == TRASH_CAN) {
     disassembleModule(moduleToMove, true);
     return;
   }
@@ -57,7 +74,7 @@ export function handleModuleMoved(result: DropResult, filter: string = "") {
 
   if (!destinationIsStorage) {
     const sourceList = CyberdeckState.installedModules.filter((m) => m.id !== moduleToMove.id);
-    const newInstalledModsList = sourceList.toSpliced(result.destination.index, 0, moduleToMove);
+    const newInstalledModsList = sourceList.toSpliced(destinationIndex || 0, 0, moduleToMove);
     // Prevent the move if it causes invalid wiring
     if (wouldCauseOverlaps(newInstalledModsList)) {
       SnackbarEvents.emit(`Failed to move module: wires cannot overlap.`, ToastVariant.ERROR, 2000);
@@ -65,7 +82,7 @@ export function handleModuleMoved(result: DropResult, filter: string = "") {
     }
   }
 
-  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, result.destination.index, filter);
+  moveModule(moduleToMove, sourceIsStorage, destinationIsStorage, destinationIndex, filter);
 }
 
 export function moveModule(

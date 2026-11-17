@@ -10,10 +10,11 @@ import {
   disconnectSocket,
   ejectOverloadedModules,
   handleModuleMoved,
+  handleModuleMovedEvent,
 } from "../models/moduleMutation";
 import { DrawWiresOnCanvas } from "./socketWireConnections";
-import { Socket } from "../Types";
-import { getCurrentRackSize } from "../utils/moduleUtilities";
+import { DeckMod, Socket } from "../Types";
+import { getCurrentRackSize, getModuleById } from "../utils/moduleUtilities";
 import { getCyberdeckIOPanel, moduleStorageAvailable } from "../models/createModule";
 import { useCyberdeckStyles } from "./cyberdeckStyles";
 import { TrashCan } from "./TrashCan";
@@ -31,6 +32,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [draggingInstalledModule, setDraggingInstalledModule] = useState(false);
   const [draggingStoredModule, setDraggingStoredModule] = useState(false);
+  const [activeDragModule, setActiveDragModule] = useState<DeckMod | null>(null);
   const [draggingWire, setDraggingWire] = useState<Socket | null>(null);
   const [modFilter, setModFilter] = useState("");
 
@@ -60,12 +62,25 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
   function onDragStart(result: DragStart) {
     setDraggingInstalledModule(result.source.droppableId === INSTALLED_MODULES);
     setDraggingStoredModule(result.source.droppableId === MODULE_STORAGE);
+    setActiveDragModule(getModuleById(result.draggableId) ?? null);
   }
 
   function onDragEnd(result: DropResult) {
-    handleModuleMoved(result, modFilter);
+    if (
+      !draggingInstalledModule &&
+      CyberdeckState.installedModules.length >= getCurrentRackSize() &&
+      result?.destination?.droppableId === INSTALLED_MODULES
+    ) {
+      handleModuleMoved(INSTALLED_MODULES, result.destination.index, MODULE_STORAGE, 0, modFilter);
+      const sourceIndex = CyberdeckState.storedModules.findIndex((mod) => mod.id === result.draggableId);
+      handleModuleMoved(MODULE_STORAGE, sourceIndex, INSTALLED_MODULES, result.destination.index);
+    } else {
+      handleModuleMovedEvent(result, modFilter);
+    }
+
     setDraggingInstalledModule(false);
     setDraggingStoredModule(false);
+    setActiveDragModule(null);
     // Continue animating for a short time as dragged components settle
     const interval = setInterval(() => {
       updateDisplay();
@@ -105,12 +120,15 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
     }
   }
 
-  function isMaxModulesInstalled() {
-    return CyberdeckState.installedModules.length >= getCurrentRackSize();
-  }
-
   function handleModFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
     setModFilter(e.target.value);
+  }
+
+  function disableInstalledModShifting(module: DeckMod): boolean {
+    if (!activeDragModule || activeDragModule.id === module.id || draggingInstalledModule) {
+      return false;
+    }
+    return CyberdeckState.installedModules.length >= getCurrentRackSize();
   }
 
   return (
@@ -174,7 +192,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                       draggingWireEnded={draggingWireEnded}
                       currentDragSource={draggingWire}
                       isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
-                      allowShift={false}
+                      allowDragging={false}
                     />
                   </span>
                 )}
@@ -182,7 +200,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
               <Droppable
                 droppableId={INSTALLED_MODULES}
                 direction="vertical"
-                isDropDisabled={isMaxModulesInstalled() && !draggingInstalledModule}
+                //isDropDisabled={isMaxModulesInstalled() && !draggingInstalledModule}
               >
                 {(provided, snapshot) => (
                   <Box
@@ -209,7 +227,8 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                         draggingInstalledModule={draggingInstalledModule}
                         currentDragSource={draggingWire}
                         isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
-                        allowShift={!draggingWire}
+                        allowDragging={!draggingWire}
+                        disableShifting={disableInstalledModShifting(module)}
                       />
                     ))}
                     {provided.placeholder}
@@ -327,7 +346,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
                           key={module.id}
                           module={module}
                           index={index}
-                          allowShift={!draggingWire}
+                          allowDragging={!draggingWire}
                           isAnyDragActive={!!draggingWire || draggingInstalledModule || draggingStoredModule}
                         />
                       ))}

@@ -22,20 +22,22 @@ export type DeckModuleProps = {
   draggingWireEnded?: ((moduleId: string) => void) | null;
   currentDragSource?: Socket | null;
   isAnyDragActive?: boolean;
+  disableShifting?: boolean;
   draggingInstalledModule?: boolean;
-  allowShift?: boolean;
+  allowDragging?: boolean;
   disableTooltip?: boolean;
 };
 
 export function ModuleComponent({
   module,
   index,
-  allowShift,
+  allowDragging,
   draggingWireStarted,
   draggingWireEnded,
   draggingInstalledModule,
   currentDragSource,
   isAnyDragActive,
+  disableShifting,
   disableTooltip,
 }: DeckModuleProps) {
   const render = useRerender(200);
@@ -77,7 +79,7 @@ export function ModuleComponent({
   }
 
   return (
-    <Draggable draggableId={module.id} index={index} isDragDisabled={!allowShift}>
+    <Draggable draggableId={module.id} index={index} isDragDisabled={!allowDragging}>
       {(provided) => (
         <Box
           ref={provided.innerRef}
@@ -97,6 +99,7 @@ export function ModuleComponent({
             background: getChargedModuleIDs().includes(module.id)
               ? Settings.theme.button
               : Settings.theme.backgroundprimary,
+            ...(disableShifting ? styles.disableDisplacement : {}),
           }}
           sx={styles.modulePanel}
           onMouseUp={() => socketDragEnd()}
