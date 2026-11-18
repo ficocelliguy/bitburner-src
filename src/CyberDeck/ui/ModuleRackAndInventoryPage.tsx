@@ -157,7 +157,7 @@ export function ModuleRackAndInventoryPage(): React.ReactElement {
           style={{ position: "absolute", zIndex: 101, top: "-50px", inset: 0, overflow: "hidden" }}
         ></canvas>
       </div>
-      <Container disableGutters maxWidth={false} sx={{ overflowY: "hidden", position: "relative" }}>
+      <Container disableGutters maxWidth={false} sx={{ overflow: "clip", position: "relative" }}>
         <div
           style={{
             display: "flex",

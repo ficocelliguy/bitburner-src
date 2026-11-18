@@ -134,6 +134,7 @@ export function CyberdeckDev(): React.ReactElement {
     CyberdeckState.components.neurodes = 25;
     CyberdeckState.components.iceBreakers = 40;
     CyberdeckState.components.cores = 4;
+    SnackbarEvents.emit("New modules created to replace existing cyberdeck mods.", ToastVariant.SUCCESS, 2000);
   }
 
   function addCustomMod(mod?: DeckMod | undefined) {

@@ -20,6 +20,7 @@ type RewardsModalProps = {
 export function RewardsModal({ open, onClose, rewards, flavorText = "", title }: RewardsModalProps) {
   const [displayedModules, setDisplayedModules] = React.useState<DeckMod[]>(rewards.mods);
 
+  // Mods can be recycled, so we control the displayed ods instead of relying on the initial reward
   React.useEffect(() => {
     setDisplayedModules(rewards.mods);
   }, [rewards]);
@@ -52,7 +53,6 @@ export function RewardsModal({ open, onClose, rewards, flavorText = "", title }:
         )}
         {rewardsHaveComponents(rewards.components) && (
           <>
-            <Typography variant="h6">Components Found:</Typography>
             <Typography
               component="div"
               sx={{
@@ -60,28 +60,34 @@ export function RewardsModal({ open, onClose, rewards, flavorText = "", title }:
                 border: `1px solid ${Settings.theme.button}`,
                 marginBottom: "12px",
                 color: Settings.theme.maplocation,
+                display: "flex",
+                flexDirection: "row",
               }}
             >
-              {!!rewards.components.chips && (
-                <span>
-                  <ComponentSymbol symbol={componentSymbols.chips} />: {rewards.components.chips}{" "}
-                </span>
-              )}
-              {!!rewards.components.neurodes && (
-                <span>
-                  <ComponentSymbol symbol={componentSymbols.neurodes} />: {rewards.components.neurodes}{" "}
-                </span>
-              )}
-              {!!rewards.components.rom && (
-                <span>
-                  <ComponentSymbol symbol={componentSymbols.rom} />: {rewards.components.rom}{" "}
-                </span>
-              )}
-              {!!rewards.components.cores && (
-                <span>
-                  <ComponentSymbol symbol={componentSymbols.cores} />: {rewards.components.cores}
-                </span>
-              )}
+              <Typography variant="h6">Components Found:</Typography>
+              <div style={{ paddingLeft: "15px", paddingTop: "5px" }}>
+                {!!rewards.components.chips && (
+                  <span>
+                    <ComponentSymbol symbol={componentSymbols.chips} showTooltip={true} />: {rewards.components.chips}{" "}
+                  </span>
+                )}
+                {!!rewards.components.neurodes && (
+                  <span>
+                    <ComponentSymbol symbol={componentSymbols.neurodes} showTooltip={true} />:{" "}
+                    {rewards.components.neurodes}{" "}
+                  </span>
+                )}
+                {!!rewards.components.rom && (
+                  <span>
+                    <ComponentSymbol symbol={componentSymbols.rom} showTooltip={true} />: {rewards.components.rom}{" "}
+                  </span>
+                )}
+                {!!rewards.components.cores && (
+                  <span>
+                    <ComponentSymbol symbol={componentSymbols.cores} showTooltip={true} />: {rewards.components.cores}
+                  </span>
+                )}
+              </div>
             </Typography>
           </>
         )}

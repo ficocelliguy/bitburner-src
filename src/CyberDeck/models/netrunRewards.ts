@@ -173,14 +173,13 @@ export function getCorruptedNetrunningRewards(rng: WHRNG, score: number) {
     : createCorruptedModule(rng);
   const rewards = [specialReward];
 
-  if (score > 30) {
-    rewards.push(createCorruptedModule(rng));
-  }
+  rewards.push(createCorruptedModule(rng));
+
   if (score > 55) {
     const boost = score > 80 ? 2 : 0;
     rewards.push(createCorruptedModule(rng, boost));
   }
-  if (score > 120) {
+  if (score > 100) {
     rewards.push(createCorruptedModule(rng));
   }
 

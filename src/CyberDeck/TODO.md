@@ -1,37 +1,23 @@
 Patch changes:
 - Added support for dragging and dropping mods from storage into a full rack to swap with the mod you dropped on top of
+- Improved netrun reward modal layout and component reward display - with tooltips!
+- Added confirmation to all dev menu buttons
 
 TODO:
 
-- remove makestyles
+- double click to move mod?
 
-- improve netrun reward component display:  make inline, add hovers
-- double click to move mod
 - hover effect on socket when mousing over it when installed
 
 - limit the width of the portal screen?
 
-- identify nested droppable?
-
-- stats page
-  - tooltips for stats page
-
-- API - test
-  - docs for all the types etc
-
-- add notification for all dev buttons
-
 - dev menu - set component counts
-
-- rewards modal cleanup - do we need a state variable AND a prop?
 
 - filter box help text
   - more search options? > and < ?
 
 
 TODO LATER:
-
-- touch event support
 
 - remove simulation
 
@@ -40,7 +26,6 @@ TODO LATER:
 - save netrun mid-run?
 - seed netrun?
 
-
 - code review
 - docs
 - unit tests
@@ -48,8 +33,6 @@ TODO LATER:
 - make testing script
 
 - let player choose color of each stat key and value, to hilight or hide stats
-
-- use pop-up numbers instead of toasts?
 
 - Make another mod type, or make a special corrupted-netrun-only one its own type, to use the last icon
 

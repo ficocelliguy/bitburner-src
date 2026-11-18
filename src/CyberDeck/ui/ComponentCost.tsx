@@ -65,14 +65,23 @@ export function ComponentCost({
   );
 }
 
-export function ComponentSymbol({ symbol, fontSize }: { symbol: string; fontSize?: string }) {
+export function ComponentSymbol({
+  symbol,
+  fontSize,
+  showTooltip,
+}: {
+  symbol: string;
+  fontSize?: string;
+  showTooltip?: boolean;
+}) {
   const isROM = symbol === componentSymbols.rom;
-  return (
+  const row = (
     <span style={{ color: getSymbolColor(symbol), fontSize: fontSize || "16px", marginTop: isROM ? "-2px" : "0" }}>
       {" "}
       {symbol}
     </span>
   );
+  return showTooltip ? <ComponentTooltip symbol={symbol}>{row}</ComponentTooltip> : row;
 }
 
 export function ComponentCostRow({

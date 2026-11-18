@@ -44,7 +44,7 @@ export function addCyberdeckServer() {
 }
 
 export function getCyberdeckServerRamUpgradeCap() {
-  return 28; // TODO-fico: make this a SF reward or something
+  return 30; // TODO-fico: make this a SF reward or something
 }
 
 export function canUpgradeCyberdeckServerRam() {
@@ -89,7 +89,7 @@ export function upgradeCyberdeckServerRam() {
   Player.loseMoney(moneyCost, "cyberdeck");
   CyberdeckState.serverRamUpgrades++;
   const server = GetServerOrThrow(SpecialServers.Cyberdeck);
-  server.maxRam = 4 + CyberdeckState.serverRamUpgrades;
+  server.maxRam = 4 + CyberdeckState.serverRamUpgrades * 2;
 
   CyberdeckEvents.emit();
   return true;
