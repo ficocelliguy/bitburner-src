@@ -46,7 +46,7 @@ export enum Challenges {
   Scrapper = "Salvage 5 mods",
   CleanRun = "Get a score of 80+ while netrunning",
   Homebrew = "Craft 5 mods",
-  LevelUp = "Gain a netrunning level of 3, for improved mod drops",
+  LevelUp = "Gain a netrunning level of 3+ from skillchips, for improved mod drops",
   StrikeGold = "Find a rarity five mod",
   ShortBus = "Charge 2 mods from the same power supply",
   DaisyChain = "Charge a mod that is 3+ jumps away from the deck",

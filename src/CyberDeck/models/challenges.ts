@@ -7,7 +7,7 @@ import {
 } from "./CyberdeckState";
 import { Challenges, ModType } from "@enums";
 import { getCyberdeckIOPanel } from "./createModule";
-import { ChallengeDetails, Connection, DeckMod } from "../Types";
+import { ChallengeDetails, DeckMod } from "../Types";
 import { romanNumeralEncoder } from "../../utils/StringHelperFunctions";
 import { NetrunningState } from "./NetrunningState";
 import { getCurrentRackSize } from "../utils/moduleUtilities";
@@ -35,7 +35,11 @@ export function completeCraftedIcebreakerTutorial() {
 }
 
 export function checkModCreationChallenges(mod: DeckMod) {
-  if (mod.rarity >= 5 && !hasCompleted(Challenges.StrikeGold) && hasCompleted(Challenges.LevelUp)) {
+  if (
+    mod.rarity >= 5 &&
+    !CyberdeckState.completedChallenges[Challenges.StrikeGold] &&
+    hasCompleted(Challenges.LevelUp)
+  ) {
     CyberdeckState.completedChallenges[Challenges.StrikeGold] = true;
     CyberdeckState.components.iceBreakers += 100;
   }
@@ -49,6 +53,7 @@ export function completeNetrunChallenges() {
   checkTutorialCompletion();
 
   if (
+    !NetrunningState.steps &&
     !NetrunningState.hasMadeManualMove &&
     !CyberdeckState.completedChallenges[Challenges.AutoRun] &&
     hasCompleted(Challenges.AutoWire)
@@ -68,7 +73,11 @@ export function completeNetrunChallenges() {
     }
   }
 
-  if (NetrunningState.rewardScore >= 120 && !CyberdeckState.completedChallenges[Challenges.Jackpot]) {
+  if (
+    NetrunningState.rewardScore >= 120 &&
+    hasCompleted(Challenges.Supplier) &&
+    !CyberdeckState.completedChallenges[Challenges.Jackpot]
+  ) {
     CyberdeckState.completedChallenges[Challenges.Jackpot] = true;
     CyberdeckState.netrunningLevel += 4;
   }
@@ -157,25 +166,8 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
     return;
   }
 
-  function getMaxDepthOfConnections(
-    modId = getCyberdeckIOPanel().id,
-    depth = 0,
-    visited: Set<string> = new Set(),
-  ): number {
-    if (visited.has(modId)) {
-      return depth;
-    }
-    visited.add(modId);
-    const connectedMods = CyberdeckState.connections
-      .filter((c) => containsSpecifiedMod(c, modId))
-      .map(([m1, m2]) => (m1.modId === modId ? m2.modId : m1.modId));
-    if (connectedMods.length === 0) {
-      return depth;
-    }
-    return Math.max(...connectedMods.map((mod) => getMaxDepthOfConnections(mod, depth + 1, visited)));
-  }
   const depth = getMaxDepthOfConnections();
-  if (depth >= 3 && !CyberdeckState.completedChallenges[Challenges.DaisyChain]) {
+  if (depth >= 3 && hasCompleted(Challenges.ShortBus) && !CyberdeckState.completedChallenges[Challenges.DaisyChain]) {
     CyberdeckState.completedChallenges[Challenges.DaisyChain] = true;
     CyberdeckState.netrunningLevel += 2;
     CyberdeckEvents.emit();
@@ -186,23 +178,30 @@ export function checkConnectionChallenges(sourceMod: DeckMod, destinationMod: De
   }
 }
 
-function containsSpecifiedMod(connection: Connection, modId: string) {
-  const [m1, m2] = connection;
-  if (modId === getCyberdeckIOPanel().id) {
-    return m1.modId === modId || m2.modId === modId;
+/** The number of jumps from the I/O panel to the furthest charged mod */
+function getMaxDepthOfConnections(): number {
+  const panelId = getCyberdeckIOPanel().id;
+  const depths = new Map<string, number>([[panelId, 0]]);
+  const queue = [panelId];
+  let maxDepth = 0;
+
+  for (const moduleId of queue) {
+    const depth = depths.get(moduleId) ?? 0;
+    const connections = CyberdeckState.connections.filter(
+      ([source, destination]) => source.modId === moduleId || destination.modId === moduleId,
+    );
+    for (const [source, destination] of connections) {
+      const neighborId = source.modId === moduleId ? destination.modId : source.modId;
+      if (depths.has(neighborId)) continue;
+      depths.set(neighborId, depth + 1);
+      maxDepth = Math.max(maxDepth, depth + 1);
+      queue.push(neighborId);
+    }
   }
-  return (
-    (m1.modId === modId || m2.modId === modId) &&
-    m1.modId !== getCyberdeckIOPanel().id &&
-    m2.modId !== getCyberdeckIOPanel().id
-  );
+  return maxDepth;
 }
 
 export function checkComponentSourceChallenges() {
-  if (hasCompleted(Challenges.Supplier)) {
-    return;
-  }
-
   const uniqueComponentSourceCount = getUniqueComponentSourceCount();
   if (!CyberdeckState.completedChallenges[Challenges.Supplier] && uniqueComponentSourceCount >= 8) {
     CyberdeckState.completedChallenges[Challenges.Supplier] = true;
@@ -261,24 +260,27 @@ export function checkCorruptionChallenge() {
 }
 
 export function checkElectricianChallenge() {
-  if (CyberdeckState.completedChallenges[Challenges.Electrician] || !hasCompleted(Challenges.GlitchRun)) {
-    return;
-  }
-
   const chargedPowerSupplies = getChargedModules().filter((m) => m.type == ModType.PowerSupply);
-  const hasFourModsConnected = chargedPowerSupplies.some((ps) => {
+  const connectionCounts = chargedPowerSupplies.map((ps) => {
     const connections = CyberdeckState.connections
       .filter(
         ([source, destination]) =>
           (source.modId === ps.id && destination.modId !== getCyberdeckIOPanel().id) ||
-          (source.modId === ps.id && destination.modId !== getCyberdeckIOPanel().id),
+          (destination.modId === ps.id && source.modId !== getCyberdeckIOPanel().id),
       )
       .flatMap(([source, destination]) => [source.modId, destination.modId])
       .filter((id) => id !== ps.id && id !== getCyberdeckIOPanel().id);
-    return new Set(connections).size >= 4;
+    return new Set(connections).size;
   });
 
-  if (hasFourModsConnected) {
+  if (connectionCounts.some((c) => c >= 2)) {
+    CyberdeckState.completedChallenges[Challenges.ShortBus] = true;
+  }
+  if (
+    hasCompleted(Challenges.GlitchRun) &&
+    !CyberdeckState.completedChallenges[Challenges.Electrician] &&
+    connectionCounts.some((c) => c >= 4)
+  ) {
     CyberdeckState.completedChallenges[Challenges.Electrician] = true;
     CyberdeckState.craftingLevel += 4;
   }
@@ -293,7 +295,11 @@ export function checkAutoWireChallenge(mod: DeckMod) {
 
 export function checkImpatientChallenge(corrupted: boolean) {
   const currentCost = getCurrentNetrunningIceCost(corrupted);
-  if (!CyberdeckState.completedChallenges[Challenges.ColdTrail] && currentCost < 11) {
+  if (
+    CyberdeckState.lastNetrunningTimestamp &&
+    !CyberdeckState.completedChallenges[Challenges.ColdTrail] &&
+    currentCost < 11
+  ) {
     CyberdeckState.completedChallenges[Challenges.ColdTrail] = true;
     CyberdeckState.netrunningCooldownLevel += 2;
   }

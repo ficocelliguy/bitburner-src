@@ -216,7 +216,7 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
 
-  const extraSlotChance = hasCompleted(Challenges.ShortBus) ? 0.12 : 0.7;
+  const extraSlotChance = hasCompleted(Challenges.ShortBus) ? 0.12 : 0.07;
   const extraSlotVariant = rng.random() < extraSlotChance;
   const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng, 0.7) : {};
   const bonus = extraSlotVariant ? 3 : 2;

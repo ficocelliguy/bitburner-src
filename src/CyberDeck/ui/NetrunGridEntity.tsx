@@ -51,6 +51,7 @@ const NetrunGridCell = React.memo(function NetrunGridCell({
     e.preventDefault();
     const entity = NetrunningState.grid[y]?.[x];
     if (entity) {
+      NetrunningState.hasMadeManualMove = true;
       flagEntity(entity);
     }
   }
