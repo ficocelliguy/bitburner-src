@@ -104,7 +104,8 @@ export function getRackExtensionCap() {
   const base = 1;
   const challengeBonus = hasCompleted(Challenges.AutoWire) ? 1 : 0;
   const challengeBonus2 = hasCompleted(Challenges.ArcHazard) ? 1 : 0;
-  return base + challengeBonus + challengeBonus2;
+  const challengeBonus3 = hasCompleted(Challenges.Connoisseur) ? 1 : 0;
+  return base + challengeBonus + challengeBonus2 + challengeBonus3;
 }
 
 export function getChargedModuleIDs(): string[] {

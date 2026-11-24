@@ -10,6 +10,7 @@ import { Player } from "@player";
 import { Page, Router } from "../../ui/Router";
 import { roundToFour } from "../utils/modStatsUtils";
 import { getCurrentNetrunningIceCost } from "./netrunRewards";
+import { checkImpatientChallenge } from "./challenges";
 
 export function move(direction: NetrunDirection, programmaticMove: boolean = false) {
   spreadOfflineNodes();
@@ -124,6 +125,8 @@ export function getEmptyGrid(width: number, height: number): NetrunEntity[][] {
 }
 
 export function initNetrunGrid(corrupted: boolean, depth = 0) {
+  checkImpatientChallenge(corrupted);
+
   NetrunningState.grid = getEmptyGrid(NETRUNNING_WIDTH, NETRUNNING_HEIGHT);
   NetrunningState.location = [0, 0];
   NetrunningState.groups = {};

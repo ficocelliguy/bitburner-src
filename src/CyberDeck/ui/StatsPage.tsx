@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { StatBonus } from "./StatBonuses";
 import { CyberdeckState } from "../models/CyberdeckState";
-import { ChallengeDetail, getCyberdeckLevel, getSupplierChallengeCount } from "../models/challenges";
+import { ChallengeDetail, getCyberdeckLevel, getUniqueComponentSourceCount } from "../models/challenges";
 import { Challenges } from "@enums";
 import { useRerender } from "../../ui/React/hooks";
 import { Settings } from "../../Settings/Settings";
@@ -165,10 +165,13 @@ export function getChallengeProgress(challenge: Challenges): string {
     return `(${CyberdeckState.craftedMods}/5)`;
   }
   if (challenge === Challenges.Supplier) {
-    return `(${getSupplierChallengeCount()}/8)`;
+    return `(${getUniqueComponentSourceCount()}/8)`;
   }
   if (challenge === Challenges.BigDeck) {
     return `(${getCurrentRackSize()}/7)`;
+  }
+  if (challenge === Challenges.Collector) {
+    return `(${getUniqueComponentSourceCount()}/12)`;
   }
   return "";
 }

@@ -33,7 +33,12 @@ import { gainComponentMessage } from "../ui/gainComponentToast";
 import { SnackbarEvents } from "../../ui/React/Snackbar";
 import { LocationName, ToastVariant } from "@enums";
 import { mergeBuffs } from "../utils/modStatsUtils";
-import { checkCrafterChallenge, checkScrapperChallenge, getCyberdeckLevel } from "./challenges";
+import {
+  checkCrafterChallenge,
+  checkModCreationChallenges,
+  checkScrapperChallenge,
+  getCyberdeckLevel,
+} from "./challenges";
 
 export const getCyberdeckIOPanel = (): DeckMod => {
   const lvl = getCyberdeckLevel();
@@ -91,6 +96,7 @@ export function createModule(rng: WHRNG, type: ModType = getRandomModuleType(rng
 }
 
 export function createAndStoreModule(mod: DeckMod) {
+  checkModCreationChallenges(mod);
   CyberdeckState.storedModules.push(mod);
   return mod;
 }
@@ -210,7 +216,8 @@ export function createCyberdeckMod(rng: WHRNG, levelBoost = 0, scalar = 1): Deck
 function createPowerSupply(level: number, rng: WHRNG): DeckMod {
   const debuff = getDebuff(level, rng);
 
-  const extraSlotVariant = rng.random() < 0.1;
+  const extraSlotChance = hasCompleted(Challenges.ShortBus) ? 0.12 : 0.7;
+  const extraSlotVariant = rng.random() < extraSlotChance;
   const debuff2 = extraSlotVariant ? getOtherStatDebuff(level, rng, 0.7) : {};
   const bonus = extraSlotVariant ? 3 : 2;
 

@@ -244,10 +244,11 @@ export function getConsumableBuff(
 ): Partial<ConsumableStats> {
   const consumableKeys = getRecordKeys(consumableStats);
   const statToAdd = consumableKeys[Math.floor(rng.random() * consumableKeys.length)];
+  const levelUpBonus = hasCompleted(Challenges.LevelUp) ? 1.1 : 1;
   const valueRange = consumableStats[statToAdd] ?? EMPTY_BOUNDS;
 
   return {
-    [statToAdd]: getStatRoll(rng, valueRange, level, scalar),
+    [statToAdd]: getStatRoll(rng, valueRange, level, scalar * levelUpBonus),
   };
 }
 

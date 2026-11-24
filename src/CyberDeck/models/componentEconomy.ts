@@ -3,7 +3,7 @@ import { minCyclesToProcess, NEURODES_PER_ASSASSINATION, NEURODES_PER_HOMICIDE }
 import { Crime } from "../../Crime/Crime";
 import { CrimeType } from "@enums";
 import { ComponentCounts, SimpleComponentCounts } from "../Types";
-import { checkSupplierChallenge } from "./challenges";
+import { checkComponentSourceChallenges } from "./challenges";
 import {
   getCyberdeckComponentsFromHacknetIncome,
   getCyberdeckComponentsFromMods,
@@ -24,7 +24,7 @@ export function gainCyberdeckComponents(cycles: number, hacknetMoney = 0) {
 
   processCyberdeckComponentGains(hacknetMoney);
 
-  checkSupplierChallenge();
+  checkComponentSourceChallenges();
 }
 
 export function processCyberdeckComponentGains(

@@ -1,6 +1,6 @@
 import { Player } from "@player";
 import { mergeMultipliers } from "../PersonObjects/Multipliers";
-import { CyberdeckState, hasCyberdeck } from "./models/CyberdeckState";
+import { CyberdeckState, hasCompleted, hasCyberdeck } from "./models/CyberdeckState";
 import { getCyberdeckStatBonuses } from "./utils/modStatsUtils";
 import { gainComponentMessage } from "./ui/gainComponentToast";
 import { Server } from "../Server/Server";
@@ -11,6 +11,7 @@ import { isCreateProgramWork } from "../Work/CreateProgramWork";
 import { ClassWork, isClassWork } from "../Work/ClassWork";
 import { CONSTANTS } from "../Constants";
 import { minCyclesToProcess } from "./models/constants";
+import { Challenges } from "@enums";
 
 export function applyCyberdeckStatBonuses() {
   const mults = getCyberdeckStatBonuses(1);
@@ -112,23 +113,26 @@ export function getCyberdeckComponentsFromMods(ticks = 1): SimpleComponentCounts
 }
 
 export function getRomFromManualProgramCreation(ticks = 1) {
-  const romGained = 7 * ticks;
+  const challengeBonus = hasCompleted(Challenges.Collector) ? 1.2 : 1.0;
+  const romGained = 7 * ticks * challengeBonus;
   CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.rom.programs += romGained;
   return { rom: romGained };
 }
 
 export function getRomFromManualProgramCompletion(level: number) {
-  const romGained = 2 + Math.floor(level / 50);
+  const challengeBonus = hasCompleted(Challenges.Collector) ? 1.2 : 1.0;
+  const romGained = (2 + Math.floor(level / 50)) * challengeBonus;
   CyberdeckState.components.rom += romGained;
   CyberdeckState.componentStats.rom.programs += romGained;
   return { rom: romGained };
 }
 
 export function getNeurodesFromClass(work: ClassWork, ticks = 1) {
+  const challengeBonus = hasCompleted(Challenges.Collector) ? 1.2 : 1.0;
   const tuitionPriceMod = getCyberdeckStatBonuses(1).otherMults.class_cost;
   const tuition = (work.calculateRates().money * -1) / tuitionPriceMod;
-  const newNeurodes = (0.5 + tuition / 25) * ticks;
+  const newNeurodes = (0.5 + tuition / 25) * ticks * challengeBonus;
   CyberdeckState.components.neurodes += newNeurodes;
   CyberdeckState.componentStats.neurodes.class += newNeurodes;
   return {
@@ -141,8 +145,9 @@ export function getChipsFromCompanyWork(work: CompanyWork, ticks = 1) {
   if (!job) {
     return {};
   }
+  const challengeBonus = hasCompleted(Challenges.Collector) ? 1.2 : 1.0;
   const repPerTick = Math.min(work.getGainRates(job).reputation, Number.MAX_SAFE_INTEGER);
-  const newChips = (1 + (50 * repPerTick + 800) / (repPerTick + 800)) * ticks;
+  const newChips = (1 + (50 * repPerTick + 800) / (repPerTick + 800)) * ticks * challengeBonus;
   CyberdeckState.components.chips += newChips;
   CyberdeckState.componentStats.chips.companyWork += newChips;
   return {

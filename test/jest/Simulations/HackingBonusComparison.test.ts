@@ -68,7 +68,7 @@ import { calculateSkill } from "../../../src/PersonObjects/formulas/skill";
 import { currentNodeMults } from "../../../src/BitNode/BitNodeMultipliers";
 import {
   checkAutoWireChallenge,
-  checkSupplierChallenge,
+  checkComponentSourceChallenges,
   completeCraftedIcebreakerTutorial,
   getCyberdeckLevel,
 } from "../../../src/CyberDeck/models/challenges";
@@ -1273,7 +1273,7 @@ function runScenario(kind: ScenarioKind, seed: number): ScenarioResult {
       }
 
       processCyberdeckComponentGains(0);
-      checkSupplierChallenge();
+      checkComponentSourceChallenges();
 
       if (tSec >= nextCct) {
         nextCct += CCT_INTERVAL_SECONDS;

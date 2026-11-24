@@ -33,12 +33,11 @@ export function SocketIOPanel({
     if (currentDragSource?.modId === moduleId && currentDragSource?.socketIndex === index) {
       return true;
     }
-    return CyberdeckState.connections.some(([source, destination]) => {
-      return (
+    return CyberdeckState.connections.some(
+      ([source, destination]) =>
         (source.modId === moduleId && source.socketIndex === index) ||
-        (destination.modId === moduleId && destination.socketIndex === index)
-      );
-    });
+        (destination.modId === moduleId && destination.socketIndex === index),
+    );
   }
 
   return (

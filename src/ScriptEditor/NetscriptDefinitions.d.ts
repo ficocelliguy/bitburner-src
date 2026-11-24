@@ -4666,8 +4666,16 @@ type ChallengeStatus = {
   CleanRun: boolean;
   /** Craft 5 mods */
   Homebrew: boolean;
+  /** Gain a netrunning level of 3 */
+  LevelUp: boolean;
+  /** Find a rarity five mod */
+  StrikeGold: boolean;
+  /** Charge 2 mods from the same power supply */
+  ShortBus: boolean;
   /** Charge a mod that is 3+ jumps away from the deck */
   DaisyChain: boolean;
+  /** Start a netrun with the hostile trace fully decayed */
+  ColdTrail: boolean;
   /** Flag ICE with an active countermeasure, and finish the run */
   BombSquad: boolean;
   /** Have a charged mod in every rack slot */
@@ -4676,14 +4684,16 @@ type ChallengeStatus = {
   Supplier: boolean;
   /** Get a score of 120+ while netrunning */
   Jackpot: boolean;
-  /** Get a 50% bonus in a single stat */
-  Overclocked: boolean;
   /** Charge a mod via the API */
   AutoWire: boolean;
+  /** Complete a netrun using only the API */
+  AutoRun: boolean;
+  /** Get a 50% bonus in a single stat */
+  Overclocked: boolean;
   /** Have 7 total rack slots */
   BigDeck: boolean;
   /** Get a score of 100+ using only the API */
-  AutoRun: boolean;
+  ScriptedWin: boolean;
   /** Flag ICE with an active countermeasure and finish the run with only the API */
   AutoBomber: boolean;
   /** Charge a mod that is 6+ jumps away from the deck */
@@ -4692,6 +4702,14 @@ type ChallengeStatus = {
   Corruption: boolean;
   /** Get a score of 100+ at the glitch using only the API */
   GlitchRun: boolean;
+  /** Charge 4 mods from the same power supply */
+  Electrician: boolean;
+  /** Get crafting components from 12 unique sources */
+  Collector: boolean;
+  /** Start a netrun that costs at least 1000 ICEBreakers */
+  Impatient: boolean;
+  /** Find a rarity ten mod */
+  Connoisseur: boolean;
 };
 
 /**

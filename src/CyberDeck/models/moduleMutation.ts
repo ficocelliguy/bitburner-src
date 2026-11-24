@@ -18,7 +18,7 @@ import {
   checkConnectionChallenges,
   completeChargedModuleTutorial,
   completeInstalledModTutorial,
-  hasConsumedSkillchipTutorial,
+  checkSkillchipChallenges,
 } from "./challenges";
 import { getFilteredStoredModules } from "../utils/modStatsUtils";
 import { MODULE_STORAGE, TRASH_CAN } from "./constants";
@@ -354,7 +354,7 @@ function consumeSkillChips() {
     }
     displaySkillchipConsumptionMessage(module);
     disconnectModule(module);
-    hasConsumedSkillchipTutorial();
+    checkSkillchipChallenges();
   }
   CyberdeckState.installedModules = CyberdeckState.installedModules.filter((m) => !chargedSkillModules.includes(m));
   CyberdeckEvents.emit();

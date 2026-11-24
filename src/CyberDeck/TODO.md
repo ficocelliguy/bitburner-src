@@ -1,9 +1,13 @@
 Patch changes:
 - Added support for dragging and dropping mods from storage into a full rack to swap with the mod you dropped on top of
 - Improved netrun reward modal layout and component reward display - with tooltips!
-- Added confirmation to all dev menu buttons
+- Added feedback to all dev menu buttons
 
 TODO:
+
+- give a skillchip reward if there isn't one and the skillchip tutorial step isn't completed
+
+- filter box help text
 
 - double click to move mod?
 
@@ -13,8 +17,6 @@ TODO:
 
 - dev menu - set component counts
 
-- filter box help text
-  - more search options? > and < ?
 
 
 TODO LATER:
@@ -111,6 +113,103 @@ harder versions of existing challenge ideas:
 
 - Possessed (Corruption): Have 3 charged corrupted mods
 - Autopilot (Auto Run): Score 100+ through the API on 10 separate runs
+
+
+challenge ideas from playtest feedback:
+
+- Bus Bar: Charge 3 mods through a single power supply
+  - Confusion: power supplies read as pure debuffs. 
+  - Hint: "A power supply doesn't make power, it spreads it. The debuff is the price of the extra sockets."
+  - Reward: Crafted power supplies get +1 socket
+
+- Cold Trail: Start a netrun with the hostile trace fully decayed
+  - Confusion: the ICEBreaker price curve. Hallowed (Sept 30) asked "does the cooldown only start when you pick
+    up your loot?" and "so it just starts off even higher than 20k ICE?". princess_fox (Sept 18) ran back-to-back
+    until told to wait. E9Cipher (Sept 18) asked why the price was Infinity.
+  - Hint: "Every run leaves a trace. The longer you wait, the cheaper the next one gets. Watch the trace risk
+    on the netrunning page."
+  - Reward: +2 netrun cooldown reduction level
+  - Hook: completeNetrunChallenges runs before netrunRewards updates lastNetrunningTimestamp, so check
+    getNetrunningTraceFraction() === 0 there (non-corrupted only). Progress: current trace fraction.
+
+- Upgrade Path: Reach netrunning level 5
+  - Confusion: that netrunning level is what gates mod rarity, and that it is raised by skillchips from a specific
+    target. Hallowed (Sept 30): "Rarity 2, right... TT" and "not getting anything impressive". AnIncrementalGamer63
+    (Oct 5) didn't know how to switch targets. Fico's own balance sim alternates Omnia runs and stat runs.
+  - Hint: "Omnia Cybersystems runs drop the skillchips that raise your deck's levels. A higher netrunning
+    level means higher rarity rolls on everything that follows."
+  - Reward: Omnia netruns drop one extra skillchip
+  - Hook: consumeSkillChips - check CyberdeckState.netrunningLevel >= 5 after applying stats. Progress:
+    netrunningLevel / 5. Different from Skill Junkie (count consumed): this is about the outcome, not the grind.
+
+- Pocket Rig: Upgrade the cyberdeck server's cores 3 times
+  - Confusion: what the cyberdeck server is for. AnIncrementalGamer63 (Sept 18): "pitiful amount of ram and nothing
+    indicates it has special properties". DIGI7 (Nov 2): "the cyberdeck can be used to run scripts!?" and
+    "i was wondering if it soft-reset". The upgrades live on the crafting page, where nobody looks for a server.
+  - Hint: "The deck is a server too. Its RAM is small and expensive, but its cores are uncapped, and both
+    survive augmentation installs. Upgrades are on the crafting page."
+  - Reward: Server RAM upgrades give 4GB instead of 2GB
+  - Hook: upgradeCyberdeckServerCores - check serverCoreUpgrades >= 3. Progress: serverCoreUpgrades / 3.
+    Pairs with Cortex Donor above (share threads from the deck) as the "use the server" pair.
+
+- Keepsake: Favorite 3 mods
+  - Confusion: storage fills fast and nothing protects a good roll. gmcew (Nov 15) "filled my mod storage in a
+    matter of minutes". Hallowed (Sept 30) was surprised a full storage still allowed netrunning (now requires a
+    free slot). AnIncrementalGamer63 (Sept 18) warned others to favorite mods before running his auto-salvage
+    script, which means the feature exists but nobody found it in the UI.
+  - Hint: "Favorited mods can't be salvaged, by you or by your scripts. Mark the ones you're building around."
+  - Reward: +2 mod storage size
+  - Hook: toggleFavorite in ModuleComponent and the favoriteMod API - count mods with favorite === true across
+    installedModules + storedModules. Progress: count / 3.
+
+- Fabricator: Gain 1,000 total components from charged mods
+  - Confusion: that mods can produce components at all. E9Cipher (Sept 18) read the production stats as something
+    to "set a number for". AnIncrementalGamer63 (Sept 18) asked for a mods row in component stats before it
+    existed. The "mods" row now exists but nothing points at it.
+  - Hint: "Some Omnia mods roll ROM, chip or neurode production per cycle. Wire one up and watch the 'mods' row
+    on the stats page tick."
+  - Reward: Component production stats on new mods roll 25% higher
+  - Hook: getCyberdeckComponentsFromMods - sum componentStats.{rom,chips,neurodes}.mods >= 1000. Runs every
+    processing tick, so keep the check to a single comparison. Progress: sum / 1000.
+
+- Stockpile: Hold 100 ICEBreakers at once
+  - Confusion: what ICEBreakers are and why a run won't start. E9Cipher (Sept 18): "I still don't understand what
+    ICEBreakers are". E9Cipher (Nov 15) hit the forbidden cursor with too few and reported it as a bug. Hallowed
+    (Sept 30) noted the glitch page doesn't show your count. Tutorial says "craft some" but not why.
+  - Hint: "ICEBreakers are the ammo for netrunning. Every run burns a stack, and the more recent your last run,
+    the bigger the stack. Craft them from components on the crafting page."
+  - Reward: ICEBreaker crafting cost reduced
+  - Hook: craftICEBreaker (and netrun component rewards) - check components.iceBreakers >= 100. Progress: count / 100.
+
+- Muscle Memory: Install augmentations with 4+ mods charged
+  - Confusion: whether the deck survives a reset. DIGI7 (Nov 2) assumed it would soft-reset. Nothing in the UI says
+    mods, wiring, levels and server upgrades persist through installs (only bitnode prestige wipes them).
+  - Hint: "Your deck is hardware. Augmentation installs don't touch it, so a good layout is worth the time."
+  - Reward: +1 netrunning level
+  - Hook: prestigeCyberdeck(prestigeBitnode = false) - check getChargedModuleIDs().length >= 5 (panel + 4) before
+    anything else runs. Lower priority: only fires once per install, so it's a slow teach.
+
+Confusions from the thread that are already covered by an existing challenge or an idea above:
+
+- Firewalls are passable, just slow (Hallowed Sept 20 "This is cruel"; gmcew Nov 15 routed around them for weeks).
+  Covered by Battering Ram. Consider moving it earlier in the order and adding "you can walk through pink" to
+  the hint.
+- Depowering a rack extension ejects its mods (DIGI7 Nov 2; AnIncrementalGamer63 Sept 18). Covered by Big Deck's hint.
+- Same-color wires can't cross and covered sockets gray out (princess_fox Sept 20). Covered by Full House's hint.
+- Netrunning does not count as a component source (DIGI7 Nov 2). Covered by Supplier's reworded description.
+- Right-click flags a group (DIGI7 Nov 2 "only discovered you could mark trapped things from the challenge").
+  Covered by Bomb Squad. This is the proof that challenge hints work as the extended tutorial.
+- Picking a target per run and what each specializes in (AnIncrementalGamer63 Oct 5). Covered by Espionage above.
+- Ending a run early vs. running the battery dry (princess_fox Sept 18). Covered by Efficient above.
+- Scrapping the starting skillchip soft-locks the tutorial step (DIGI7 Nov 2). Not a challenge, but the tutorial
+  should either exclude starting mods from salvage until consumed or accept any later skillchip.
+
+Not challenge-shaped, but repeated enough to note for docs:
+
+- start() vs getStatus() look like the same call (DIGI7 Nov 7). getStatus() is not discoverable from start()'s docs.
+- coordinates are [y, x] in getStatus() but x/y fields on grid entities (DIGI7 Nov 15; gmcew Nov 15).
+- getGrid() groups answered "why can't I see connections" (AnIncrementalGamer63 Sept 19), but the docs don't say
+  group ids are how you find them.
 
 
 Cyberdeck Expansion
